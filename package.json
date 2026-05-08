@@ -30,7 +30,7 @@
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.38.0",
     "hono": "^4.12.18",
-    "lucide-react": "^0.453.0",
+    "lucide-react": "^1.14.0",
     "nanoid": "^5.1.11",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
