@@ -2,7 +2,7 @@
 **/node_modules
 .pnpm-store/
 .wrangler/
-wrangler.deploy.toml
+wrangler.deploy.jsonc
 
 # Build outputs
 dist/

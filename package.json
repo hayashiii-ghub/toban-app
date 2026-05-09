@@ -8,7 +8,7 @@
     "dev:api": "wrangler dev --port 8788",
     "dev:full": "concurrently \"pnpm dev\" \"pnpm dev:api\"",
     "build": "vite build",
-    "deploy:cf": "node scripts/prepare-wrangler-config.mjs --require && wrangler d1 migrations apply toban-maker-db --config wrangler.deploy.toml && wrangler deploy --config wrangler.deploy.toml",
+    "deploy:cf": "node scripts/prepare-wrangler-config.mjs --require && wrangler d1 migrations apply toban-maker-db --config wrangler.deploy.jsonc && wrangler deploy --config wrangler.deploy.jsonc",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
     "lint": "eslint .",

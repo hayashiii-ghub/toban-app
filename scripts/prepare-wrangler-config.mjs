@@ -4,10 +4,10 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, "..");
-const inputConfigPath = path.resolve(projectRoot, "wrangler.toml");
+const inputConfigPath = path.resolve(projectRoot, "wrangler.jsonc");
 const outputConfigPath = process.env.WRANGLER_CONFIG_PATH
   ? path.resolve(process.cwd(), process.env.WRANGLER_CONFIG_PATH)
-  : path.resolve(projectRoot, "wrangler.deploy.toml");
+  : path.resolve(projectRoot, "wrangler.deploy.jsonc");
 const requireDatabaseId = process.argv.includes("--require");
 
 const DATABASE_ID_PLACEHOLDER = "__CLOUDFLARE_D1_DATABASE_ID__";
@@ -47,9 +47,12 @@ let preparedConfig = config
   .replaceAll(DATABASE_ID_PLACEHOLDER, databaseId)
   .replaceAll(PREVIEW_DATABASE_ID_PLACEHOLDER, previewDatabaseId);
 
-// 本番デプロイ用の環境変数を追加
-if (!preparedConfig.includes("[vars]")) {
-  preparedConfig += '\n[vars]\nENVIRONMENT = "production"\n';
+// 本番デプロイ用の環境変数を追加（jsonc の最上位 { ... } 直後に挿入）
+if (!/"vars"\s*:/.test(preparedConfig)) {
+  preparedConfig = preparedConfig.replace(
+    /^(\s*)\{/,
+    '$1{\n  "vars": { "ENVIRONMENT": "production" },',
+  );
 }
 
 await mkdir(path.dirname(outputConfigPath), { recursive: true });
