@@ -96,7 +96,8 @@ export async function handleScheduleOgp(
     type: "website",
   });
 
-  html = html.replace("</head>", `    ${ogTags}\n  </head>`);
+  const indentedOgTags = ogTags.split("\n").map((line) => `    ${line}`).join("\n");
+  html = html.replace("</head>", `${indentedOgTags}\n  </head>`);
 
   return new Response(html, {
     headers: {
