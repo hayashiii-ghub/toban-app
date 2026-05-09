@@ -80,24 +80,21 @@ export async function handleScheduleOgp(
     return new Response("Not found", { status: 404 });
   }
 
-  const title = escapeHtml(schedule.name);
-  const description = escapeHtml(`「${schedule.name}」の当番表`);
-  const ogUrl = escapeHtml(url.href);
-
   const assetResponse = await env.ASSETS.fetch(new Request(`${url.origin}/`));
   let html = await assetResponse.text();
 
   html = html.replace(
     /<title>[^<]*<\/title>/,
-    `<title>${title} - toban</title>`,
+    `<title>${escapeHtml(schedule.name)} - toban</title>`,
   );
 
-  const ogTags = [
-    `<meta property="og:title" content="${title} - toban" />`,
-    `<meta property="og:description" content="${description}" />`,
-    `<meta property="og:url" content="${ogUrl}" />`,
-    `<meta property="og:type" content="website" />`,
-  ].join("\n    ");
+  const ogTags = buildSocialMetaTags({
+    title: `${schedule.name} - toban`,
+    description: `「${schedule.name}」の当番表`,
+    url: url.href,
+    origin: url.origin,
+    type: "website",
+  });
 
   html = html.replace("</head>", `    ${ogTags}\n  </head>`);
 
