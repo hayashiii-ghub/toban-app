@@ -263,6 +263,26 @@ export function renderTemplateDetailHtml(origin: string, slug: string): string |
     },
   ]);
 
+  const sameCategory = TEMPLATE_SEO_DATA.filter(
+    (t) => t.categoryId === seo.categoryId && t.slug !== slug,
+  );
+  const otherCategory = TEMPLATE_SEO_DATA.filter(
+    (t) => t.categoryId !== seo.categoryId,
+  );
+  const relatedTemplates = [
+    ...sameCategory,
+    ...otherCategory.slice(0, Math.max(0, 4 - sameCategory.length)),
+  ].slice(0, 4);
+
+  const relatedHtml = relatedTemplates.length > 0
+    ? `<section><h2>関連するテンプレート</h2><ul>${relatedTemplates
+        .map(
+          (t) =>
+            `<li><a href="${origin}/templates/${t.slug}">${escapeHtml(t.heading)}</a></li>`,
+        )
+        .join("")}</ul></section>`
+    : "";
+
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -282,6 +302,7 @@ ${cat ? `<p>${cat.emoji} ${escapeHtml(cat.label)}</p>` : ""}
 <h1>${escapeHtml(seo.heading)}</h1>
 <p>${escapeHtml(seo.intro)}</p>
 <a href="${origin}/?template=${seo.templateIndex}">このテンプレートで当番表を作る</a>
+${relatedHtml}
 <h2>よくある質問</h2>
 <dl>${COMMON_FAQ.map((f) => `<dt>${escapeHtml(f.question)}</dt><dd>${escapeHtml(f.answer)}</dd>`).join("")}</dl>
 </main>

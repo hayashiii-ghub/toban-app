@@ -101,3 +101,24 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
     expect(html).toContain('<meta name="twitter:image" content="https://toban.app/og-image.png">');
   });
 });
+
+describe("renderTemplateDetailHtml related templates", () => {
+  const origin = "https://toban.app";
+
+  it("includes a section with related template links", () => {
+    const html = renderTemplateDetailHtml(origin, "office-cleaning");
+    expect(html).not.toBeNull();
+    expect(html).toContain("関連するテンプレート");
+    expect(html).not.toMatch(/<a href="https:\/\/toban\.app\/templates\/office-cleaning"/);
+  });
+
+  it("emits up to 4 related template anchor tags inside the related section", () => {
+    const html = renderTemplateDetailHtml(origin, "office-cleaning");
+    expect(html).not.toBeNull();
+    const sectionMatch = html!.match(/<section>\s*<h2>関連するテンプレート<\/h2>[\s\S]*?<\/section>/);
+    expect(sectionMatch).not.toBeNull();
+    const anchorCount = (sectionMatch![0].match(/<a href="https:\/\/toban\.app\/templates\//g) || []).length;
+    expect(anchorCount).toBeGreaterThan(0);
+    expect(anchorCount).toBeLessThanOrEqual(4);
+  });
+});
