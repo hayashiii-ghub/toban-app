@@ -110,8 +110,8 @@ export async function handleScheduleOgp(
 // ─── LP のプリレンダリング (bot用) ───
 
 export function renderLandingPageHtml(origin: string): string {
-  const title = "toban（トバン）｜無料で当番表を作成・印刷・共有";
-  const desc = "掃除当番・給食当番・日直のローテーション表を無料でかんたんに作成・印刷・共有できるWebアプリ。アカウント登録不要、ブラウザだけで完結します。";
+  const title = "当番表メーカー toban（トバン）｜無料で作成・印刷・共有";
+  const desc = "掃除当番・給食当番・日直のローテーション表をかんたんに作れる無料の当番表メーカー。アカウント登録不要、ブラウザだけで印刷品質の当番表がすぐ完成します。";
 
   const faqHtml = COMMON_FAQ.map(
     (f) => `<dt>${escapeHtml(f.question)}</dt><dd>${escapeHtml(f.answer)}</dd>`,

@@ -24,7 +24,7 @@ export default function TemplateDetailPage() {
       document.title = seo.title + "｜toban（トバン）";
     }
     return () => {
-      document.title = "toban（トバン）｜無料で当番表を作成・印刷・共有";
+      document.title = "当番表メーカー toban（トバン）｜無料で作成・印刷・共有";
     };
   }, [seo]);
 

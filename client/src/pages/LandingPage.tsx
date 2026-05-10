@@ -259,7 +259,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "toban（トバン）｜無料で当番表を作成・印刷・共有";
+    document.title = "当番表メーカー toban（トバン）｜無料で作成・印刷・共有";
   }, []);
 
   useEffect(() => {
