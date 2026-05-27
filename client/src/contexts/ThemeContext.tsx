@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
 import { safeGetItem, safeSetItem } from "@/lib/storage";
 
 type Theme = "light" | "dark";
@@ -43,14 +43,16 @@ export function ThemeProvider({
     }
   }, [theme, switchable]);
 
-  const toggleTheme = switchable
-    ? () => {
-        setTheme(prev => (prev === "light" ? "dark" : "light"));
-      }
-    : undefined;
+  const value = useMemo<ThemeContextType>(() => ({
+    theme,
+    toggleTheme: switchable
+      ? () => setTheme(prev => (prev === "light" ? "dark" : "light"))
+      : undefined,
+    switchable,
+  }), [theme, switchable]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, use } from "react";
 import type { Member } from "@/rotation/types";
 
 export interface GroupCardContextValue {
@@ -62,7 +62,7 @@ const GroupCardContext = createContext<GroupCardContextValue | null>(null);
 export const GroupCardProvider = GroupCardContext.Provider;
 
 export function useGroupCardContext(): GroupCardContextValue {
-  const ctx = useContext(GroupCardContext);
+  const ctx = use(GroupCardContext);
   if (!ctx) {
     throw new Error("useGroupCardContext must be used within a GroupCardProvider");
   }
