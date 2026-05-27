@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { MotionConfig } from "framer-motion";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch, useLocation } from "wouter";
@@ -81,16 +82,18 @@ function AppFooter() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-          <AppFooter />
-        </TooltipProvider>
-      </ThemeProvider>
+      <MotionConfig reducedMotion="user">
+        <ThemeProvider
+          defaultTheme="light"
+          // switchable
+        >
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+            <AppFooter />
+          </TooltipProvider>
+        </ThemeProvider>
+      </MotionConfig>
     </ErrorBoundary>
   );
 }
