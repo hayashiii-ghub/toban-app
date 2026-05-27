@@ -96,7 +96,7 @@ export function RotationQuickTable({
                 </tr>
               </thead>
               <tbody>
-                <tr aria-hidden="true"><td colSpan={activeMembers.length + 1} style={{ height: "6px", border: "none" }} /></tr>
+                <tr aria-hidden="true"><td colSpan={activeMembers.length + 1} aria-hidden="true" style={{ height: "6px", border: "none" }} /></tr>
                 {groups.map((group, groupIndex) => (
                   <tr key={group.id}>
                     <th

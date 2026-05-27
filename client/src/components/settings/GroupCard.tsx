@@ -107,7 +107,7 @@ export function GroupCard({
       {ctx.openDetailsKey === `details-${gIdx}` && (
         <div className="px-3 sm:px-4 py-2 flex flex-col gap-2" style={{ backgroundColor: "#f5f5f5", borderBottom: "1px solid #e5e5e5" }}>
           <div className="flex items-center gap-2">
-            <label className="text-xs font-bold shrink-0" style={{ color: "var(--dt-text-muted)" }}>絵文字</label>
+            <span className="text-xs font-bold shrink-0" style={{ color: "var(--dt-text-muted)" }}>絵文字</span>
             <input
               type="text"
               value={group.emoji}
@@ -119,7 +119,7 @@ export function GroupCard({
           </div>
           {!ctx.isTaskMode && ownerMember && (
             <div>
-              <label className="text-xs font-bold block mb-1" style={{ color: "var(--dt-text-muted)" }}>色</label>
+              <div className="text-xs font-bold block mb-1" style={{ color: "var(--dt-text-muted)" }}>色</div>
               <ColorPalette member={ownerMember} onPresetSelect={ctx.onColorPreset} onCustomColor={ctx.onColorCustom} />
             </div>
           )}

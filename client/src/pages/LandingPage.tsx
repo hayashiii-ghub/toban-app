@@ -152,7 +152,7 @@ function ContactForm() {
       {/* ハニーポット: CSS で非表示。bot が自動入力すると送信をスキップ */}
       <div aria-hidden="true" className="absolute opacity-0 h-0 overflow-hidden pointer-events-none" tabIndex={-1}>
         <label htmlFor="contact-url">URL</label>
-        <input id="contact-url" name="url" type="text" autoComplete="off" tabIndex={-1} />
+        <input id="contact-url" name="url" type="text" autoComplete="off" tabIndex={-1} aria-label="URL (honeypot)" />
       </div>
       <div>
         <label htmlFor="contact-name" className="block text-sm font-bold mb-1" style={{ color: C.text }}>
@@ -168,6 +168,7 @@ function ContactForm() {
           className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-shadow"
           style={{ borderColor: C.border, color: C.text }}
           placeholder="山田 太郎"
+          aria-label="お名前"
         />
       </div>
       <div>
@@ -184,6 +185,7 @@ function ContactForm() {
           className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-shadow"
           style={{ borderColor: C.border, color: C.text }}
           placeholder="example@email.com"
+          aria-label="メールアドレス"
         />
       </div>
       <div>
@@ -200,6 +202,7 @@ function ContactForm() {
           className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-shadow resize-y"
           style={{ borderColor: C.border, color: C.text }}
           placeholder="不具合の報告や機能のご要望など、お気軽にお書きください。"
+          aria-label="お問い合わせ内容"
         />
       </div>
       {status === "error" && (

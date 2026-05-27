@@ -288,6 +288,7 @@ export function SettingsModal({
                     className="flex-1 min-w-0 theme-border px-3 py-2 text-sm font-bold"
                     style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#FAFAFA" }}
                     placeholder="例: 掃除当番、給食当番、日直..."
+                    aria-label="当番表の名前"
                   />
                   <button
                     type="button"
@@ -303,8 +304,8 @@ export function SettingsModal({
               </div>
 
               {/* 割り当て方式 */}
-              <div>
-                <label className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>見方をえらぶ</label>
+              <div role="group" aria-labelledby="assignment-mode-label">
+                <div id="assignment-mode-label" className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>見方をえらぶ</div>
                 <div className="flex gap-2">
                   <button
                     type="button"

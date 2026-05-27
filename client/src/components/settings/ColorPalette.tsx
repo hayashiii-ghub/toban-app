@@ -29,14 +29,15 @@ export function ColorPalette({ member, onPresetSelect, onCustomColor }: Props) {
       <label
         className="size-6 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer hover:scale-110 transition-transform relative overflow-hidden"
         style={{ borderColor: "#bbb" }}
-        aria-label="カスタムカラー"
       >
+        <span className="sr-only">カスタムカラー</span>
         <Palette className="size-3" style={{ color: "#999" }} aria-hidden="true" />
         <input
           type="color"
           value={member.color}
           onChange={(e) => onCustomColor(member.id, e.target.value)}
           className="absolute inset-0 opacity-0 cursor-pointer"
+          aria-label="カスタムカラー"
         />
       </label>
     </div>

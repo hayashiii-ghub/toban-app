@@ -57,6 +57,7 @@ export function BulkMemberAdd({ members, groups, activeMemberIds, isTaskMode, on
         rows={5}
         className="theme-border px-3 py-2 text-sm font-medium resize-none"
         style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
+        aria-label={isTaskMode ? "メンバーを一括追加" : "メンバーとグループを一括追加"}
       />
       {bulkNames.length > 0 && (
         <p className="text-xs font-bold" style={{ color: "var(--dt-text-secondary)" }}>
