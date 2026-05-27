@@ -21,7 +21,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "doctor": "npx react-doctor@latest"
+    "react-doctor": "react-doctor"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
