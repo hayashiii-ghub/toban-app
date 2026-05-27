@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import type { AssignmentMode, Member, RotationConfig, TaskGroup } from "@/rotation/types";
 import { computeAssignments, computeDateRotationForDate } from "@/rotation/utils";
 import { getHolidaysForMonth } from "@/rotation/holidays";
@@ -89,7 +89,7 @@ export function RotationCalendar({
   return (
     <div className="px-3 sm:px-4 py-3 sm:py-4 pb-8 sm:pb-12 rotation-print-calendar-section">
       <div className="max-w-4xl mx-auto">
-        <motion.div
+        <m.div
           className="theme-border theme-shadow-sm p-3 sm:p-5 rotation-print-card"
           style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "var(--dt-border-radius)" }}
           initial={{ y: 10, opacity: 0 }}
@@ -221,7 +221,7 @@ export function RotationCalendar({
                       {/* Day detail popover */}
                       <AnimatePresence>
                         {isSelected && !isSkipped && assignments && (
-                          <motion.div
+                          <m.div
                             ref={popoverRef}
                             className="rotation-no-print absolute z-20 theme-border theme-shadow-sm p-2.5 min-w-[min(160px,80vw)]"
                             style={{
@@ -257,7 +257,7 @@ export function RotationCalendar({
                                 </div>
                               ))}
                             </div>
-                          </motion.div>
+                          </m.div>
                         )}
                       </AnimatePresence>
                     </>
@@ -280,7 +280,7 @@ export function RotationCalendar({
               </div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

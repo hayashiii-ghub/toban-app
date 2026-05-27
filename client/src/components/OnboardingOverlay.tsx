@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 
 interface OnboardingOverlayProps {
   onComplete: () => void;
@@ -162,7 +162,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
       aria-label={`ガイド: ${step.title}`}
       style={{ pointerEvents: "none" }}
     >
-      <motion.div
+      <m.div
         className="fixed inset-0"
         style={{ backgroundColor: "rgba(0,0,0,0.5)", pointerEvents: "auto" }}
         initial={{ opacity: 0 }}
@@ -188,7 +188,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
       )}
 
       <AnimatePresence mode="wait">
-        <motion.div
+        <m.div
           key={currentStep}
           ref={tooltipRef}
           tabIndex={-1}
@@ -270,7 +270,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       </AnimatePresence>
     </div>
   );

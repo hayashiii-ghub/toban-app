@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import type { AssignmentMode, Member, TaskGroup } from "@/rotation/types";
 import {
   CARD_STAGGER_DELAY,
@@ -41,7 +41,7 @@ export function AssignmentsGrid({
         >
           <AnimatePresence>
             {assignments.map(({ group, member }, index) => (
-              <motion.div
+              <m.div
                 key={`${scheduleId}-${member.id}-${group.id}-${rotation}`}
                 role="listitem"
                 aria-label={isTaskMode
@@ -75,7 +75,7 @@ export function AssignmentsGrid({
                       </div>
                     </div>
                     <div className="p-2.5 sm:p-3 flex flex-col gap-1.5 sm:gap-2">
-                      <motion.div
+                      <m.div
                         className="flex items-center justify-center gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 font-bold text-sm sm:text-base"
                         style={{
                           backgroundColor: member.bgColor,
@@ -97,7 +97,7 @@ export function AssignmentsGrid({
                           {member.name.charAt(0)}
                         </span>
                         <span>{member.name}</span>
-                      </motion.div>
+                      </m.div>
                     </div>
                   </>
                 ) : (
@@ -119,7 +119,7 @@ export function AssignmentsGrid({
 
                     <div className="p-2.5 sm:p-3 flex flex-col gap-1.5 sm:gap-2">
                       {group.tasks.map((task, taskIndex) => (
-                        <motion.div
+                        <m.div
                           key={`${group.id}-task-${taskIndex}`}
                           className="flex items-center gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 font-bold text-xs sm:text-sm"
                           style={{
@@ -139,12 +139,12 @@ export function AssignmentsGrid({
                             {group.emoji}
                           </span>
                           <span>{task}</span>
-                        </motion.div>
+                        </m.div>
                       ))}
                     </div>
                   </>
                 )}
-              </motion.div>
+              </m.div>
             ))}
           </AnimatePresence>
         </div>

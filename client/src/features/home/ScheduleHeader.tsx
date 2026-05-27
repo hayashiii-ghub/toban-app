@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 interface ScheduleHeaderProps {
   scheduleName: string;
@@ -12,7 +12,7 @@ export function ScheduleHeader({
   return (
     <header className="rotation-print-header pt-6 sm:pt-8 pb-6 sm:pb-8 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto text-center">
-        <motion.div
+        <m.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -39,7 +39,7 @@ export function ScheduleHeader({
               順番: {rotationLabel} ／ 印刷日: {new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric", weekday: "short" })}
             </span>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </header>
   );

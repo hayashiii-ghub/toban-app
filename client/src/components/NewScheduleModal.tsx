@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ChevronDown, FileText, Plus, X } from "lucide-react";
 import type { ScheduleTemplate } from "@/rotation/types";
 import { TEMPLATES } from "@/rotation/constants";
@@ -56,7 +56,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
   };
 
   return (
-    <motion.div
+    <m.div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 rotation-no-print"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       initial={{ opacity: 0 }}
@@ -67,7 +67,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
       aria-modal="true"
       aria-labelledby="new-schedule-title"
     >
-      <motion.div
+      <m.div
         ref={modalRef}
         className="theme-border theme-shadow w-full max-w-md modal-max-h overflow-hidden flex flex-col sm:rounded-2xl rounded-t-2xl rounded-b-none sm:rounded-b-2xl"
         style={{ backgroundColor: "var(--dt-card-bg)" }}
@@ -136,7 +136,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
                 </button>
                 <AnimatePresence initial={false}>
                   {isOpen && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -168,14 +168,14 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
                           </button>
                         ))}
                       </div>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
               </div>
             );
           })}
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { X, Save, Pin, PinOff, Copy, Trash2 } from "lucide-react";
 import type { AssignmentMode, TaskGroup, Member, RotationConfig } from "@/rotation/types";
 import { deepClone, generateId } from "@/rotation/utils";
@@ -230,7 +230,7 @@ export function SettingsModal({
     : `${editMembers.length}人・${editGroups.length}グループ`;
 
   return (
-    <motion.div
+    <m.div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 rotation-no-print"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       initial={{ opacity: 0 }}
@@ -241,7 +241,7 @@ export function SettingsModal({
       aria-modal="true"
       aria-labelledby="settings-title"
     >
-      <motion.div
+      <m.div
         ref={modalRef}
         className="theme-border theme-shadow w-full max-w-lg modal-max-h overflow-hidden flex flex-col sm:rounded-2xl rounded-t-2xl rounded-b-none sm:rounded-b-2xl"
         style={{ backgroundColor: "var(--dt-card-bg)" }}
@@ -382,7 +382,7 @@ export function SettingsModal({
             )}
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }

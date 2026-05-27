@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
@@ -17,7 +17,7 @@ export function ConfirmDeleteDialog({ scheduleName, onConfirm, onCancel }: Props
   useFocusTrap(modalRef, true);
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -28,7 +28,7 @@ export function ConfirmDeleteDialog({ scheduleName, onConfirm, onCancel }: Props
       aria-modal="true"
       aria-labelledby="delete-dialog-title"
     >
-      <motion.div
+      <m.div
         ref={modalRef}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -60,7 +60,7 @@ export function ConfirmDeleteDialog({ scheduleName, onConfirm, onCancel }: Props
             削除する
           </button>
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }

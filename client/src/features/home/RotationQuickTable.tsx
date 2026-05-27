@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import type { AssignmentMode, Member, TaskGroup } from "@/rotation/types";
 import { computeAssignments } from "@/rotation/utils";
 
@@ -44,7 +44,7 @@ export function RotationQuickTable({
   return (
     <div className="px-3 sm:px-4 py-3 sm:py-4 pb-8 sm:pb-12 rotation-print-table-section">
       <div className="max-w-4xl mx-auto">
-        <motion.div
+        <m.div
           className="theme-border theme-shadow-sm p-3 sm:p-5 rotation-print-card"
           style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "var(--dt-border-radius)" }}
           initial={{ y: 10, opacity: 0 }}
@@ -140,7 +140,7 @@ export function RotationQuickTable({
               </tbody>
             </table>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

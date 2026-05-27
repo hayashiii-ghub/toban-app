@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
 interface Props {
@@ -26,16 +26,16 @@ export function AccordionSection({ title, summary, defaultOpen = false, children
             <span className="text-xs font-bold" style={{ color: "#999" }}>{summary}</span>
           )}
         </div>
-        <motion.span
+        <m.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
           <ChevronDown className="size-4" style={{ color: "#999" }} />
-        </motion.span>
+        </m.span>
       </button>
       <AnimatePresence initial={false}>
         {isOpen && (
-          <motion.div
+          <m.div
             initial={{ height: 0, opacity: 0, overflow: "hidden" }}
             animate={{ height: "auto", opacity: 1, overflow: "visible", transitionEnd: { overflow: "visible" } }}
             exit={{ height: 0, opacity: 0, overflow: "hidden" }}
@@ -44,7 +44,7 @@ export function AccordionSection({ title, summary, defaultOpen = false, children
             <div className="px-4 sm:px-5 pb-4">
               {children}
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

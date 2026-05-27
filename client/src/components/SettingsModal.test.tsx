@@ -25,6 +25,14 @@ vi.mock("framer-motion", () => {
       ul: createMotionComponent("ul"),
       section: createMotionComponent("section"),
     },
+    m: {
+      div: createMotionComponent("div"),
+      span: createMotionComponent("span"),
+      button: createMotionComponent("button"),
+      li: createMotionComponent("li"),
+      ul: createMotionComponent("ul"),
+      section: createMotionComponent("section"),
+    },
     AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
   };
 });

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ChevronLeft, ChevronRight, Cloud, CloudOff, Loader2, Pencil } from "lucide-react";
 import type { SyncStatus } from "@/lib/syncManager";
 import { PrintMenu } from "@/components/PrintMenu";
@@ -35,7 +35,7 @@ export function RotationControls({
   return (
     <div className="px-3 sm:px-4 pb-3 rotation-no-print">
       <div className="max-w-4xl mx-auto">
-        <motion.div
+        <m.div
           className="theme-border theme-shadow p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4"
           style={{ backgroundColor: "var(--dt-control-bar-bg)", borderRadius: "var(--dt-border-radius)" }}
           initial={{ scale: 0.95, opacity: 0 }}
@@ -140,7 +140,7 @@ export function RotationControls({
               <Pencil className="size-3.5 sm:size-4" aria-hidden="true" /> 編集
             </button>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );
