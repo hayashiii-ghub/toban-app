@@ -25,7 +25,7 @@ export function sanitizeTaskGroup(group: unknown): TaskGroup | null {
   if (!isRecord(group)) return null;
 
   const tasks = Array.isArray(group.tasks)
-    ? group.tasks.filter(isNonEmptyString).map((task) => task.trim())
+    ? group.tasks.flatMap((task) => (isNonEmptyString(task) ? [task.trim()] : []))
     : [];
 
   if (

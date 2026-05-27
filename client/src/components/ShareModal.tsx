@@ -34,9 +34,7 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
     };
   }, []);
 
-  const viewUrl = useMemo(() => {
-    return `${window.location.origin}/s/${slug}`;
-  }, [slug]);
+  const viewUrl = `${window.location.origin}/s/${slug}`;
 
   const editUrl = useMemo(() => {
     const json = JSON.stringify({ slug, editToken, name: scheduleName });

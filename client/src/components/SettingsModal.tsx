@@ -187,7 +187,7 @@ export function SettingsModal({
   const handleSave = () => {
     setValidationError(null);
     const cleanedMembers = editMembers.filter((m) => m.name.trim() !== "");
-    const activeMemberIds = cleanedMembers.filter(m => !m.skipped).map(m => m.id);
+    const activeMemberIds = cleanedMembers.flatMap(m => (m.skipped ? [] : [m.id]));
     const cleanedGroups = editGroups
       .map((g) => {
         const cleaned = { ...g, tasks: g.tasks.filter((t) => t.trim() !== "") };
@@ -197,7 +197,7 @@ export function SettingsModal({
             delete cleaned.memberIds;
           } else if (validIds.length >= activeMemberIds.length) {
             // 全員いるが、並び順がデフォルトと同じなら不要なので消す
-            const isSameOrder = activeMemberIds.every((id, i) => validIds[i] === id);
+            const isSameOrder = validIds.length === activeMemberIds.length && activeMemberIds.every((id, i) => validIds[i] === id);
             if (isSameOrder) {
               delete cleaned.memberIds;
             } else {

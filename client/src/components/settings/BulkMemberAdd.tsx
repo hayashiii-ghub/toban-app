@@ -16,7 +16,10 @@ interface Props {
 export function BulkMemberAdd({ members, groups, activeMemberIds, isTaskMode, onMembersChange, onGroupsChange, onClose }: Props) {
   const [bulkText, setBulkText] = useState("");
   const bulkNames = useMemo(
-    () => bulkText.split(/[\n,、\t]+/).map((s) => s.trim()).filter(Boolean),
+    () => bulkText.split(/[\n,、\t]+/).flatMap((s) => {
+      const t = s.trim();
+      return t ? [t] : [];
+    }),
     [bulkText],
   );
 

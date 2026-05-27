@@ -259,8 +259,10 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 // カテゴリから代表テンプレートを抜粋（各カテゴリ1つずつ、最大6つ）
 const featuredTemplates = TEMPLATE_CATEGORIES
-  .map((cat) => TEMPLATE_SEO_DATA.find((t) => t.categoryId === cat.id))
-  .filter(Boolean)
+  .flatMap((cat) => {
+    const t = TEMPLATE_SEO_DATA.find((t) => t.categoryId === cat.id);
+    return t ? [t] : [];
+  })
   .slice(0, 6);
 
 export default function LandingPage() {

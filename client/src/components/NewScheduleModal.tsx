@@ -30,7 +30,7 @@ interface Props {
 export function NewScheduleModal({ onSelect, onClose }: Props) {
   const modalRef = useRef<HTMLDivElement>(null);
   const [openSections, setOpenSections] = useState<Set<string>>(
-    () => new Set(TEMPLATE_SECTIONS.filter((s) => s.defaultOpen).map((s) => s.label))
+    () => new Set(TEMPLATE_SECTIONS.flatMap((s) => (s.defaultOpen ? [s.label] : [])))
   );
 
   const handleEscape = useCallback(() => onClose(), [onClose]);
