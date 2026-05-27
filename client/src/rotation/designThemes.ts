@@ -484,8 +484,6 @@ const ocean: DesignTheme = {
   },
 };
 
-export const DEFAULT_THEME_ID = "whiteboard";
-
 export const DESIGN_THEMES: DesignTheme[] = [
   whiteboard,
   chalkboard,

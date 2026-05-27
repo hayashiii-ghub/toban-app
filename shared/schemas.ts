@@ -29,10 +29,10 @@ export const rotationConfigSchema = z.object({
 });
 
 /** 割り当てモード */
-export const assignmentModeSchema = z.enum(["member", "task"]);
+const assignmentModeSchema = z.enum(["member", "task"]);
 
 /** スケジュール書き込みデータ（create/update共通） */
-export const scheduleDataSchema = z.object({
+const scheduleDataSchema = z.object({
   name: z.string(),
   rotation: z.number(),
   groups: z.array(taskGroupSchema),

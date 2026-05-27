@@ -46,8 +46,3 @@ function toLocalDayNumber(date: Date): number {
 export function diffLocalCalendarDays(startDate: Date, endDate: Date): number {
   return toLocalDayNumber(endDate) - toLocalDayNumber(startDate);
 }
-
-export function toDateKey(date: Date): string {
-  const normalized = startOfLocalDay(date);
-  return `${normalized.getFullYear()}-${String(normalized.getMonth() + 1).padStart(2, "0")}-${String(normalized.getDate()).padStart(2, "0")}`;
-}

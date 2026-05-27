@@ -394,18 +394,6 @@ export const TEMPLATE_SEO_MAP = new Map(
   TEMPLATE_SEO_DATA.map((t) => [t.slug, t]),
 );
 
-/** カテゴリID → TemplateSEO[] のグルーピング */
-export function getTemplatesByCategory(): Map<string, TemplateSEO[]> {
-  const map = new Map<string, TemplateSEO[]>();
-  for (const cat of TEMPLATE_CATEGORIES) {
-    map.set(cat.id, []);
-  }
-  for (const tpl of TEMPLATE_SEO_DATA) {
-    const arr = map.get(tpl.categoryId);
-    if (arr) arr.push(tpl);
-  }
-  return map;
-}
 
 /** 共通FAQ（全テンプレートページに表示） */
 export const COMMON_FAQ = [

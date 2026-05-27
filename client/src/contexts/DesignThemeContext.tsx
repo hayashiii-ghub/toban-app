@@ -1,4 +1,4 @@
-import { createContext, use, useEffect, useMemo } from "react";
+import { createContext, useEffect, useMemo } from "react";
 import { getThemeById, type DesignTheme } from "@/rotation/designThemes";
 
 interface DesignThemeContextType {
@@ -66,12 +66,4 @@ export function DesignThemeProvider({ themeId, children }: DesignThemeProviderPr
       {children}
     </DesignThemeContext.Provider>
   );
-}
-
-export function useDesignTheme(): DesignTheme {
-  const context = use(DesignThemeContext);
-  if (!context) {
-    return getThemeById(undefined);
-  }
-  return context.theme;
 }

@@ -21,7 +21,7 @@ export function isBot(ua: string): boolean {
   return BOT_UA_PATTERN.test(ua);
 }
 
-export function escapeHtml(str: string): string {
+function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")

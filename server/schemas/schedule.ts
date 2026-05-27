@@ -32,7 +32,7 @@ export const rotationConfigObjectSchema = baseRotationConfigSchema.extend({
   cycleDays: z.number().int().min(1).max(365).optional(),
 });
 
-export const rotationConfigSchema = rotationConfigObjectSchema.optional();
+const rotationConfigSchema = rotationConfigObjectSchema.optional();
 
 export const createScheduleSchema = z.object({
   name: z.string().trim().min(1).max(100),
