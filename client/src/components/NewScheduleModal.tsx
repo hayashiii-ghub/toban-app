@@ -120,7 +120,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
                 <button
                   type="button"
                   onClick={() => toggleSection(section.label)}
-                  className="w-full flex items-center justify-between py-2 px-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <span
                     className="text-sm font-extrabold tracking-wider"
@@ -143,7 +143,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="flex flex-col gap-2 py-1 px-1">
+                      <div className="flex flex-col gap-2 p-1">
                         {templates.map((template, idx) => (
                           <button
                             key={section.from + idx}

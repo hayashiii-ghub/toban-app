@@ -354,7 +354,7 @@ export default function LandingPage() {
               >
                 {/* ヘッダー（アプリのカード上部と同じスタイル） */}
                 <div
-                  className="px-3 py-3 sm:py-4 text-center"
+                  className="p-3 sm:py-4 text-center"
                   style={{ backgroundColor: "color-mix(in srgb, #F5F0E8 60%, #ffffff)" }}
                 >
                   <div className="text-3xl sm:text-4xl mb-1" aria-hidden="true">{emoji}</div>
@@ -363,7 +363,7 @@ export default function LandingPage() {
                 {/* ボディ */}
                 <div className="px-3 py-2.5 sm:py-3">
                   <div
-                    className="lp-pretty text-xs leading-relaxed px-1.5 py-1.5 text-center"
+                    className="lp-pretty text-xs leading-relaxed p-1.5 text-center"
                     style={{
                       backgroundColor: `${C.highlight}40`,
                       borderRadius: "4px",
