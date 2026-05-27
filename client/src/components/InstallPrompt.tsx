@@ -22,7 +22,6 @@ const DISMISS_KEY = "toban-install-dismissed";
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [dismissed, setDismissed] = useState(() => safeGetItem(DISMISS_KEY) === "1");
-  const [showIOSGuide, setShowIOSGuide] = useState(false);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -33,15 +32,11 @@ export function InstallPrompt() {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  useEffect(() => {
-    if (!dismissed && isIOSSafari() && !isStandalone()) {
-      setShowIOSGuide(true);
-    }
-  }, [dismissed]);
+  // dismissed と環境から直接導出 (useEffect/useState 不要)
+  const showIOSGuide = !dismissed && isIOSSafari() && !isStandalone();
 
   const handleDismiss = () => {
     setDismissed(true);
-    setShowIOSGuide(false);
     safeSetItem(DISMISS_KEY, "1");
   };
 
