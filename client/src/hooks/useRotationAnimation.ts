@@ -17,6 +17,8 @@ export function useRotationAnimation(
 
   useEffect(() => {
     return () => {
+      // unmount 時に最新の timeout id をクリアするため ref.current を直接参照
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       if (animationTimeoutRef.current !== null) window.clearTimeout(animationTimeoutRef.current);
     };
   }, []);

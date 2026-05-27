@@ -26,6 +26,8 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
   useEffect(() => {
     closeButtonRef.current?.focus();
     return () => {
+      // unmount 時に最新の timer id をクリアするため ref.current を直接参照
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       if (copyTimerRef.current !== null) {
         clearTimeout(copyTimerRef.current);
       }
