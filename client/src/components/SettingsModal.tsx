@@ -58,8 +58,8 @@ export function SettingsModal({
   onClose,
 }: Props) {
   const [editName, setEditName] = useState(scheduleName);
-  const [editGroups, setEditGroups] = useState<TaskGroup[]>(deepClone(groups));
-  const [editMembers, setEditMembers] = useState<Member[]>(deepClone(members));
+  const [editGroups, setEditGroups] = useState<TaskGroup[]>(() => deepClone(groups));
+  const [editMembers, setEditMembers] = useState<Member[]>(() => deepClone(members));
   const [editRotationConfig, setEditRotationConfig] = useState<RotationConfig>(
     rotationConfig ?? { mode: "manual" }
   );
