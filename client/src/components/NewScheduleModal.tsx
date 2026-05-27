@@ -81,7 +81,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
             <FileText className="size-5 inline-block mr-2 -mt-0.5" aria-hidden="true" />
             新しい当番表を作成
           </h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
+          <button type="button" onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
             <X className="size-5" aria-hidden="true" />
           </button>
         </div>
@@ -93,7 +93,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
           </p>
 
           {/* 新しくつくる（カスタム） */}
-          <button
+          <button type="button"
             onClick={() => onSelect(CUSTOM_TEMPLATE)}
             className="theme-border theme-shadow-sm p-3 sm:p-4 w-full text-left transition-all duration-150 theme-hover-lift mb-2"
             style={{ borderRadius: "var(--dt-border-radius)", backgroundColor: "var(--dt-current-highlight)" }}
@@ -145,7 +145,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
                     >
                       <div className="flex flex-col gap-2 p-1">
                         {templates.map((template, idx) => (
-                          <button
+                          <button type="button"
                             key={section.from + idx}
                             onClick={() => onSelect(template)}
                             className="theme-border theme-shadow-sm p-3 sm:p-4 w-full text-left transition-all duration-150 theme-hover-lift"

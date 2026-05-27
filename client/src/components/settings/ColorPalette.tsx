@@ -12,7 +12,7 @@ export function ColorPalette({ member, onPresetSelect, onCustomColor }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-1.5" role="radiogroup" aria-label="カラー選択">
       {MEMBER_PRESETS.map((preset, pIdx) => (
-        <button
+        <button type="button"
           key={pIdx}
           className="size-6 rounded-full transition-transform hover:scale-110"
           style={{

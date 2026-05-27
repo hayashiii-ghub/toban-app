@@ -113,7 +113,7 @@ export function RotationCalendar({
 
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-3">
-            <button
+            <button type="button"
               onClick={prevMonth}
               className="theme-border px-3 py-1.5 font-bold text-sm theme-hover-lift transition-all duration-150 rotation-no-print"
               style={{ backgroundColor: "var(--dt-button-bg)", borderRadius: "var(--dt-border-radius-sm)" }}
@@ -125,7 +125,7 @@ export function RotationCalendar({
                 {year}年{month + 1}月
               </span>
               {(year !== today.getFullYear() || month !== today.getMonth()) && (
-                <button
+                <button type="button"
                   onClick={goToday}
                   className="theme-border px-2 py-1 font-bold text-xs theme-hover-lift transition-all duration-150 rotation-no-print"
                   style={{ backgroundColor: "var(--dt-current-highlight)", borderRadius: "6px" }}
@@ -134,7 +134,7 @@ export function RotationCalendar({
                 </button>
               )}
             </div>
-            <button
+            <button type="button"
               onClick={nextMonth}
               className="theme-border px-3 py-1.5 font-bold text-sm theme-hover-lift transition-all duration-150 rotation-no-print"
               style={{ backgroundColor: "var(--dt-button-bg)", borderRadius: "var(--dt-border-radius-sm)" }}

@@ -59,7 +59,7 @@ class ErrorBoundary extends Component<Props, State> {
 
             {errorStack && (
               <div className="w-full mb-6">
-                <button
+                <button type="button"
                   onClick={() => this.setState((s) => ({ showDetails: !s.showDetails }))}
                   className="text-xs font-medium mb-2 underline underline-offset-2"
                   style={{ color: "#888" }}
@@ -86,7 +86,7 @@ class ErrorBoundary extends Component<Props, State> {
                 <Home className="size-4" aria-hidden="true" />
                 ホームに戻る
               </a>
-              <button
+              <button type="button"
                 onClick={() => window.location.reload()}
                 className="theme-border theme-shadow-sm inline-flex items-center gap-2 px-5 py-2.5 font-bold text-sm text-white transition-all duration-150 theme-hover-lift"
                 style={{ borderRadius: "10px", backgroundColor: "#1a1a1a" }}

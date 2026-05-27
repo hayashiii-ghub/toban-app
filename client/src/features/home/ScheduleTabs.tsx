@@ -112,7 +112,7 @@ export function ScheduleTabs({
         <nav aria-label="当番表の切り替え">
           <div className="relative flex items-center">
             {canScrollLeft && (
-              <button
+              <button type="button"
                 onClick={() => scroll("left")}
                 className="absolute left-0 z-10 size-7 flex items-center justify-center rounded-full sm:hidden"
                 style={{ backgroundColor: "color-mix(in srgb, var(--dt-page-bg) 90%, transparent)", boxShadow: "2px 0 8px rgba(0,0,0,0.1)" }}
@@ -128,7 +128,7 @@ export function ScheduleTabs({
               className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide"
             >
               {sortedSchedules.map((schedule, index) => (
-                <button
+                <button type="button"
                   key={schedule.id}
                   role="tab"
                   aria-label={`${schedule.name}タブ${schedule.pinned ? "（ピン留め）" : ""}${!schedule.pinned ? "（Alt+矢印キーで並び替え）" : ""}`}
@@ -168,7 +168,7 @@ export function ScheduleTabs({
                   <span className="max-w-[80px] sm:max-w-[150px] md:max-w-[200px] truncate">{schedule.name}</span>
                 </button>
               ))}
-              <button
+              <button type="button"
                 onClick={onAddSchedule}
                 className="theme-border shrink-0 self-stretch px-2.5 text-sm font-bold transition-all duration-150 hover:bg-gray-100 flex items-center"
                 style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "var(--dt-button-bg)" }}
@@ -179,7 +179,7 @@ export function ScheduleTabs({
               </button>
             </div>
             {canScrollRight && (
-              <button
+              <button type="button"
                 onClick={() => scroll("right")}
                 className="absolute right-0 z-10 size-7 flex items-center justify-center rounded-full sm:hidden"
                 style={{ backgroundColor: "color-mix(in srgb, var(--dt-page-bg) 90%, transparent)", boxShadow: "-2px 0 8px rgba(0,0,0,0.1)" }}

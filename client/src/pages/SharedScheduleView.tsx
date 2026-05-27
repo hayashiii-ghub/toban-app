@@ -230,7 +230,7 @@ export default function SharedScheduleView() {
       <div className="px-3 sm:px-4 pb-8 sm:pb-12 rotation-no-print">
         <div className="max-w-4xl mx-auto text-center flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
           <PrintMenu onPrint={handlePrint} />
-          <button
+          <button type="button"
             onClick={handleImport}
             className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "#10B981", color: "#fff", borderRadius: "var(--dt-border-radius-sm)" }}

@@ -45,14 +45,14 @@ export function ConfirmDeleteDialog({ scheduleName, onConfirm, onCancel }: Props
           「{scheduleName}」を削除しますか？この操作は元に戻せません。
         </p>
         <div className="flex gap-3">
-          <button
+          <button type="button"
             onClick={onCancel}
             className="theme-border theme-shadow-sm flex-1 px-4 py-2.5 font-bold text-sm transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "10px" }}
           >
             キャンセル
           </button>
-          <button
+          <button type="button"
             onClick={onConfirm}
             className="theme-border theme-shadow-sm flex-1 px-4 py-2.5 font-bold text-sm text-white transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "#DC2626", borderRadius: "10px" }}

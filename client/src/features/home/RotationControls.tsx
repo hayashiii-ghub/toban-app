@@ -48,7 +48,7 @@ export function RotationControls({
               style={{ backgroundColor: "var(--dt-button-bg)", borderRadius: "var(--dt-border-radius-sm)" }}
             >
               {!isDateMode && onRotateBackward && (
-                <button
+                <button type="button"
                   onClick={onRotateBackward}
                   disabled={isAnimating}
                   className="h-9 sm:h-10 px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
@@ -69,7 +69,7 @@ export function RotationControls({
                 {rotation}
               </div>
               {!isDateMode && onRotateForward && (
-                <button
+                <button type="button"
                   onClick={onRotateForward}
                   disabled={isAnimating}
                   className="h-9 sm:h-10 px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
@@ -91,7 +91,7 @@ export function RotationControls({
 
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap">
             <PrintMenu onPrint={onPrint} />
-            <button
+            <button type="button"
               onClick={onShare}
               disabled={isSharing}
               data-onboarding="share-button"
@@ -130,7 +130,7 @@ export function RotationControls({
               )}
               共有
             </button>
-            <button
+            <button type="button"
               onClick={onOpenSettings}
               data-onboarding="edit-button"
               className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px]"

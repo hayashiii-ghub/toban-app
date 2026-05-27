@@ -233,7 +233,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
 
               <div className="flex items-center gap-2">
                 {currentStep === 0 ? (
-                  <button
+                  <button type="button"
                     onClick={onComplete}
                     className="px-3 py-1.5 text-xs font-bold"
                     style={{ color: "var(--dt-text-muted)" }}
@@ -241,7 +241,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
                     スキップ
                   </button>
                 ) : (
-                  <button
+                  <button type="button"
                     onClick={handleBack}
                     className="theme-border px-3 py-1.5 text-xs font-bold transition-all duration-150 theme-hover-lift"
                     style={{
@@ -254,7 +254,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
                     戻る
                   </button>
                 )}
-                <button
+                <button type="button"
                   onClick={handleNext}
                   className="px-3 py-1.5 text-xs font-bold transition-all duration-150 theme-hover-lift"
                   style={{

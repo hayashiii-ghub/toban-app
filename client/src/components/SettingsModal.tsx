@@ -259,7 +259,7 @@ export function SettingsModal({
               </span>
             )}
           </h2>
-          <button onClick={handleCloseWithCheck} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
+          <button type="button" onClick={handleCloseWithCheck} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
             <X className="size-5" aria-hidden="true" />
           </button>
         </div>
@@ -352,7 +352,7 @@ export function SettingsModal({
 
         {/* フッター */}
         <div className="shrink-0 px-4 sm:px-5 py-3 sm:py-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] sm:pb-4 flex flex-col gap-2" style={{ borderTop: "var(--dt-border-width) solid var(--dt-border-color)" }}>
-          <button
+          <button type="button"
             onClick={handleSave}
             className="theme-border theme-shadow-sm w-full flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "var(--dt-control-bar-bg)", color: "var(--dt-control-bar-text)", borderRadius: "10px" }}

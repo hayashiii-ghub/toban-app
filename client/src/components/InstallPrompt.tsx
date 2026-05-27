@@ -65,14 +65,14 @@ export function InstallPrompt() {
           <div className="text-sm font-bold" style={{ color: "var(--dt-text)" }}>アプリとして追加</div>
           <div className="text-xs font-medium" style={{ color: "var(--dt-text-secondary)" }}>ホーム画面からすぐアクセス</div>
         </div>
-        <button
+        <button type="button"
           onClick={handleInstall}
           className="theme-border px-3 py-1.5 text-xs font-bold transition-all hover:translate-y-[-1px]"
           style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "6px" }}
         >
           追加
         </button>
-        <button
+        <button type="button"
           onClick={handleDismiss}
           className="p-1 hover:bg-yellow-400 rounded-lg transition-colors"
           aria-label="閉じる"
@@ -97,7 +97,7 @@ export function InstallPrompt() {
             下の共有ボタン<span className="inline-block mx-0.5">↗</span>→「ホーム画面に追加」でアプリにできます
           </div>
         </div>
-        <button
+        <button type="button"
           onClick={handleDismiss}
           className="p-1 hover:bg-yellow-400 rounded-lg transition-colors shrink-0"
           aria-label="閉じる"

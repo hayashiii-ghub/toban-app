@@ -89,7 +89,7 @@ function ShareDropdown({ onClose }: { onClose: () => void }) {
           </svg>
           Xで共有
         </a>
-        <button
+        <button type="button"
           onClick={handleCopyUrl}
           className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold hover:bg-gray-50 transition-colors"
           style={{ color: C.text }}
@@ -308,7 +308,7 @@ export default function LandingPage() {
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-md sm:max-w-none mx-auto">
           <div className="relative">
-            <button
+            <button type="button"
               onClick={handleShare}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl font-bold px-8 py-3 text-base sm:text-lg border-2 transition-colors cursor-pointer min-w-[200px] sm:min-w-[220px]"
               style={{ borderColor: C.heroText, color: C.heroText }}

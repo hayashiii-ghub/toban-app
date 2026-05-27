@@ -63,7 +63,7 @@ export function BulkMemberAdd({ members, groups, activeMemberIds, isTaskMode, on
           {bulkNames.length}人を追加します
         </p>
       )}
-      <button
+      <button type="button"
         onClick={handleBulkAdd}
         disabled={bulkNames.length === 0}
         className="theme-border theme-shadow-sm flex items-center justify-center gap-2 px-4 py-2.5 font-bold text-sm text-white transition-all duration-150 hover:translate-x-[-2px] hover:translate-y-[-2px] disabled:opacity-40 disabled:hover:translate-x-0 disabled:hover:translate-y-0"

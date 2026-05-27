@@ -29,7 +29,7 @@ export default function NotFound() {
           お探しのページは存在しないか、移動した可能性があります。
         </p>
 
-        <button
+        <button type="button"
           onClick={() => setLocation("/")}
           className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-6 py-3 font-bold text-sm text-white transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: "#1a1a1a", borderRadius: "10px" }}

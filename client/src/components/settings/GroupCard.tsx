@@ -92,7 +92,7 @@ export function GroupCard({
         >
           <Settings2 className="size-4" aria-hidden="true" />
         </button>
-        <button
+        <button type="button"
           onClick={() => ctx.onRemoveGroup(gIdx)}
           className="p-1.5 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 shrink-0"
           style={{ color: "#EF4444" }}
@@ -227,7 +227,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                 style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
                 aria-label="メンバーの名前"
               />
-              <button
+              <button type="button"
                 onClick={() => ctx.onRemoveMemberFromGroup(gIdx, member.id)}
                 className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0 disabled:opacity-30"
                 style={{ color: "#EF4444" }}
@@ -322,7 +322,7 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
               style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
               aria-label={`グループ${gIdx + 1}のタスク${tIdx + 1}`}
             />
-            <button
+            <button type="button"
               onClick={() => ctx.onRemoveTask(gIdx, tIdx)}
               className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0"
               style={{ color: "#EF4444" }}
@@ -333,7 +333,7 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
           </div>
         );
       })}
-      <button
+      <button type="button"
         onClick={() => ctx.onAddTask(gIdx)}
         className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold self-start hover:bg-gray-100 rounded-lg transition-colors"
         style={{ color: "var(--dt-text-secondary)" }}

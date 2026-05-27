@@ -14,7 +14,7 @@ export function ViewTabs({ viewTab, onChangeTab }: ViewTabsProps) {
           { value: "table", label: "早見表" },
           { value: "calendar", label: "カレンダー" },
         ] as const).map(({ value, label }) => (
-          <button
+          <button type="button"
             key={value}
             onClick={() => onChangeTab(value)}
             className={`theme-border px-3 sm:px-4 py-1.5 sm:py-2 font-bold text-sm transition-all duration-150 ${

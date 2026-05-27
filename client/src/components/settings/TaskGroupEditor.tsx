@@ -419,14 +419,14 @@ export function TaskGroupEditor({ groups, members, onGroupsChange, onMembersChan
       </GroupCardProvider>
 
       <div className="flex items-center gap-2">
-        <button
+        <button type="button"
           onClick={addGroup}
           className="theme-border theme-shadow-sm flex-1 flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: "#E8E8E8", borderRadius: "10px" }}
         >
           <Plus className="size-4" aria-hidden="true" /> {isTaskMode ? "タスクを追加" : "担当者を追加"}
         </button>
-        <button
+        <button type="button"
           onClick={() => setBulkMode((v) => !v)}
           className="theme-border theme-shadow-sm flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: bulkMode ? "var(--dt-current-highlight)" : "#E8E8E8", borderRadius: "10px" }}

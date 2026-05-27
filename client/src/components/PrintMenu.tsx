@@ -6,7 +6,7 @@ interface PrintMenuProps {
 
 export function PrintMenu({ onPrint }: PrintMenuProps) {
   return (
-    <button
+    <button type="button"
       onClick={onPrint}
       data-onboarding="print-button"
       className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px] rotation-no-print"

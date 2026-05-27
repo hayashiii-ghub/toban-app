@@ -92,14 +92,14 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
       >
         <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4" style={{ borderBottom: "var(--dt-border-width) solid var(--dt-border-color)" }}>
           <h2 id="share-modal-title" className="text-lg font-extrabold" style={{ color: "var(--dt-text)" }}>共有</h2>
-          <button ref={closeButtonRef} onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
+          <button type="button" ref={closeButtonRef} onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
             <X className="size-5" />
           </button>
         </div>
 
         {/* タブ切り替え */}
         <div className="grid grid-cols-2" style={{ borderBottom: "var(--dt-border-width) solid var(--dt-border-color)" }}>
-          <button
+          <button type="button"
             className="py-3 text-sm font-bold transition-colors"
             style={{
               backgroundColor: activeTab === "view" ? "var(--dt-current-highlight)" : "transparent",
@@ -110,7 +110,7 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
           >
             👀 見るだけ
           </button>
-          <button
+          <button type="button"
             className="py-3 text-sm font-bold transition-colors"
             style={{
               backgroundColor: activeTab === "edit" ? "var(--dt-current-highlight)" : "transparent",
@@ -156,7 +156,7 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
             LINEで共有
           </a>
 
-          <button
+          <button type="button"
             onClick={handleCopy}
             className="theme-border theme-shadow-sm w-full flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm text-white transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "#1a1a1a", borderRadius: "10px" }}
