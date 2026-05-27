@@ -1,4 +1,5 @@
 import { m } from "framer-motion";
+import { usePrintDateString } from "@/hooks/usePrintDateString";
 
 interface ScheduleHeaderProps {
   scheduleName: string;
@@ -9,6 +10,7 @@ export function ScheduleHeader({
   scheduleName,
   rotationLabel,
 }: ScheduleHeaderProps) {
+  const printDate = usePrintDateString();
   return (
     <header className="rotation-print-header pt-6 sm:pt-8 pb-6 sm:pb-8 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto text-center">
@@ -36,7 +38,7 @@ export function ScheduleHeader({
             style={{ color: "var(--dt-text-secondary)", borderBottom: "2px solid var(--dt-current-highlight)" }}
           >
             <span className="inline-block pb-2">
-              順番: {rotationLabel} ／ 印刷日: {new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric", weekday: "short" })}
+              順番: {rotationLabel} ／ 印刷日: {printDate}
             </span>
           </div>
         </m.div>

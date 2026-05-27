@@ -13,6 +13,7 @@ import { AdBanner } from "@/components/AdBanner";
 import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
 import { Copy, Loader2 } from "lucide-react";
 import { PrintMenu } from "@/components/PrintMenu";
+import { usePrintDateString } from "@/hooks/usePrintDateString";
 import "./home.css";
 
 export default function SharedScheduleView() {
@@ -22,6 +23,7 @@ export default function SharedScheduleView() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [viewTab, setViewTab] = useState<ViewTabValue>("cards");
+  const printDate = usePrintDateString();
 
   useEffect(() => {
     const cleanup = () => {
@@ -187,7 +189,7 @@ export default function SharedScheduleView() {
             style={{ color: "var(--dt-text-secondary)", borderBottom: "2px solid var(--dt-current-highlight)" }}
           >
             <span className="inline-block pb-2">
-              順番: {rotationLabel} ／ 印刷日: {new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric", weekday: "short" })}
+              順番: {rotationLabel} ／ 印刷日: {printDate}
             </span>
           </div>
         </div>
