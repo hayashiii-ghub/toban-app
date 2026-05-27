@@ -1,0 +1,5 @@
+# supply chain 防御 (react-doctor/require-pnpm-hardening)
+# - minimumReleaseAge: 公開直後のマルウェア混入版を install しないよう待機
+# - trustPolicy: 更新で provenance/署名が弱まる場合に install を拒否
+minimumReleaseAge: 10080 # 7 days (minutes)
+trustPolicy: no-downgrade

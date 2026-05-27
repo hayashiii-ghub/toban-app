@@ -457,7 +457,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* JSON-LD */}
+      {/* JSON-LD: 構造化データを script に注入する標準パターン。
+          `<` を < にエスケープして `</script>` injection を防御 */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -481,7 +482,7 @@ export default function LandingPage() {
                 acceptedAnswer: { "@type": "Answer", text: faq.answer },
               })),
             },
-          ]),
+          ]).replace(/</g, "\\u003c"),
         }}
       />
     </main>

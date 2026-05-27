@@ -142,7 +142,8 @@ export default function TemplateDetailPage() {
         <RelatedTemplates currentSlug={seo.slug} categoryId={seo.categoryId} />
       </section>
 
-      {/* JSON-LD: BreadcrumbList */}
+      {/* JSON-LD: BreadcrumbList。
+          `<` を < にエスケープして `</script>` injection を防御 */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -168,7 +169,7 @@ export default function TemplateDetailPage() {
                 name: template.name,
               },
             ],
-          }),
+          }).replace(/</g, "\\u003c"),
         }}
       />
 
