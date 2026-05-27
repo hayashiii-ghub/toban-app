@@ -34,16 +34,14 @@ export function AssignmentsGrid({
               : `${member.name}: ${group.tasks.join("・")}`
           ).join("、")}
         </div>
-        <div
-          className={`grid gap-3 md:gap-4 rotation-print-card-grid ${getGridCols()}`}
-          role="list"
+        <ul
+          className={`list-none p-0 grid gap-3 md:gap-4 rotation-print-card-grid ${getGridCols()}`}
           aria-label="当番割り当て一覧"
         >
           <AnimatePresence>
             {assignments.map(({ group, member }, index) => (
-              <m.div
+              <m.li
                 key={`${scheduleId}-${member.id}-${group.id}-${rotation}`}
-                role="listitem"
                 aria-label={isTaskMode
                   ? `${group.tasks[0] ?? ""}: ${member.name}`
                   : `${member.name}: ${group.tasks.join("・")}`
@@ -144,10 +142,10 @@ export function AssignmentsGrid({
                     </div>
                   </>
                 )}
-              </m.div>
+              </m.li>
             ))}
           </AnimatePresence>
-        </div>
+        </ul>
       </div>
     </div>
   );

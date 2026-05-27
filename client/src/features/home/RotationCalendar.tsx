@@ -170,19 +170,32 @@ export function RotationCalendar({
                 (rotationConfig?.skipHolidays && holidayName)
               ));
               const isSelected = selectedDayIdx === idx;
-              return (
+              const interactive = day && !isSkipped;
+              const cellStyle = {
+                borderRight: `1px solid var(--dt-table-border-light)`,
+                borderBottom: `1px solid var(--dt-table-border-light)`,
+                backgroundColor: !day ? "color-mix(in srgb, var(--dt-page-bg) 50%, var(--dt-card-bg))"
+                  : isSelected ? "color-mix(in srgb, var(--dt-current-highlight) 15%, var(--dt-card-bg))"
+                  : isToday ? "color-mix(in srgb, var(--dt-current-highlight) 8%, var(--dt-card-bg))"
+                  : "var(--dt-card-bg)",
+              };
+              const cellKey = day ? day.toISOString() : `empty-${idx}`;
+              const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleDayClick(idx);
+                }
+              };
+              return interactive ? (
                 <div
-                  key={idx}
-                  className={`min-h-[68px] sm:min-h-[84px] p-1 sm:p-1.5 flex flex-col relative ${day && !isSkipped ? "cursor-pointer" : ""}`}
-                  style={{
-                    borderRight: `1px solid var(--dt-table-border-light)`,
-                    borderBottom: `1px solid var(--dt-table-border-light)`,
-                    backgroundColor: !day ? "color-mix(in srgb, var(--dt-page-bg) 50%, var(--dt-card-bg))"
-                      : isSelected ? "color-mix(in srgb, var(--dt-current-highlight) 15%, var(--dt-card-bg))"
-                      : isToday ? "color-mix(in srgb, var(--dt-current-highlight) 8%, var(--dt-card-bg))"
-                      : "var(--dt-card-bg)",
-                  }}
-                  onClick={day && !isSkipped ? () => handleDayClick(idx) : undefined}
+                  key={cellKey}
+                  className="min-h-[68px] sm:min-h-[84px] p-1 sm:p-1.5 flex flex-col relative cursor-pointer"
+                  style={cellStyle}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={isSelected}
+                  onClick={() => handleDayClick(idx)}
+                  onKeyDown={onKeyDown}
                 >
                   {day && (
                     <>
@@ -261,6 +274,33 @@ export function RotationCalendar({
                         )}
                       </AnimatePresence>
                     </>
+                  )}
+                </div>
+              ) : (
+                <div
+                  key={cellKey}
+                  className="min-h-[68px] sm:min-h-[84px] p-1 sm:p-1.5 flex flex-col relative"
+                  style={cellStyle}
+                >
+                  {day && (
+                    <div className="flex items-center gap-0.5 mb-0.5 min-h-[16px] sm:min-h-[20px]">
+                      <span
+                        className={`text-xs sm:text-sm font-bold leading-none shrink-0 ${
+                          isToday ? "rounded-full min-w-[1rem] sm:min-w-[1.25rem] h-4 sm:h-5 flex items-center justify-center px-0.5" : ""
+                        }`}
+                        style={{
+                          color: isToday ? "var(--dt-card-bg)" : (holidayName || dow === 0) ? "#EF4444" : dow === 6 ? "#3B82F6" : "var(--dt-text)",
+                          backgroundColor: isToday ? "var(--dt-text)" : undefined,
+                        }}
+                      >
+                        {day.getDate()}
+                      </span>
+                      {holidayName && (
+                        <span className="text-[8px] sm:text-[10px] leading-tight truncate" style={{ color: "#EF4444" }} title={holidayName}>
+                          {holidayName}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               );

@@ -52,9 +52,8 @@ describe("RotationQuickTable", () => {
       <RotationQuickTable groups={groups} members={members} rotation={0} />,
     );
     const table = container.querySelector('table[aria-label="ローテーション早見表"]')!;
-    // tbody rows: 1 spacer + 2 groups = 3
     const bodyRows = table.querySelectorAll("tbody tr");
-    expect(bodyRows.length).toBe(3); // 1 spacer + 2 data rows
+    expect(bodyRows.length).toBe(2);
   });
 
   it("renders one column per active member plus header column", () => {

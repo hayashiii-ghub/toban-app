@@ -304,8 +304,8 @@ export function SettingsModal({
               </div>
 
               {/* 割り当て方式 */}
-              <div role="group" aria-labelledby="assignment-mode-label">
-                <div id="assignment-mode-label" className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>見方をえらぶ</div>
+              <fieldset className="border-0 p-0 m-0">
+                <legend className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>見方をえらぶ</legend>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -324,7 +324,7 @@ export function SettingsModal({
                     何をだれがやるか
                   </button>
                 </div>
-              </div>
+              </fieldset>
 
               {/* ローテーション方式 */}
               <RotationConfigEditor config={editRotationConfig} onUpdate={updateRotationConfig} />

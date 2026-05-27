@@ -8,8 +8,8 @@ interface Props {
 export function RotationConfigEditor({ config, onUpdate }: Props) {
   return (
     <div>
-      <div role="group" aria-labelledby="rotation-mode-label">
-        <div id="rotation-mode-label" className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>交代のしかた</div>
+      <fieldset className="border-0 p-0 m-0">
+        <legend className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>交代のしかた</legend>
         <div className="flex gap-2 mb-3">
           <button
             type="button"
@@ -33,7 +33,7 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
             日付で自動切り替え
           </button>
         </div>
-      </div>
+      </fieldset>
 
       {config.mode === "date" && (
         <>

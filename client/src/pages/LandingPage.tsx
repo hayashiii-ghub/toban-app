@@ -60,7 +60,13 @@ function ShareDropdown({ onClose }: { onClose: () => void }) {
 
   return (
     <>
-      <div className="fixed inset-0 z-40" onClick={onClose} />
+      <button
+        type="button"
+        aria-label="共有メニューを閉じる"
+        className="fixed inset-0 z-40 cursor-default"
+        tabIndex={-1}
+        onClick={onClose}
+      />
       <div
         className="absolute left-1/2 -translate-x-1/2 mt-2 z-50 w-56 rounded-xl shadow-lg border overflow-hidden"
         style={{ backgroundColor: "#fff", borderColor: C.border }}
