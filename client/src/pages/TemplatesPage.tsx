@@ -83,7 +83,7 @@ export default function TemplatesPage() {
                               ・{template.members.length}名
                             </div>
                           </div>
-                          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-amber-500 flex-shrink-0 mt-1 transition-colors" />
+                          <ArrowRight className="size-4 text-gray-300 group-hover:text-amber-500 flex-shrink-0 mt-1 transition-colors" />
                         </div>
                       </Link>
                     );
@@ -101,7 +101,7 @@ export default function TemplatesPage() {
           href="/about"
           className="inline-flex items-center gap-2 text-sm font-bold text-amber-700 hover:underline"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="size-4" />
           toban について
         </Link>
       </div>
@@ -112,7 +112,7 @@ export default function TemplatesPage() {
         className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-xl bg-[#2E6B4F] hover:bg-[#245A41] text-white font-bold px-5 py-3 shadow-lg transition-colors print:hidden"
       >
         当番表を作る
-        <ArrowRight className="w-4 h-4" />
+        <ArrowRight className="size-4" />
       </a>
 
     </main>

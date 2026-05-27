@@ -54,7 +54,7 @@ export function RotationControls({
                   className="h-9 sm:h-10 px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
                   aria-label="前の当番に戻す"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="size-4" />
                 </button>
               )}
               <div
@@ -75,7 +75,7 @@ export function RotationControls({
                   className="h-9 sm:h-10 px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
                   aria-label="次の当番に進める"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="size-4" />
                 </button>
               )}
             </div>
@@ -100,18 +100,18 @@ export function RotationControls({
               aria-label="共有する"
             >
               {isSharing ? (
-                <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" aria-hidden="true" />
+                <Loader2 className="size-3.5 sm:size-4 animate-spin" aria-hidden="true" />
               ) : hasSlug ? (
                 <span className="relative inline-flex">
                   {syncStatus === "error" ? (
-                    <CloudOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: "#EF4444" }} aria-hidden="true" />
+                    <CloudOff className="size-3.5 sm:size-4" style={{ color: "#EF4444" }} aria-hidden="true" />
                   ) : syncStatus === "syncing" ? (
-                    <Cloud className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse" aria-hidden="true" />
+                    <Cloud className="size-3.5 sm:size-4 animate-pulse" aria-hidden="true" />
                   ) : (
                     <>
-                      <Cloud className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
+                      <Cloud className="size-3.5 sm:size-4" aria-hidden="true" />
                       <span
-                        className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border border-white"
+                        className="absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white"
                         style={{ backgroundColor: "#10B981" }}
                         aria-label="クラウド保存済み"
                       />
@@ -120,9 +120,9 @@ export function RotationControls({
                 </span>
               ) : (
                 <span className="relative inline-flex">
-                  <Cloud className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
+                  <Cloud className="size-3.5 sm:size-4" aria-hidden="true" />
                   <span
-                    className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border border-white"
+                    className="absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white"
                     style={{ backgroundColor: "#F59E0B" }}
                     aria-label="未保存"
                   />
@@ -137,7 +137,7 @@ export function RotationControls({
               style={{ backgroundColor: "var(--dt-button-bg)", borderRadius: "var(--dt-border-radius-sm)" }}
               aria-label="当番表を編集する"
             >
-              <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" /> 編集
+              <Pencil className="size-3.5 sm:size-4" aria-hidden="true" /> 編集
             </button>
           </div>
         </motion.div>

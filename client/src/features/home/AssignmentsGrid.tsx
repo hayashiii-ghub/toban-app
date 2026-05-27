@@ -91,7 +91,7 @@ export function AssignmentsGrid({
                         }
                       >
                         <span
-                          className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-extrabold text-white shrink-0"
+                          className="size-5 sm:size-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-extrabold text-white shrink-0"
                           style={{ backgroundColor: member.color }}
                         >
                           {member.name.charAt(0)}
@@ -108,7 +108,7 @@ export function AssignmentsGrid({
                       style={{ backgroundColor: member.color }}
                     >
                       <div
-                        className="theme-border w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-1.5 sm:mb-2 flex items-center justify-center font-extrabold text-sm sm:text-base"
+                        className="theme-border size-10 sm:size-12 mx-auto mb-1.5 sm:mb-2 flex items-center justify-center font-extrabold text-sm sm:text-base"
                         style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "50%", color: member.color }}
                         aria-hidden="true"
                       >

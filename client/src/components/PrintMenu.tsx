@@ -13,7 +13,7 @@ export function PrintMenu({ onPrint }: PrintMenuProps) {
       style={{ backgroundColor: "var(--dt-button-bg)", borderRadius: "var(--dt-border-radius-sm)" }}
       aria-label="印刷する"
     >
-      <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
+      <Printer className="size-3.5 sm:size-4" aria-hidden="true" />
       印刷
     </button>
   );

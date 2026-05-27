@@ -129,7 +129,7 @@ export default function TemplateDetailPage() {
           href="/templates"
           className="inline-flex items-center gap-2 text-sm font-bold text-amber-700 hover:underline"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="size-4" />
           テンプレート一覧に戻る
         </Link>
       </div>
@@ -178,7 +178,7 @@ export default function TemplateDetailPage() {
         className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-xl bg-[#2E6B4F] hover:bg-[#245A41] text-white font-bold px-5 py-3 shadow-lg transition-colors print:hidden"
       >
         このテンプレートで作る
-        <ArrowRight className="w-4 h-4" />
+        <ArrowRight className="size-4" />
       </a>
     </main>
   );

@@ -221,7 +221,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
                 {STEPS.map((_, i) => (
                   <div
                     key={i}
-                    className="w-2.5 h-2.5 rounded-full"
+                    className="size-2.5 rounded-full"
                     style={
                       i === currentStep
                         ? { backgroundColor: "var(--dt-current-highlight)", border: "2px solid var(--dt-border-color)" }

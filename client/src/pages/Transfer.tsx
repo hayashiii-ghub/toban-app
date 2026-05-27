@@ -119,7 +119,7 @@ export default function Transfer() {
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--dt-page-bg)" }}>
-      <Loader2 className="w-8 h-8 animate-spin" style={{ color: "var(--dt-current-highlight)" }} />
+      <Loader2 className="size-8 animate-spin" style={{ color: "var(--dt-current-highlight)" }} />
     </div>
   );
 }

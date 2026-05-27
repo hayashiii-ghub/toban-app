@@ -40,13 +40,13 @@ export function GroupCard({
       >
         <div className="flex flex-col shrink-0 sm:hidden">
           <button type="button" onClick={() => ctx.onMoveGroup(gIdx, -1)} disabled={gIdx === 0} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label="グループを上に移動">
-            <ArrowUp className="w-3.5 h-3.5" />
+            <ArrowUp className="size-3.5" />
           </button>
           <button type="button" onClick={() => ctx.onMoveGroup(gIdx, 1)} disabled={gIdx === groupCount - 1} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label="グループを下に移動">
-            <ArrowDown className="w-3.5 h-3.5" />
+            <ArrowDown className="size-3.5" />
           </button>
         </div>
-        <GripVertical className="w-4 h-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block" style={{ color: "#bbb" }} aria-hidden="true" />
+        <GripVertical className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block" style={{ color: "#bbb" }} aria-hidden="true" />
         <span className="text-lg shrink-0 select-none" aria-label={`グループ${gIdx + 1}の絵文字`}>{group.emoji}</span>
 
         {ctx.isTaskMode ? (
@@ -66,7 +66,7 @@ export function GroupCard({
             {ownerMember && (
               <>
                 <div
-                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full shrink-0"
+                  className="size-5 sm:size-6 rounded-full shrink-0"
                   style={{ backgroundColor: ownerMember.color }}
                 />
                 <input
@@ -90,7 +90,7 @@ export function GroupCard({
           style={{ color: ctx.openDetailsKey === `details-${gIdx}` ? "var(--dt-text)" : "#999" }}
           aria-label="詳細設定"
         >
-          <Settings2 className="w-4 h-4" aria-hidden="true" />
+          <Settings2 className="size-4" aria-hidden="true" />
         </button>
         <button
           onClick={() => ctx.onRemoveGroup(gIdx)}
@@ -99,7 +99,7 @@ export function GroupCard({
           disabled={groupCount <= 1}
           aria-label={`グループ${gIdx + 1}を削除`}
         >
-          <Trash2 className="w-4 h-4" aria-hidden="true" />
+          <Trash2 className="size-4" aria-hidden="true" />
         </button>
       </div>
 
@@ -197,7 +197,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                   style={{ color: "#999" }}
                   aria-label="上に移動"
                 >
-                  <ChevronUp className="w-3.5 h-3.5" />
+                  <ChevronUp className="size-3.5" />
                 </button>
                 <button
                   type="button"
@@ -207,14 +207,14 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                   style={{ color: "#999" }}
                   aria-label="下に移動"
                 >
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  <ChevronDown className="size-3.5" />
                 </button>
               </div>
-              <GripVertical className="w-4 h-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block" style={{ color: "#bbb" }} aria-hidden="true" />
+              <GripVertical className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block" style={{ color: "#bbb" }} aria-hidden="true" />
               <button
                 type="button"
                 onClick={() => ctx.onToggleColor(colorKey)}
-                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full shrink-0 theme-border transition-transform hover:scale-110"
+                className="size-6 sm:size-7 rounded-full shrink-0 theme-border transition-transform hover:scale-110"
                 style={{ backgroundColor: member.color, borderWidth: "2px" }}
                 aria-label="色を変更"
               />
@@ -234,7 +234,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                 disabled={groupMembers.length <= 1}
                 aria-label={`${member.name}を除外`}
               >
-                <X className="w-3.5 h-3.5" aria-hidden="true" />
+                <X className="size-3.5" aria-hidden="true" />
               </button>
             </div>
             <div className="pl-7 sm:pl-[1.75rem]">
@@ -264,7 +264,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold hover:bg-gray-100 rounded-lg transition-colors"
               style={{ color: "var(--dt-text-secondary)" }}
             >
-              <Plus className="w-3.5 h-3.5" aria-hidden="true" /> メンバーを追加
+              <Plus className="size-3.5" aria-hidden="true" /> メンバーを追加
             </button>
           )}
           <button
@@ -273,7 +273,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold hover:bg-gray-100 rounded-lg transition-colors"
             style={{ color: "var(--dt-text-secondary)" }}
           >
-            <Plus className="w-3.5 h-3.5" aria-hidden="true" /> 新規メンバー
+            <Plus className="size-3.5" aria-hidden="true" /> 新規メンバー
           </button>
         </div>
       )}
@@ -306,13 +306,13 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
             )}
             <div className="flex flex-col shrink-0 sm:hidden">
               <button type="button" onClick={() => ctx.onMoveTask(gIdx, tIdx, -1)} disabled={tIdx === 0} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label="上に移動">
-                <ChevronUp className="w-3.5 h-3.5" />
+                <ChevronUp className="size-3.5" />
               </button>
               <button type="button" onClick={() => ctx.onMoveTask(gIdx, tIdx, 1)} disabled={tIdx === group.tasks.length - 1} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label="下に移動">
-                <ChevronDown className="w-3.5 h-3.5" />
+                <ChevronDown className="size-3.5" />
               </button>
             </div>
-            <GripVertical className="w-4 h-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block" style={{ color: "#bbb" }} aria-hidden="true" />
+            <GripVertical className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block" style={{ color: "#bbb" }} aria-hidden="true" />
             <input
               type="text"
               value={task}
@@ -328,7 +328,7 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
               style={{ color: "#EF4444" }}
               aria-label={`タスク「${task || "空"}」を削除`}
             >
-              <X className="w-3.5 h-3.5" aria-hidden="true" />
+              <X className="size-3.5" aria-hidden="true" />
             </button>
           </div>
         );
@@ -338,7 +338,7 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
         className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold self-start hover:bg-gray-100 rounded-lg transition-colors"
         style={{ color: "var(--dt-text-secondary)" }}
       >
-        <Plus className="w-3.5 h-3.5" aria-hidden="true" /> タスクを追加
+        <Plus className="size-3.5" aria-hidden="true" /> タスクを追加
       </button>
     </>
   );

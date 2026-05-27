@@ -78,11 +78,11 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
         {/* ヘッダー */}
         <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4" style={{ borderBottom: "var(--dt-border-width) solid var(--dt-border-color)" }}>
           <h2 id="new-schedule-title" className="text-lg font-extrabold" style={{ color: "var(--dt-text)" }}>
-            <FileText className="w-5 h-5 inline-block mr-2 -mt-0.5" aria-hidden="true" />
+            <FileText className="size-5 inline-block mr-2 -mt-0.5" aria-hidden="true" />
             新しい当番表を作成
           </h2>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
-            <X className="w-5 h-5" aria-hidden="true" />
+            <X className="size-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -99,7 +99,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
             style={{ borderRadius: "var(--dt-border-radius)", backgroundColor: "var(--dt-current-highlight)" }}
           >
             <div className="flex items-center gap-3">
-              <Plus className="w-6 h-6" style={{ color: "var(--dt-text)" }} aria-hidden="true" />
+              <Plus className="size-6" style={{ color: "var(--dt-text)" }} aria-hidden="true" />
               <div className="min-w-0">
                 <div className="text-sm font-extrabold" style={{ color: "var(--dt-text)" }}>
                   新しくつくる
@@ -129,7 +129,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
                     {section.label}
                   </span>
                   <ChevronDown
-                    className="w-4 h-4 transition-transform duration-200"
+                    className="size-4 transition-transform duration-200"
                     style={{ color: "var(--dt-text-muted)", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
                     aria-hidden="true"
                   />

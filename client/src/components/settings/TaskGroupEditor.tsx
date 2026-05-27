@@ -424,7 +424,7 @@ export function TaskGroupEditor({ groups, members, onGroupsChange, onMembersChan
           className="theme-border theme-shadow-sm flex-1 flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: "#E8E8E8", borderRadius: "10px" }}
         >
-          <Plus className="w-4 h-4" aria-hidden="true" /> {isTaskMode ? "タスクを追加" : "担当者を追加"}
+          <Plus className="size-4" aria-hidden="true" /> {isTaskMode ? "タスクを追加" : "担当者を追加"}
         </button>
         <button
           onClick={() => setBulkMode((v) => !v)}

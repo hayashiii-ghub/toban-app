@@ -30,7 +30,7 @@ export function AccordionSection({ title, summary, defaultOpen = false, children
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronDown className="w-4 h-4" style={{ color: "#999" }} />
+          <ChevronDown className="size-4" style={{ color: "#999" }} />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>

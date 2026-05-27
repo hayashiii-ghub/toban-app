@@ -24,7 +24,7 @@ export function SyncIndicator({ status, hasSlug }: SyncIndicatorProps) {
       className="flex items-center gap-1 text-xs font-medium rotation-no-print"
       style={{ color: config.color }}
     >
-      <Icon className={`w-3 h-3 ${status === "syncing" ? "animate-spin" : ""}`} />
+      <Icon className={`size-3 ${status === "syncing" ? "animate-spin" : ""}`} />
       <span>{config.text}</span>
     </div>
   );

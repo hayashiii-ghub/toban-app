@@ -72,7 +72,7 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
                 type="checkbox"
                 checked={config.skipSaturday ?? false}
                 onChange={(e) => onUpdate((prev) => ({ ...prev, skipSaturday: e.target.checked }))}
-                className="w-4 h-4 accent-amber-500"
+                className="size-4 accent-amber-500"
               />
               <span className="text-xs font-bold" style={{ color: "var(--dt-text-secondary)" }}>土曜はお休み</span>
             </label>
@@ -81,7 +81,7 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
                 type="checkbox"
                 checked={config.skipSunday ?? false}
                 onChange={(e) => onUpdate((prev) => ({ ...prev, skipSunday: e.target.checked }))}
-                className="w-4 h-4 accent-amber-500"
+                className="size-4 accent-amber-500"
               />
               <span className="text-xs font-bold" style={{ color: "var(--dt-text-secondary)" }}>日曜はお休み</span>
             </label>
@@ -90,7 +90,7 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
                 type="checkbox"
                 checked={config.skipHolidays ?? false}
                 onChange={(e) => onUpdate((prev) => ({ ...prev, skipHolidays: e.target.checked }))}
-                className="w-4 h-4 accent-amber-500"
+                className="size-4 accent-amber-500"
               />
               <span className="text-xs font-bold" style={{ color: "var(--dt-text-secondary)" }}>祝日はお休み</span>
             </label>

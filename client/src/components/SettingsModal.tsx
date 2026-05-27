@@ -260,7 +260,7 @@ export function SettingsModal({
             )}
           </h2>
           <button onClick={handleCloseWithCheck} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
-            <X className="w-5 h-5" aria-hidden="true" />
+            <X className="size-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -297,7 +297,7 @@ export function SettingsModal({
                     aria-label={editPinned ? "固定を解除" : "先頭に固定"}
                     title={editPinned ? "固定を解除" : "タブを先頭に固定"}
                   >
-                    {editPinned ? <Pin className="w-4 h-4" style={{ color: "var(--dt-text)" }} /> : <PinOff className="w-4 h-4" style={{ color: "#999" }} />}
+                    {editPinned ? <Pin className="size-4" style={{ color: "var(--dt-text)" }} /> : <PinOff className="size-4" style={{ color: "#999" }} />}
                   </button>
                 </div>
               </div>
@@ -357,7 +357,7 @@ export function SettingsModal({
             className="theme-border theme-shadow-sm w-full flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "var(--dt-control-bar-bg)", color: "var(--dt-control-bar-text)", borderRadius: "10px" }}
           >
-            <Save className="w-4 h-4" aria-hidden="true" /> 保存する
+            <Save className="size-4" aria-hidden="true" /> 保存する
           </button>
           <div className="flex gap-2">
             <button
@@ -366,7 +366,7 @@ export function SettingsModal({
               className="theme-border flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold transition-all duration-150 theme-hover-lift"
               style={{ color: "var(--dt-text)", backgroundColor: "var(--dt-card-bg)", borderRadius: "10px" }}
             >
-              <Copy className="w-4 h-4" aria-hidden="true" />
+              <Copy className="size-4" aria-hidden="true" />
               複製
             </button>
             {canDelete && (
@@ -376,7 +376,7 @@ export function SettingsModal({
                 className="theme-border flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold transition-all duration-150 theme-hover-lift"
                 style={{ color: "#DC2626", backgroundColor: "var(--dt-card-bg)", borderRadius: "10px" }}
               >
-                <Trash2 className="w-4 h-4" aria-hidden="true" />
+                <Trash2 className="size-4" aria-hidden="true" />
                 削除
               </button>
             )}

@@ -19,7 +19,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 function LazyFallback() {
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--dt-page-bg)" }}>
-      <Loader2 className="w-8 h-8 animate-spin" style={{ color: "var(--dt-current-highlight)" }} />
+      <Loader2 className="size-8 animate-spin" style={{ color: "var(--dt-current-highlight)" }} />
     </div>
   );
 }
@@ -55,10 +55,10 @@ function AppFooter() {
           href="/about"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center w-8 h-8 rounded-full text-muted-foreground/60 hover:text-muted-foreground/80 hover:bg-muted/40 transition-colors"
+          className="flex items-center justify-center size-8 rounded-full text-muted-foreground/60 hover:text-muted-foreground/80 hover:bg-muted/40 transition-colors"
           title="toban について"
         >
-          <CircleHelp className="w-5 h-5" />
+          <CircleHelp className="size-5" />
         </a>
         <a
           href="https://shigoto.dev"

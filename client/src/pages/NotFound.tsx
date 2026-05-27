@@ -12,10 +12,10 @@ export default function NotFound() {
       >
         <div className="flex justify-center mb-6">
           <div
-            className="theme-border w-16 h-16 flex items-center justify-center"
+            className="theme-border size-16 flex items-center justify-center"
             style={{ borderRadius: "50%", backgroundColor: "#FEE2E2" }}
           >
-            <AlertCircle className="w-8 h-8" style={{ color: "#DC2626" }} aria-hidden="true" />
+            <AlertCircle className="size-8" style={{ color: "#DC2626" }} aria-hidden="true" />
           </div>
         </div>
 
@@ -34,7 +34,7 @@ export default function NotFound() {
           className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-6 py-3 font-bold text-sm text-white transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: "#1a1a1a", borderRadius: "10px" }}
         >
-          <Home className="w-4 h-4" aria-hidden="true" />
+          <Home className="size-4" aria-hidden="true" />
           ホームへ
         </button>
       </div>

@@ -14,7 +14,7 @@ export function ColorPalette({ member, onPresetSelect, onCustomColor }: Props) {
       {MEMBER_PRESETS.map((preset, pIdx) => (
         <button
           key={pIdx}
-          className="w-6 h-6 rounded-full transition-transform hover:scale-110"
+          className="size-6 rounded-full transition-transform hover:scale-110"
           style={{
             backgroundColor: preset.color,
             border: member.color === preset.color ? "3px solid var(--dt-border-color)" : "2px solid #ddd",
@@ -27,11 +27,11 @@ export function ColorPalette({ member, onPresetSelect, onCustomColor }: Props) {
         />
       ))}
       <label
-        className="w-6 h-6 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer hover:scale-110 transition-transform relative overflow-hidden"
+        className="size-6 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer hover:scale-110 transition-transform relative overflow-hidden"
         style={{ borderColor: "#bbb" }}
         aria-label="カスタムカラー"
       >
-        <Palette className="w-3 h-3" style={{ color: "#999" }} aria-hidden="true" />
+        <Palette className="size-3" style={{ color: "#999" }} aria-hidden="true" />
         <input
           type="color"
           value={member.color}

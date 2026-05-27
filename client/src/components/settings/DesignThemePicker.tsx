@@ -60,7 +60,7 @@ export function DesignThemePicker({ selectedThemeId, onSelect }: DesignThemePick
                 {theme.name}
               </span>
               {theme.id === "whiteboard" && (
-                <Printer className="w-3 h-3" style={{ color: "var(--dt-text-muted)" }} aria-label="印刷向け" />
+                <Printer className="size-3" style={{ color: "var(--dt-text-muted)" }} aria-label="印刷向け" />
               )}
             </div>
             <div className="text-[10px]" style={{ color: "var(--dt-text-muted)" }}>
@@ -70,10 +70,10 @@ export function DesignThemePicker({ selectedThemeId, onSelect }: DesignThemePick
             {/* 選択チェックマーク */}
             {isSelected && (
               <div
-                className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full flex items-center justify-center"
+                className="absolute top-1.5 right-1.5 size-5 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: "var(--dt-current-highlight)" }}
               >
-                <Check className="w-3 h-3" style={{ color: "var(--dt-text)" }} />
+                <Check className="size-3" style={{ color: "var(--dt-text)" }} />
               </div>
             )}
           </button>

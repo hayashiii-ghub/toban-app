@@ -60,7 +60,7 @@ export function InstallPrompt() {
         className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 theme-border theme-shadow p-3 flex items-center gap-3"
         style={{ backgroundColor: "var(--dt-current-highlight)", borderRadius: "var(--dt-border-radius)" }}
       >
-        <Download className="w-5 h-5 shrink-0" style={{ color: "var(--dt-text)" }} />
+        <Download className="size-5 shrink-0" style={{ color: "var(--dt-text)" }} />
         <div className="flex-1">
           <div className="text-sm font-bold" style={{ color: "var(--dt-text)" }}>アプリとして追加</div>
           <div className="text-xs font-medium" style={{ color: "var(--dt-text-secondary)" }}>ホーム画面からすぐアクセス</div>
@@ -77,7 +77,7 @@ export function InstallPrompt() {
           className="p-1 hover:bg-yellow-400 rounded-lg transition-colors"
           aria-label="閉じる"
         >
-          <X className="w-4 h-4" />
+          <X className="size-4" />
         </button>
       </div>
     );
@@ -90,7 +90,7 @@ export function InstallPrompt() {
         className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 theme-border theme-shadow p-3 flex items-center gap-3"
         style={{ backgroundColor: "var(--dt-current-highlight)", borderRadius: "var(--dt-border-radius)" }}
       >
-        <Share className="w-5 h-5 shrink-0" style={{ color: "var(--dt-text)" }} />
+        <Share className="size-5 shrink-0" style={{ color: "var(--dt-text)" }} />
         <div className="flex-1">
           <div className="text-sm font-bold" style={{ color: "var(--dt-text)" }}>ホーム画面に追加</div>
           <div className="text-xs font-medium" style={{ color: "var(--dt-text-secondary)" }}>
@@ -102,7 +102,7 @@ export function InstallPrompt() {
           className="p-1 hover:bg-yellow-400 rounded-lg transition-colors shrink-0"
           aria-label="閉じる"
         >
-          <X className="w-4 h-4" />
+          <X className="size-4" />
         </button>
       </div>
     );

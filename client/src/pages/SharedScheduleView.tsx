@@ -136,7 +136,7 @@ export default function SharedScheduleView() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--dt-page-bg)" }}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: "var(--dt-current-highlight)" }} />
+        <Loader2 className="size-8 animate-spin" style={{ color: "var(--dt-current-highlight)" }} />
       </div>
     );
   }
@@ -235,7 +235,7 @@ export default function SharedScheduleView() {
             className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "#10B981", color: "#fff", borderRadius: "var(--dt-border-radius-sm)" }}
           >
-            <Copy className="w-4 h-4" />
+            <Copy className="size-4" />
             この当番表を自分用にコピー
           </button>
           <a

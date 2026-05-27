@@ -38,7 +38,7 @@ export function ConfirmDeleteDialog({ scheduleName, onConfirm, onCancel }: Props
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 mb-4">
-          <Trash2 className="w-5 h-5" style={{ color: "#DC2626" }} aria-hidden="true" />
+          <Trash2 className="size-5" style={{ color: "#DC2626" }} aria-hidden="true" />
           <h3 id="delete-dialog-title" className="font-extrabold text-lg">当番表を削除</h3>
         </div>
         <p className="text-sm mb-6" style={{ color: "#555" }}>

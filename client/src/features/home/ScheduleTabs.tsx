@@ -114,11 +114,11 @@ export function ScheduleTabs({
             {canScrollLeft && (
               <button
                 onClick={() => scroll("left")}
-                className="absolute left-0 z-10 w-7 h-7 flex items-center justify-center rounded-full sm:hidden"
+                className="absolute left-0 z-10 size-7 flex items-center justify-center rounded-full sm:hidden"
                 style={{ backgroundColor: "color-mix(in srgb, var(--dt-page-bg) 90%, transparent)", boxShadow: "2px 0 8px rgba(0,0,0,0.1)" }}
                 aria-label="左にスクロール"
               >
-                <ChevronLeft className="w-4 h-4" style={{ color: "var(--dt-text-secondary)" }} />
+                <ChevronLeft className="size-4" style={{ color: "var(--dt-text-secondary)" }} />
               </button>
             )}
             <div
@@ -161,9 +161,9 @@ export function ScheduleTabs({
                   }}
                 >
                   {schedule.pinned ? (
-                    <Pin className="w-3 h-3 shrink-0 opacity-60" aria-hidden="true" />
+                    <Pin className="size-3 shrink-0 opacity-60" aria-hidden="true" />
                   ) : (
-                    <GripVertical className="w-3 h-3 opacity-40 shrink-0 hidden sm:block" aria-hidden="true" />
+                    <GripVertical className="size-3 opacity-40 shrink-0 hidden sm:block" aria-hidden="true" />
                   )}
                   <span className="max-w-[80px] sm:max-w-[150px] md:max-w-[200px] truncate">{schedule.name}</span>
                 </button>
@@ -175,17 +175,17 @@ export function ScheduleTabs({
                 aria-label="新しい当番表を追加"
                 data-onboarding="add-button"
               >
-                <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                <Plus className="size-3.5" aria-hidden="true" />
               </button>
             </div>
             {canScrollRight && (
               <button
                 onClick={() => scroll("right")}
-                className="absolute right-0 z-10 w-7 h-7 flex items-center justify-center rounded-full sm:hidden"
+                className="absolute right-0 z-10 size-7 flex items-center justify-center rounded-full sm:hidden"
                 style={{ backgroundColor: "color-mix(in srgb, var(--dt-page-bg) 90%, transparent)", boxShadow: "-2px 0 8px rgba(0,0,0,0.1)" }}
                 aria-label="右にスクロール"
               >
-                <ChevronRight className="w-4 h-4" style={{ color: "var(--dt-text-secondary)" }} />
+                <ChevronRight className="size-4" style={{ color: "var(--dt-text-secondary)" }} />
               </button>
             )}
           </div>

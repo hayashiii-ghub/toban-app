@@ -43,10 +43,10 @@ class ErrorBoundary extends Component<Props, State> {
             style={{ borderRadius: "var(--dt-border-radius)", backgroundColor: "var(--dt-card-bg)" }}
           >
             <div
-              className="theme-border w-14 h-14 flex items-center justify-center mb-6"
+              className="theme-border size-14 flex items-center justify-center mb-6"
               style={{ borderRadius: "50%", backgroundColor: "#FEE2E2" }}
             >
-              <AlertTriangle className="w-7 h-7" style={{ color: "#DC2626" }} aria-hidden="true" />
+              <AlertTriangle className="size-7" style={{ color: "#DC2626" }} aria-hidden="true" />
             </div>
 
             <h2 className="text-xl font-extrabold mb-2" style={{ color: "var(--dt-text)" }}>
@@ -83,7 +83,7 @@ class ErrorBoundary extends Component<Props, State> {
                 className="theme-border theme-shadow-sm inline-flex items-center gap-2 px-5 py-2.5 font-bold text-sm transition-all duration-150 theme-hover-lift"
                 style={{ borderRadius: "10px", backgroundColor: "#fff", color: "#1a1a1a" }}
               >
-                <Home className="w-4 h-4" aria-hidden="true" />
+                <Home className="size-4" aria-hidden="true" />
                 ホームに戻る
               </a>
               <button
@@ -91,7 +91,7 @@ class ErrorBoundary extends Component<Props, State> {
                 className="theme-border theme-shadow-sm inline-flex items-center gap-2 px-5 py-2.5 font-bold text-sm text-white transition-all duration-150 theme-hover-lift"
                 style={{ borderRadius: "10px", backgroundColor: "#1a1a1a" }}
               >
-                <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                <RotateCcw className="size-4" aria-hidden="true" />
                 再読み込み
               </button>
             </div>
