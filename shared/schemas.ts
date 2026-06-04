@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+/** お問い合わせの種別（client の select と server の検証で共有し、drift を防ぐ） */
+export const CONTACT_CATEGORIES = [
+  "不具合の報告",
+  "機能のご要望",
+  "使い方の質問",
+  "その他",
+] as const;
+
+export const contactCategorySchema = z.enum(CONTACT_CATEGORIES);
+
+export type ContactCategory = z.infer<typeof contactCategorySchema>;
+
 /** タスクグループスキーマ */
 export const taskGroupSchema = z.object({
   id: z.string(),

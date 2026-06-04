@@ -1,15 +1,18 @@
 import { Hono } from "hono";
 import { Resend } from "resend";
 import { z } from "zod";
+import { contactCategorySchema } from "../../shared/schemas";
 
 type Env = { Bindings: { RESEND_API_KEY: string } };
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1).max(50),
+  category: contactCategorySchema,
   email: z.string().trim().email().max(254),
   message: z.string().trim().min(1).max(1000),
-  // ハニーポット: bot はこのフィールドを埋めてしまう
-  url: z.string().max(0).optional(),
+  // ハニーポット: bot はこのフィールドを埋めてしまう。
+  // 値があれば下で静かに 200 を返すため、ここでは長さ制約を掛けない
+  // （max(0) だと非空 url が 400 になり honeypot 分岐に到達しない）
+  url: z.string().optional(),
 });
 
 /** メール用文字列から制御文字を除去 */
@@ -36,8 +39,8 @@ app.post("/", async (c) => {
     return c.json({ ok: true });
   }
 
-  const { name, email, message } = parsed.data;
-  const safeName = sanitizeControlChars(name);
+  const { category, email, message } = parsed.data;
+  // category は enum の固定値なので sanitize 不要
   const safeEmail = sanitizeControlChars(email);
   const safeMessage = sanitizeControlChars(message);
 
@@ -46,8 +49,8 @@ app.post("/", async (c) => {
     from: "toban お問い合わせ <noreply@send.shigoto.dev>",
     to: "hay@shigoto.dev",
     replyTo: safeEmail,
-    subject: `[toban] お問い合わせ: ${safeName}`,
-    text: `名前: ${safeName}\nメール: ${safeEmail}\n\n${safeMessage}`,
+    subject: `[toban] ${category}`,
+    text: `種別: ${category}\nメール: ${safeEmail}\n\n${safeMessage}`,
   });
 
   if (error) {
