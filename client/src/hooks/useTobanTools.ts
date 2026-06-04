@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { useHomeState } from "@/pages/useHomeState";
-import { TEMPLATES } from "@/rotation/constants";
+import { MEMBER_PRESETS, TEMPLATES } from "@/rotation/constants";
+import { generateId, normalizeRotation } from "@/rotation/utils";
 
 /** useHomeState() の戻り値。tool はこの派生値/ハンドラだけを介して動く。 */
 type HomeState = ReturnType<typeof useHomeState>;
@@ -20,6 +21,12 @@ function rotationLabel(rotation: number): string {
 function strField(input: unknown, key: string): string {
   const obj = (input ?? {}) as Record<string, unknown>;
   return typeof obj[key] === "string" ? (obj[key] as string).trim() : "";
+}
+
+/** input(JSON) から数値フィールドを安全に取り出す。数値でなければ null。 */
+function numField(input: unknown, key: string): number | null {
+  const obj = (input ?? {}) as Record<string, unknown>;
+  return typeof obj[key] === "number" ? (obj[key] as number) : null;
 }
 
 function listSchedulesTool(get: () => HomeState): WebMCPTool {
@@ -192,16 +199,154 @@ function createScheduleTool(get: () => HomeState): WebMCPTool {
   };
 }
 
+function addMemberTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "add_member",
+    description:
+      "Add a member (a person or team) to the active duty roster by name. A display color is assigned automatically.",
+    inputSchema: {
+      type: "object",
+      properties: { name: { type: "string", description: "Name of the member to add" } },
+      required: ["name"],
+    },
+    async execute(input) {
+      const { activeSchedule, onSaveSettings } = get();
+      if (!activeSchedule) return result("現在選択されている当番表がありません。");
+      const name = strField(input, "name");
+      if (!name) return result("追加するメンバーの名前を指定してください。");
+      const preset = MEMBER_PRESETS[activeSchedule.members.length % MEMBER_PRESETS.length];
+      const nextMembers = [...activeSchedule.members, { id: generateId("m"), name, ...preset }];
+      onSaveSettings(
+        activeSchedule.name,
+        activeSchedule.groups,
+        nextMembers,
+        activeSchedule.rotationConfig,
+        activeSchedule.pinned,
+        activeSchedule.assignmentMode,
+        activeSchedule.designThemeId,
+      );
+      return result(`「${name}」をメンバーに追加しました。`);
+    },
+  };
+}
+
+function removeMemberTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "remove_member",
+    description: "Remove a member from the active duty roster by name.",
+    inputSchema: {
+      type: "object",
+      properties: { name: { type: "string", description: "Name of the member to remove" } },
+      required: ["name"],
+    },
+    async execute(input) {
+      const { activeSchedule, onSaveSettings } = get();
+      if (!activeSchedule) return result("現在選択されている当番表がありません。");
+      const name = strField(input, "name");
+      const target = activeSchedule.members.find((m) => m.name === name);
+      if (!target) {
+        const names = activeSchedule.members.map((m) => m.name).join("、");
+        return result(`「${name}」というメンバーは見つかりませんでした。現在のメンバー: ${names}`);
+      }
+      if (activeSchedule.members.length <= 1) {
+        return result("最後のメンバーは削除できません。");
+      }
+      const nextMembers = activeSchedule.members.filter((m) => m.id !== target.id);
+      const nextGroups = activeSchedule.groups.map((g) =>
+        g.memberIds ? { ...g, memberIds: g.memberIds.filter((id) => id !== target.id) } : g,
+      );
+      onSaveSettings(
+        activeSchedule.name,
+        nextGroups,
+        nextMembers,
+        activeSchedule.rotationConfig,
+        activeSchedule.pinned,
+        activeSchedule.assignmentMode,
+        activeSchedule.designThemeId,
+      );
+      return result(`「${target.name}」をメンバーから削除しました。`);
+    },
+  };
+}
+
+function setRotationTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "set_rotation",
+    description:
+      "Set the active roster's rotation to a specific turn number (0 = initial). Only for manually-rotated rosters; date-based rosters advance automatically.",
+    inputSchema: {
+      type: "object",
+      properties: { rotation: { type: "number", description: "Turn number, 0 or greater" } },
+      required: ["rotation"],
+    },
+    async execute(input) {
+      const { activeSchedule, updateActiveSchedule } = get();
+      if (!activeSchedule) return result("現在選択されている当番表がありません。");
+      if (activeSchedule.rotationConfig?.mode === "date") {
+        return result(
+          `「${activeSchedule.name}」は日付ベースで自動的に当番が変わる設定のため、回数を手動で設定できません。`,
+        );
+      }
+      const rotation = numField(input, "rotation");
+      if (rotation === null || !Number.isInteger(rotation) || rotation < 0) {
+        return result("rotation は 0 以上の整数で指定してください。");
+      }
+      const activeCount = activeSchedule.members.filter((m) => !m.skipped).length;
+      const normalized = normalizeRotation(rotation, activeCount);
+      updateActiveSchedule((s) => ({ ...s, rotation: normalized }));
+      return result(`回転を${normalized === 0 ? "初期" : `${normalized}回目`}に設定しました。`);
+    },
+  };
+}
+
+function printScheduleTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "print_schedule",
+    description: "Open the browser print dialog for the active roster in its current view (cards / table / calendar).",
+    inputSchema: { type: "object", properties: {} },
+    async execute() {
+      const { handlePrint, viewTab } = get();
+      handlePrint(viewTab);
+      return result(`印刷ダイアログを開きました（${VIEW_LABELS[viewTab as ViewKey] ?? viewTab}表示）。`);
+    },
+  };
+}
+
+function shareLinkTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "get_share_link",
+    description:
+      "Get the public share URL of the active roster if it has already been shared. Does NOT create or publish a new link — sharing must be done by the user via the share button.",
+    inputSchema: { type: "object", properties: {} },
+    annotations: { readOnlyHint: true },
+    async execute() {
+      const { activeSchedule } = get();
+      if (!activeSchedule) return result("現在選択されている当番表がありません。");
+      if (activeSchedule.slug) {
+        return result(`「${activeSchedule.name}」の共有リンク: ${window.location.origin}/s/${activeSchedule.slug}`);
+      }
+      return result(
+        `「${activeSchedule.name}」はまだ共有されていません。画面の共有ボタンから共有リンクを作成できます。`,
+      );
+    },
+  };
+}
+
 /** 登録する全 tool を組み立てる。get() は常に最新の HomeState を返すこと。 */
 export function buildTobanTools(get: () => HomeState): WebMCPTool[] {
   return [
     listSchedulesTool(get),
     currentAssignmentsTool(get),
     scheduleDetailsTool(get),
+    shareLinkTool(get),
     switchScheduleTool(get),
     advanceRotationTool(get),
     changeViewTool(get),
     createScheduleTool(get),
+    addMemberTool(get),
+    removeMemberTool(get),
+    setRotationTool(get),
+    printScheduleTool(get),
   ];
 }
 

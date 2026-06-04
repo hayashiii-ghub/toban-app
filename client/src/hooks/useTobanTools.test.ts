@@ -292,6 +292,203 @@ describe("create_schedule", () => {
   });
 });
 
+describe("add_member", () => {
+  it("名前を指定してメンバーを追加する（色は preset 割当）", async () => {
+    const a = sched({ name: "掃除当番", members: [member("m1", "佐藤"), member("m2", "鈴木")] });
+    let saved: unknown[] | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((...args: unknown[]) => {
+        saved = args;
+      }) as HomeState["onSaveSettings"],
+    });
+
+    const text = (await toolNamed("add_member", get).execute({ name: "田中" })).content[0].text;
+
+    expect(text).toContain("田中");
+    const members = saved![2] as Member[];
+    expect(members.map((m) => m.name)).toEqual(["佐藤", "鈴木", "田中"]);
+    const added = members[2];
+    expect(added.color).toBeTruthy();
+    expect(added.bgColor).toBeTruthy();
+    expect(added.textColor).toBeTruthy();
+    expect(saved![0]).toBe("掃除当番");
+  });
+});
+
+describe("remove_member", () => {
+  it("名前一致のメンバーを削除し group.memberIds からも除去する", async () => {
+    const a = sched({
+      members: [member("m1", "佐藤"), member("m2", "鈴木")],
+      groups: [{ id: "g1", emoji: "🧹", tasks: ["床"], memberIds: ["m1", "m2"] }],
+    });
+    let saved: unknown[] | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((...args: unknown[]) => {
+        saved = args;
+      }) as HomeState["onSaveSettings"],
+    });
+
+    const text = (await toolNamed("remove_member", get).execute({ name: "鈴木" })).content[0].text;
+
+    expect(text).toContain("鈴木");
+    expect((saved![2] as Member[]).map((m) => m.name)).toEqual(["佐藤"]);
+    expect((saved![1] as TaskGroup[])[0].memberIds).toEqual(["m1"]);
+  });
+
+  it("最後の1人は削除できない", async () => {
+    const a = sched({ members: [member("m1", "佐藤")] });
+    let saved: unknown[] | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((...args: unknown[]) => {
+        saved = args;
+      }) as HomeState["onSaveSettings"],
+    });
+
+    const text = (await toolNamed("remove_member", get).execute({ name: "佐藤" })).content[0].text;
+
+    expect(saved).toBeNull();
+    expect(text).toMatch(/最後|削除できません/);
+  });
+
+  it("該当しない名前は候補付きで知らせる", async () => {
+    const a = sched({ members: [member("m1", "佐藤"), member("m2", "鈴木")] });
+    let saved: unknown[] | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((...args: unknown[]) => {
+        saved = args;
+      }) as HomeState["onSaveSettings"],
+    });
+
+    const text = (await toolNamed("remove_member", get).execute({ name: "田中" })).content[0].text;
+
+    expect(saved).toBeNull();
+    expect(text).toContain("佐藤");
+  });
+});
+
+describe("set_rotation", () => {
+  it("回転を指定の回数に設定する", async () => {
+    const a = sched({
+      rotationConfig: { mode: "manual" },
+      members: [member("m1", "佐藤"), member("m2", "鈴木"), member("m3", "高橋")],
+    });
+    let updater: ((s: Schedule) => Schedule) | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      updateActiveSchedule: (fn: (s: Schedule) => Schedule) => {
+        updater = fn;
+      },
+    });
+
+    const text = (await toolNamed("set_rotation", get).execute({ rotation: 2 })).content[0].text;
+
+    expect(updater).not.toBeNull();
+    expect(updater!(a).rotation).toBe(2);
+    expect(text).toContain("2回目");
+  });
+
+  it("メンバー数で正規化する", async () => {
+    const a = sched({ rotationConfig: { mode: "manual" }, members: [member("m1", "佐藤"), member("m2", "鈴木")] });
+    let updater: ((s: Schedule) => Schedule) | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      updateActiveSchedule: (fn: (s: Schedule) => Schedule) => {
+        updater = fn;
+      },
+    });
+
+    await toolNamed("set_rotation", get).execute({ rotation: 5 });
+
+    expect(updater!(a).rotation).toBe(1);
+  });
+
+  it("date モードでは設定せず日付管理を伝える", async () => {
+    const a = sched({ rotationConfig: { mode: "date", startDate: "2026-01-01", cycleDays: 7 } });
+    let updater: ((s: Schedule) => Schedule) | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      updateActiveSchedule: (fn: (s: Schedule) => Schedule) => {
+        updater = fn;
+      },
+    });
+
+    const text = (await toolNamed("set_rotation", get).execute({ rotation: 2 })).content[0].text;
+
+    expect(updater).toBeNull();
+    expect(text).toContain("日付");
+  });
+
+  it("負の数や非整数は拒否する", async () => {
+    const a = sched({ rotationConfig: { mode: "manual" } });
+    let updater: ((s: Schedule) => Schedule) | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      updateActiveSchedule: (fn: (s: Schedule) => Schedule) => {
+        updater = fn;
+      },
+    });
+
+    const text = (await toolNamed("set_rotation", get).execute({ rotation: -1 })).content[0].text;
+
+    expect(updater).toBeNull();
+    expect(text).toMatch(/0以上|整数/);
+  });
+});
+
+describe("print_schedule", () => {
+  it("現在の表示形式で印刷ダイアログを開く", async () => {
+    let printed: string | null = null;
+    const get = makeGet({
+      viewTab: "calendar",
+      handlePrint: (v: string) => {
+        printed = v;
+      },
+    });
+
+    const text = (await toolNamed("print_schedule", get).execute({})).content[0].text;
+
+    expect(printed).toBe("calendar");
+    expect(text).toContain("印刷");
+  });
+});
+
+describe("get_share_link", () => {
+  it("共有済みなら共有 URL を返す", async () => {
+    const a = sched({ slug: "abc123" });
+    const get = makeGet({ state: { schedules: [a], activeScheduleId: a.id }, activeSchedule: a });
+
+    const text = (await toolNamed("get_share_link", get).execute({})).content[0].text;
+
+    expect(text).toContain("/s/abc123");
+  });
+
+  it("未共有なら共有方法を案内する", async () => {
+    const a = sched({});
+    const get = makeGet({ state: { schedules: [a], activeScheduleId: a.id }, activeSchedule: a });
+
+    const text = (await toolNamed("get_share_link", get).execute({})).content[0].text;
+
+    expect(text).toContain("共有");
+    expect(text).not.toContain("/s/");
+  });
+
+  it("read-only を宣言する", () => {
+    expect(toolNamed("get_share_link", makeGet()).annotations?.readOnlyHint).toBe(true);
+  });
+});
+
 describe("useTobanTools (登録フック)", () => {
   it("registerTool が throw してもフックはクラッシュしない", () => {
     const nav = navigator as unknown as { modelContext?: unknown };

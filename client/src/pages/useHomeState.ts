@@ -114,6 +114,7 @@ export function useHomeState() {
   return {
     state,
     activeSchedule,
+    updateActiveSchedule,
     selectSchedule,
     // Sync
     syncStatus,
