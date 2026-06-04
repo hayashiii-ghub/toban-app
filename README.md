@@ -47,8 +47,9 @@
 │   ├── features/home/        # ホーム画面の機能コンポーネント
 │   ├── components/           # 共通UIコンポーネント（shadcn/ui）
 │   ├── rotation/             # コア型・ユーティリティ・定数・デフォルト状態
-│   ├── hooks/                # カスタムフック（useAutoSync等）
-│   └── lib/                  # APIクライアント・同期マネージャ
+│   ├── hooks/                # カスタムフック（useAutoSync・WebMCP登録 useTobanTools 等）
+│   ├── lib/                  # APIクライアント・同期マネージャ
+│   └── types/                # 型定義（webmcp.d.ts 等）
 ├── server/
 │   ├── worker.ts             # Cloudflare Workers エントリーポイント
 │   ├── api.ts                # Hono APIアプリ定義
@@ -94,6 +95,30 @@ pnpm run deploy:cf     # migration 適用込みで Cloudflare へデプロイ
 - `CLOUDFLARE_D1_PREVIEW_DATABASE_ID` — プレビュー用 D1 データベースID（任意）
 - `RESEND_API_KEY` — Resend APIキー（お問い合わせフォーム送信用、`wrangler secret put RESEND_API_KEY`）
 - `VITE_SENTRY_DSN` — Sentry DSN（任意、エラートラッキング用。ビルド時に `.env` または CI で設定）
+
+## WebMCP 対応（実験的）
+
+AIエージェントがブラウザ上で当番表を直接操作できるよう、[WebMCP](https://developer.chrome.com/docs/ai/webmcp) のツールを公開しています。対応ブラウザでのみ有効化され、非対応環境では何も登録しません（既存の動作に影響なし）。データは既存の localStorage / state 経路をそのまま使うため、ツール経由の変更も通常操作と同じく自動保存されます。
+
+公開ツール（Home画面 `/` で登録）:
+
+| ツール | 種別 | 内容 |
+|--------|------|------|
+| `list_schedules` | 読み取り | 全当番表の一覧（名前・人数・グループ数、表示中を明示） |
+| `get_current_assignments` | 読み取り | 表示中の当番表の担当割り当てと回転状況 |
+| `get_schedule_details` | 読み取り | 表示中の当番表の設定（メンバー・グループ・回転モード） |
+| `switch_schedule` | 操作 | 名前を指定して表示する当番表を切り替え |
+| `advance_rotation` | 操作 | 回転を1つ進める/戻す（手動モードのみ。日付モードは自動のため不可） |
+| `change_view` | 操作 | 表示形式を切り替え（カード / 早見表 / カレンダー） |
+| `create_schedule` | 操作 | テンプレート名から新しい当番表を作成 |
+
+実装は `client/src/hooks/useTobanTools.ts` に集約、型は `client/src/types/webmcp.d.ts`（`navigator.modelContext` / `document.modelContext` の差異もここで吸収）。
+
+### 動作確認（ローカル）
+
+1. Chrome Canary で `chrome://flags/#enable-webmcp-testing` を Enabled にして再起動
+2. `pnpm dev` で起動し Home画面（`/`）を開く
+3. 「Model Context Tool Inspector」拡張、または `navigator.modelContext` 対応エージェントからツール一覧・実行を確認（`console.log(navigator.modelContext)` でAPI有無を確認できる）
 
 ## ライセンス
 

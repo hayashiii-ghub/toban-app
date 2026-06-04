@@ -14,10 +14,12 @@ import { ScheduleTabs } from "@/features/home/ScheduleTabs";
 import { TodayBanner } from "@/features/home/TodayBanner";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { useHomeState } from "./useHomeState";
+import { useTobanTools } from "@/hooks/useTobanTools";
 import "./home.css";
 
 export default function Home() {
   const s = useHomeState();
+  useTobanTools(s); // WebMCP tools を登録（非対応ブラウザでは no-op）
 
   if (!s.activeSchedule) {
     return (
