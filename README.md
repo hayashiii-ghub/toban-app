@@ -107,10 +107,17 @@ AIエージェントがブラウザ上で当番表を直接操作できるよう
 | `list_schedules` | 読み取り | 全当番表の一覧（名前・人数・グループ数、表示中を明示） |
 | `get_current_assignments` | 読み取り | 表示中の当番表の担当割り当てと回転状況 |
 | `get_schedule_details` | 読み取り | 表示中の当番表の設定（メンバー・グループ・回転モード） |
+| `get_share_link` | 読み取り | 共有済みなら公開 URL を返す（**公開はしない**。共有はユーザが共有ボタンで実施） |
 | `switch_schedule` | 操作 | 名前を指定して表示する当番表を切り替え |
 | `advance_rotation` | 操作 | 回転を1つ進める/戻す（手動モードのみ。日付モードは自動のため不可） |
+| `set_rotation` | 操作 | 回転を指定の回数に設定（手動モードのみ） |
 | `change_view` | 操作 | 表示形式を切り替え（カード / 早見表 / カレンダー） |
 | `create_schedule` | 操作 | テンプレート名から新しい当番表を作成 |
+| `add_member` | 操作 | 名前を指定してメンバーを追加（色は自動割当） |
+| `remove_member` | 操作 | 名前を指定してメンバーを削除（最後の1人は不可） |
+| `print_schedule` | 操作 | 現在の表示形式で印刷ダイアログを開く |
+
+> 共有（外部公開）の実行はエージェントの tool に含めていません。実名を含む当番表を公開 URL 化する操作は、誤発火による意図しない公開を避けるため、ユーザの明示操作（共有ボタン）に限定しています。`get_share_link` は既存リンクの参照のみ。
 
 実装は `client/src/hooks/useTobanTools.ts` に集約、型は `client/src/types/webmcp.d.ts`（`navigator.modelContext` / `document.modelContext` の差異もここで吸収）。
 
