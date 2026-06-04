@@ -489,6 +489,185 @@ describe("get_share_link", () => {
   });
 });
 
+describe("update_schedule", () => {
+  const setup = () => {
+    const a = sched({ name: "掃除当番", assignmentMode: "member", pinned: false });
+    let saved: unknown[] | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((...args: unknown[]) => {
+        saved = args;
+      }) as HomeState["onSaveSettings"],
+    });
+    return { a, get, getSaved: () => saved };
+  };
+
+  it("名前を変更し他は保持する", async () => {
+    const { get, getSaved } = setup();
+    const text = (await toolNamed("update_schedule", get).execute({ name: "新・掃除当番" })).content[0].text;
+    expect(getSaved()![0]).toBe("新・掃除当番");
+    expect(getSaved()![5]).toBe("member");
+    expect(text).toContain("新・掃除当番");
+  });
+
+  it("担当者⇄タスクモードを切り替える", async () => {
+    const { get, getSaved } = setup();
+    await toolNamed("update_schedule", get).execute({ assignment_mode: "task" });
+    expect(getSaved()![5]).toBe("task");
+    expect(getSaved()![0]).toBe("掃除当番");
+  });
+
+  it("ピン留めを設定する", async () => {
+    const { get, getSaved } = setup();
+    await toolNamed("update_schedule", get).execute({ pinned: true });
+    expect(getSaved()![4]).toBe(true);
+  });
+
+  it("何も指定しないとエラー", async () => {
+    const { get, getSaved } = setup();
+    const text = (await toolNamed("update_schedule", get).execute({})).content[0].text;
+    expect(getSaved()).toBeNull();
+    expect(text).toMatch(/指定/);
+  });
+
+  it("不正な assignment_mode はエラー", async () => {
+    const { get, getSaved } = setup();
+    const text = (await toolNamed("update_schedule", get).execute({ assignment_mode: "x" })).content[0].text;
+    expect(getSaved()).toBeNull();
+    expect(text).toMatch(/member|task/);
+  });
+});
+
+describe("update_member", () => {
+  const setup = () => {
+    const a = sched({ members: [member("m1", "佐藤"), member("m2", "鈴木")] });
+    let saved: unknown[] | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((...args: unknown[]) => {
+        saved = args;
+      }) as HomeState["onSaveSettings"],
+    });
+    return { a, get, getSaved: () => saved };
+  };
+
+  it("メンバーを休みにする", async () => {
+    const { get, getSaved } = setup();
+    await toolNamed("update_member", get).execute({ name: "佐藤", skip: true });
+    const m = (getSaved()![2] as Member[]).find((x) => x.name === "佐藤");
+    expect(m?.skipped).toBe(true);
+  });
+
+  it("メンバーを改名する", async () => {
+    const { get, getSaved } = setup();
+    await toolNamed("update_member", get).execute({ name: "佐藤", new_name: "佐藤太郎" });
+    const names = (getSaved()![2] as Member[]).map((x) => x.name);
+    expect(names).toContain("佐藤太郎");
+    expect(names).not.toContain("佐藤");
+  });
+
+  it("該当しない名前は候補付きエラー", async () => {
+    const { get, getSaved } = setup();
+    const text = (await toolNamed("update_member", get).execute({ name: "田中", skip: true })).content[0].text;
+    expect(getSaved()).toBeNull();
+    expect(text).toContain("佐藤");
+  });
+
+  it("変更内容がなければエラー", async () => {
+    const { get, getSaved } = setup();
+    const text = (await toolNamed("update_member", get).execute({ name: "佐藤" })).content[0].text;
+    expect(getSaved()).toBeNull();
+    expect(text).toMatch(/変更|指定/);
+  });
+});
+
+describe("configure_rotation", () => {
+  const setup = (rotationConfig?: import("@/rotation/types").RotationConfig) => {
+    const a = sched(rotationConfig ? { rotationConfig } : {});
+    let saved: unknown[] | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((...args: unknown[]) => {
+        saved = args;
+      }) as HomeState["onSaveSettings"],
+    });
+    return { a, get, getSaved: () => saved };
+  };
+
+  it("日付モードに設定する", async () => {
+    const { get, getSaved } = setup({ mode: "manual" });
+    await toolNamed("configure_rotation", get).execute({ mode: "date", start_date: "2026-04-01", cycle_days: 7 });
+    const rc = getSaved()![3] as import("@/rotation/types").RotationConfig;
+    expect(rc.mode).toBe("date");
+    expect(rc.startDate).toBe("2026-04-01");
+    expect(rc.cycleDays).toBe(7);
+  });
+
+  it("日付モードで開始日/周期が無ければエラー", async () => {
+    const { get, getSaved } = setup({ mode: "manual" });
+    const text = (await toolNamed("configure_rotation", get).execute({ mode: "date" })).content[0].text;
+    expect(getSaved()).toBeNull();
+    expect(text).toMatch(/開始日|周期/);
+  });
+
+  it("手動モードに戻す", async () => {
+    const { get, getSaved } = setup({ mode: "date", startDate: "2026-01-01", cycleDays: 7 });
+    await toolNamed("configure_rotation", get).execute({ mode: "manual" });
+    expect((getSaved()![3] as import("@/rotation/types").RotationConfig).mode).toBe("manual");
+  });
+
+  it("既存の日付設定に土曜スキップをマージする", async () => {
+    const { get, getSaved } = setup({ mode: "date", startDate: "2026-01-01", cycleDays: 7 });
+    await toolNamed("configure_rotation", get).execute({ skip_saturday: true });
+    const rc = getSaved()![3] as import("@/rotation/types").RotationConfig;
+    expect(rc.skipSaturday).toBe(true);
+    expect(rc.mode).toBe("date");
+    expect(rc.startDate).toBe("2026-01-01");
+  });
+
+  it("cycle_days が非整数や0以下はエラー", async () => {
+    const { get, getSaved } = setup({ mode: "manual" });
+    // 1.5 は date guard をすり抜けるため、cycle 検証行そのものを verify できる
+    const text = (await toolNamed("configure_rotation", get).execute({ mode: "date", start_date: "2026-04-01", cycle_days: 1.5 })).content[0].text;
+    expect(getSaved()).toBeNull();
+    expect(text).toMatch(/周期|cycle/);
+  });
+
+  it("start_date の形式が不正ならエラー", async () => {
+    const { get, getSaved } = setup({ mode: "manual" });
+    const text = (await toolNamed("configure_rotation", get).execute({ mode: "date", start_date: "2026/04/01", cycle_days: 7 })).content[0].text;
+    expect(getSaved()).toBeNull();
+    expect(text).toMatch(/開始日|日付|YYYY/);
+  });
+
+  it("何も指定しないとエラー", async () => {
+    const { get, getSaved } = setup({ mode: "manual" });
+    const text = (await toolNamed("configure_rotation", get).execute({})).content[0].text;
+    expect(getSaved()).toBeNull();
+    expect(text).toMatch(/指定/);
+  });
+});
+
+describe("duplicate_schedule", () => {
+  it("表示中の当番表を複製する", async () => {
+    const a = sched({ name: "掃除当番" });
+    let dup = false;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onDuplicateSchedule: () => {
+        dup = true;
+      },
+    });
+    const text = (await toolNamed("duplicate_schedule", get).execute({})).content[0].text;
+    expect(dup).toBe(true);
+    expect(text).toContain("複製");
+  });
+});
+
 describe("useTobanTools (登録フック)", () => {
   it("registerTool が throw してもフックはクラッシュしない", () => {
     const nav = navigator as unknown as { modelContext?: unknown };

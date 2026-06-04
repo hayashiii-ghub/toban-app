@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { useHomeState } from "@/pages/useHomeState";
+import type { AssignmentMode, RotationConfig } from "@/rotation/types";
 import { MEMBER_PRESETS, TEMPLATES } from "@/rotation/constants";
 import { generateId, normalizeRotation } from "@/rotation/utils";
 
@@ -27,6 +28,40 @@ function strField(input: unknown, key: string): string {
 function numField(input: unknown, key: string): number | null {
   const obj = (input ?? {}) as Record<string, unknown>;
   return typeof obj[key] === "number" ? (obj[key] as number) : null;
+}
+
+/** 部分更新用: 該当 key が無い/型違いなら undefined（= 未指定）を返す。 */
+function optStr(input: unknown, key: string): string | undefined {
+  const obj = (input ?? {}) as Record<string, unknown>;
+  return typeof obj[key] === "string" ? (obj[key] as string).trim() : undefined;
+}
+function optBool(input: unknown, key: string): boolean | undefined {
+  const obj = (input ?? {}) as Record<string, unknown>;
+  return typeof obj[key] === "boolean" ? (obj[key] as boolean) : undefined;
+}
+function optNum(input: unknown, key: string): number | undefined {
+  const obj = (input ?? {}) as Record<string, unknown>;
+  return typeof obj[key] === "number" ? (obj[key] as number) : undefined;
+}
+
+/**
+ * activeSchedule の現値をベースに patch だけ差し替えて onSaveSettings(full) を呼ぶ。
+ * 7 引数 positional の取り違えを 1 箇所に閉じ込める。
+ */
+function saveEdit(
+  active: NonNullable<HomeState["activeSchedule"]>,
+  onSaveSettings: HomeState["onSaveSettings"],
+  patch: Partial<NonNullable<HomeState["activeSchedule"]>>,
+): void {
+  onSaveSettings(
+    patch.name ?? active.name,
+    patch.groups ?? active.groups,
+    patch.members ?? active.members,
+    patch.rotationConfig ?? active.rotationConfig,
+    patch.pinned ?? active.pinned,
+    patch.assignmentMode ?? active.assignmentMode,
+    patch.designThemeId ?? active.designThemeId,
+  );
 }
 
 function listSchedulesTool(get: () => HomeState): WebMCPTool {
@@ -216,15 +251,7 @@ function addMemberTool(get: () => HomeState): WebMCPTool {
       if (!name) return result("追加するメンバーの名前を指定してください。");
       const preset = MEMBER_PRESETS[activeSchedule.members.length % MEMBER_PRESETS.length];
       const nextMembers = [...activeSchedule.members, { id: generateId("m"), name, ...preset }];
-      onSaveSettings(
-        activeSchedule.name,
-        activeSchedule.groups,
-        nextMembers,
-        activeSchedule.rotationConfig,
-        activeSchedule.pinned,
-        activeSchedule.assignmentMode,
-        activeSchedule.designThemeId,
-      );
+      saveEdit(activeSchedule, onSaveSettings, { members: nextMembers });
       return result(`「${name}」をメンバーに追加しました。`);
     },
   };
@@ -255,15 +282,7 @@ function removeMemberTool(get: () => HomeState): WebMCPTool {
       const nextGroups = activeSchedule.groups.map((g) =>
         g.memberIds ? { ...g, memberIds: g.memberIds.filter((id) => id !== target.id) } : g,
       );
-      onSaveSettings(
-        activeSchedule.name,
-        nextGroups,
-        nextMembers,
-        activeSchedule.rotationConfig,
-        activeSchedule.pinned,
-        activeSchedule.assignmentMode,
-        activeSchedule.designThemeId,
-      );
+      saveEdit(activeSchedule, onSaveSettings, { groups: nextGroups, members: nextMembers });
       return result(`「${target.name}」をメンバーから削除しました。`);
     },
   };
@@ -332,6 +351,173 @@ function shareLinkTool(get: () => HomeState): WebMCPTool {
   };
 }
 
+function updateScheduleTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "update_schedule",
+    description:
+      "Update the active roster's settings: name, pinned state, and/or assignment mode (member = one person per group, task = one person per task). Provide only the fields you want to change.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "New roster name" },
+        pinned: { type: "boolean", description: "Pin or unpin the roster" },
+        assignment_mode: { type: "string", enum: ["member", "task"], description: "Assignment mode" },
+      },
+    },
+    async execute(input) {
+      const { activeSchedule, onSaveSettings } = get();
+      if (!activeSchedule) return result("現在選択されている当番表がありません。");
+      const name = optStr(input, "name");
+      const pinned = optBool(input, "pinned");
+      const mode = optStr(input, "assignment_mode");
+      if (name === undefined && pinned === undefined && mode === undefined) {
+        return result("更新する項目（name / pinned / assignment_mode）を指定してください。");
+      }
+      if (name === "") return result("name は空にできません。");
+      if (mode !== undefined && mode !== "member" && mode !== "task") {
+        return result('assignment_mode は "member" または "task" を指定してください。');
+      }
+      saveEdit(activeSchedule, onSaveSettings, {
+        name,
+        pinned,
+        assignmentMode: mode as AssignmentMode | undefined,
+      });
+      const changed = [
+        name !== undefined ? `名前を「${name}」に` : null,
+        pinned !== undefined ? `ピン留めを${pinned ? "オン" : "オフ"}に` : null,
+        mode !== undefined ? `割り当てを${mode === "task" ? "タスクごと" : "担当者ごと"}に` : null,
+      ]
+        .filter(Boolean)
+        .join("、");
+      return result(`当番表の設定を更新しました（${changed}）。`);
+    },
+  };
+}
+
+function updateMemberTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "update_member",
+    description:
+      "Update a member of the active roster by name: rename and/or mark them as resting (skip = excluded from rotation) or active. Provide name plus the fields to change.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Current name of the member" },
+        new_name: { type: "string", description: "New name (rename)" },
+        skip: { type: "boolean", description: "true = rest (exclude from rotation), false = active" },
+      },
+      required: ["name"],
+    },
+    async execute(input) {
+      const { activeSchedule, onSaveSettings } = get();
+      if (!activeSchedule) return result("現在選択されている当番表がありません。");
+      const name = strField(input, "name");
+      const target = activeSchedule.members.find((m) => m.name === name);
+      if (!target) {
+        const names = activeSchedule.members.map((m) => m.name).join("、");
+        return result(`「${name}」というメンバーは見つかりませんでした。現在のメンバー: ${names}`);
+      }
+      const newName = optStr(input, "new_name");
+      const skip = optBool(input, "skip");
+      if (newName === undefined && skip === undefined) {
+        return result("変更内容（new_name / skip）を指定してください。");
+      }
+      if (newName === "") return result("new_name は空にできません。");
+      const nextMembers = activeSchedule.members.map((m) =>
+        m.id === target.id ? { ...m, name: newName ?? m.name, skipped: skip ?? m.skipped } : m,
+      );
+      saveEdit(activeSchedule, onSaveSettings, { members: nextMembers });
+      const changed = [
+        newName !== undefined ? `「${newName}」に改名` : null,
+        skip !== undefined ? (skip ? "休みに設定" : "復帰") : null,
+      ]
+        .filter(Boolean)
+        .join("、");
+      return result(`「${target.name}」を${changed}しました。`);
+    },
+  };
+}
+
+function configureRotationTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "configure_rotation",
+    description:
+      "Configure how the active roster rotates. mode 'manual' = advance by hand; mode 'date' = auto-advance by date (requires start_date as YYYY-MM-DD and cycle_days). Optionally skip Saturdays / Sundays / Japanese holidays. Provide only the fields you want to change.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        mode: { type: "string", enum: ["manual", "date"], description: "Rotation mode" },
+        start_date: { type: "string", description: "Start date YYYY-MM-DD (date mode)" },
+        cycle_days: { type: "number", description: "Days per rotation, positive integer (date mode)" },
+        skip_saturday: { type: "boolean" },
+        skip_sunday: { type: "boolean" },
+        skip_holidays: { type: "boolean" },
+      },
+    },
+    async execute(input) {
+      const { activeSchedule, onSaveSettings } = get();
+      if (!activeSchedule) return result("現在選択されている当番表がありません。");
+      const mode = optStr(input, "mode");
+      const startDate = optStr(input, "start_date");
+      const cycleDays = optNum(input, "cycle_days");
+      const skipSat = optBool(input, "skip_saturday");
+      const skipSun = optBool(input, "skip_sunday");
+      const skipHol = optBool(input, "skip_holidays");
+      if (
+        mode === undefined &&
+        startDate === undefined &&
+        cycleDays === undefined &&
+        skipSat === undefined &&
+        skipSun === undefined &&
+        skipHol === undefined
+      ) {
+        return result("変更する項目を指定してください。");
+      }
+      if (mode !== undefined && mode !== "manual" && mode !== "date") {
+        return result('mode は "manual" または "date" を指定してください。');
+      }
+      if (cycleDays !== undefined && (!Number.isInteger(cycleDays) || cycleDays <= 0)) {
+        return result("cycle_days（周期）は 1 以上の整数で指定してください。");
+      }
+      if (startDate !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
+        return result("start_date（開始日）は YYYY-MM-DD 形式で指定してください。");
+      }
+      const current: RotationConfig = activeSchedule.rotationConfig ?? { mode: "manual" };
+      const merged: RotationConfig = { ...current };
+      if (mode !== undefined) merged.mode = mode as "manual" | "date";
+      if (startDate !== undefined) merged.startDate = startDate;
+      if (cycleDays !== undefined) merged.cycleDays = cycleDays;
+      if (skipSat !== undefined) merged.skipSaturday = skipSat;
+      if (skipSun !== undefined) merged.skipSunday = skipSun;
+      if (skipHol !== undefined) merged.skipHolidays = skipHol;
+      if (merged.mode === "date" && (!merged.startDate || !merged.cycleDays)) {
+        return result("日付モードには開始日(start_date)と周期(cycle_days)が必要です。");
+      }
+      saveEdit(activeSchedule, onSaveSettings, { rotationConfig: merged });
+      const label =
+        merged.mode === "date"
+          ? `日付ベース（${merged.startDate} 起点 / ${merged.cycleDays}日ごと）`
+          : "手動";
+      return result(`回転設定を更新しました（${label}）。`);
+    },
+  };
+}
+
+function duplicateScheduleTool(get: () => HomeState): WebMCPTool {
+  return {
+    name: "duplicate_schedule",
+    description:
+      "Duplicate the active roster as a new copy (members, groups, and settings are copied; the copy becomes active).",
+    inputSchema: { type: "object", properties: {} },
+    async execute() {
+      const { activeSchedule, onDuplicateSchedule } = get();
+      if (!activeSchedule) return result("現在選択されている当番表がありません。");
+      onDuplicateSchedule();
+      return result(`「${activeSchedule.name}」を複製しました。`);
+    },
+  };
+}
+
 /** 登録する全 tool を組み立てる。get() は常に最新の HomeState を返すこと。 */
 export function buildTobanTools(get: () => HomeState): WebMCPTool[] {
   return [
@@ -343,9 +529,13 @@ export function buildTobanTools(get: () => HomeState): WebMCPTool[] {
     advanceRotationTool(get),
     changeViewTool(get),
     createScheduleTool(get),
+    updateScheduleTool(get),
+    duplicateScheduleTool(get),
     addMemberTool(get),
     removeMemberTool(get),
+    updateMemberTool(get),
     setRotationTool(get),
+    configureRotationTool(get),
     printScheduleTool(get),
   ];
 }
