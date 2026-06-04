@@ -15,6 +15,7 @@ import {
   TEMPLATE_SEO_DATA,
   COMMON_FAQ,
 } from "@shared/seo-templates";
+import { CONTACT_CATEGORIES } from "@shared/schemas";
 import { TEMPLATES } from "@/rotation/constants";
 import "./landing.css";
 
@@ -109,7 +110,7 @@ function ShareDropdown({ onClose }: { onClose: () => void }) {
 }
 
 function ContactForm() {
-  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -122,11 +123,11 @@ function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message, url: honeypot }),
+        body: JSON.stringify({ category, email, message, url: honeypot }),
       });
       if (!res.ok) throw new Error();
       setStatus("sent");
-      setName("");
+      setCategory("");
       setEmail("");
       setMessage("");
     } catch {
@@ -161,21 +162,27 @@ function ContactForm() {
         <input id="contact-url" name="url" type="text" autoComplete="off" tabIndex={-1} aria-label="URL (honeypot)" />
       </div>
       <div>
-        <label htmlFor="contact-name" className="block text-sm font-bold mb-1" style={{ color: C.text }}>
-          お名前
+        <label htmlFor="contact-category" className="block text-sm font-bold mb-1" style={{ color: C.text }}>
+          お問い合わせ種別
         </label>
-        <input
-          id="contact-name"
-          type="text"
+        <select
+          id="contact-category"
           required
-          maxLength={50}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
           className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-shadow"
-          style={{ borderColor: C.border, color: C.text }}
-          placeholder="山田 太郎"
-          aria-label="お名前"
-        />
+          style={{ borderColor: C.border, backgroundColor: C.cardBg, color: category ? C.text : C.textSecondary }}
+          aria-label="お問い合わせ種別"
+        >
+          <option value="" disabled>
+            選択してください
+          </option>
+          {CONTACT_CATEGORIES.map((c) => (
+            <option key={c} value={c} style={{ color: C.text }}>
+              {c}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label htmlFor="contact-email" className="block text-sm font-bold mb-1" style={{ color: C.text }}>
