@@ -1,9 +1,11 @@
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
+import { useT } from "@/i18n";
 
 export function usePrintMode(): {
   handlePrint: (viewTab: string) => void;
 } {
+  const t = useT();
   useEffect(() => {
     const cleanupPrintState = () => {
       delete document.body.dataset.printMode;
@@ -18,7 +20,7 @@ export function usePrintMode(): {
 
   const handlePrint = useCallback((viewTab: string) => {
     if (typeof window.print !== "function") {
-      toast.error("このブラウザでは印刷できません。SafariまたはChromeで開いてください");
+      toast.error(t("shared.printUnsupported"));
       return;
     }
     document.body.dataset.printMode = viewTab;
@@ -28,7 +30,7 @@ export function usePrintMode(): {
     style.textContent = `@page { size: A4 ${orientation}; }`;
     document.head.appendChild(style);
     window.print();
-  }, []);
+  }, [t]);
 
   return { handlePrint };
 }

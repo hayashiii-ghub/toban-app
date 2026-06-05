@@ -2,9 +2,11 @@ import { startTransition, useCallback, useMemo, useState } from "react";
 import type { AppState, AssignmentMode, Member, RotationConfig, Schedule, ScheduleTemplate, TaskGroup } from "@/rotation/types";
 import { createScheduleFromTemplate, deepClone, generateId, loadState, normalizeRotation, saveState } from "@/rotation/utils";
 import { deleteSchedule } from "@/lib/api";
+import { useT } from "@/i18n";
 import { toast } from "sonner";
 
 export function useScheduleManager() {
+  const t = useT();
   const [state, setState] = useState<AppState>(loadState);
 
   const activeSchedule = useMemo(() => {
@@ -41,7 +43,7 @@ export function useScheduleManager() {
     if (schedule?.slug && schedule?.editToken) {
       deleteSchedule(schedule.slug, schedule.editToken).catch((error) => {
         console.error("Failed to delete schedule from server:", error);
-        toast.error("サーバーからの削除に失敗しました");
+        toast.error(t("schedule.deleteFailed"));
       });
     }
 
@@ -57,13 +59,13 @@ export function useScheduleManager() {
         };
       });
     });
-  }, [state.schedules]);
+  }, [state.schedules, t]);
 
   const handleDuplicateSchedule = useCallback(() => {
     if (!activeSchedule) return;
     const clone: Schedule = {
       id: generateId("s"),
-      name: `${activeSchedule.name}（コピー）`,
+      name: t("schedule.copyName", { name: activeSchedule.name }),
       rotation: 0,
       groups: deepClone(activeSchedule.groups),
       members: deepClone(activeSchedule.members),
@@ -77,7 +79,7 @@ export function useScheduleManager() {
         activeScheduleId: clone.id,
       }));
     });
-  }, [activeSchedule]);
+  }, [activeSchedule, t]);
 
   const handleSaveSettings = useCallback((name: string, nextGroups: TaskGroup[], nextMembers: Member[], rotationConfig?: RotationConfig, pinned?: boolean, assignmentMode?: AssignmentMode, designThemeId?: string) => {
     updateActiveSchedule((schedule) => ({

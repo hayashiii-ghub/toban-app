@@ -3,6 +3,7 @@ import { m } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useT } from "@/i18n";
 
 interface Props {
   scheduleName: string;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function ConfirmDeleteDialog({ scheduleName, onConfirm, onCancel }: Props) {
+  const t = useT();
   const modalRef = useRef<HTMLDivElement>(null);
   const handleEscape = useCallback(() => onCancel(), [onCancel]);
   useEscapeKey(handleEscape);
@@ -39,10 +41,10 @@ export function ConfirmDeleteDialog({ scheduleName, onConfirm, onCancel }: Props
       >
         <div className="flex items-center gap-3 mb-4">
           <Trash2 className="size-5" style={{ color: "#DC2626" }} aria-hidden="true" />
-          <h3 id="delete-dialog-title" className="font-extrabold text-lg">当番表を削除</h3>
+          <h3 id="delete-dialog-title" className="font-extrabold text-lg">{t("confirmDelete.title")}</h3>
         </div>
         <p className="text-sm mb-6" style={{ color: "#555" }}>
-          「{scheduleName}」を削除しますか？この操作は元に戻せません。
+          {t("confirmDelete.message", { name: scheduleName })}
         </p>
         <div className="flex gap-3">
           <button type="button"
@@ -50,14 +52,14 @@ export function ConfirmDeleteDialog({ scheduleName, onConfirm, onCancel }: Props
             className="theme-border theme-shadow-sm flex-1 px-4 py-2.5 font-bold text-sm transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "10px" }}
           >
-            キャンセル
+            {t("common.cancel")}
           </button>
           <button type="button"
             onClick={onConfirm}
             className="theme-border theme-shadow-sm flex-1 px-4 py-2.5 font-bold text-sm text-white transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "#DC2626", borderRadius: "10px" }}
           >
-            削除する
+            {t("confirmDelete.confirm")}
           </button>
         </div>
       </m.div>

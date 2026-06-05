@@ -1,5 +1,6 @@
 import type { TaskGroup, Member, AssignmentMode } from "@/rotation/types";
 import { computeAssignments } from "@/rotation/utils";
+import { useT, useDateLocale } from "@/i18n";
 
 interface TodayBannerProps {
   groups: TaskGroup[];
@@ -9,10 +10,12 @@ interface TodayBannerProps {
 }
 
 export function TodayBanner({ groups, members, rotation, assignmentMode }: TodayBannerProps) {
+  const t = useT();
+  const dateLocale = useDateLocale();
   const assignments = computeAssignments(groups, members, rotation, assignmentMode);
   if (assignments.length === 0) return null;
 
-  const today = new Date().toLocaleDateString("ja-JP", { month: "short", day: "numeric", weekday: "short" });
+  const today = new Date().toLocaleDateString(dateLocale, { month: "short", day: "numeric", weekday: "short" });
 
   return (
     <div className="px-3 sm:px-4 pb-2 rotation-no-print">
@@ -21,7 +24,7 @@ export function TodayBanner({ groups, members, rotation, assignmentMode }: Today
         style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "var(--dt-border-radius-sm)" }}
       >
         <span className="text-xs font-bold shrink-0" style={{ color: "var(--dt-text-muted)" }}>
-          きょうの当番（{today}）
+          {t("today.label", { date: today })}
         </span>
         <div className="flex items-center gap-1.5 flex-wrap">
           {assignments.map(({ group, member }) => (

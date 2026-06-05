@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import type { Member, TaskGroup } from "@/rotation/types";
 import { MEMBER_PRESETS } from "@/rotation/constants";
 import { generateId, deepClone } from "@/rotation/utils";
+import { useT } from "@/i18n";
 
 interface Props {
   members: Member[];
@@ -14,11 +15,12 @@ interface Props {
 }
 
 export function BulkMemberAdd({ members, groups, activeMemberIds, isTaskMode, onMembersChange, onGroupsChange, onClose }: Props) {
+  const t = useT();
   const [bulkText, setBulkText] = useState("");
   const bulkNames = useMemo(
     () => bulkText.split(/[\n,、\t]+/).flatMap((s) => {
-      const t = s.trim();
-      return t ? [t] : [];
+      const trimmed = s.trim();
+      return trimmed ? [trimmed] : [];
     }),
     [bulkText],
   );
@@ -41,7 +43,7 @@ export function BulkMemberAdd({ members, groups, activeMemberIds, isTaskMode, on
     } else {
       const newGroups = newMembers.map(() => ({
         id: generateId("g"),
-        tasks: ["新しいタスク"],
+        tasks: [t("settings.newTask")],
         emoji: "✨",
       } as TaskGroup));
       onMembersChange([...members, ...newMembers]);
@@ -56,15 +58,15 @@ export function BulkMemberAdd({ members, groups, activeMemberIds, isTaskMode, on
       <textarea
         value={bulkText}
         onChange={(e) => setBulkText(e.target.value)}
-        placeholder={isTaskMode ? "メンバー名を入力（1行に1人、またはカンマ区切り）\n例：田中, 佐藤, 鈴木\n（全タスクに追加されます）" : "名前を入力（1行に1人、またはカンマ区切り）\n例：田中, 佐藤, 鈴木\n（グループも同時に作成されます）"}
+        placeholder={isTaskMode ? t("bulk.placeholderTask") : t("bulk.placeholderMember")}
         rows={5}
         className="theme-border px-3 py-2 text-sm font-medium resize-none"
         style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
-        aria-label={isTaskMode ? "メンバーを一括追加" : "メンバーとグループを一括追加"}
+        aria-label={isTaskMode ? t("bulk.ariaTask") : t("bulk.ariaMember")}
       />
       {bulkNames.length > 0 && (
         <p className="text-xs font-bold" style={{ color: "var(--dt-text-secondary)" }}>
-          {bulkNames.length}人を追加します
+          {t("bulk.willAdd", { n: bulkNames.length })}
         </p>
       )}
       <button type="button"
@@ -73,7 +75,7 @@ export function BulkMemberAdd({ members, groups, activeMemberIds, isTaskMode, on
         className="theme-border theme-shadow-sm flex items-center justify-center gap-2 px-4 py-2.5 font-bold text-sm text-white transition-all duration-150 hover:translate-x-[-2px] hover:translate-y-[-2px] disabled:opacity-40 disabled:hover:translate-x-0 disabled:hover:translate-y-0"
         style={{ backgroundColor: "#1a1a1a", borderRadius: "10px" }}
       >
-        追加する
+        {t("bulk.add")}
       </button>
     </div>
   );

@@ -1,8 +1,10 @@
 import { Home, AlertCircle } from "lucide-react";
 import { useLocation } from "wouter";
+import { useT } from "@/i18n";
 
 export default function NotFound() {
   const [, setLocation] = useLocation();
+  const t = useT();
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: "var(--dt-page-bg)" }}>
@@ -23,10 +25,10 @@ export default function NotFound() {
           404
         </h1>
         <h2 className="text-lg font-bold mb-4" style={{ color: "#444" }}>
-          ページが見つかりません
+          {t("notFound.title")}
         </h2>
         <p className="text-sm mb-8" style={{ color: "var(--dt-text-secondary)" }}>
-          お探しのページは存在しないか、移動した可能性があります。
+          {t("notFound.message")}
         </p>
 
         <button type="button"
@@ -35,7 +37,7 @@ export default function NotFound() {
           style={{ backgroundColor: "#1a1a1a", borderRadius: "10px" }}
         >
           <Home className="size-4" aria-hidden="true" />
-          ホームへ
+          {t("notFound.home")}
         </button>
       </div>
     </div>

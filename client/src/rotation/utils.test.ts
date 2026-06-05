@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { DEFAULT_APP_STATE } from "./defaultState";
+import { DEFAULT_APP_STATE, DEFAULT_APP_STATE_EN } from "./defaultState";
 import { STORAGE_KEY } from "./constants";
 import { getHolidaysForYear } from "./holidays";
 import {
@@ -67,11 +67,21 @@ describe("loadState", () => {
       getItem,
       setItem: vi.fn(),
     });
+    vi.stubGlobal("navigator", { language: "ja" });
 
     const state = loadState();
 
     expect(getItem).toHaveBeenCalledWith(STORAGE_KEY);
     expect(state).toEqual(DEFAULT_APP_STATE);
+  });
+
+  it("seeds the English default when the locale resolves to en", () => {
+    vi.stubGlobal("localStorage", { getItem: vi.fn(() => null), setItem: vi.fn() });
+    vi.stubGlobal("navigator", { language: "en-US" });
+
+    const state = loadState();
+
+    expect(state).toEqual(DEFAULT_APP_STATE_EN);
   });
 
   it("normalizes valid stored rotation and active schedule", () => {

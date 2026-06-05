@@ -6,6 +6,8 @@ import { Route, Switch, useLocation } from "wouter";
 import { CircleHelp, Loader2 } from "lucide-react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { LanguageProvider, useT } from "./i18n";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 import Home from "./pages/Home";
 
 const LandingPage = lazy(() => import("./pages/LandingPage"));
@@ -44,6 +46,7 @@ function Router() {
 
 function AppFooter() {
   const [location] = useLocation();
+  const t = useT();
   // アプリ本体と共有ページのみ表示
   const showFooter = location === "/" || location.startsWith("/s/");
   if (!showFooter) return null;
@@ -51,12 +54,13 @@ function AppFooter() {
   return (
     <footer className="py-2 pr-3 text-right print:hidden md:fixed md:bottom-0 md:right-0 md:z-50">
       <div className="flex items-center justify-end gap-1 md:inline-flex">
+        <LanguageSwitcher />
         <a
           href="/about"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center size-8 rounded-full text-muted-foreground/60 hover:text-muted-foreground/80 hover:bg-muted/40 transition-colors"
-          title="toban について"
+          title={t("footer.about")}
         >
           <CircleHelp className="size-5" />
         </a>
@@ -88,11 +92,13 @@ function App() {
             defaultTheme="light"
             // switchable
           >
-            <TooltipProvider>
-              <Toaster />
-              <Router />
-              <AppFooter />
-            </TooltipProvider>
+            <LanguageProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Router />
+                <AppFooter />
+              </TooltipProvider>
+            </LanguageProvider>
           </ThemeProvider>
         </MotionConfig>
       </LazyMotion>

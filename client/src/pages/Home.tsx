@@ -15,10 +15,12 @@ import { TodayBanner } from "@/features/home/TodayBanner";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { useHomeState } from "./useHomeState";
 import { useTobanTools } from "@/hooks/useTobanTools";
+import { useT } from "@/i18n";
 import "./home.css";
 
 export default function Home() {
   const s = useHomeState();
+  const t = useT();
   useTobanTools(s); // WebMCP tools を登録（非対応ブラウザでは no-op）
 
   if (!s.activeSchedule) {
@@ -26,15 +28,15 @@ export default function Home() {
       <DesignThemeProvider themeId={undefined}>
         <main className="rotation-page min-h-screen" style={{ backgroundColor: "var(--dt-page-bg)" }}>
           <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
-            <p className="text-lg font-bold" style={{ color: "var(--dt-text)" }}>当番表がありません</p>
-            <p className="text-sm" style={{ color: "var(--dt-text-secondary)" }}>新しい当番表を作成してください。</p>
+            <p className="text-lg font-bold" style={{ color: "var(--dt-text)" }}>{t("home.empty")}</p>
+            <p className="text-sm" style={{ color: "var(--dt-text-secondary)" }}>{t("home.emptyHint")}</p>
             <button
               type="button"
               className="theme-border px-6 py-3 font-bold theme-hover-lift transition-all duration-150"
               style={{ backgroundColor: "var(--dt-button-bg)", borderRadius: "var(--dt-border-radius-sm)", color: "var(--dt-text)" }}
               onClick={s.openNewSchedule}
             >
-              当番表を作成
+              {t("home.create")}
             </button>
           </div>
           {createPortal(
@@ -50,7 +52,7 @@ export default function Home() {
     );
   }
 
-  const rotationLabel = s.effectiveRotation === 0 ? "初期" : `${s.effectiveRotation}回目`;
+  const rotationLabel = s.effectiveRotation === 0 ? t("rotation.initial") : t("rotation.nth", { n: s.effectiveRotation });
 
   return (
     <DesignThemeProvider themeId={s.activeSchedule.designThemeId}>

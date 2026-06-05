@@ -1,5 +1,6 @@
 import { m } from "framer-motion";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
+import { useT } from "@/i18n";
 
 interface ScheduleHeaderProps {
   scheduleName: string;
@@ -10,6 +11,7 @@ export function ScheduleHeader({
   scheduleName,
   rotationLabel,
 }: ScheduleHeaderProps) {
+  const t = useT();
   const printDate = usePrintDateString();
   return (
     <header className="rotation-print-header pt-6 sm:pt-8 pb-6 sm:pb-8 px-3 sm:px-4">
@@ -38,7 +40,7 @@ export function ScheduleHeader({
             style={{ color: "var(--dt-text-secondary)", borderBottom: "2px solid var(--dt-current-highlight)" }}
           >
             <span className="inline-block pb-2">
-              順番: {rotationLabel} ／ 印刷日: {printDate}
+              {t("shared.printHeader", { label: rotationLabel, date: printDate })}
             </span>
           </div>
         </m.div>

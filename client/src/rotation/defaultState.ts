@@ -29,3 +29,33 @@ export const DEFAULT_APP_STATE: AppState = {
   ],
   activeScheduleId: "s_default_1",
 };
+
+/**
+ * 英語ロケールでの初回表示用デフォルト。
+ * 英語ユーザがクリーンな状態で開いたとき、日本語ガイドではなく英語ガイドを seed する。
+ * テンプレート一覧（gallery）は日本語のままなので、ここはコールドスタートの入口だけ英語化する。
+ */
+export const DEFAULT_APP_STATE_EN: AppState = {
+  schedules: [
+    {
+      id: "s_default_1",
+      name: "Getting Started",
+      rotation: 0,
+      assignmentMode: "task",
+      designThemeId: "chalkboard",
+      groups: [
+        { id: "g1", tasks: ["Pick a template", "Choose any roster from the Template button"], emoji: "📋" },
+        { id: "g2", tasks: ["Edit members & tasks", "Tap a name or task to change it freely"], emoji: "✏️" },
+        { id: "g3", tasks: ["Advance the rotation", "Use the ◀ ▶ buttons to switch who's on duty"], emoji: "🔄" },
+        { id: "g4", tasks: ["Print or share", "When you're done, print, save as PDF, or share by URL"], emoji: "🖨️" },
+      ],
+      members: [
+        { id: "m1", name: "Step 1", color: "#3B82F6", bgColor: "#DBEAFE", textColor: "#1E3A5F" },
+        { id: "m2", name: "Step 2", color: "#10B981", bgColor: "#D1FAE5", textColor: "#064E3B" },
+        { id: "m3", name: "Step 3", color: "#F97316", bgColor: "#FED7AA", textColor: "#7C2D12" },
+        { id: "m4", name: "Step 4", color: "#8B5CF6", bgColor: "#EDE9FE", textColor: "#4C1D95" },
+      ],
+    },
+  ],
+  activeScheduleId: "s_default_1",
+};

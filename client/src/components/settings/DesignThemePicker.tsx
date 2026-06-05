@@ -1,5 +1,6 @@
 import { Check, Printer } from "lucide-react";
 import { DESIGN_THEMES } from "@/rotation/designThemes";
+import { useT } from "@/i18n";
 
 interface DesignThemePickerProps {
   selectedThemeId: string | undefined;
@@ -7,6 +8,7 @@ interface DesignThemePickerProps {
 }
 
 export function DesignThemePicker({ selectedThemeId, onSelect }: DesignThemePickerProps) {
+  const t = useT();
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-0.5">
       {DESIGN_THEMES.map((theme) => {
@@ -25,7 +27,7 @@ export function DesignThemePicker({ selectedThemeId, onSelect }: DesignThemePick
               ...(isSelected ? { "--tw-ring-color": "var(--dt-current-highlight)" } as React.CSSProperties : {}),
             }}
             aria-pressed={isSelected}
-            aria-label={`${theme.name}テーマを選択`}
+            aria-label={t("theme.selectAria", { name: theme.name })}
           >
             {/* ミニプレビュー */}
             <div
@@ -60,7 +62,7 @@ export function DesignThemePicker({ selectedThemeId, onSelect }: DesignThemePick
                 {theme.name}
               </span>
               {theme.id === "whiteboard" && (
-                <Printer className="size-3" style={{ color: "var(--dt-text-muted)" }} aria-label="印刷向け" />
+                <Printer className="size-3" style={{ color: "var(--dt-text-muted)" }} aria-label={t("theme.forPrint")} />
               )}
             </div>
             <div className="text-[10px]" style={{ color: "var(--dt-text-muted)" }}>

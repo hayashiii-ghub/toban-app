@@ -3,6 +3,7 @@ import { m, AnimatePresence } from "framer-motion";
 import type { AssignmentMode, Member, RotationConfig, TaskGroup } from "@/rotation/types";
 import { computeAssignments, computeDateRotationForDate } from "@/rotation/utils";
 import { getHolidaysForMonth } from "@/rotation/holidays";
+import { useT, useDateLocale } from "@/i18n";
 
 interface RotationCalendarProps {
   groups: TaskGroup[];
@@ -11,8 +12,6 @@ interface RotationCalendarProps {
   rotationConfig?: RotationConfig;
   assignmentMode?: AssignmentMode;
 }
-
-const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
 
 function getCalendarDays(year: number, month: number) {
   const firstDay = new Date(year, month, 1);
@@ -38,6 +37,12 @@ export function RotationCalendar({
   rotationConfig,
   assignmentMode,
 }: RotationCalendarProps) {
+  const t = useT();
+  const dateLocale = useDateLocale();
+  const weekdayLabels = [
+    t("cal.wd0"), t("cal.wd1"), t("cal.wd2"), t("cal.wd3"),
+    t("cal.wd4"), t("cal.wd5"), t("cal.wd6"),
+  ];
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -50,6 +55,7 @@ export function RotationCalendar({
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
+  const monthLabel = new Date(year, month, 1).toLocaleDateString(dateLocale, { year: "numeric", month: "long" });
   const isDateMode = rotationConfig?.mode === "date";
 
   const activeMembers = useMemo(() => members.filter(m => !m.skipped), [members]);
@@ -102,11 +108,11 @@ export function RotationCalendar({
               className="text-sm tracking-wider uppercase"
               style={{ color: "var(--dt-text-secondary)", fontWeight: "var(--dt-font-weight-extra)" }}
             >
-              カレンダー
+              {t("view.calendar")}
             </h2>
             {!isDateMode && (
               <span className="text-xs font-bold px-2 py-1 rounded-md rotation-no-print" style={{ backgroundColor: "color-mix(in srgb, var(--dt-current-highlight) 20%, var(--dt-card-bg))", color: "var(--dt-text-secondary)" }}>
-                手動切り替え：当番は固定です
+                {t("cal.manualNote")}
               </span>
             )}
           </div>
@@ -122,7 +128,7 @@ export function RotationCalendar({
             </button>
             <div className="flex items-center gap-2">
               <span className="text-base sm:text-lg" style={{ color: "var(--dt-text)", fontWeight: "var(--dt-font-weight-extra)" }}>
-                {year}年{month + 1}月
+                {monthLabel}
               </span>
               {(year !== today.getFullYear() || month !== today.getMonth()) && (
                 <button type="button"
@@ -130,7 +136,7 @@ export function RotationCalendar({
                   className="theme-border px-2 py-1 font-bold text-xs theme-hover-lift transition-all duration-150 rotation-no-print"
                   style={{ backgroundColor: "var(--dt-current-highlight)", borderRadius: "6px" }}
                 >
-                  今月
+                  {t("cal.thisMonth")}
                 </button>
               )}
             </div>
@@ -145,7 +151,7 @@ export function RotationCalendar({
 
           {/* Weekday headers */}
           <div className="grid grid-cols-7 mb-1">
-            {WEEKDAY_LABELS.map((label, i) => (
+            {weekdayLabels.map((label, i) => (
               <div
                 key={label}
                 className="text-center py-1.5 text-xs"
@@ -252,7 +258,7 @@ export function RotationCalendar({
                             onClick={(e) => e.stopPropagation()}
                           >
                             <div className="text-xs mb-1.5" style={{ color: "var(--dt-text)", fontWeight: "var(--dt-font-weight-extra)" }}>
-                              {day.getMonth() + 1}/{day.getDate()}（{WEEKDAY_LABELS[dow]}）
+                              {t("cal.dayLabel", { month: day.getMonth() + 1, day: day.getDate(), weekday: weekdayLabels[dow] })}
                               {holidayName && <span style={{ color: "#EF4444" }}> {holidayName}</span>}
                             </div>
                             <div className="flex flex-col gap-1">

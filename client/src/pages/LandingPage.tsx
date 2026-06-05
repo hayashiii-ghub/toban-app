@@ -17,6 +17,7 @@ import {
 } from "@shared/seo-templates";
 import { CONTACT_CATEGORIES } from "@shared/schemas";
 import { TEMPLATES } from "@/rotation/constants";
+import { useT } from "@/i18n";
 import "./landing.css";
 
 // 黒板テーマカラー
@@ -36,34 +37,34 @@ const C = {
 } as const;
 
 const SHARE_URL = typeof window !== "undefined" ? `${window.location.origin}/about` : "https://toban.shigoto.dev/about";
-const SHARE_TEXT = "かんたん当番表、すぐ完成。掃除・給食・日直のローテーション表を無料で作成できます。";
-const SHARE_TITLE = "toban｜かんたん当番表";
 
 function ShareDropdown({ onClose }: { onClose: () => void }) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
+  const shareText = t("lp.shareText");
 
   const handleCopyUrl = async () => {
     try {
       await navigator.clipboard.writeText(SHARE_URL);
       setCopied(true);
-      toast.success("URLをコピーしました");
+      toast.success(t("lp.urlCopied"));
       setTimeout(() => {
         setCopied(false);
         onClose();
       }, 1000);
     } catch {
-      toast.error("コピーに失敗しました");
+      toast.error(t("lp.copyFailed"));
     }
   };
 
-  const lineShareUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(SHARE_URL)}&text=${encodeURIComponent(SHARE_TEXT)}`;
-  const xShareUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(SHARE_URL)}&text=${encodeURIComponent(SHARE_TEXT)}`;
+  const lineShareUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(SHARE_URL)}&text=${encodeURIComponent(shareText)}`;
+  const xShareUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(SHARE_URL)}&text=${encodeURIComponent(shareText)}`;
 
   return (
     <>
       <button
         type="button"
-        aria-label="共有メニューを閉じる"
+        aria-label={t("lp.shareMenuClose")}
         className="fixed inset-0 z-40 cursor-default"
         tabIndex={-1}
         onClick={onClose}
@@ -82,7 +83,7 @@ function ShareDropdown({ onClose }: { onClose: () => void }) {
           <svg viewBox="0 0 24 24" className="size-5" fill="currentColor">
             <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
           </svg>
-          LINEで共有
+          {t("share.lineShare")}
         </a>
         <a
           href={xShareUrl}
@@ -94,7 +95,7 @@ function ShareDropdown({ onClose }: { onClose: () => void }) {
           <svg viewBox="0 0 24 24" className="size-5" fill="currentColor">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
           </svg>
-          Xで共有
+          {t("lp.shareX")}
         </a>
         <button type="button"
           onClick={handleCopyUrl}
@@ -102,7 +103,7 @@ function ShareDropdown({ onClose }: { onClose: () => void }) {
           style={{ color: C.text }}
         >
           {copied ? <Check className="size-5" /> : <Copy className="size-5" />}
-          URLをコピー
+          {t("share.copyUrl")}
         </button>
       </div>
     </>
@@ -110,6 +111,7 @@ function ShareDropdown({ onClose }: { onClose: () => void }) {
 }
 
 function ContactForm() {
+  const t = useT();
   const [category, setCategory] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -138,9 +140,9 @@ function ContactForm() {
   if (status === "sent") {
     return (
       <div className="border p-6 sm:p-8 text-center" style={{ borderColor: C.border, backgroundColor: C.cardBg, borderRadius: "6px" }}>
-        <p className="text-lg font-bold" style={{ color: C.primary }}>送信しました</p>
+        <p className="text-lg font-bold" style={{ color: C.primary }}>{t("contact.sent")}</p>
         <p className="text-sm mt-2" style={{ color: C.textSecondary }}>
-          お問い合わせいただきありがとうございます。内容を確認のうえ、ご返信いたします。
+          {t("contact.sentDetail")}
         </p>
         <button
           type="button"
@@ -148,7 +150,7 @@ function ContactForm() {
           className="mt-4 text-sm font-bold underline"
           style={{ color: C.primary }}
         >
-          別の内容を送信する
+          {t("contact.sendAnother")}
         </button>
       </div>
     );
@@ -163,7 +165,7 @@ function ContactForm() {
       </div>
       <div>
         <label htmlFor="contact-category" className="block text-sm font-bold mb-1" style={{ color: C.text }}>
-          お問い合わせ種別
+          {t("contact.categoryLabel")}
         </label>
         <select
           id="contact-category"
@@ -172,10 +174,10 @@ function ContactForm() {
           onChange={(e) => setCategory(e.target.value)}
           className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-shadow"
           style={{ borderColor: C.border, backgroundColor: C.cardBg, color: category ? C.text : C.textSecondary }}
-          aria-label="お問い合わせ種別"
+          aria-label={t("contact.categoryLabel")}
         >
           <option value="" disabled>
-            選択してください
+            {t("contact.selectPlaceholder")}
           </option>
           {CONTACT_CATEGORIES.map((c) => (
             <option key={c} value={c} style={{ color: C.text }}>
@@ -186,7 +188,7 @@ function ContactForm() {
       </div>
       <div>
         <label htmlFor="contact-email" className="block text-sm font-bold mb-1" style={{ color: C.text }}>
-          メールアドレス
+          {t("contact.emailLabel")}
         </label>
         <input
           id="contact-email"
@@ -198,12 +200,12 @@ function ContactForm() {
           className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-shadow"
           style={{ borderColor: C.border, color: C.text }}
           placeholder="example@email.com"
-          aria-label="メールアドレス"
+          aria-label={t("contact.emailLabel")}
         />
       </div>
       <div>
         <label htmlFor="contact-message" className="block text-sm font-bold mb-1" style={{ color: C.text }}>
-          お問い合わせ内容
+          {t("contact.messageLabel")}
         </label>
         <textarea
           id="contact-message"
@@ -214,13 +216,13 @@ function ContactForm() {
           onChange={(e) => setMessage(e.target.value)}
           className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-shadow resize-y"
           style={{ borderColor: C.border, color: C.text }}
-          placeholder="不具合の報告や機能のご要望など、お気軽にお書きください。"
-          aria-label="お問い合わせ内容"
+          placeholder={t("contact.messagePlaceholder")}
+          aria-label={t("contact.messageLabel")}
         />
       </div>
       {status === "error" && (
         <p className="text-sm text-red-600">
-          送信に失敗しました。しばらくしてからお試しください。
+          {t("contact.error")}
         </p>
       )}
       <button
@@ -234,7 +236,7 @@ function ContactForm() {
         ) : (
           <Send className="size-4" />
         )}
-        {status === "sending" ? "送信中…" : "送信する"}
+        {status === "sending" ? t("contact.sending") : t("contact.submit")}
       </button>
     </form>
   );
@@ -273,12 +275,13 @@ const featuredTemplates = TEMPLATE_CATEGORIES
   .slice(0, 6);
 
 export default function LandingPage() {
+  const t = useT();
   const [showShareMenu, setShowShareMenu] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "当番表メーカー toban（トバン）｜無料で作成・印刷・共有";
-  }, []);
+    document.title = t("lp.docTitle");
+  }, [t]);
 
   useEffect(() => {
     if (!showShareMenu) return;
@@ -292,7 +295,7 @@ export default function LandingPage() {
   const handleShare = async () => {
     if (isMobile && navigator.share) {
       try {
-        await navigator.share({ title: SHARE_TITLE, text: SHARE_TEXT, url: SHARE_URL });
+        await navigator.share({ title: t("lp.shareTitle"), text: t("lp.shareText"), url: SHARE_URL });
         return;
       } catch (e) {
         if ((e as DOMException).name === "AbortError") return;
@@ -312,17 +315,17 @@ export default function LandingPage() {
           className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight"
           style={{ color: C.heroText }}
         >
-          かんたん当番表、
+          {t("lp.heroTitleA")}
           <br className="sm:hidden" />
-          すぐ完成。
+          {t("lp.heroTitleB")}
         </h1>
         <p
           className="mt-4 text-sm sm:text-base max-w-xl mx-auto leading-relaxed"
           style={{ color: C.heroSubtext }}
         >
-          掃除当番・給食当番・日直のローテーション表を
+          {t("lp.heroSubA")}
           <br className="hidden sm:block" />
-          無料でかんたんに作成・印刷・共有できます。
+          {t("lp.heroSubB")}
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-md sm:max-w-none mx-auto">
           <div className="relative">
@@ -332,7 +335,7 @@ export default function LandingPage() {
               style={{ borderColor: C.heroText, color: C.heroText }}
             >
               <Share2 className="size-5" />
-              tobanを共有する
+              {t("lp.shareToban")}
             </button>
             {showShareMenu && <ShareDropdown onClose={() => setShowShareMenu(false)} />}
           </div>
@@ -341,7 +344,7 @@ export default function LandingPage() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl font-bold px-8 py-3 text-base sm:text-lg shadow-lg transition-colors min-w-[200px] sm:min-w-[220px]"
             style={{ backgroundColor: C.heroText, color: C.primary }}
           >
-            当番表を作る
+            {t("lp.createSchedule")}
             <ArrowRight className="size-5" />
           </Link>
         </div>
@@ -351,14 +354,14 @@ export default function LandingPage() {
       <section className="px-4 py-12 sm:py-16">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-extrabold text-center mb-8" style={{ color: C.text }}>
-            tobanの特徴
+            {t("lp.featuresHeading")}
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {[
-              { emoji: "📝", label: "登録不要", desc: "アカウント不要。ブラウザだけで完結します。" },
-              { emoji: "🖨️", label: "印刷がきれい", desc: "カード・一覧表・カレンダーの3形式で印刷できます。" },
-              { emoji: "🔗", label: "URLで共有", desc: "共有URLを発行してLINEやメールで送れます。" },
-              { emoji: "🆓", label: "完全無料", desc: "すべての機能を無料でお使いいただけます。" },
+              { emoji: "📝", label: t("lp.feat.noSignup.label"), desc: t("lp.feat.noSignup.desc") },
+              { emoji: "🖨️", label: t("lp.feat.print.label"), desc: t("lp.feat.print.desc") },
+              { emoji: "🔗", label: t("lp.feat.share.label"), desc: t("lp.feat.share.desc") },
+              { emoji: "🆓", label: t("lp.feat.free.label"), desc: t("lp.feat.free.desc") },
             ].map(({ label, emoji, desc }) => (
               <div
                 key={label}
@@ -402,10 +405,10 @@ export default function LandingPage() {
       <section className="px-4 py-12 sm:py-16" style={{ backgroundColor: `${C.primary}08` }}>
         <div className="max-w-4xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-extrabold text-center mb-2" style={{ color: C.text }}>
-            すぐ使えるテンプレート
+            {t("lp.templatesHeading")}
           </h2>
           <p className="text-sm text-center mb-8" style={{ color: C.textMuted }}>
-            {TEMPLATE_SEO_DATA.length}種類のテンプレートから選んで、メンバーを入れるだけ。
+            {t("lp.templatesSubtitle", { count: TEMPLATE_SEO_DATA.length })}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {featuredTemplates.map((tpl) => {
@@ -439,7 +442,7 @@ export default function LandingPage() {
               className="inline-flex items-center gap-1 text-sm font-bold underline"
               style={{ color: C.primary }}
             >
-              テンプレート一覧を見る
+              {t("lp.viewAllTemplates")}
               <ArrowRight className="size-3" />
             </Link>
           </div>
@@ -450,7 +453,7 @@ export default function LandingPage() {
       <section className="px-4 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-extrabold text-center mb-8" style={{ color: C.text }}>
-            よくある質問
+            {t("lp.faqHeading")}
           </h2>
           <div className="flex flex-col gap-3">
             {COMMON_FAQ.map((faq) => (
@@ -464,10 +467,10 @@ export default function LandingPage() {
       <section id="contact" className="px-4 py-12 sm:py-16" style={{ backgroundColor: `${C.primary}08` }}>
         <div className="max-w-xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-extrabold text-center mb-2" style={{ color: C.text }}>
-            お問い合わせ
+            {t("contact.heading")}
           </h2>
           <p className="text-sm text-center mb-8" style={{ color: C.textMuted }}>
-            不具合の報告や機能のご要望など、お気軽にご連絡ください。
+            {t("contact.subtitle")}
           </p>
           <div className="border p-4 sm:p-6" style={{ borderColor: C.border, backgroundColor: C.cardBg, borderRadius: "6px" }}>
             <ContactForm />
