@@ -5,6 +5,7 @@ import { z } from "zod";
 import { loadState, saveState, generateId } from "@/rotation/utils";
 import { ApiError, getScheduleForEdit } from "@/lib/api";
 import { decodeShareTransferData } from "@/lib/shareTransfer";
+import { useT, tStandalone } from "@/i18n";
 import { Loader2 } from "lucide-react";
 
 const transferDataSchema = z.object({
@@ -16,7 +17,8 @@ const transferDataSchema = z.object({
 export default function Transfer() {
   const search = useSearch();
   const [, navigate] = useLocation();
-  const [error, setError] = useState<string | null>(null);
+  const t = useT();
+  const [errorKey, setErrorKey] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -25,7 +27,7 @@ export default function Transfer() {
       const params = new URLSearchParams(search);
       const data = params.get("data");
       if (!data) {
-        setError("転送データが見つかりません");
+        setErrorKey("transfer.error.notFound");
         return;
       }
 
@@ -33,7 +35,7 @@ export default function Transfer() {
       try {
         decoded = decodeShareTransferData(data);
       } catch {
-        setError("転送URLが壊れています。もう一度リンクを取得してください");
+        setErrorKey("transfer.error.broken");
         return;
       }
 
@@ -41,7 +43,7 @@ export default function Transfer() {
         try { return JSON.parse(decoded); } catch { return null; }
       })());
       if (!parseResult.success) {
-        setError("転送データの形式が正しくありません");
+        setErrorKey("transfer.error.badFormat");
         return;
       }
       const parsed = parseResult.data;
@@ -78,9 +80,7 @@ export default function Transfer() {
         });
 
         toast.success(
-          existing
-            ? `「${fetched.name}」の編集権限を更新しました`
-            : `「${fetched.name}」の編集権限を追加しました`,
+          tStandalone(existing ? "transfer.updated" : "transfer.added", { name: fetched.name }),
         );
         navigate("/");
       } catch (error) {
@@ -89,10 +89,10 @@ export default function Transfer() {
           error instanceof ApiError &&
           (error.status === 401 || error.status === 403 || error.status === 404)
         ) {
-          setError("編集リンクが無効か、当番表が見つかりません");
+          setErrorKey("transfer.error.invalidLink");
           return;
         }
-        setError("転送データの保存に失敗しました");
+        setErrorKey("transfer.error.saveFailed");
       }
     })();
 
@@ -101,17 +101,17 @@ export default function Transfer() {
     };
   }, [search, navigate]);
 
-  if (error) {
+  if (errorKey) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ backgroundColor: "var(--dt-page-bg)" }}>
         <div className="text-6xl">😢</div>
-        <h1 className="text-xl font-bold" style={{ color: "var(--dt-text)" }}>{error}</h1>
+        <h1 className="text-xl font-bold" style={{ color: "var(--dt-text)" }}>{t(errorKey)}</h1>
         <a
           href="/"
           className="theme-border theme-shadow-sm px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: "var(--dt-current-highlight)", borderRadius: "var(--dt-border-radius-sm)" }}
         >
-          ホームに戻る
+          {t("error.backHome")}
         </a>
       </div>
     );

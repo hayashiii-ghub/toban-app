@@ -1,54 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
+import { useT } from "@/i18n";
 
 interface OnboardingOverlayProps {
   onComplete: () => void;
 }
 
+// title / description は辞書から引く（key 単位）。selector は data 属性なので非翻訳。
 const STEPS = [
-  {
-    selector: '[data-onboarding="schedule-tabs"]',
-    title: "当番表の切り替え",
-    description: "タブで当番表を切り替えられます",
-  },
-  {
-    selector: '[data-onboarding="edit-button"]',
-    title: "まずは中身を編集",
-    description: "メンバーやタスクの追加・削除はここから",
-  },
-  {
-    selector: '[data-onboarding="rotation-controls"]',
-    title: "順番を送る",
-    description: "矢印ボタンで次の当番に進められます",
-  },
-  {
-    selector: '[data-onboarding="view-tabs"]',
-    title: "見かたを変える",
-    description: "カード・早見表・カレンダーの3種類から選べます",
-  },
-  {
-    selector: '[data-onboarding="print-button"]',
-    title: "印刷・PDF保存",
-    description: "今の表示をそのまま印刷できます。PDF保存も◎",
-  },
-  {
-    selector: '[data-onboarding="share-button"]',
-    title: "みんなに共有",
-    description: "QRコードやLINEでかんたんにシェアできます",
-  },
-  {
-    selector: '[data-onboarding="add-button"]',
-    title: "当番表を追加",
-    description: "掃除・給食・日直など、いくつでも作れます",
-  },
+  { selector: '[data-onboarding="schedule-tabs"]', key: "tabs" },
+  { selector: '[data-onboarding="edit-button"]', key: "edit" },
+  { selector: '[data-onboarding="rotation-controls"]', key: "rotation" },
+  { selector: '[data-onboarding="view-tabs"]', key: "view" },
+  { selector: '[data-onboarding="print-button"]', key: "print" },
+  { selector: '[data-onboarding="share-button"]', key: "share" },
+  { selector: '[data-onboarding="add-button"]', key: "add" },
 ] as const;
 
 export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
+  const t = useT();
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const step = STEPS[currentStep];
+  const stepTitle = t(`onboarding.${step.key}.title`);
+  const stepDescription = t(`onboarding.${step.key}.desc`);
 
   const updateTargetRect = useCallback(() => {
     const el = document.querySelector(step.selector);
@@ -159,7 +136,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
       className="fixed inset-0 z-[100] rotation-no-print"
       role="dialog"
       aria-modal="true"
-      aria-label={`ガイド: ${step.title}`}
+      aria-label={t("onboarding.guide", { title: stepTitle })}
       style={{ pointerEvents: "none" }}
     >
       <m.div
@@ -198,7 +175,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.2 }}
           onClick={(e) => e.stopPropagation()}
-          aria-label={`ステップ ${currentStep + 1}/${STEPS.length}: ${step.title} — ${step.description}`}
+          aria-label={t("onboarding.stepAria", { current: currentStep + 1, total: STEPS.length, title: stepTitle, desc: stepDescription })}
         >
           <div
             className="theme-border p-4"
@@ -210,10 +187,10 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
             }}
           >
             <div className="font-extrabold text-base mb-1" style={{ color: "var(--dt-text)" }}>
-              {step.title}
+              {stepTitle}
             </div>
             <div className="text-sm mb-4" style={{ color: "#444" }}>
-              {step.description}
+              {stepDescription}
             </div>
 
             <div className="flex items-center justify-between">
@@ -238,7 +215,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
                     className="px-3 py-1.5 text-xs font-bold"
                     style={{ color: "var(--dt-text-muted)" }}
                   >
-                    スキップ
+                    {t("onboarding.skip")}
                   </button>
                 ) : (
                   <button type="button"
@@ -251,7 +228,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
                       boxShadow: "var(--dt-shadow-card-sm)",
                     }}
                   >
-                    戻る
+                    {t("onboarding.back")}
                   </button>
                 )}
                 <button type="button"
@@ -265,7 +242,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
                     color: "var(--dt-text)",
                   }}
                 >
-                  {currentStep === STEPS.length - 1 ? "始める！" : "次へ"}
+                  {currentStep === STEPS.length - 1 ? t("onboarding.start") : t("onboarding.next")}
                 </button>
               </div>
             </div>

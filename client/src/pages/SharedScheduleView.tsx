@@ -14,13 +14,15 @@ import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
 import { Copy, Loader2 } from "lucide-react";
 import { PrintMenu } from "@/components/PrintMenu";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
+import { useT } from "@/i18n";
 import "./home.css";
 
 export default function SharedScheduleView() {
   const { slug } = useParams<{ slug: string }>();
   const [, navigate] = useLocation();
+  const t = useT();
   const [schedule, setSchedule] = useState<ScheduleDTO | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [viewTab, setViewTab] = useState<ViewTabValue>("cards");
   const printDate = usePrintDateString();
@@ -35,18 +37,18 @@ export default function SharedScheduleView() {
 
   const handlePrint = useCallback(() => {
     if (typeof window.print !== "function") {
-      toast.error("このブラウザでは印刷できません。SafariまたはChromeで開いてください");
+      toast.error(t("shared.printUnsupported"));
       return;
     }
     document.body.dataset.printMode = viewTab;
     window.print();
-  }, [viewTab]);
+  }, [viewTab, t]);
 
   useEffect(() => {
     if (!slug) return;
     let cancelled = false;
     setLoading(true);
-    setError(null);
+    setErrorKey(null);
     setSchedule(null);
     getSchedule(slug)
       .then((data) => {
@@ -57,14 +59,14 @@ export default function SharedScheduleView() {
         if (cancelled) return;
         if (err instanceof ApiError) {
           if (err.status === 404) {
-            setError("スケジュールが見つかりませんでした");
+            setErrorKey("shared.error.notFound");
           } else if (err.status >= 500) {
-            setError("サーバーエラーが発生しました。しばらくしてからお試しください");
+            setErrorKey("shared.error.server");
           } else {
-            setError("データの取得に失敗しました");
+            setErrorKey("shared.error.fetch");
           }
         } else {
-          setError("ネットワークエラーが発生しました。接続を確認してください");
+          setErrorKey("shared.error.network");
         }
       })
       .finally(() => {
@@ -131,9 +133,9 @@ export default function SharedScheduleView() {
       activeScheduleId: newSchedule.id,
     };
     saveState(newState);
-    toast.success("当番表をコピーしました");
+    toast.success(t("shared.copied"));
     navigate("/");
-  }, [schedule, navigate]);
+  }, [schedule, navigate, t]);
 
   if (loading) {
     return (
@@ -143,25 +145,28 @@ export default function SharedScheduleView() {
     );
   }
 
-  if (error || !schedule) {
+  if (errorKey || !schedule) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ backgroundColor: "var(--dt-page-bg)" }}>
         <div className="text-6xl">😢</div>
         <h1 className="text-xl font-bold" style={{ color: "var(--dt-text)" }}>
-          {error ?? "スケジュールが見つかりませんでした"}
+          {t(errorKey ?? "shared.error.notFound")}
         </h1>
         <a
           href="/"
           className="theme-border theme-shadow-sm px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: "var(--dt-current-highlight)", borderRadius: "var(--dt-border-radius-sm)" }}
         >
-          自分で当番表を作る
+          {t("shared.createYourOwn")}
         </a>
       </div>
     );
   }
 
-  const rotationLabel = effectiveRotation === 0 ? "初期" : `${effectiveRotation}回目`;
+  const rotationLabel =
+    effectiveRotation === 0
+      ? t("rotation.initial")
+      : t("rotation.nth", { n: effectiveRotation });
 
   return (
     <DesignThemeProvider themeId={schedule?.designThemeId}>
@@ -189,7 +194,7 @@ export default function SharedScheduleView() {
             style={{ color: "var(--dt-text-secondary)", borderBottom: "2px solid var(--dt-current-highlight)" }}
           >
             <span className="inline-block pb-2">
-              順番: {rotationLabel} ／ 印刷日: {printDate}
+              {t("shared.printHeader", { label: rotationLabel, date: printDate })}
             </span>
           </div>
         </div>
@@ -238,14 +243,14 @@ export default function SharedScheduleView() {
             style={{ backgroundColor: "#10B981", color: "#fff", borderRadius: "var(--dt-border-radius-sm)" }}
           >
             <Copy className="size-4" />
-            この当番表を自分用にコピー
+            {t("shared.copyToMine")}
           </button>
           <a
             href="/"
             className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "var(--dt-current-highlight)", borderRadius: "var(--dt-border-radius-sm)" }}
           >
-            自分で当番表を作る
+            {t("shared.createYourOwn")}
           </a>
         </div>
       </div>

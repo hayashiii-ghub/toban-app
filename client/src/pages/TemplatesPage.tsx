@@ -3,43 +3,46 @@ import { Link } from "wouter";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import {
   TEMPLATE_CATEGORIES,
+  TEMPLATE_CATEGORIES_EN,
   TEMPLATE_SEO_DATA,
   type TemplateSEO,
 } from "@shared/seo-templates";
 import { TEMPLATES } from "@/rotation/constants";
+import { useT, useLocale } from "@/i18n";
 
 const byCategory = new Map<string, TemplateSEO[]>();
 for (const cat of TEMPLATE_CATEGORIES) byCategory.set(cat.id, []);
 for (const t of TEMPLATE_SEO_DATA) byCategory.get(t.categoryId)?.push(t);
 
 export default function TemplatesPage() {
+  const t = useT();
+  const { locale } = useLocale();
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "当番表テンプレート一覧｜無料で使えるtoban（トバン）";
+    document.title = t("templates.docTitle");
     return () => {
-      document.title = "当番表メーカー toban（トバン）｜無料で作成・印刷・共有";
+      document.title = t("lp.docTitle");
     };
-  }, []);
+  }, [t]);
 
   return (
     <main className="min-h-screen" style={{ backgroundColor: "#FFF8E7" }}>
       {/* パンくず */}
-      <nav className="px-4 pt-6 pb-2 max-w-3xl mx-auto" aria-label="パンくず">
+      <nav className="px-4 pt-6 pb-2 max-w-3xl mx-auto" aria-label={t("templates.breadcrumbAria")}>
         <ol className="flex flex-wrap items-center gap-1 text-xs text-gray-500">
-          <li><Link href="/about" className="hover:underline text-amber-700">toban について</Link></li>
+          <li><Link href="/about" className="hover:underline text-amber-700">{t("footer.about")}</Link></li>
           <li aria-hidden="true">/</li>
-          <li className="text-gray-700 font-bold">テンプレート一覧</li>
+          <li className="text-gray-700 font-bold">{t("templates.breadcrumb")}</li>
         </ol>
       </nav>
 
       {/* ヘッダー */}
       <div className="px-4 pb-6 max-w-3xl mx-auto">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
-          当番表テンプレート一覧
+          {t("templates.heading")}
         </h1>
         <p className="mt-4 text-sm sm:text-base text-gray-600 leading-relaxed">
-          掃除当番・給食当番・日直など、すぐ使える<strong>無料テンプレート</strong>を{TEMPLATE_SEO_DATA.length}種類ご用意しました。
-          テンプレートを選んで、メンバーや担当を自由に編集するだけで当番表が完成します。
+          {t("templates.subA")}<strong>{t("templates.subFree")}</strong>{t("templates.subB", { count: TEMPLATE_SEO_DATA.length })}
         </p>
       </div>
 
@@ -49,13 +52,14 @@ export default function TemplatesPage() {
           {TEMPLATE_CATEGORIES.map((cat) => {
             const templates = byCategory.get(cat.id);
             if (!templates || templates.length === 0) return null;
+            const catEn = locale === "en" ? TEMPLATE_CATEGORIES_EN[cat.id] : undefined;
             return (
               <section key={cat.id} id={cat.id}>
                 <h2 className="text-lg sm:text-xl font-extrabold text-gray-900 mb-1">
                   <span className="mr-2">{cat.emoji}</span>
-                  {cat.label}
+                  {catEn?.label ?? cat.label}
                 </h2>
-                <p className="text-sm text-gray-500 mb-4">{cat.description}</p>
+                <p className="text-sm text-gray-500 mb-4">{catEn?.description ?? cat.description}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {templates.map((tpl) => {
                     const template = TEMPLATES[tpl.templateIndex];
@@ -102,7 +106,7 @@ export default function TemplatesPage() {
           className="inline-flex items-center gap-2 text-sm font-bold text-amber-700 hover:underline"
         >
           <ArrowLeft className="size-4" />
-          toban について
+          {t("footer.about")}
         </Link>
       </div>
 
@@ -111,7 +115,7 @@ export default function TemplatesPage() {
         href="/"
         className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-xl bg-[#2E6B4F] hover:bg-[#245A41] text-white font-bold px-5 py-3 shadow-lg transition-colors print:hidden"
       >
-        当番表を作る
+        {t("lp.createSchedule")}
         <ArrowRight className="size-4" />
       </a>
 

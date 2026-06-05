@@ -1,3 +1,5 @@
+import { useT } from "@/i18n";
+
 export type ViewTabValue = "cards" | "table" | "calendar";
 
 interface ViewTabsProps {
@@ -6,13 +8,14 @@ interface ViewTabsProps {
 }
 
 export function ViewTabs({ viewTab, onChangeTab }: ViewTabsProps) {
+  const t = useT();
   return (
     <div className="px-3 sm:px-4 pt-2 pb-1 rotation-no-print" data-onboarding="view-tabs">
       <div className="max-w-4xl mx-auto flex gap-2">
         {([
-          { value: "cards", label: "カード" },
-          { value: "table", label: "早見表" },
-          { value: "calendar", label: "カレンダー" },
+          { value: "cards", label: t("view.cards") },
+          { value: "table", label: t("view.table") },
+          { value: "calendar", label: t("view.calendar") },
         ] as const).map(({ value, label }) => (
           <button type="button"
             key={value}

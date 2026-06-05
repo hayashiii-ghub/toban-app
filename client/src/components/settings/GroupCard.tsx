@@ -2,6 +2,7 @@ import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp, ArrowUp, ArrowDown,
 import type { Member, TaskGroup } from "@/rotation/types";
 import { ColorPalette } from "./ColorPalette";
 import { useGroupCardContext } from "./GroupCardContext";
+import { useT } from "@/i18n";
 
 interface Props {
   group: TaskGroup;
@@ -17,6 +18,7 @@ export function GroupCard({
   isGroupDragging, isGroupDropTarget,
 }: Props) {
   const ctx = useGroupCardContext();
+  const t = useT();
 
   return (
     <div
@@ -39,15 +41,15 @@ export function GroupCard({
         onDragEnd={ctx.onGroupDragEnd}
       >
         <div className="flex flex-col shrink-0 sm:hidden">
-          <button type="button" onClick={() => ctx.onMoveGroup(gIdx, -1)} disabled={gIdx === 0} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label="グループを上に移動">
+          <button type="button" onClick={() => ctx.onMoveGroup(gIdx, -1)} disabled={gIdx === 0} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label={t("group.moveGroupUp")}>
             <ArrowUp className="size-3.5" />
           </button>
-          <button type="button" onClick={() => ctx.onMoveGroup(gIdx, 1)} disabled={gIdx === groupCount - 1} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label="グループを下に移動">
+          <button type="button" onClick={() => ctx.onMoveGroup(gIdx, 1)} disabled={gIdx === groupCount - 1} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label={t("group.moveGroupDown")}>
             <ArrowDown className="size-3.5" />
           </button>
         </div>
         <GripVertical className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block" style={{ color: "#bbb" }} aria-hidden="true" />
-        <span className="text-lg shrink-0 select-none" aria-label={`グループ${gIdx + 1}の絵文字`}>{group.emoji}</span>
+        <span className="text-lg shrink-0 select-none" aria-label={t("group.emojiOf", { n: gIdx + 1 })}>{group.emoji}</span>
 
         {ctx.isTaskMode ? (
           <div className="flex-1 min-w-0">
@@ -55,10 +57,10 @@ export function GroupCard({
               type="text"
               value={group.tasks[0] ?? ""}
               onChange={(e) => ctx.onUpdateTask(gIdx, 0, e.target.value)}
-              placeholder="タスク名を入力"
+              placeholder={t("group.taskNamePlaceholder")}
               className="w-full theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
               style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
-              aria-label={`タスク${gIdx + 1}の名前`}
+              aria-label={t("group.taskNameOf", { n: gIdx + 1 })}
             />
           </div>
         ) : (
@@ -73,10 +75,10 @@ export function GroupCard({
                   type="text"
                   value={ownerMember.name}
                   onChange={(e) => ctx.onMemberNameChange(ownerMember.id, e.target.value)}
-                  placeholder="名前を入力"
+                  placeholder={t("group.namePlaceholder")}
                   className="flex-1 min-w-0 theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
                   style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
-                  aria-label={`担当者${gIdx + 1}の名前`}
+                  aria-label={t("group.memberNameOf", { n: gIdx + 1 })}
                 />
               </>
             )}
@@ -88,7 +90,7 @@ export function GroupCard({
           onClick={() => ctx.onToggleDetails(`details-${gIdx}`)}
           className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors shrink-0"
           style={{ color: ctx.openDetailsKey === `details-${gIdx}` ? "var(--dt-text)" : "#999" }}
-          aria-label="詳細設定"
+          aria-label={t("group.details")}
         >
           <Settings2 className="size-4" aria-hidden="true" />
         </button>
@@ -97,7 +99,7 @@ export function GroupCard({
           className="p-1.5 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 shrink-0"
           style={{ color: "#EF4444" }}
           disabled={groupCount <= 1}
-          aria-label={`グループ${gIdx + 1}を削除`}
+          aria-label={t("group.deleteGroup", { n: gIdx + 1 })}
         >
           <Trash2 className="size-4" aria-hidden="true" />
         </button>
@@ -107,19 +109,19 @@ export function GroupCard({
       {ctx.openDetailsKey === `details-${gIdx}` && (
         <div className="px-3 sm:px-4 py-2 flex flex-col gap-2" style={{ backgroundColor: "#f5f5f5", borderBottom: "1px solid #e5e5e5" }}>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold shrink-0" style={{ color: "var(--dt-text-muted)" }}>絵文字</span>
+            <span className="text-xs font-bold shrink-0" style={{ color: "var(--dt-text-muted)" }}>{t("group.emoji")}</span>
             <input
               type="text"
               value={group.emoji}
               onChange={(e) => ctx.onUpdateEmoji(gIdx, e.target.value)}
               className="w-12 text-center text-lg theme-border px-1 py-0.5"
               style={{ borderRadius: "6px", backgroundColor: "#fff" }}
-              aria-label={`グループ${gIdx + 1}の絵文字を変更`}
+              aria-label={t("group.changeEmoji", { n: gIdx + 1 })}
             />
           </div>
           {!ctx.isTaskMode && ownerMember && (
             <div>
-              <div className="text-xs font-bold block mb-1" style={{ color: "var(--dt-text-muted)" }}>色</div>
+              <div className="text-xs font-bold block mb-1" style={{ color: "var(--dt-text-muted)" }}>{t("group.color")}</div>
               <ColorPalette member={ownerMember} onPresetSelect={ctx.onColorPreset} onCustomColor={ctx.onColorCustom} />
             </div>
           )}
@@ -146,6 +148,7 @@ export function GroupCard({
 
 function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
   const ctx = useGroupCardContext();
+  const t = useT();
 
   const isImplicitAll = !group.memberIds;
   const groupMemberIds = group.memberIds ?? ctx.activeMemberIds;
@@ -159,7 +162,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
       {isImplicitAll && ctx.activeMembers.length > 0 && (
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#D1FAE5", color: "#064E3B" }}>
-            全員が担当
+            {t("group.everyone")}
           </span>
           <button
             type="button"
@@ -167,7 +170,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
             className="text-xs font-bold hover:underline"
             style={{ color: "var(--dt-text-muted)" }}
           >
-            担当者をえらぶ
+            {t("group.chooseMembers")}
           </button>
         </div>
       )}
@@ -195,7 +198,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                   disabled={mIdx === 0}
                   className="p-0.5 disabled:opacity-20"
                   style={{ color: "#999" }}
-                  aria-label="上に移動"
+                  aria-label={t("group.moveUp")}
                 >
                   <ChevronUp className="size-3.5" />
                 </button>
@@ -205,7 +208,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                   disabled={mIdx === groupMembers.length - 1}
                   className="p-0.5 disabled:opacity-20"
                   style={{ color: "#999" }}
-                  aria-label="下に移動"
+                  aria-label={t("group.moveDown")}
                 >
                   <ChevronDown className="size-3.5" />
                 </button>
@@ -216,23 +219,23 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                 onClick={() => ctx.onToggleColor(colorKey)}
                 className="size-6 sm:size-7 rounded-full shrink-0 theme-border transition-transform hover:scale-110"
                 style={{ backgroundColor: member.color, borderWidth: "2px" }}
-                aria-label="色を変更"
+                aria-label={t("group.changeColor")}
               />
               <input
                 type="text"
                 value={member.name}
                 onChange={(e) => ctx.onMemberNameChange(member.id, e.target.value)}
-                placeholder="名前を入力"
+                placeholder={t("group.namePlaceholder")}
                 className="flex-1 min-w-0 theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
                 style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
-                aria-label="メンバーの名前"
+                aria-label={t("group.memberName")}
               />
               <button type="button"
                 onClick={() => ctx.onRemoveMemberFromGroup(gIdx, member.id)}
                 className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0 disabled:opacity-30"
                 style={{ color: "#EF4444" }}
                 disabled={groupMembers.length <= 1}
-                aria-label={`${member.name}を除外`}
+                aria-label={t("group.excludeMember", { name: member.name })}
               >
                 <X className="size-3.5" aria-hidden="true" />
               </button>
@@ -255,7 +258,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
             className="text-xs font-bold hover:underline"
             style={{ color: "var(--dt-text-muted)" }}
           >
-            全員にもどす
+            {t("group.resetToAll")}
           </button>
           {unassignedMembers.length > 0 && (
             <button
@@ -264,7 +267,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold hover:bg-gray-100 rounded-lg transition-colors"
               style={{ color: "var(--dt-text-secondary)" }}
             >
-              <Plus className="size-3.5" aria-hidden="true" /> メンバーを追加
+              <Plus className="size-3.5" aria-hidden="true" /> {t("group.addMember")}
             </button>
           )}
           <button
@@ -273,7 +276,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold hover:bg-gray-100 rounded-lg transition-colors"
             style={{ color: "var(--dt-text-secondary)" }}
           >
-            <Plus className="size-3.5" aria-hidden="true" /> 新規メンバー
+            <Plus className="size-3.5" aria-hidden="true" /> {t("group.newMember")}
           </button>
         </div>
       )}
@@ -285,6 +288,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
 
 function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
   const ctx = useGroupCardContext();
+  const t = useT();
 
   return (
     <>
@@ -305,10 +309,10 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
               <div className="absolute left-0 right-0 h-0.5 -top-1.5 rounded-full" style={{ backgroundColor: "var(--dt-current-highlight)" }} />
             )}
             <div className="flex flex-col shrink-0 sm:hidden">
-              <button type="button" onClick={() => ctx.onMoveTask(gIdx, tIdx, -1)} disabled={tIdx === 0} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label="上に移動">
+              <button type="button" onClick={() => ctx.onMoveTask(gIdx, tIdx, -1)} disabled={tIdx === 0} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label={t("group.moveUp")}>
                 <ChevronUp className="size-3.5" />
               </button>
-              <button type="button" onClick={() => ctx.onMoveTask(gIdx, tIdx, 1)} disabled={tIdx === group.tasks.length - 1} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label="下に移動">
+              <button type="button" onClick={() => ctx.onMoveTask(gIdx, tIdx, 1)} disabled={tIdx === group.tasks.length - 1} className="p-0.5 disabled:opacity-20" style={{ color: "#999" }} aria-label={t("group.moveDown")}>
                 <ChevronDown className="size-3.5" />
               </button>
             </div>
@@ -317,16 +321,16 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
               type="text"
               value={task}
               onChange={(e) => ctx.onUpdateTask(gIdx, tIdx, e.target.value)}
-              placeholder="タスク名を入力"
+              placeholder={t("group.taskNamePlaceholder")}
               className="flex-1 min-w-0 theme-border px-3 py-2 text-sm font-medium"
               style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
-              aria-label={`グループ${gIdx + 1}のタスク${tIdx + 1}`}
+              aria-label={t("group.taskAt", { g: gIdx + 1, t: tIdx + 1 })}
             />
             <button type="button"
               onClick={() => ctx.onRemoveTask(gIdx, tIdx)}
               className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0"
               style={{ color: "#EF4444" }}
-              aria-label={`タスク「${task || "空"}」を削除`}
+              aria-label={t("group.deleteTask", { task: task || t("group.emptyTask") })}
             >
               <X className="size-3.5" aria-hidden="true" />
             </button>
@@ -338,7 +342,7 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
         className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold self-start hover:bg-gray-100 rounded-lg transition-colors"
         style={{ color: "var(--dt-text-secondary)" }}
       >
-        <Plus className="size-3.5" aria-hidden="true" /> タスクを追加
+        <Plus className="size-3.5" aria-hidden="true" /> {t("group.addTask")}
       </button>
     </>
   );

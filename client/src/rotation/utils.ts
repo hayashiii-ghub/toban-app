@@ -1,6 +1,7 @@
 import type { AppState, Assignment, AssignmentMode, Member, RotationConfig, Schedule, ScheduleTemplate, TaskGroup } from "./types";
 import { STORAGE_KEY, TEMPLATES } from "./constants";
-import { DEFAULT_APP_STATE } from "./defaultState";
+import { DEFAULT_APP_STATE, DEFAULT_APP_STATE_EN } from "./defaultState";
+import { detectLocale } from "@/i18n/core";
 import { countSkipDays, isSkippedDate } from "./holidays";
 import { addDays, diffLocalCalendarDays, parseIsoDateLocal, startOfLocalDay } from "./dateUtils";
 import { safeGetItem, safeSetItem } from "@/lib/storage";
@@ -215,7 +216,16 @@ export function loadState(): AppState {
     }
   } catch { /* ignore corrupted data */ }
 
-  const defaultState = sanitizeAppState(DEFAULT_APP_STATE);
+  // 初回（保存データなし）は locale に合わせた default を seed する。
+  // key は i18n の LANG_STORAGE_KEY と同じ "toban-lang"（Provider 初回 effect 前でも
+  // navigator から英語を拾えるよう detectLocale に navigator.language も渡す）。
+  const locale = detectLocale(
+    safeGetItem("toban-lang"),
+    typeof navigator !== "undefined" ? navigator.language : undefined,
+  );
+  const defaultState = sanitizeAppState(
+    locale === "en" ? DEFAULT_APP_STATE_EN : DEFAULT_APP_STATE,
+  );
   if (defaultState) {
     return defaultState;
   }

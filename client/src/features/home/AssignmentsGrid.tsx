@@ -5,6 +5,7 @@ import {
   TASK_STAGGER_DELAY,
 } from "@/rotation/constants";
 import { getGridCols } from "@/rotation/utils";
+import { useT } from "@/i18n";
 
 interface AssignmentsGridProps {
   assignments: Array<{ group: TaskGroup; member: Member }>;
@@ -23,6 +24,7 @@ export function AssignmentsGrid({
   stagger = true,
   assignmentMode,
 }: AssignmentsGridProps) {
+  const t = useT();
   const isTaskMode = assignmentMode === "task";
   return (
     <div className="px-3 sm:px-4 py-3 sm:py-4 rotation-print-card-section">
@@ -36,7 +38,7 @@ export function AssignmentsGrid({
         </div>
         <ul
           className={`list-none p-0 grid gap-3 md:gap-4 rotation-print-card-grid ${getGridCols()}`}
-          aria-label="当番割り当て一覧"
+          aria-label={t("assignments.listAria")}
         >
           <AnimatePresence>
             {assignments.map(({ group, member }, index) => (

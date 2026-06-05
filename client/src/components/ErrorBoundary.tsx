@@ -1,6 +1,7 @@
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
 import { Component, ReactNode } from "react";
 import { Sentry } from "@/lib/sentry";
+import { tStandalone } from "@/i18n";
 
 interface Props {
   children: ReactNode;
@@ -30,7 +31,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      const errorMessage = this.state.error?.message || "不明なエラー";
+      const errorMessage = this.state.error?.message || tStandalone("error.unknown");
       const errorStack = this.state.error?.stack;
 
       return (
@@ -50,7 +51,7 @@ class ErrorBoundary extends Component<Props, State> {
             </div>
 
             <h2 className="text-xl font-extrabold mb-2" style={{ color: "var(--dt-text)" }}>
-              予期しないエラーが発生しました
+              {tStandalone("error.unexpected")}
             </h2>
 
             <p className="text-sm mb-6 text-center" style={{ color: "#777" }}>
@@ -64,7 +65,7 @@ class ErrorBoundary extends Component<Props, State> {
                   className="text-xs font-medium mb-2 underline underline-offset-2"
                   style={{ color: "#888" }}
                 >
-                  {this.state.showDetails ? "詳細を隠す" : "詳細を表示"}
+                  {this.state.showDetails ? tStandalone("error.hideDetails") : tStandalone("error.showDetails")}
                 </button>
                 {this.state.showDetails && (
                   <div
@@ -84,7 +85,7 @@ class ErrorBoundary extends Component<Props, State> {
                 style={{ borderRadius: "10px", backgroundColor: "#fff", color: "#1a1a1a" }}
               >
                 <Home className="size-4" aria-hidden="true" />
-                ホームに戻る
+                {tStandalone("error.backHome")}
               </a>
               <button type="button"
                 onClick={() => window.location.reload()}
@@ -92,7 +93,7 @@ class ErrorBoundary extends Component<Props, State> {
                 style={{ borderRadius: "10px", backgroundColor: "#1a1a1a" }}
               >
                 <RotateCcw className="size-4" aria-hidden="true" />
-                再読み込み
+                {tStandalone("error.reload")}
               </button>
             </div>
           </div>

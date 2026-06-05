@@ -6,6 +6,7 @@ import { generateId, deepClone } from "@/rotation/utils";
 import { GroupCard } from "./GroupCard";
 import { GroupCardProvider, type GroupCardContextValue } from "./GroupCardContext";
 import { BulkMemberAdd } from "./BulkMemberAdd";
+import { useT } from "@/i18n";
 
 interface Props {
   groups: TaskGroup[];
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function TaskGroupEditor({ groups, members, onGroupsChange, onMembersChange, assignmentMode }: Props) {
+  const t = useT();
   const isTaskMode = assignmentMode === "task";
   const activeMembers = useMemo(
     () => members.filter((member) => member.name.trim() && !member.skipped),
@@ -302,13 +304,13 @@ export function TaskGroupEditor({ groups, members, onGroupsChange, onMembersChan
 
   const addGroup = () => {
     if (isTaskMode) {
-      const newGroup: TaskGroup = { id: generateId("g"), tasks: ["新しいタスク"], emoji: "✨" };
+      const newGroup: TaskGroup = { id: generateId("g"), tasks: [t("settings.newTask")], emoji: "✨" };
       if (activeMemberIds.length > 0) newGroup.memberIds = activeMemberIds;
       onGroupsChange([...groups, newGroup]);
     } else {
       const preset = MEMBER_PRESETS[members.length % MEMBER_PRESETS.length];
       const newMember: Member = { id: generateId("m"), name: "", ...preset };
-      const newGroup: TaskGroup = { id: generateId("g"), tasks: ["新しいタスク"], emoji: "✨" };
+      const newGroup: TaskGroup = { id: generateId("g"), tasks: [t("settings.newTask")], emoji: "✨" };
       onMembersChange([...members, newMember]);
       onGroupsChange([...groups, newGroup]);
     }
@@ -424,14 +426,14 @@ export function TaskGroupEditor({ groups, members, onGroupsChange, onMembersChan
           className="theme-border theme-shadow-sm flex-1 flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: "#E8E8E8", borderRadius: "10px" }}
         >
-          <Plus className="size-4" aria-hidden="true" /> {isTaskMode ? "タスクを追加" : "担当者を追加"}
+          <Plus className="size-4" aria-hidden="true" /> {isTaskMode ? t("group.addTask") : t("group.addAssignee")}
         </button>
         <button type="button"
           onClick={() => setBulkMode((v) => !v)}
           className="theme-border theme-shadow-sm flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
           style={{ backgroundColor: bulkMode ? "var(--dt-current-highlight)" : "#E8E8E8", borderRadius: "10px" }}
         >
-          📋 一括追加
+          {t("bulk.bulkAdd")}
         </button>
       </div>
 

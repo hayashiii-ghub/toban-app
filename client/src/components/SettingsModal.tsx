@@ -12,6 +12,7 @@ import { DesignThemePicker } from "./settings/DesignThemePicker";
 import { RotationConfigEditor } from "./settings/RotationConfigEditor";
 import { getThemeById } from "@/rotation/designThemes";
 import { applyThemeToRoot } from "@/contexts/DesignThemeContext";
+import { useT } from "@/i18n";
 
 interface Props {
   scheduleName: string;
@@ -27,11 +28,6 @@ interface Props {
   onDelete: () => void;
   onClose: () => void;
 }
-
-const ROTATION_MODE_LABELS: Record<string, string> = {
-  manual: "手動で切り替え",
-  date: "日付で自動",
-};
 
 type EditorPatch = {
   name?: string;
@@ -57,6 +53,7 @@ export function SettingsModal({
   onDelete,
   onClose,
 }: Props) {
+  const t = useT();
   const [editName, setEditName] = useState(scheduleName);
   const [editGroups, setEditGroups] = useState<TaskGroup[]>(() => deepClone(groups));
   const [editMembers, setEditMembers] = useState<Member[]>(() => deepClone(members));
@@ -145,7 +142,7 @@ export function SettingsModal({
         const extra = editMembers.length - editGroups.length;
         nextGroups = [...editGroups];
         for (let i = 0; i < extra; i++) {
-          nextGroups.push({ id: generateId("g"), tasks: ["新しいタスク"], emoji: "✨" });
+          nextGroups.push({ id: generateId("g"), tasks: [t("settings.newTask")], emoji: "✨" });
         }
       }
     }
@@ -155,7 +152,7 @@ export function SettingsModal({
       groups: nextGroups,
       members: nextMembers,
     });
-  }, [applyEditorPatch, editGroups, editMembers]);
+  }, [applyEditorPatch, editGroups, editMembers, t]);
 
   const revertThemePreview = useCallback(() => {
     if (editDesignThemeId !== designThemeId) {
@@ -165,7 +162,7 @@ export function SettingsModal({
 
   const handleCloseWithCheck = useCallback(() => {
     if (isDirty) {
-      if (window.confirm("変更が保存されていません。閉じますか？")) {
+      if (window.confirm(t("settings.confirmClose"))) {
         revertThemePreview();
         onClose();
       }
@@ -173,7 +170,7 @@ export function SettingsModal({
       revertThemePreview();
       onClose();
     }
-  }, [isDirty, onClose, revertThemePreview]);
+  }, [isDirty, onClose, revertThemePreview, t]);
 
   useEscapeKey(useCallback(() => handleCloseWithCheck(), [handleCloseWithCheck]));
   useFocusTrap(modalRef, true);
@@ -212,22 +209,22 @@ export function SettingsModal({
       .filter((g) => g.tasks.length > 0);
 
     if (cleanedGroups.length === 0) {
-      setValidationError("タスクが1つ以上必要です。");
+      setValidationError(t("settings.errorNeedTask"));
       return;
     }
     if (cleanedMembers.length === 0) {
-      setValidationError("担当者が1人以上必要です。");
+      setValidationError(t("settings.errorNeedMember"));
       return;
     }
     onSave(editName.trim() || scheduleName, cleanedGroups, cleanedMembers, editRotationConfig, editPinned, editAssignmentMode, editDesignThemeId);
   };
 
-  const rotationModeLabel = ROTATION_MODE_LABELS[editRotationConfig.mode] ?? editRotationConfig.mode;
-  const assignmentModeLabel = editAssignmentMode === "task" ? "タスクから見る" : "担当者から見る";
+  const rotationModeLabel = editRotationConfig.mode === "date" ? t("settings.rotationDate") : t("settings.rotationManual");
+  const assignmentModeLabel = editAssignmentMode === "task" ? t("settings.viewByTask") : t("settings.viewByMember");
   const basicSummary = `${editName || scheduleName} / ${assignmentModeLabel} / ${rotationModeLabel}`;
   const taskSummary = editAssignmentMode === "task"
-    ? `${editGroups.length}タスク・${editMembers.length}人`
-    : `${editMembers.length}人・${editGroups.length}グループ`;
+    ? t("settings.summaryTaskMode", { tasks: editGroups.length, members: editMembers.length })
+    : t("settings.summaryMemberMode", { members: editMembers.length, groups: editGroups.length });
 
   return (
     <m.div
@@ -252,14 +249,14 @@ export function SettingsModal({
         {/* ヘッダー */}
         <div className="shrink-0 flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4" style={{ borderBottom: "var(--dt-border-width) solid var(--dt-border-color)" }}>
           <h2 id="settings-title" className="text-lg font-extrabold flex items-center gap-2" style={{ color: "var(--dt-text)" }}>
-            編集
+            {t("settings.title")}
             {isDirty && (
               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "#FEF3C7", color: "#92400E" }}>
-                未保存
+                {t("settings.unsaved")}
               </span>
             )}
           </h2>
-          <button type="button" onClick={handleCloseWithCheck} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
+          <button type="button" onClick={handleCloseWithCheck} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label={t("common.close")}>
             <X className="size-5" aria-hidden="true" />
           </button>
         </div>
@@ -274,11 +271,11 @@ export function SettingsModal({
         {/* アコーディオンコンテンツ */}
         <div className="flex-1 min-h-0 overflow-y-auto">
           {/* 基本設定 */}
-          <AccordionSection title="基本設定" summary={basicSummary} defaultOpen={false}>
+          <AccordionSection title={t("settings.sectionBasic")} summary={basicSummary} defaultOpen={false}>
             <div className="flex flex-col gap-3">
               {/* 名前 + ピン */}
               <div>
-                <label htmlFor="schedule-name-input" className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>当番表の名前</label>
+                <label htmlFor="schedule-name-input" className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>{t("settings.scheduleName")}</label>
                 <div className="flex items-stretch gap-2">
                   <input
                     id="schedule-name-input"
@@ -287,16 +284,16 @@ export function SettingsModal({
                     onChange={(e) => applyEditorPatch({ name: e.target.value })}
                     className="flex-1 min-w-0 theme-border px-3 py-2 text-sm font-bold"
                     style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#FAFAFA" }}
-                    placeholder="例: 掃除当番、給食当番、日直..."
-                    aria-label="当番表の名前"
+                    placeholder={t("settings.scheduleNamePlaceholder")}
+                    aria-label={t("settings.scheduleName")}
                   />
                   <button
                     type="button"
                     onClick={() => applyEditorPatch({ pinned: !editPinned })}
                     className="theme-border w-9 flex items-center justify-center shrink-0 transition-colors"
                     style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: editPinned ? "var(--dt-current-highlight)" : "#FAFAFA" }}
-                    aria-label={editPinned ? "固定を解除" : "先頭に固定"}
-                    title={editPinned ? "固定を解除" : "タブを先頭に固定"}
+                    aria-label={editPinned ? t("settings.unpin") : t("settings.pin")}
+                    title={editPinned ? t("settings.unpin") : t("settings.pinTab")}
                   >
                     {editPinned ? <Pin className="size-4" style={{ color: "var(--dt-text)" }} /> : <PinOff className="size-4" style={{ color: "#999" }} />}
                   </button>
@@ -305,7 +302,7 @@ export function SettingsModal({
 
               {/* 割り当て方式 */}
               <fieldset className="border-0 p-0 m-0">
-                <legend className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>見方をえらぶ</legend>
+                <legend className="text-xs font-bold mb-1 block" style={{ color: "var(--dt-text-muted)" }}>{t("settings.chooseView")}</legend>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -313,7 +310,7 @@ export function SettingsModal({
                     style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: editAssignmentMode === "member" ? "var(--dt-current-highlight)" : "#FAFAFA" }}
                     onClick={() => handleAssignmentModeChange("member")}
                   >
-                    だれが何をするか
+                    {t("settings.whoDoesWhat")}
                   </button>
                   <button
                     type="button"
@@ -321,7 +318,7 @@ export function SettingsModal({
                     style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: editAssignmentMode === "task" ? "var(--dt-current-highlight)" : "#FAFAFA" }}
                     onClick={() => handleAssignmentModeChange("task")}
                   >
-                    何をだれがやるか
+                    {t("settings.whatByWhom")}
                   </button>
                 </div>
               </fieldset>
@@ -332,7 +329,7 @@ export function SettingsModal({
           </AccordionSection>
 
           {/* デザインテンプレート */}
-          <AccordionSection title="デザインテンプレート" summary={getThemeById(editDesignThemeId).name} defaultOpen={false}>
+          <AccordionSection title={t("settings.sectionDesign")} summary={getThemeById(editDesignThemeId).name} defaultOpen={false}>
             <DesignThemePicker
               selectedThemeId={editDesignThemeId}
               onSelect={handleThemePreview}
@@ -340,7 +337,7 @@ export function SettingsModal({
           </AccordionSection>
 
           {/* タスク */}
-          <AccordionSection title="内容を編集" summary={taskSummary} defaultOpen={true}>
+          <AccordionSection title={t("settings.sectionContent")} summary={taskSummary} defaultOpen={true}>
             <TaskGroupEditor
               groups={editGroups}
               members={editMembers}
@@ -358,7 +355,7 @@ export function SettingsModal({
             className="theme-border theme-shadow-sm w-full flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
             style={{ backgroundColor: "var(--dt-control-bar-bg)", color: "var(--dt-control-bar-text)", borderRadius: "10px" }}
           >
-            <Save className="size-4" aria-hidden="true" /> 保存する
+            <Save className="size-4" aria-hidden="true" /> {t("common.save")}
           </button>
           <div className="flex gap-2">
             <button
@@ -368,7 +365,7 @@ export function SettingsModal({
               style={{ color: "var(--dt-text)", backgroundColor: "var(--dt-card-bg)", borderRadius: "10px" }}
             >
               <Copy className="size-4" aria-hidden="true" />
-              複製
+              {t("common.duplicate")}
             </button>
             {canDelete && (
               <button
@@ -378,7 +375,7 @@ export function SettingsModal({
                 style={{ color: "#DC2626", backgroundColor: "var(--dt-card-bg)", borderRadius: "10px" }}
               >
                 <Trash2 className="size-4" aria-hidden="true" />
-                削除
+                {t("common.delete")}
               </button>
             )}
           </div>

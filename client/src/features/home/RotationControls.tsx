@@ -2,6 +2,7 @@ import { m } from "framer-motion";
 import { ChevronLeft, ChevronRight, Cloud, CloudOff, Loader2, Pencil } from "lucide-react";
 import type { SyncStatus } from "@/lib/syncManager";
 import { PrintMenu } from "@/components/PrintMenu";
+import { useT } from "@/i18n";
 
 interface RotationControlsProps {
   rotation: number;
@@ -32,6 +33,7 @@ export function RotationControls({
   onRotateForward,
   onRotateBackward,
 }: RotationControlsProps) {
+  const t = useT();
   return (
     <div className="px-3 sm:px-4 pb-3 rotation-no-print">
       <div className="max-w-4xl mx-auto">
@@ -52,7 +54,7 @@ export function RotationControls({
                   onClick={onRotateBackward}
                   disabled={isAnimating}
                   className="h-9 sm:h-10 px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
-                  aria-label="前の当番に戻す"
+                  aria-label={t("rotation.prevAria")}
                 >
                   <ChevronLeft className="size-4" />
                 </button>
@@ -64,7 +66,7 @@ export function RotationControls({
                   borderLeft: !isDateMode ? "var(--dt-border-width) solid var(--dt-border-color)" : "none",
                   borderRight: !isDateMode ? "var(--dt-border-width) solid var(--dt-border-color)" : "none",
                 }}
-                aria-label={`現在の順番: ${rotation}`}
+                aria-label={t("rotation.currentAria", { n: rotation })}
               >
                 {rotation}
               </div>
@@ -73,7 +75,7 @@ export function RotationControls({
                   onClick={onRotateForward}
                   disabled={isAnimating}
                   className="h-9 sm:h-10 px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
-                  aria-label="次の当番に進める"
+                  aria-label={t("rotation.nextAria")}
                 >
                   <ChevronRight className="size-4" />
                 </button>
@@ -81,10 +83,10 @@ export function RotationControls({
             </div>
             <div className="text-center sm:text-left">
               <div className="text-sm font-bold" style={{ color: "var(--dt-control-bar-text)" }}>
-                現在の順番
+                {t("rotation.current")}
               </div>
               <div className="text-xs sm:text-sm font-medium" style={{ color: "var(--dt-control-bar-subtext)" }}>
-                {isDateMode ? "日付で自動切り替え" : rotationLabel}
+                {isDateMode ? t("rotation.autoByDate") : rotationLabel}
               </div>
             </div>
           </div>
@@ -97,7 +99,7 @@ export function RotationControls({
               data-onboarding="share-button"
               className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-50"
               style={{ backgroundColor: "var(--dt-button-bg)", borderRadius: "var(--dt-border-radius-sm)" }}
-              aria-label="共有する"
+              aria-label={t("rotation.shareAria")}
             >
               {isSharing ? (
                 <Loader2 className="size-3.5 sm:size-4 animate-spin" aria-hidden="true" />
@@ -113,7 +115,7 @@ export function RotationControls({
                       <span
                         className="absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white"
                         style={{ backgroundColor: "#10B981" }}
-                        aria-label="クラウド保存済み"
+                        aria-label={t("rotation.cloudSaved")}
                       />
                     </>
                   )}
@@ -124,20 +126,20 @@ export function RotationControls({
                   <span
                     className="absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white"
                     style={{ backgroundColor: "#F59E0B" }}
-                    aria-label="未保存"
+                    aria-label={t("rotation.cloudUnsaved")}
                   />
                 </span>
               )}
-              共有
+              {t("share.title")}
             </button>
             <button type="button"
               onClick={onOpenSettings}
               data-onboarding="edit-button"
               className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px]"
               style={{ backgroundColor: "var(--dt-button-bg)", borderRadius: "var(--dt-border-radius-sm)" }}
-              aria-label="当番表を編集する"
+              aria-label={t("rotation.editAria")}
             >
-              <Pencil className="size-3.5 sm:size-4" aria-hidden="true" /> 編集
+              <Pencil className="size-3.5 sm:size-4" aria-hidden="true" /> {t("settings.title")}
             </button>
           </div>
         </m.div>

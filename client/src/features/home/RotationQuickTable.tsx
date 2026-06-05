@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import { m } from "framer-motion";
 import type { AssignmentMode, Member, TaskGroup } from "@/rotation/types";
 import { computeAssignments } from "@/rotation/utils";
+import { useT } from "@/i18n";
 
 interface RotationQuickTableProps {
   groups: TaskGroup[];
@@ -16,6 +17,7 @@ export function RotationQuickTable({
   rotation,
   assignmentMode,
 }: RotationQuickTableProps) {
+  const t = useT();
   const activeMembers = useMemo(() => members.filter(m => !m.skipped), [members]);
 
   const allColumnAssignments = useMemo(() => {
@@ -55,17 +57,17 @@ export function RotationQuickTable({
             className="text-sm mb-3 sm:mb-4 tracking-wider uppercase"
             style={{ color: "var(--dt-text-secondary)", fontWeight: "var(--dt-font-weight-extra)" }}
           >
-            当番の順番 早見表
+            {t("quickTable.heading")}
           </h2>
           {showScrollHint && (
             <div className="flex items-center gap-1.5 mb-2 text-xs font-bold sm:hidden rotation-no-print" style={{ color: "var(--dt-text-muted)" }}>
               <span>←</span>
-              <span>横にスクロールできます</span>
+              <span>{t("quickTable.scrollHint")}</span>
               <span>→</span>
             </div>
           )}
           <div ref={scrollRef} className="overflow-x-auto -mx-1">
-            <table className="w-full text-sm border-collapse" aria-label="ローテーション早見表">
+            <table className="w-full text-sm border-collapse" aria-label={t("quickTable.tableAria")}>
               <thead>
                 <tr>
                   <th
@@ -73,7 +75,7 @@ export function RotationQuickTable({
                     style={{ color: "var(--dt-text)", borderBottom: "var(--dt-border-width) solid var(--dt-table-border-strong)", fontWeight: "var(--dt-font-weight-extra)" }}
                     scope="col"
                   >
-                    担当
+                    {t("quickTable.assignee")}
                   </th>
                   {activeMembers.map((_, rotationIndex) => {
                     const isCurrent = rotationIndex === rotation;
@@ -88,7 +90,7 @@ export function RotationQuickTable({
                         }}
                         scope="col"
                       >
-                        {rotationIndex === 0 ? "初期" : `${rotationIndex}回目`}
+                        {rotationIndex === 0 ? t("rotation.initial") : t("rotation.nth", { n: rotationIndex })}
                         {isCurrent && " ◀"}
                       </th>
                     );

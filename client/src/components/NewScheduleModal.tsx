@@ -5,6 +5,7 @@ import type { ScheduleTemplate } from "@/rotation/types";
 import { TEMPLATES } from "@/rotation/constants";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useT } from "@/i18n";
 
 const CUSTOM_TEMPLATE = TEMPLATES[TEMPLATES.length - 1]; // カスタム（空白）— 常に最後
 
@@ -28,6 +29,7 @@ interface Props {
 }
 
 export function NewScheduleModal({ onSelect, onClose }: Props) {
+  const t = useT();
   const modalRef = useRef<HTMLDivElement>(null);
   const [openSections, setOpenSections] = useState<Set<string>>(
     () => new Set(TEMPLATE_SECTIONS.flatMap((s) => (s.defaultOpen ? [s.label] : [])))
@@ -79,9 +81,9 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
         <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4" style={{ borderBottom: "var(--dt-border-width) solid var(--dt-border-color)" }}>
           <h2 id="new-schedule-title" className="text-lg font-extrabold" style={{ color: "var(--dt-text)" }}>
             <FileText className="size-5 inline-block mr-2 -mt-0.5" aria-hidden="true" />
-            新しい当番表を作成
+            {t("newSchedule.title")}
           </h2>
-          <button type="button" onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label="閉じる">
+          <button type="button" onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors" aria-label={t("common.close")}>
             <X className="size-5" aria-hidden="true" />
           </button>
         </div>
@@ -89,7 +91,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
         {/* テンプレート一覧 */}
         <div className="p-4 sm:p-5 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] sm:pb-5 overflow-y-auto flex flex-col gap-1">
           <p className="text-sm font-bold mb-2" style={{ color: "var(--dt-text-muted)" }}>
-            テンプレートを選択してください。後から自由に編集できます。
+            {t("newSchedule.instruction")}
           </p>
 
           {/* 新しくつくる（カスタム） */}
@@ -102,10 +104,10 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
               <Plus className="size-6" style={{ color: "var(--dt-text)" }} aria-hidden="true" />
               <div className="min-w-0">
                 <div className="text-sm font-extrabold" style={{ color: "var(--dt-text)" }}>
-                  新しくつくる
+                  {t("newSchedule.createBlank")}
                 </div>
                 <div className="text-xs font-medium mt-0.5" style={{ color: "var(--dt-text-secondary)" }}>
-                  空白から自由に当番表を作成
+                  {t("newSchedule.createBlankDesc")}
                 </div>
               </div>
             </div>
