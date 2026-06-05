@@ -63,7 +63,7 @@
 
 ```sh
 pnpm dev          # Vite 開発サーバー (port 3000)
-pnpm dev:api      # Wrangler Pages dev サーバー (port 8788)
+pnpm dev:api      # Wrangler Pages dev サーバー (port 8788)。dist/ が無ければ自動で build
 pnpm dev:full     # フロント + API を同時起動
 pnpm build        # 本番ビルド
 pnpm check        # TypeScript 型チェック

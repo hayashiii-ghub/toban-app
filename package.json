@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --host",
-    "dev:api": "wrangler dev --port 8788",
+    "dev:api": "node scripts/ensure-dist.mjs && wrangler dev --port 8788",
     "dev:full": "concurrently \"pnpm dev\" \"pnpm dev:api\"",
     "build": "vite build",
     "deploy:cf": "node scripts/prepare-wrangler-config.mjs --require && wrangler d1 migrations apply toban-maker-db --config wrangler.deploy.jsonc && wrangler deploy --config wrangler.deploy.jsonc",
