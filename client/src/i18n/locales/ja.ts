@@ -316,4 +316,25 @@ export const ja: Record<string, string> = {
   "cal.wd4": "木",
   "cal.wd5": "金",
   "cal.wd6": "土",
+
+  // テンプレート一覧ページ
+  "templates.docTitle": "当番表テンプレート一覧｜無料で使えるtoban（トバン）",
+  "templates.titleSuffix": "｜toban（トバン）",
+  "templates.breadcrumb": "テンプレート一覧",
+  "templates.breadcrumbAria": "パンくず",
+  "templates.heading": "当番表テンプレート一覧",
+  "templates.subA": "掃除当番・給食当番・日直など、すぐ使える",
+  "templates.subFree": "無料テンプレート",
+  "templates.subB": "を{count}種類ご用意しました。テンプレートを選んで、メンバーや担当を自由に編集するだけで当番表が完成します。",
+
+  // テンプレート詳細ページ
+  "templatesDetail.contents": "テンプレートの内容",
+  "templatesDetail.jaNote": "※ 以下の内容は日本語で表示されます（作成後に自由に編集できます）。",
+  "templatesDetail.taskN": "タスク {n}",
+  "templatesDetail.groupN": "グループ {n}",
+  "templatesDetail.memberExample": "メンバー例（{count}名）",
+  "templatesDetail.editNote": "※ メンバー名・人数・色は自由に編集できます。",
+  "templatesDetail.backToList": "テンプレート一覧に戻る",
+  "templatesDetail.related": "関連するテンプレート",
+  "templatesDetail.createFromThis": "このテンプレートで作る",
 };

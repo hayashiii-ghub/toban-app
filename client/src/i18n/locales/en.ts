@@ -319,4 +319,25 @@ export const en: Record<string, string> = {
   "cal.wd4": "Thu",
   "cal.wd5": "Fri",
   "cal.wd6": "Sat",
+
+  // Templates list page
+  "templates.docTitle": "Duty Roster Templates | Free with toban",
+  "templates.titleSuffix": " | toban",
+  "templates.breadcrumb": "Templates",
+  "templates.breadcrumbAria": "Breadcrumb",
+  "templates.heading": "Duty Roster Templates",
+  "templates.subA": "Ready-to-use ",
+  "templates.subFree": "free templates",
+  "templates.subB": " — {count} of them. Pick one and just edit the members and assignments to finish your roster.",
+
+  // Template detail page
+  "templatesDetail.contents": "Template contents",
+  "templatesDetail.jaNote": "The contents below are shown in Japanese. You can edit everything freely after creating.",
+  "templatesDetail.taskN": "Task {n}",
+  "templatesDetail.groupN": "Group {n}",
+  "templatesDetail.memberExample": "Example members ({count})",
+  "templatesDetail.editNote": "* Member names, counts, and colors are fully editable.",
+  "templatesDetail.backToList": "Back to templates",
+  "templatesDetail.related": "Related templates",
+  "templatesDetail.createFromThis": "Create with this template",
 };

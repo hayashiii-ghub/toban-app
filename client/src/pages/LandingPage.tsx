@@ -14,10 +14,11 @@ import {
   TEMPLATE_CATEGORIES,
   TEMPLATE_SEO_DATA,
   COMMON_FAQ,
+  COMMON_FAQ_EN,
 } from "@shared/seo-templates";
 import { CONTACT_CATEGORIES } from "@shared/schemas";
 import { TEMPLATES } from "@/rotation/constants";
-import { useT } from "@/i18n";
+import { useT, useLocale } from "@/i18n";
 import "./landing.css";
 
 // 黒板テーマカラー
@@ -276,6 +277,8 @@ const featuredTemplates = TEMPLATE_CATEGORIES
 
 export default function LandingPage() {
   const t = useT();
+  const { locale } = useLocale();
+  const faqs = locale === "en" ? COMMON_FAQ_EN : COMMON_FAQ;
   const [showShareMenu, setShowShareMenu] = useState(false);
 
   useEffect(() => {
@@ -456,7 +459,7 @@ export default function LandingPage() {
             {t("lp.faqHeading")}
           </h2>
           <div className="flex flex-col gap-3">
-            {COMMON_FAQ.map((faq) => (
+            {faqs.map((faq) => (
               <FAQItem key={faq.question} question={faq.question} answer={faq.answer} />
             ))}
           </div>

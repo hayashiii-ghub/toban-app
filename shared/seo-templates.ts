@@ -430,3 +430,71 @@ export const COMMON_FAQ = [
     answer: "tobanのトップページ下部にあるお問い合わせフォームからご連絡いただけます。不具合の報告や機能のご要望など、お気軽にお送りください。",
   },
 ];
+
+// ───────────────────────────────────────────────────────────
+// 英語訳（client の locale=en 表示用）。
+// 既存の JA 配列は無改変。server の bot prerender は JA のまま使う。
+// 欠落時は client 側で JA に fallback する。
+// ───────────────────────────────────────────────────────────
+
+/** カテゴリの英語訳（id キー） */
+export const TEMPLATE_CATEGORIES_EN: Record<string, { label: string; description: string }> = {
+  office: { label: "Office", description: "Rotate everyday office tasks such as cleaning duty and phone/reception coverage." },
+  kindergarten: { label: "Kindergarten & Preschool", description: "Templates for preschool teachers—facility cleaning, bus escort, extended care, and more." },
+  school: { label: "Elementary & Junior High (Class)", description: "Classroom duty templates—cleaning, school lunch, daily duty. Works by group or pair." },
+  faculty: { label: "Staff Room (Teachers)", description: "Rosters for school tasks teachers share, like patrols and locking up." },
+  pta: { label: "PTA & Parents", description: "Handy templates for parent rotations—crossing guard, PTA events, pool watch." },
+  care: { label: "Care Facility", description: "Shift and duty management for care facilities—floor assignments, bathing assistance, night shifts." },
+  community: { label: "Neighborhood & Apartment", description: "Templates for neighborhood cleaning/patrol and apartment common-area management." },
+  restaurant: { label: "Restaurant & Shop", description: "Task rotations for restaurants and shops—opening/closing work, restroom cleaning." },
+  home: { label: "Home & Living", description: "Rotate household chores like bath cleaning and taking out the trash fairly among family." },
+  other: { label: "Other Groups", description: "Templates for various groups—share houses, clubs, places of worship." },
+  checklist: { label: "Checklist & TODO", description: "Templates usable as to-do lists, like event prep and new-term preparation." },
+};
+
+/** テンプレートの heading / intro の英語訳（slug キー） */
+export const TEMPLATE_SEO_EN: Record<string, { heading: string; intro: string }> = {
+  "office-cleaning": { heading: "Office Cleaning Duty Roster Template", intro: "A roster for sharing office cleaning fairly among members. Manage four areas: vacuuming/mopping, restroom & sink, trash collection, and the kitchenette. People and areas are fully editable, and automatic date rotation keeps it running hands-free." },
+  "office-phone": { heading: "Phone & Reception Duty Roster Template", intro: "Rotate reception duties across three roles: morning phone/visitor handling, afternoon phone/visitor handling, and mail sorting/distribution. Even a small office can share the load fairly." },
+  "kindergarten-cleaning": { heading: "Preschool Cleaning Duty Roster Template", intro: "Rotate cleaning by class: room cleaning/disinfection, restroom cleaning, playground/equipment checks, and entrance/hallway cleaning. Manage by class name, like Sakura or Himawari." },
+  "bus-escort": { heading: "Bus Escort & Pickup Duty Roster Template", intro: "Balance teachers' load across three shifts: morning bus escort/headcount, afternoon bus escort/drop-off check, and pickup/gate duty. Also works as a headcount checklist." },
+  "after-care": { heading: "Extended Care Duty Roster Template", intro: "Cover extended care with three shifts: early care (from 7:30), extended care (until 18:00), and snack prep/cleanup. The weekend/holiday skip feature enables weekday-only automatic rotation." },
+  "nap-check": { heading: "Nap Check Duty Roster Template", intro: "Rotate breathing and position checks for the 0-, 1-, and 2-year-old classes, plus temperature/humidity logging. Task-assignment mode lets you staff each class flexibly for SIDS prevention." },
+  "allergy-check": { heading: "Allergy Check Duty Roster Template", intro: "Rotate, by task, the allergen-free meal check, double-check at serving, and watch during eating, plus snack content and serving checks. Builds a system to prevent human error." },
+  "classroom-cleaning": { heading: "Classroom Cleaning Duty Roster Template", intro: "Rotate five jobs by group: classroom (broom/dustpan), classroom (wiping), hallway/stairs, restroom cleaning, and blackboard/eraser cleaner. Print it and post it on the wall so kids can check it themselves." },
+  "school-lunch": { heading: "School Lunch Duty Roster Template", intro: "Cover prep to cleanup with four groups: serving (main dish), serving (soup/rice), milk/straw handout, and cleanup/wiping. Print it and post it at the lunch corner for smooth days." },
+  "daily-duty": { heading: "Daily Duty (Nicchoku) Roster Template", intro: "Rotate three roles in pairs: hosting the morning and afternoon meetings, erasing the board/filling the journal, and calls/greetings. With date auto mode, the order rotates automatically on weekdays only." },
+  "handout-duty": { heading: "Handout & Print Helper Roster Template", intro: "Rotate four roles by group: handing out prints, collecting/checking submissions, distributing communication notebooks, and keeping prints for absentees. Makes the classic class-management tasks visible." },
+  "plant-animal-care": { heading: "Watering & Animal Care Roster Template", intro: "Rotate, by task, watering beds/planters, feeding fish/animals, cleaning tanks/cages, and keeping the observation journal. Builds a habit so plants and animals are never forgotten." },
+  "ventilation-duty": { heading: "Ventilation & Classroom Environment Roster Template", intro: "Share four roles by group: morning window opening, ventilation checks at breaks, locking up/closing windows at day's end, and refilling/managing the humidifier. Kids can run the ventilation habit themselves." },
+  "school-patrol": { heading: "Campus Patrol & Locking Roster Template", intro: "Rotate three shifts among teachers: morning gate duty, lunchtime patrol, and after-school locking up. With date auto mode the duty day is set automatically, and you can post it in the staff room." },
+  "crossing-guard": { heading: "Crossing Guard (Flag) Duty Roster Template", intro: "Rotate flag duty and crossing support at the east gate, west gate, and intersection among parents. With automatic date rotation and weekend/holiday skip, a school-days-only roster builds itself. Easy to print or share via LINE." },
+  "pta-event": { heading: "PTA Event Prep Roster Template", intro: "Share PTA event operations across three teams—from moving desks and chairs, to reception and guiding guests, to trash collection and teardown. Rotating per event keeps the load off specific parents." },
+  "pool-watch": { heading: "Pool Watch Duty Roster Template", intro: "Run a safe pool opening with poolside watch and headcount checks (morning and afternoon) plus a first-aid/AED-prep/water-temperature shift. Share summer-break parent duties fairly." },
+  "reading-volunteer": { heading: "Read-Aloud Volunteer Roster Template", intro: "Rotate read-aloud volunteers across classrooms from grade 1 to 6. With a template of 6 grades by 6 volunteers, you can cover every grade evenly." },
+  "care-floor": { heading: "Floor Assignment Roster Template", intro: "Rotate day-shift leaders and sub-leaders across three floors among staff. Task-assignment mode lets you staff each floor flexibly, and automatic date rotation sets each day's shift." },
+  "bathing-assist": { heading: "Bathing Assistance Roster Template", intro: "Rotate three tasks—in-bath assistance, undressing/dressing assistance, and guiding/watching—across morning and afternoon shifts among 5 staff. Prevents uneven bathing-assistance loads." },
+  "night-shift": { heading: "Night Shift Roster Template", intro: "Rotate two shifts among 5 staff: night patrols (every 2 hours)/nurse-call response/records, and wake-up assistance/breakfast-prep support. Print and post it at the night station so the assignee is clear at a glance." },
+  "community-cleaning": { heading: "Neighborhood Cleaning & Management Roster Template", intro: "Rotate three roles among district groups (e.g., East Town, West Town): trash-station cleaning/dumping checks, park cleaning/equipment inspection, and night patrol/streetlight checks. Print and distribute it in place of a circular notice." },
+  "apartment-management": { heading: "Apartment Common-Area Management Roster Template", intro: "Rotate four tasks by floor: entrance cleaning, trash-area cleaning/sorting checks, hallway rounds/bike-parking tidying, and plant watering/weeding. Makes the management association's routine duties visible." },
+  "restaurant-ops": { heading: "Restaurant Opening & Closing Roster Template", intro: "Rotate three categories among 6 staff: opening work (prep, table setting, sign, register), closing work (cleaning, locking up, closing the register, sales report), and daytime cleaning (restroom, restocking)." },
+  "household-chores": { heading: "Household Chore Rotation Template", intro: "Rotate everyday chores like bath cleaning and taking out the trash fairly among family members. Tasks and members are freely editable, and you can print a clean roster to stick on the fridge." },
+  "sharehouse-management": { heading: "Share House Common-Area Roster Template", intro: "Rotate four areas among 5 roommates: kitchen cleaning, bathroom/sink cleaning, trash/sorting, and the living room/entrance/restroom. Share by URL so everyone can check it on their phone." },
+  "sports-club": { heading: "Sports Team & Club Duty Roster Template", intro: "Rotate four categories among grade groups: ground prep/line marking, equipment setup/cleanup, drink prep/refill, and clubroom cleaning/attendance records. Share pre- and post-practice work fairly." },
+  "religious-service": { heading: "Church & Temple Service Roster Template", intro: "Rotate four services among groups (Ume, Matsu, Take, Sakura): cleaning the main hall/chapel, reception/visitor guidance, flower offering/arranging, and memorial/event prep. Fairly manage the service activities of members." },
+  "event-checklist": { heading: "Event Prep Checklist Template", intro: "Share five tasks across the team: venue booking/site visit, supplies/equipment prep, announcements/invitations, day-of reception/guidance, and teardown/cleanup. You can also use toban as a to-do list." },
+  "new-semester-checklist": { heading: "New-Term To-Do List Template", intro: "Split five tasks among the homeroom teacher, assistant, and grade head: roster/seating chart, classroom displays/layout, printing handouts, contacting parents, and prepping duty rosters/roles. Prevents new-term oversights." },
+  "moving-checklist": { heading: "Moving To-Do List Template", intro: "Manage moving tasks in four categories: move-out/move-in notices and utilities, packing/disposing of unwanted items, cleaning/furniture placement at the new home, and cleaning/walkthrough at the old home. Handy for splitting with family." },
+};
+
+/** 共通FAQ の英語訳（COMMON_FAQ と同順） */
+export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
+  { question: "Is toban free?", answer: "Yes, it's completely free. No account needed—you can create a roster right in your browser." },
+  { question: "Can I print the roster I made?", answer: "Yes. Use your browser's print feature to print or save an image with a clean layout, or save as PDF from the print dialog. Choose from three formats: cards, table, or calendar." },
+  { question: "How do I share a roster with others?", answer: "Issue a URL from the Share button. Send a view-only URL so anyone can see the roster, or share an edit URL to collaborate. QR-code sharing is also supported." },
+  { question: "Does the rotation switch automatically?", answer: "If you set date mode, the rotation switches automatically based on a start date and cycle. There's also an option to skip weekends and holidays." },
+  { question: "Is there a recommended browser?", answer: "We recommend the latest Google Chrome or Microsoft Edge for the cleanest print layout. Basic features work in Safari and Firefox too, but the print layout may break." },
+  { question: "Can I use it on a smartphone?", answer: "Yes, creating, viewing, and sharing rosters all work fine on a smartphone. For printing or saving as PDF, we recommend Google Chrome on a computer." },
+  { question: "Where is my data stored?", answer: "Roster data is stored in your browser (localStorage). It's also saved to the cloud only when you use the share feature. Clearing your browser data deletes the roster, so for important data we recommend issuing a share URL to keep it." },
+  { question: "Where can I contact you?", answer: "Reach us through the contact form at the bottom of toban's top page. Feel free to send bug reports or feature requests." },
+];
