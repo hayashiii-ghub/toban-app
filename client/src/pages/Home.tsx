@@ -74,9 +74,14 @@ export default function Home() {
         hasSlug={!!s.activeSchedule.slug}
       />
 
-      {s.isDateMode && (
-        <TodayBanner groups={s.groups} members={s.members} rotation={s.effectiveRotation} assignmentMode={s.activeSchedule.assignmentMode} />
-      )}
+      <TodayBanner
+        groups={s.groups}
+        members={s.members}
+        rotation={s.effectiveRotation}
+        isDateMode={s.isDateMode}
+        rotationLabel={rotationLabel}
+        assignmentMode={s.activeSchedule.assignmentMode}
+      />
 
       <ScheduleTabs
         schedules={s.state.schedules}

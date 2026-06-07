@@ -307,6 +307,7 @@ export const en: Record<string, string> = {
 
   // Today banner
   "today.label": "Today's duty ({date})",
+  "current.label": "Current duty ({turn})",
 
   // Calendar
   "cal.manualNote": "Manual mode: assignments are fixed",

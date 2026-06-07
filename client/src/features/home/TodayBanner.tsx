@@ -6,16 +6,23 @@ interface TodayBannerProps {
   groups: TaskGroup[];
   members: Member[];
   rotation: number;
+  /** 日付で自動切替するモードか。true なら今日の日付、false なら現在の周回でラベルする */
+  isDateMode: boolean;
+  /** 手動モードで表示する周回ラベル（例: 「初期」「2回目」） */
+  rotationLabel: string;
   assignmentMode?: AssignmentMode;
 }
 
-export function TodayBanner({ groups, members, rotation, assignmentMode }: TodayBannerProps) {
+export function TodayBanner({ groups, members, rotation, isDateMode, rotationLabel, assignmentMode }: TodayBannerProps) {
   const t = useT();
   const dateLocale = useDateLocale();
   const assignments = computeAssignments(groups, members, rotation, assignmentMode);
   if (assignments.length === 0) return null;
 
+  // 自動モードは rotation が今日の日付から算出されるので「きょうの当番」、
+  // 手動モードはユーザーが選んだ周回なので「いまの当番（N回目）」と出し分ける。
   const today = new Date().toLocaleDateString(dateLocale, { month: "short", day: "numeric", weekday: "short" });
+  const label = isDateMode ? t("today.label", { date: today }) : t("current.label", { turn: rotationLabel });
 
   return (
     <div className="px-3 sm:px-4 pb-2 rotation-no-print">
@@ -24,7 +31,7 @@ export function TodayBanner({ groups, members, rotation, assignmentMode }: Today
         style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "var(--dt-border-radius-sm)" }}
       >
         <span className="text-xs font-bold shrink-0" style={{ color: "var(--dt-text-muted)" }}>
-          {t("today.label", { date: today })}
+          {label}
         </span>
         <div className="flex items-center gap-1.5 flex-wrap">
           {assignments.map(({ group, member }) => (
