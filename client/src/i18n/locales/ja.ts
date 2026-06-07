@@ -304,6 +304,7 @@ export const ja: Record<string, string> = {
 
   // 今日のバナー
   "today.label": "きょうの当番（{date}）",
+  "current.label": "いまの当番（{turn}）",
 
   // カレンダー
   "cal.manualNote": "手動切り替え：当番は固定です",
