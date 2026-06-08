@@ -204,6 +204,9 @@ export const ja: Record<string, string> = {
   "view.cards": "カード",
   "view.table": "早見表",
   "view.calendar": "カレンダー",
+  "view.disc": "円盤",
+  "disc.offDuty": "おやすみ",
+  "disc.unsupported": "この当番表は円盤にできません（グループ専用メンバーや、役割がメンバー数より多い場合）。早見表をご利用ください。",
   "print.print": "印刷",
   "print.printAria": "印刷する",
 
