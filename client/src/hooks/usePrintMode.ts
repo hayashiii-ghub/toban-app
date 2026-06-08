@@ -9,7 +9,6 @@ export function usePrintMode(): {
   const t = useT();
   useEffect(() => {
     const cleanupPrintState = () => {
-      delete document.body.dataset.printMode;
       document.getElementById("print-orientation")?.remove();
     };
     window.addEventListener("afterprint", cleanupPrintState);
@@ -24,7 +23,6 @@ export function usePrintMode(): {
       toast.error(t("shared.printUnsupported"));
       return;
     }
-    document.body.dataset.printMode = viewTab;
     const orientation = viewOrientation(viewTab);
     const style = document.createElement("style");
     style.id = "print-orientation";
