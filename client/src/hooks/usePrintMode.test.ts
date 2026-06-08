@@ -8,15 +8,7 @@ vi.mock("sonner", () => ({
 
 describe("usePrintMode", () => {
   afterEach(() => {
-    delete document.body.dataset.printMode;
     document.getElementById("print-orientation")?.remove();
-  });
-
-  it("handlePrint('cards')でbody.dataset.printModeが'cards'になる", () => {
-    window.print = vi.fn();
-    const { result } = renderHook(() => usePrintMode());
-    act(() => result.current.handlePrint("cards"));
-    expect(document.body.dataset.printMode).toBe("cards");
   });
 
   it("handlePrint('cards')でlandscape orientationのstyle要素が作成される", () => {
@@ -51,23 +43,22 @@ describe("usePrintMode", () => {
     expect(window.print).toHaveBeenCalled();
   });
 
-  it("window.printが未実装の場合はtoast.errorを表示しprintModeを設定しない", async () => {
+  it("window.printが未実装の場合はtoast.errorを表示し印刷を行わない", async () => {
     const { toast } = await import("sonner");
     const original = window.print;
     Object.defineProperty(window, "print", { value: undefined, writable: true, configurable: true });
     const { result } = renderHook(() => usePrintMode());
     act(() => result.current.handlePrint("cards"));
     expect(toast.error).toHaveBeenCalledWith("このブラウザでは印刷できません。SafariまたはChromeで開いてください");
-    expect(document.body.dataset.printMode).toBeUndefined();
+    expect(document.getElementById("print-orientation")).toBeNull();
     Object.defineProperty(window, "print", { value: original, writable: true, configurable: true });
   });
 
-  it("afterprintイベントでdatasetとstyle要素がクリーンアップされる", () => {
+  it("afterprintイベントでstyle要素がクリーンアップされる", () => {
     window.print = vi.fn();
     const { result } = renderHook(() => usePrintMode());
     act(() => result.current.handlePrint("cards"));
     act(() => { window.dispatchEvent(new Event("afterprint")); });
-    expect(document.body.dataset.printMode).toBeUndefined();
     expect(document.getElementById("print-orientation")).toBeNull();
   });
 });

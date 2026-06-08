@@ -62,33 +62,10 @@
     padding: 6px !important;
   }
 
-  /* Print mode: cards only - hide table, calendar & disc */
-  [data-print-mode="cards"] .rotation-print-table-section,
-  [data-print-mode="cards"] .rotation-print-calendar-section,
-  [data-print-mode="cards"] .rotation-print-disc-section {
-    display: none !important;
-  }
-
-  /* Print mode: table only - hide cards, calendar & disc */
-  [data-print-mode="table"] .rotation-print-card-section,
-  [data-print-mode="table"] .rotation-print-calendar-section,
-  [data-print-mode="table"] .rotation-print-disc-section {
-    display: none !important;
-  }
-
-  /* Print mode: calendar only - hide cards, table & disc */
-  [data-print-mode="calendar"] .rotation-print-card-section,
-  [data-print-mode="calendar"] .rotation-print-table-section,
-  [data-print-mode="calendar"] .rotation-print-disc-section {
-    display: none !important;
-  }
-
-  /* Print mode: disc only - hide cards, table & calendar */
-  [data-print-mode="disc"] .rotation-print-card-section,
-  [data-print-mode="disc"] .rotation-print-table-section,
-  [data-print-mode="disc"] .rotation-print-calendar-section {
-    display: none !important;
-  }
+  /* 印刷の view 分離は不要: Home/SharedScheduleView は active な viewTab の
+     section しか描画しない（条件レンダリング）。data-print-mode による
+     hide マトリクスは存在しない section を隠す no-op だったため削除。
+     全 view を常時描画する方式に戻す場合はここに分離ルールを再追加すること。 */
 
   /* Disc print: keep the wheel whole on one page, centered */
   .rotation-print-disc-section {
