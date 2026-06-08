@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
+import { viewOrientation } from "@/features/home/viewTabsConfig";
 import { useT } from "@/i18n";
 
 export function usePrintMode(): {
@@ -24,7 +25,7 @@ export function usePrintMode(): {
       return;
     }
     document.body.dataset.printMode = viewTab;
-    const orientation = viewTab === "calendar" || viewTab === "disc" ? "portrait" : "landscape";
+    const orientation = viewOrientation(viewTab);
     const style = document.createElement("style");
     style.id = "print-orientation";
     style.textContent = `@page { size: A4 ${orientation}; }`;

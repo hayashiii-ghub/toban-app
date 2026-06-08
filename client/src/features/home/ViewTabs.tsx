@@ -1,6 +1,7 @@
 import { useT } from "@/i18n";
+import { VIEW_TABS, type ViewTabValue } from "./viewTabsConfig";
 
-export type ViewTabValue = "cards" | "table" | "calendar" | "disc";
+export type { ViewTabValue };
 
 interface ViewTabsProps {
   viewTab: ViewTabValue;
@@ -12,12 +13,7 @@ export function ViewTabs({ viewTab, onChangeTab }: ViewTabsProps) {
   return (
     <div className="px-3 sm:px-4 pt-2 pb-1 rotation-no-print" data-onboarding="view-tabs">
       <div className="max-w-4xl mx-auto flex gap-2">
-        {([
-          { value: "cards", label: t("view.cards") },
-          { value: "table", label: t("view.table") },
-          { value: "calendar", label: t("view.calendar") },
-          { value: "disc", label: t("view.disc") },
-        ] as const).map(({ value, label }) => (
+        {VIEW_TABS.map(({ value, labelKey }) => (
           <button type="button"
             key={value}
             onClick={() => onChangeTab(value)}
@@ -33,7 +29,7 @@ export function ViewTabs({ viewTab, onChangeTab }: ViewTabsProps) {
               transform: viewTab === value ? `translate(var(--dt-hover-translate), var(--dt-hover-translate))` : undefined,
             }}
           >
-            {label}
+            {t(labelKey)}
           </button>
         ))}
       </div>

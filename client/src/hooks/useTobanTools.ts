@@ -3,12 +3,10 @@ import type { useHomeState } from "@/pages/useHomeState";
 import type { AssignmentMode, RotationConfig } from "@/rotation/types";
 import { MEMBER_PRESETS, TEMPLATES } from "@/rotation/constants";
 import { generateId, normalizeRotation } from "@/rotation/utils";
+import { VIEW_VALUES, isViewTab, viewMcpLabel } from "@/features/home/viewTabsConfig";
 
 /** useHomeState() の戻り値。tool はこの派生値/ハンドラだけを介して動く。 */
 type HomeState = ReturnType<typeof useHomeState>;
-
-const VIEW_LABELS = { cards: "カード", table: "表", calendar: "カレンダー" } as const;
-type ViewKey = keyof typeof VIEW_LABELS;
 
 function result(text: string): WebMCPToolResult {
   return { content: [{ type: "text", text }] };
@@ -192,20 +190,20 @@ function advanceRotationTool(get: () => HomeState): WebMCPTool {
 function changeViewTool(get: () => HomeState): WebMCPTool {
   return {
     name: "change_view",
-    description: "Switch how the active roster is displayed: cards, table, or calendar.",
+    description: "Switch how the active roster is displayed: cards, table, calendar, or disc.",
     inputSchema: {
       type: "object",
-      properties: { view: { type: "string", enum: ["cards", "table", "calendar"], description: "Display mode" } },
+      properties: { view: { type: "string", enum: [...VIEW_VALUES], description: "Display mode" } },
       required: ["view"],
     },
     async execute(input) {
       const { changeTab } = get();
       const view = strField(input, "view");
-      if (view !== "cards" && view !== "table" && view !== "calendar") {
-        return result('view は "cards" / "table" / "calendar" のいずれかを指定してください。');
+      if (!isViewTab(view)) {
+        return result(`view は ${VIEW_VALUES.map(v => `"${v}"`).join(" / ")} のいずれかを指定してください。`);
       }
-      changeTab(view as ViewKey);
-      return result(`表示を「${VIEW_LABELS[view as ViewKey]}」に切り替えました。`);
+      changeTab(view);
+      return result(`表示を「${viewMcpLabel(view)}」に切り替えました。`);
     },
   };
 }
@@ -326,7 +324,7 @@ function printScheduleTool(get: () => HomeState): WebMCPTool {
     async execute() {
       const { handlePrint, viewTab } = get();
       handlePrint(viewTab);
-      return result(`印刷ダイアログを開きました（${VIEW_LABELS[viewTab as ViewKey] ?? viewTab}表示）。`);
+      return result(`印刷ダイアログを開きました（${viewMcpLabel(viewTab)}表示）。`);
     },
   };
 }
