@@ -7,7 +7,7 @@ const VIEW_TAB_KEY = "toban-view-tab";
 export function useViewTab() {
   const [viewTab, setViewTab] = useState<ViewTabValue>(() => {
     const saved = safeGetItem(VIEW_TAB_KEY);
-    if (saved === "cards" || saved === "table" || saved === "calendar") return saved;
+    if (saved === "cards" || saved === "table" || saved === "calendar" || saved === "disc") return saved;
     return "cards";
   });
 

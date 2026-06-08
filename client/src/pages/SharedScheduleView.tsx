@@ -8,6 +8,7 @@ import { computeAssignments, computeDateRotation, generateId, loadState, saveSta
 import { AssignmentsGrid } from "@/features/home/AssignmentsGrid";
 import { RotationQuickTable } from "@/features/home/RotationQuickTable";
 import { RotationCalendar } from "@/features/home/RotationCalendar";
+import { RotationDisc } from "@/features/home/RotationDisc";
 import { ViewTabs, type ViewTabValue } from "@/features/home/ViewTabs";
 import { AdBanner } from "@/components/AdBanner";
 import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
@@ -228,6 +229,15 @@ export default function SharedScheduleView() {
           members={schedule.members}
           rotation={effectiveRotation}
           rotationConfig={schedule.rotationConfig}
+          assignmentMode={schedule.assignmentMode}
+        />
+      )}
+
+      {viewTab === "disc" && (
+        <RotationDisc
+          groups={schedule.groups}
+          members={schedule.members}
+          rotation={effectiveRotation}
           assignmentMode={schedule.assignmentMode}
         />
       )}

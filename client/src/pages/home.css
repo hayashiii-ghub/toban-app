@@ -67,22 +67,41 @@
     display: block !important;
   }
 
-  /* Print mode: cards only - hide table & calendar */
+  /* Print mode: cards only - hide table, calendar & disc */
   [data-print-mode="cards"] .rotation-print-table-section,
-  [data-print-mode="cards"] .rotation-print-calendar-section {
+  [data-print-mode="cards"] .rotation-print-calendar-section,
+  [data-print-mode="cards"] .rotation-print-disc-section {
     display: none !important;
   }
 
-  /* Print mode: table only - hide cards & calendar */
+  /* Print mode: table only - hide cards, calendar & disc */
   [data-print-mode="table"] .rotation-print-card-section,
-  [data-print-mode="table"] .rotation-print-calendar-section {
+  [data-print-mode="table"] .rotation-print-calendar-section,
+  [data-print-mode="table"] .rotation-print-disc-section {
     display: none !important;
   }
 
-  /* Print mode: calendar only - hide cards & table */
+  /* Print mode: calendar only - hide cards, table & disc */
   [data-print-mode="calendar"] .rotation-print-card-section,
-  [data-print-mode="calendar"] .rotation-print-table-section {
+  [data-print-mode="calendar"] .rotation-print-table-section,
+  [data-print-mode="calendar"] .rotation-print-disc-section {
     display: none !important;
+  }
+
+  /* Print mode: disc only - hide cards, table & calendar */
+  [data-print-mode="disc"] .rotation-print-card-section,
+  [data-print-mode="disc"] .rotation-print-table-section,
+  [data-print-mode="disc"] .rotation-print-calendar-section {
+    display: none !important;
+  }
+
+  /* Disc print: keep the wheel whole on one page, centered */
+  .rotation-print-disc-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .rotation-print-disc-svg {
+    max-width: 170mm !important;
   }
 
   /* Allow content to flow across pages */
