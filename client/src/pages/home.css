@@ -62,11 +62,6 @@
     padding: 6px !important;
   }
 
-  /* Unhide tab wrappers for print — visibility controlled by data-print-mode rules below */
-  .rotation-view-tab.hidden {
-    display: block !important;
-  }
-
   /* Print mode: cards only - hide table, calendar & disc */
   [data-print-mode="cards"] .rotation-print-table-section,
   [data-print-mode="cards"] .rotation-print-calendar-section,

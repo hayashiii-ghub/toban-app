@@ -247,6 +247,20 @@ describe("change_view", () => {
     expect(text).toContain("カレンダー");
   });
 
+  it("disc（円盤）に切り替えられる", async () => {
+    let view: string | null = null;
+    const get = makeGet({
+      changeTab: (t: "cards" | "table" | "calendar" | "disc") => {
+        view = t;
+      },
+    });
+
+    const text = (await toolNamed("change_view", get).execute({ view: "disc" })).content[0].text;
+
+    expect(view).toBe("disc");
+    expect(text).toContain("円盤");
+  });
+
   it("無効なビューは切り替えずエラーを返す", async () => {
     let view: string | null = null;
     const get = makeGet({
