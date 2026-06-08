@@ -36,6 +36,14 @@ describe("usePrintMode", () => {
     expect(style!.textContent).toContain("portrait");
   });
 
+  it("handlePrint('disc')でportrait orientationのstyle要素が作成される", () => {
+    window.print = vi.fn();
+    const { result } = renderHook(() => usePrintMode());
+    act(() => result.current.handlePrint("disc"));
+    const style = document.getElementById("print-orientation");
+    expect(style!.textContent).toContain("portrait");
+  });
+
   it("window.printが呼ばれる", () => {
     window.print = vi.fn();
     const { result } = renderHook(() => usePrintMode());

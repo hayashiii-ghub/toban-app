@@ -4,11 +4,8 @@ import { NewScheduleModal } from "@/components/NewScheduleModal";
 import { ModalHost } from "@/components/ModalHost";
 import { OnboardingOverlay } from "@/components/OnboardingOverlay";
 import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
-import { AssignmentsGrid } from "@/features/home/AssignmentsGrid";
 import { RotationControls } from "@/features/home/RotationControls";
-import { RotationQuickTable } from "@/features/home/RotationQuickTable";
-import { RotationCalendar } from "@/features/home/RotationCalendar";
-import { RotationDisc } from "@/features/home/RotationDisc";
+import { ScheduleViews } from "@/features/home/ScheduleViews";
 import { ViewTabs } from "@/features/home/ViewTabs";
 import { ScheduleHeader } from "@/features/home/ScheduleHeader";
 import { ScheduleTabs } from "@/features/home/ScheduleTabs";
@@ -100,22 +97,18 @@ export default function Home() {
 
       <ViewTabs viewTab={s.viewTab} onChangeTab={s.changeTab} />
 
-      {s.viewTab === "cards" && (
-        <AssignmentsGrid
-          assignments={s.assignments} direction={s.direction} rotation={s.effectiveRotation}
-          scheduleId={s.activeSchedule.id} stagger={s.isAnimating}
-          assignmentMode={s.activeSchedule.assignmentMode}
-        />
-      )}
-      {s.viewTab === "table" && (
-        <RotationQuickTable groups={s.groups} members={s.members} rotation={s.effectiveRotation} assignmentMode={s.activeSchedule.assignmentMode} />
-      )}
-      {s.viewTab === "calendar" && (
-        <RotationCalendar groups={s.groups} members={s.members} rotation={s.effectiveRotation} rotationConfig={s.activeSchedule.rotationConfig} assignmentMode={s.activeSchedule.assignmentMode} />
-      )}
-      {s.viewTab === "disc" && (
-        <RotationDisc groups={s.groups} members={s.members} rotation={s.effectiveRotation} assignmentMode={s.activeSchedule.assignmentMode} />
-      )}
+      <ScheduleViews
+        viewTab={s.viewTab}
+        assignments={s.assignments}
+        groups={s.groups}
+        members={s.members}
+        rotation={s.effectiveRotation}
+        rotationConfig={s.activeSchedule.rotationConfig}
+        assignmentMode={s.activeSchedule.assignmentMode}
+        scheduleId={s.activeSchedule.id}
+        direction={s.direction}
+        stagger={s.isAnimating}
+      />
 
       <ModalHost
         modalType={s.modal.type}
