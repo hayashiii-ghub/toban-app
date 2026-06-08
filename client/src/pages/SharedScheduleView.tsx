@@ -5,10 +5,7 @@ import { getSchedule, ApiError } from "@/lib/api";
 import type { ScheduleDTO } from "@/rotation/types";
 import { APP_TITLE } from "@/rotation/constants";
 import { computeAssignments, computeDateRotation, generateId, loadState, saveState } from "@/rotation/utils";
-import { AssignmentsGrid } from "@/features/home/AssignmentsGrid";
-import { RotationQuickTable } from "@/features/home/RotationQuickTable";
-import { RotationCalendar } from "@/features/home/RotationCalendar";
-import { RotationDisc } from "@/features/home/RotationDisc";
+import { ScheduleViews } from "@/features/home/ScheduleViews";
 import { ViewTabs, type ViewTabValue } from "@/features/home/ViewTabs";
 import { AdBanner } from "@/components/AdBanner";
 import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
@@ -203,44 +200,18 @@ export default function SharedScheduleView() {
 
       <ViewTabs viewTab={viewTab} onChangeTab={setViewTab} />
 
-      {viewTab === "cards" && (
-        <AssignmentsGrid
-          assignments={assignments}
-          direction="forward"
-          rotation={effectiveRotation}
-          scheduleId={schedule.slug}
-          stagger={false}
-          assignmentMode={schedule.assignmentMode}
-        />
-      )}
-
-      {viewTab === "table" && (
-        <RotationQuickTable
-          groups={schedule.groups}
-          members={schedule.members}
-          rotation={effectiveRotation}
-          assignmentMode={schedule.assignmentMode}
-        />
-      )}
-
-      {viewTab === "calendar" && (
-        <RotationCalendar
-          groups={schedule.groups}
-          members={schedule.members}
-          rotation={effectiveRotation}
-          rotationConfig={schedule.rotationConfig}
-          assignmentMode={schedule.assignmentMode}
-        />
-      )}
-
-      {viewTab === "disc" && (
-        <RotationDisc
-          groups={schedule.groups}
-          members={schedule.members}
-          rotation={effectiveRotation}
-          assignmentMode={schedule.assignmentMode}
-        />
-      )}
+      <ScheduleViews
+        viewTab={viewTab}
+        assignments={assignments}
+        groups={schedule.groups}
+        members={schedule.members}
+        rotation={effectiveRotation}
+        rotationConfig={schedule.rotationConfig}
+        assignmentMode={schedule.assignmentMode}
+        scheduleId={schedule.slug}
+        direction="forward"
+        stagger={false}
+      />
 
       <AdBanner />
 
