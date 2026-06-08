@@ -12,6 +12,7 @@ import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
 import { Copy, Loader2 } from "lucide-react";
 import { PrintMenu } from "@/components/PrintMenu";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
+import { usePrintMode } from "@/hooks/usePrintMode";
 import { useT } from "@/i18n";
 import "./home.css";
 
@@ -25,22 +26,8 @@ export default function SharedScheduleView() {
   const [viewTab, setViewTab] = useState<ViewTabValue>("cards");
   const printDate = usePrintDateString();
 
-  useEffect(() => {
-    const cleanup = () => {
-      delete document.body.dataset.printMode;
-    };
-    window.addEventListener("afterprint", cleanup);
-    return () => window.removeEventListener("afterprint", cleanup);
-  }, []);
-
-  const handlePrint = useCallback(() => {
-    if (typeof window.print !== "function") {
-      toast.error(t("shared.printUnsupported"));
-      return;
-    }
-    document.body.dataset.printMode = viewTab;
-    window.print();
-  }, [viewTab, t]);
+  // 印刷は Home と同じ usePrintMode に集約（printMode 設定・@page 向き注入・afterprint cleanup を一括）。
+  const { handlePrint } = usePrintMode();
 
   useEffect(() => {
     if (!slug) return;
@@ -217,7 +204,7 @@ export default function SharedScheduleView() {
 
       <div className="px-3 sm:px-4 pb-8 sm:pb-12 rotation-no-print">
         <div className="max-w-4xl mx-auto text-center flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
-          <PrintMenu onPrint={handlePrint} />
+          <PrintMenu onPrint={() => handlePrint(viewTab)} />
           <button type="button"
             onClick={handleImport}
             className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
