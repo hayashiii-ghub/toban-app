@@ -209,7 +209,11 @@ export const en: Record<string, string> = {
   "view.calendar": "Calendar",
   "view.disc": "Disc",
   "disc.offDuty": "Off",
-  "disc.unsupported": "This chart can't be shown as a disc (group-specific members, or more roles than members). Please use the Table view.",
+  "disc.sheetOuter": "Outer ring (fixed — roles) — cut along the outer line",
+  "disc.sheetInner": "Inner disc (rotating — members) — cut along the outer line, center it on the outer ring and pin",
+  "disc.unsupported": "This chart can't be shown as a disc. Please use the Table view.",
+  "disc.unsupportedGroupPool": "Charts with group-specific members can't be shown as a disc. Please use the Table view.",
+  "disc.unsupportedTooManyTasks": "To use the disc, keep members ≥ tasks (currently {members} members, {tasks} tasks). Merge tasks or add members to enable the disc. Until then, please use the Table view.",
   "print.print": "Print",
   "print.printAria": "Print",
 
