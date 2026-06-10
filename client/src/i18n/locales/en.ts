@@ -67,7 +67,7 @@ export const en: Record<string, string> = {
   "lp.feat.noSignup.label": "No sign-up",
   "lp.feat.noSignup.desc": "No account needed. Works right in your browser.",
   "lp.feat.print.label": "Clean printing",
-  "lp.feat.print.desc": "Print in three formats: cards, table, or calendar.",
+  "lp.feat.print.desc": "Print in four formats: cards, table, calendar, or wheel.",
   "lp.feat.share.label": "Share by URL",
   "lp.feat.share.desc": "Generate a share URL and send it via LINE or email.",
   "lp.feat.free.label": "Completely free",

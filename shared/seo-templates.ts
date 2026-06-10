@@ -403,7 +403,7 @@ export const COMMON_FAQ = [
   },
   {
     question: "作った当番表は印刷できますか？",
-    answer: "はい、ブラウザの印刷機能を使って、きれいなレイアウトで印刷や画像保存ができます。印刷ダイアログからPDF保存も可能です。カード表示・一覧表・カレンダーの3つの形式から選べます。",
+    answer: "はい、ブラウザの印刷機能を使って、きれいなレイアウトで印刷や画像保存ができます。印刷ダイアログからPDF保存も可能です。カード表示・一覧表・カレンダー・円盤の4つの形式から選べます。",
   },
   {
     question: "当番表を他の人と共有するにはどうすればいいですか？",
@@ -490,7 +490,7 @@ export const TEMPLATE_SEO_EN: Record<string, { heading: string; intro: string }>
 /** 共通FAQ の英語訳（COMMON_FAQ と同順） */
 export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
   { question: "Is toban free?", answer: "Yes, it's completely free. No account needed—you can create a roster right in your browser." },
-  { question: "Can I print the roster I made?", answer: "Yes. Use your browser's print feature to print or save an image with a clean layout, or save as PDF from the print dialog. Choose from three formats: cards, table, or calendar." },
+  { question: "Can I print the roster I made?", answer: "Yes. Use your browser's print feature to print or save an image with a clean layout, or save as PDF from the print dialog. Choose from four formats: cards, table, calendar, or wheel." },
   { question: "How do I share a roster with others?", answer: "Issue a URL from the Share button. Send a view-only URL so anyone can see the roster, or share an edit URL to collaborate. QR-code sharing is also supported." },
   { question: "Does the rotation switch automatically?", answer: "If you set date mode, the rotation switches automatically based on a start date and cycle. There's also an option to skip weekends and holidays." },
   { question: "Is there a recommended browser?", answer: "We recommend the latest Google Chrome or Microsoft Edge for the cleanest print layout. Basic features work in Safari and Firefox too, but the print layout may break." },
