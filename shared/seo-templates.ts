@@ -498,3 +498,83 @@ export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
   { question: "Where is my data stored?", answer: "Roster data is stored in your browser (localStorage). It's also saved to the cloud only when you use the share feature. Clearing your browser data deletes the roster, so for important data we recommend issuing a share URL to keep it." },
   { question: "Where can I contact you?", answer: "Reach us through the contact form at the bottom of toban's top page. Feel free to send bug reports or feature requests." },
 ];
+
+/**
+ * 「当番の順番をルーレット感覚で決める」専用 SEO ページ (/junban) のメタ。
+ * 検索意図「当番 ルーレット / 順番 決める」を、円盤ビューの受け皿として捕捉する。
+ * 円盤は固定ローテーションを回す方式でランダム抽選ではないため、コピーは
+ * 「順番が回る・一目でわかる」見せ方に限定し、抽選は約束しない（FAQ で明記）。
+ */
+export interface JunbanPageSEO {
+  path: string;
+  title: string;
+  description: string;
+  heading: string;
+  intro: string;
+  benefits: string[];
+  faq: { question: string; answer: string }[];
+}
+
+export const JUNBAN_PAGE_SEO: JunbanPageSEO = {
+  path: "/junban",
+  title: "当番の順番をルーレット感覚で決める｜無料の当番表メーカー toban",
+  description:
+    "当番や係の順番を、回転する円盤でくるくる決められる無料の当番表メーカー。名前を入れて回すだけで担当が決まり、印刷して壁に貼ればピンを回して毎週の担当が一目でわかります。登録不要・エクセル不要、ブラウザですぐ作れます。",
+  heading: "当番・係の順番をルーレット感覚で決める",
+  intro:
+    "「次は誰の番？」を毎回数えるのは大変です。tobanの円盤ビューなら、メンバーの名前を入れて回すだけで担当が決まります。掃除・給食・日直から係活動まで、回転する盤面で順番がひと目でわかります。印刷して壁に貼れば、毎週ピンをひとつ進めるだけ。",
+  benefits: [
+    "名前を入れて回すだけ — 順番決めがそのまま当番表になります",
+    "印刷して壁に貼れる — ピンをひとつ回すだけで今週の担当がわかります",
+    "登録不要・無料 — ブラウザだけで完結、エクセルもアプリのインストールも不要です",
+  ],
+  faq: [
+    {
+      question: "当番の順番をランダム（抽選）で決められますか？",
+      answer:
+        "円盤ビューは、決めた順番をくるくる回していく方式で、毎回ランダムに当たりを引く抽選とは異なります。並び順は固定のまま公平に順番が回るので、掃除・給食・係などの当番ローテーションに向いています。",
+    },
+    {
+      question: "決めた順番を紙に印刷できますか？",
+      answer:
+        "はい。円盤はそのまま印刷でき、全体・外円・内円の3枚を出力できます。外円（役割）と内円（担当者）を切り取って中心をピンで留めれば、毎週ピンを回すだけの紙の当番ルーレットになります。",
+    },
+    {
+      question: "人数や当番の数は自由に変えられますか？",
+      answer:
+        "はい。メンバーや当番（役割）は自由に追加・編集できます。担当者の数が当番の数以上であれば円盤で表示でき、足りない場合はカード・一覧表・カレンダーの表示形式に切り替えてご利用いただけます。",
+    },
+  ],
+};
+
+/** /junban ページの英語訳 */
+export const JUNBAN_PAGE_SEO_EN: Pick<JunbanPageSEO, "title" | "description" | "heading" | "intro" | "benefits" | "faq"> = {
+  title: "Decide Duty Order Like a Wheel | Free Duty Roster Maker toban",
+  description:
+    "Spin a rotating wheel to decide the order of chores and duties—free, no sign-up. Enter names and spin to assign, print it for the wall, and turn the pin each week to see who's on duty at a glance.",
+  heading: "Decide duty and chore order with a spinning wheel",
+  intro:
+    "Tired of counting \"whose turn is it next?\" every time? toban's wheel view lets you enter member names and spin to assign duties. From cleaning, lunch, and daily duty to club roles, the rotating board shows the order at a glance. Print it for the wall and just advance the pin each week.",
+  benefits: [
+    "Enter names and spin — your order becomes the roster",
+    "Print it for the wall — turn one pin to see this week's duty",
+    "No sign-up, free — browser only, no Excel or app install needed",
+  ],
+  faq: [
+    {
+      question: "Can I decide duty order randomly (a lottery)?",
+      answer:
+        "The wheel view spins a fixed order around—it's not a random lottery that draws a winner each time. The order stays fixed and rotates fairly, which suits duty rotations like cleaning, lunch, and roles.",
+    },
+    {
+      question: "Can I print the order I decided?",
+      answer:
+        "Yes. The wheel prints as three sheets: full, outer ring, and inner ring. Cut out the outer ring (roles) and inner ring (members), pin them at the center, and you get a paper duty wheel you turn each week.",
+    },
+    {
+      question: "Can I freely change the number of people and duties?",
+      answer:
+        "Yes. Members and duties (roles) are freely editable. The wheel shows when you have at least as many members as duties; otherwise, switch to the card, table, or calendar view.",
+    },
+  ],
+};
