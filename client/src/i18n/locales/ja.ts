@@ -206,7 +206,11 @@ export const ja: Record<string, string> = {
   "view.calendar": "カレンダー",
   "view.disc": "円盤",
   "disc.offDuty": "おやすみ",
-  "disc.unsupported": "この当番表は円盤にできません（グループ専用メンバーや、役割がメンバー数より多い場合）。早見表をご利用ください。",
+  "disc.sheetOuter": "外円（固定・役割）— 外周の線で切り取ってください",
+  "disc.sheetInner": "内円（回す・担当者）— 外周の線で切り取り、中心を外円に重ねてピンで留めてください",
+  "disc.unsupported": "この当番表は円盤にできません。早見表をご利用ください。",
+  "disc.unsupportedGroupPool": "グループ専用メンバーがいる当番表は円盤にできません。早見表をご利用ください。",
+  "disc.unsupportedTooManyTasks": "円盤にするには「担当者の数 ≧ タスクの数」にしてください（いまは担当者{members}人・タスク{tasks}個）。タスクをまとめるか担当者を増やすと円盤にできます。それまでは早見表をどうぞ。",
   "print.print": "印刷",
   "print.printAria": "印刷する",
 

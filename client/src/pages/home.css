@@ -72,6 +72,12 @@
     break-inside: avoid;
     page-break-inside: avoid;
   }
+  /* 分割印刷: 外円・内円は各自のページ先頭から始める（1ページ1枚で切りやすく）。
+     break-before なので全体（1枚目）の前には改ページが入らず、末尾の空白ページも出ない。 */
+  .rotation-print-disc-page {
+    break-before: page;
+    page-break-before: always;
+  }
   .rotation-print-disc-svg {
     max-width: 170mm !important;
   }

@@ -16,14 +16,17 @@ const members = [mk("m1", "田中"), mk("m2", "鈴木"), mk("m3", "佐藤"), mk(
 const groups = [grp("g1", ["掃除"]), grp("g2", ["配膳"]), grp("g3", ["日直"])];
 
 describe("RotationDisc", () => {
-  it("表現可能な構成では円盤SVGと全メンバー名を描画する", () => {
+  it("表現可能な構成では円盤を3枚（全体/外円/内円）描画し全メンバー名を載せる", () => {
     const { container } = render(
       <RotationDisc groups={groups} members={members} rotation={0} assignmentMode="member" />,
     );
-    expect(container.querySelector("svg")).toBeInTheDocument();
+    // 全体・外円・内円 の3枚。画面では全体のみ、外円/内円は印刷専用。
+    expect(container.querySelectorAll("svg")).toHaveLength(3);
+    expect(container.querySelectorAll(".rotation-print-only")).toHaveLength(2);
     const view = within(container);
-    expect(view.getByText("田中")).toBeInTheDocument();
-    expect(view.getByText("高橋")).toBeInTheDocument();
+    // 担当者名は全体＋内円の2枚に載る（外円には載らない）
+    expect(view.getAllByText("田中")).toHaveLength(2);
+    expect(view.getAllByText("高橋")).toHaveLength(2);
   });
 
   it("役割名は盤面ではなく凡例にテキスト表示される（外周はみ出し回避）", () => {
@@ -64,7 +67,7 @@ describe("RotationDisc", () => {
     expect(container.querySelector("svg")).not.toBeInTheDocument();
   });
 
-  it("役割数 > メンバー数でも円盤化できず注記を出す", () => {
+  it("役割数 > メンバー数では円盤化できず、現在の人数・タスク数を添えた直し方を出す", () => {
     const tooManyRoles = [
       grp("g1", ["A"]), grp("g2", ["B"]), grp("g3", ["C"]), grp("g4", ["D"]), grp("g5", ["E"]),
     ];
@@ -72,7 +75,9 @@ describe("RotationDisc", () => {
     const { container } = render(
       <RotationDisc groups={tooManyRoles} members={twoMembers} rotation={0} assignmentMode="member" />,
     );
-    expect(within(container).getByText(/円盤にできません/)).toBeInTheDocument();
+    // 原因の羅列ではなく行動できる文言＋現在数（担当者2人・タスク5個）を埋め込む。
+    expect(within(container).getByText(/担当者の数 ≧ タスクの数/)).toBeInTheDocument();
+    expect(within(container).getByText(/担当者2人・タスク5個/)).toBeInTheDocument();
     expect(container.querySelector("svg")).not.toBeInTheDocument();
   });
 });
