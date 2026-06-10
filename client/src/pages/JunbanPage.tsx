@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { JUNBAN_PAGE_SEO, JUNBAN_PAGE_SEO_EN } from "@shared/seo-templates";
+import { faqPageSchema, breadcrumbSchema, serializeJsonLd } from "@shared/jsonLd";
 import type { Member, TaskGroup } from "@/rotation/types";
 import { RotationDisc } from "@/features/home/RotationDisc";
 import { useT, useLocale } from "@/i18n";
@@ -103,29 +104,17 @@ export default function JunbanPage() {
         </Link>
       </div>
 
-      {/* JSON-LD: FAQPage + BreadcrumbList（`<` をエスケープして injection 防御） */}
+      {/* JSON-LD: FAQPage + BreadcrumbList（serializeJsonLd が < をエスケープ） */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
-            {
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: seo.faq.map((f) => ({
-                "@type": "Question",
-                name: f.question,
-                acceptedAnswer: { "@type": "Answer", text: f.answer },
-              })),
-            },
-            {
-              "@context": "https://schema.org",
-              "@type": "BreadcrumbList",
-              itemListElement: [
-                { "@type": "ListItem", position: 1, name: "toban について", item: window.location.origin + "/about" },
-                { "@type": "ListItem", position: 2, name: seo.heading },
-              ],
-            },
-          ]).replace(/</g, "\\u003c"),
+          __html: serializeJsonLd([
+            faqPageSchema(seo.faq),
+            breadcrumbSchema([
+              { name: "toban について", item: window.location.origin + "/about" },
+              { name: seo.heading },
+            ]),
+          ]),
         }}
       />
     </main>

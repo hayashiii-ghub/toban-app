@@ -16,6 +16,7 @@ import {
   COMMON_FAQ,
   COMMON_FAQ_EN,
 } from "@shared/seo-templates";
+import { faqPageSchema, serializeJsonLd } from "@shared/jsonLd";
 import { CONTACT_CATEGORIES } from "@shared/schemas";
 import { TEMPLATES } from "@/rotation/constants";
 import { useT, useLocale } from "@/i18n";
@@ -489,12 +490,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* JSON-LD: 構造化データを script に注入する標準パターン。
-          `<` を < にエスケープして `</script>` injection を防御 */}
+      {/* JSON-LD: 構造化データ（serializeJsonLd が < をエスケープ） */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
+          __html: serializeJsonLd([
             {
               "@context": "https://schema.org",
               "@type": "WebApplication",
@@ -505,16 +505,8 @@ export default function LandingPage() {
               operatingSystem: "All",
               offers: { "@type": "Offer", price: "0", priceCurrency: "JPY" },
             },
-            {
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: COMMON_FAQ.map((faq) => ({
-                "@type": "Question",
-                name: faq.question,
-                acceptedAnswer: { "@type": "Answer", text: faq.answer },
-              })),
-            },
-          ]).replace(/</g, "\\u003c"),
+            faqPageSchema(COMMON_FAQ),
+          ]),
         }}
       />
     </main>

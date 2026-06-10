@@ -8,6 +8,7 @@ import {
   TEMPLATE_CATEGORIES,
   TEMPLATE_CATEGORIES_EN,
 } from "@shared/seo-templates";
+import { breadcrumbSchema, serializeJsonLd } from "@shared/jsonLd";
 import { TEMPLATES } from "@/rotation/constants";
 import { useT, useLocale } from "@/i18n";
 
@@ -158,34 +159,17 @@ export default function TemplateDetailPage() {
         <RelatedTemplates currentSlug={seo.slug} categoryId={seo.categoryId} />
       </section>
 
-      {/* JSON-LD: BreadcrumbList。
-          `<` を < にエスケープして `</script>` injection を防御 */}
+      {/* JSON-LD: BreadcrumbList（serializeJsonLd が < をエスケープ） */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "toban について",
-                item: window.location.origin + "/about",
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: "テンプレート一覧",
-                item: window.location.origin + "/templates",
-              },
-              {
-                "@type": "ListItem",
-                position: 3,
-                name: template.name,
-              },
-            ],
-          }).replace(/</g, "\\u003c"),
+          __html: serializeJsonLd(
+            breadcrumbSchema([
+              { name: "toban について", item: window.location.origin + "/about" },
+              { name: "テンプレート一覧", item: window.location.origin + "/templates" },
+              { name: template.name },
+            ]),
+          ),
         }}
       />
 

@@ -9,6 +9,7 @@ import {
   COMMON_FAQ,
   JUNBAN_PAGE_SEO,
 } from "../../shared/seo-templates";
+import { faqPageSchema, breadcrumbSchema, serializeJsonLd } from "../../shared/jsonLd";
 
 interface Env {
   ASSETS: { fetch: typeof fetch };
@@ -165,7 +166,7 @@ export function renderLandingPageHtml(origin: string): string {
     )
     .join("");
 
-  const schema = JSON.stringify([
+  const schema = serializeJsonLd([
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
@@ -176,15 +177,7 @@ export function renderLandingPageHtml(origin: string): string {
       operatingSystem: "All",
       offers: { "@type": "Offer", price: "0", priceCurrency: "JPY" },
     },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: COMMON_FAQ.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: { "@type": "Answer", text: faq.answer },
-      })),
-    },
+    faqPageSchema(COMMON_FAQ),
   ]);
 
   return `<!DOCTYPE html>
@@ -242,15 +235,7 @@ export function renderTemplateListHtml(origin: string): string {
     return `<section><h2>${cat.emoji} ${escapeHtml(cat.label)}</h2><p>${escapeHtml(cat.description)}</p><ul>${items}</ul></section>`;
   }).join("\n");
 
-  const faqSchema = JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: COMMON_FAQ.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: { "@type": "Answer", text: faq.answer },
-    })),
-  });
+  const faqSchema = serializeJsonLd(faqPageSchema(COMMON_FAQ));
 
   return `<!DOCTYPE html>
 <html lang="ja">
@@ -285,25 +270,13 @@ export function renderTemplateDetailHtml(origin: string, slug: string): string |
   const cat = TEMPLATE_CATEGORIES.find((c) => c.id === seo.categoryId);
   const fullTitle = `${seo.title}｜toban（トバン）`;
 
-  const faqAndBreadcrumb = JSON.stringify([
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: COMMON_FAQ.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: { "@type": "Answer", text: faq.answer },
-      })),
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "toban について", item: `${origin}/about` },
-        { "@type": "ListItem", position: 2, name: "テンプレート一覧", item: `${origin}/templates` },
-        { "@type": "ListItem", position: 3, name: seo.heading },
-      ],
-    },
+  const faqAndBreadcrumb = serializeJsonLd([
+    faqPageSchema(COMMON_FAQ),
+    breadcrumbSchema([
+      { name: "toban について", item: `${origin}/about` },
+      { name: "テンプレート一覧", item: `${origin}/templates` },
+      { name: seo.heading },
+    ]),
   ]);
 
   const sameCategory = TEMPLATE_SEO_DATA.filter(
@@ -360,24 +333,12 @@ export function renderJunbanHtml(origin: string): string {
   const seo = JUNBAN_PAGE_SEO;
   const url = `${origin}${seo.path}`;
 
-  const schema = JSON.stringify([
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: seo.faq.map((f) => ({
-        "@type": "Question",
-        name: f.question,
-        acceptedAnswer: { "@type": "Answer", text: f.answer },
-      })),
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "toban について", item: `${origin}/about` },
-        { "@type": "ListItem", position: 2, name: seo.heading },
-      ],
-    },
+  const schema = serializeJsonLd([
+    faqPageSchema(seo.faq),
+    breadcrumbSchema([
+      { name: "toban について", item: `${origin}/about` },
+      { name: seo.heading },
+    ]),
   ]);
 
   const benefitsHtml = seo.benefits
@@ -397,7 +358,7 @@ export function renderJunbanHtml(origin: string): string {
 <link rel="canonical" href="${url}">
 ${buildSocialMetaTags({ title: seo.title, description: seo.description, url, origin, type: "article" })}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<script type="application/ld+json">${schema.replace(/</g, "\\u003c")}</script>
+<script type="application/ld+json">${schema}</script>
 </head>
 <body>
 <header><nav><a href="${origin}/about">toban について</a> / <span>${escapeHtml(seo.heading)}</span></nav></header>
