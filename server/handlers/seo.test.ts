@@ -77,10 +77,11 @@ describe("buildSocialMetaTags", () => {
 describe("render functions emit consistent OGP/Twitter tags", () => {
   const origin = "https://toban.app";
 
-  it("renderLandingPageHtml は当番表アプリ/エクセル不要の検索語彙を含む", () => {
+  it("renderLandingPageHtml は当番表作成アプリ/エクセル不要の検索語彙を含む", () => {
     // ③当番表アプリ・②エクセル代替クエリの受け皿。文言変更で語彙が落ちないよう固定。
+    // 「当番表作成アプリ」は 当番表 / 作成 / アプリ を内包し「当番表 アプリ」「当番表 作成」両クエリを受ける。
     const html = renderLandingPageHtml(origin);
-    expect(html).toContain("当番表アプリ");
+    expect(html).toContain("当番表作成アプリ");
     expect(html).toMatch(/エクセル|Excel/);
   });
 
@@ -118,11 +119,11 @@ describe("injectScheduleOgp", () => {
   const baseHtml = `<!doctype html>
 <html lang="ja">
   <head>
-    <title>当番表メーカー toban</title>
+    <title>当番表作成アプリ toban</title>
     <link rel="canonical" href="https://toban.app/" />
-    <meta property="og:title" content="当番表メーカー toban" />
+    <meta property="og:title" content="当番表作成アプリ toban" />
     <meta property="og:url" content="https://toban.app/" />
-    <meta name="twitter:title" content="当番表メーカー toban" />
+    <meta name="twitter:title" content="当番表作成アプリ toban" />
   </head>
   <body><div id="root"></div></body>
 </html>`;
@@ -136,14 +137,14 @@ describe("injectScheduleOgp", () => {
   it("title を共有スケジュール名に置き換える", () => {
     const html = injectScheduleOgp(baseHtml, args);
     expect(html).toContain("<title>3年2組の掃除当番 - toban</title>");
-    expect(html).not.toContain("<title>当番表メーカー toban</title>");
+    expect(html).not.toContain("<title>当番表作成アプリ toban</title>");
   });
 
   it("トップページ用の og:/twitter: タグを残さない（スクレイパーの先頭タグ誤読防止）", () => {
     const html = injectScheduleOgp(baseHtml, args);
     expect(html).not.toContain('content="https://toban.app/" property');
-    expect(html).not.toMatch(/og:title" content="当番表メーカー/);
-    expect(html).not.toMatch(/twitter:title" content="当番表メーカー/);
+    expect(html).not.toMatch(/og:title" content="当番表作成アプリ/);
+    expect(html).not.toMatch(/twitter:title" content="当番表作成アプリ/);
     // og:title / og:url / twitter:title は共有ページ用の1つだけになる
     expect(html.match(/property="og:title"/g)).toHaveLength(1);
     expect(html.match(/property="og:url"/g)).toHaveLength(1);
@@ -173,14 +174,14 @@ describe("injectScheduleOgp", () => {
 
   it("minify された1行 HTML でも元の og:/twitter:/canonical を除去できる", () => {
     const minified =
-      '<!doctype html><html lang="ja"><head><title>当番表メーカー toban</title>' +
+      '<!doctype html><html lang="ja"><head><title>当番表作成アプリ toban</title>' +
       '<link rel="canonical" href="https://toban.app/"/>' +
-      '<meta property="og:title" content="当番表メーカー toban"/>' +
-      '<meta name="twitter:title" content="当番表メーカー toban"/>' +
+      '<meta property="og:title" content="当番表作成アプリ toban"/>' +
+      '<meta name="twitter:title" content="当番表作成アプリ toban"/>' +
       '</head><body><div id="root"></div></body></html>';
     const html = injectScheduleOgp(minified, args);
-    expect(html).not.toMatch(/og:title" content="当番表メーカー/);
-    expect(html).not.toMatch(/twitter:title" content="当番表メーカー/);
+    expect(html).not.toMatch(/og:title" content="当番表作成アプリ/);
+    expect(html).not.toMatch(/twitter:title" content="当番表作成アプリ/);
     expect(html.match(/property="og:title"/g)).toHaveLength(1);
     expect(html.match(/rel="canonical"/g)).toHaveLength(1);
     expect(html).toContain('<link rel="canonical" href="https://toban.app/s/abc123">');
