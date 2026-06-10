@@ -439,13 +439,21 @@ export default function LandingPage() {
               );
             })}
           </div>
-          <div className="text-center mt-6">
+          <div className="text-center mt-6 flex flex-col items-center gap-2">
             <Link
               href="/templates"
               className="inline-flex items-center gap-1 text-sm font-bold underline"
               style={{ color: C.primary }}
             >
               {t("lp.viewAllTemplates")}
+              <ArrowRight className="size-3" />
+            </Link>
+            <Link
+              href="/junban"
+              className="inline-flex items-center gap-1 text-sm font-bold underline"
+              style={{ color: C.primary }}
+            >
+              {t("lp.viewJunban")}
               <ArrowRight className="size-3" />
             </Link>
           </div>

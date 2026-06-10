@@ -9,6 +9,7 @@ import {
   renderLandingPageHtml,
   renderTemplateListHtml,
   renderTemplateDetailHtml,
+  renderJunbanHtml,
   handleSitemap,
   handleRobots,
 } from "./handlers/seo";
@@ -77,6 +78,16 @@ export default {
     const slugMatch = pathname.match(/^\/s\/([a-zA-Z0-9_-]+)$/);
     if (slugMatch && botRequest) {
       return withSecurityHeaders(await handleScheduleOgp(url, env, slugMatch[1]));
+    }
+
+    // 順番決め/ルーレットページ — bot用プリレンダリング
+    if (pathname === "/junban" && botRequest) {
+      return withSecurityHeaders(new Response(renderJunbanHtml(origin), {
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "public, max-age=86400",
+        },
+      }));
     }
 
     // テンプレート一覧ページ — bot用プリレンダリング
