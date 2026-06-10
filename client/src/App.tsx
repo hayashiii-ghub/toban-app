@@ -27,6 +27,8 @@ function LazyFallback() {
 }
 
 function Router() {
+  // Route を追加・変更したら server/handlers/seo.ts の KNOWN_APP_ROUTES も更新すること。
+  // 同期が漏れると bot に 404 が返り、新ページが検索に index されない。
   return (
     <Suspense fallback={<LazyFallback />}>
       <Switch>

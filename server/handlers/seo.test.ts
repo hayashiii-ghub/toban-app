@@ -4,6 +4,9 @@ import {
   renderLandingPageHtml,
   renderTemplateListHtml,
   renderTemplateDetailHtml,
+  handleSitemap,
+  injectScheduleOgp,
+  isKnownAppRoute,
 } from "./seo";
 
 describe("buildSocialMetaTags", () => {
@@ -99,6 +102,120 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
     expect(html).toContain('<meta property="og:image:width" content="1200">');
     expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
     expect(html).toContain('<meta name="twitter:image" content="https://toban.app/og-image.png">');
+  });
+});
+
+describe("injectScheduleOgp", () => {
+  // index.html 相当: トップページ用の OGP/canonical を持つベース HTML
+  const baseHtml = `<!doctype html>
+<html lang="ja">
+  <head>
+    <title>当番表メーカー toban</title>
+    <link rel="canonical" href="https://toban.app/" />
+    <meta property="og:title" content="当番表メーカー toban" />
+    <meta property="og:url" content="https://toban.app/" />
+    <meta name="twitter:title" content="当番表メーカー toban" />
+  </head>
+  <body><div id="root"></div></body>
+</html>`;
+
+  const args = {
+    name: "3年2組の掃除当番",
+    url: "https://toban.app/s/abc123",
+    origin: "https://toban.app",
+  };
+
+  it("title を共有スケジュール名に置き換える", () => {
+    const html = injectScheduleOgp(baseHtml, args);
+    expect(html).toContain("<title>3年2組の掃除当番 - toban</title>");
+    expect(html).not.toContain("<title>当番表メーカー toban</title>");
+  });
+
+  it("トップページ用の og:/twitter: タグを残さない（スクレイパーの先頭タグ誤読防止）", () => {
+    const html = injectScheduleOgp(baseHtml, args);
+    expect(html).not.toContain('content="https://toban.app/" property');
+    expect(html).not.toMatch(/og:title" content="当番表メーカー/);
+    expect(html).not.toMatch(/twitter:title" content="当番表メーカー/);
+    // og:title / og:url / twitter:title は共有ページ用の1つだけになる
+    expect(html.match(/property="og:title"/g)).toHaveLength(1);
+    expect(html.match(/property="og:url"/g)).toHaveLength(1);
+    expect(html.match(/name="twitter:title"/g)).toHaveLength(1);
+  });
+
+  it("canonical を共有 URL に張り替える（sitemap 掲載と整合）", () => {
+    const html = injectScheduleOgp(baseHtml, args);
+    expect(html).toContain('<link rel="canonical" href="https://toban.app/s/abc123">');
+    expect(html).not.toContain('<link rel="canonical" href="https://toban.app/" />');
+  });
+
+  it("スケジュール名の HTML 特殊文字をエスケープする", () => {
+    const html = injectScheduleOgp(baseHtml, { ...args, name: '<script>"x"</script>' });
+    expect(html).not.toContain("<script>");
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("スケジュール名の $ 置換パターン（$` / $&）で head 構造を汚染できない", () => {
+    // String.replace の substitution pattern は escapeHtml では無害化されないため、
+    // replacer 関数で渡さないとマッチ前方の HTML が title 内に複製注入される。
+    const html = injectScheduleOgp(baseHtml, { ...args, name: "$`x$&y" });
+    expect(html.match(/<title>/g)).toHaveLength(1);
+    expect(html).toContain("<title>$`x$&amp;y - toban</title>");
+    expect(html).not.toContain("<title><!doctype");
+  });
+
+  it("minify された1行 HTML でも元の og:/twitter:/canonical を除去できる", () => {
+    const minified =
+      '<!doctype html><html lang="ja"><head><title>当番表メーカー toban</title>' +
+      '<link rel="canonical" href="https://toban.app/"/>' +
+      '<meta property="og:title" content="当番表メーカー toban"/>' +
+      '<meta name="twitter:title" content="当番表メーカー toban"/>' +
+      '</head><body><div id="root"></div></body></html>';
+    const html = injectScheduleOgp(minified, args);
+    expect(html).not.toMatch(/og:title" content="当番表メーカー/);
+    expect(html).not.toMatch(/twitter:title" content="当番表メーカー/);
+    expect(html.match(/property="og:title"/g)).toHaveLength(1);
+    expect(html.match(/rel="canonical"/g)).toHaveLength(1);
+    expect(html).toContain('<link rel="canonical" href="https://toban.app/s/abc123">');
+  });
+});
+
+describe("handleSitemap", () => {
+  // DB なし（ensureSchedulesSchema が throw）でも静的ルート分の sitemap は返る設計。
+  const envWithoutDb = {} as never;
+
+  it("DB が無くても / と /about と /templates を含む sitemap を返す", async () => {
+    const res = await handleSitemap("https://toban.app", envWithoutDb);
+    expect(res.headers.get("Content-Type")).toContain("application/xml");
+    const xml = await res.text();
+    expect(xml).toContain("<loc>https://toban.app/</loc>");
+    expect(xml).toContain("<loc>https://toban.app/about</loc>");
+    expect(xml).toContain("<loc>https://toban.app/templates</loc>");
+  });
+
+  it("全テンプレート詳細 URL を含む", async () => {
+    const res = await handleSitemap("https://toban.app", envWithoutDb);
+    const xml = await res.text();
+    expect(xml).toContain("<loc>https://toban.app/templates/office-cleaning</loc>");
+    expect(xml).toContain("<loc>https://toban.app/templates/school-lunch</loc>");
+  });
+});
+
+describe("isKnownAppRoute", () => {
+  it.each(["/", "/about", "/templates", "/templates/office-cleaning", "/s/abc_123-X", "/transfer"])(
+    "既知ルート %s は true",
+    (path) => {
+      expect(isKnownAppRoute(path)).toBe(true);
+    },
+  );
+
+  it.each([
+    "/templates/not-a-real-template", // 実在しない slug は soft-404 にしない
+    "/foobar",
+    "/about/extra",
+    "/s/",
+    "/404", // 404 ページ自体を bot に 200 で返すと自己矛盾するため未知扱い
+  ])("未知ルート %s は false（bot へ 404 status を返す根拠）", (path) => {
+    expect(isKnownAppRoute(path)).toBe(false);
   });
 });
 

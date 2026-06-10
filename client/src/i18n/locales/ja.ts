@@ -65,7 +65,7 @@ export const ja: Record<string, string> = {
   "lp.feat.noSignup.label": "登録不要",
   "lp.feat.noSignup.desc": "アカウント不要。ブラウザだけで完結します。",
   "lp.feat.print.label": "印刷がきれい",
-  "lp.feat.print.desc": "カード・一覧表・カレンダーの3形式で印刷できます。",
+  "lp.feat.print.desc": "カード・一覧表・カレンダー・円盤の4形式で印刷できます。",
   "lp.feat.share.label": "URLで共有",
   "lp.feat.share.desc": "共有URLを発行してLINEやメールで送れます。",
   "lp.feat.free.label": "完全無料",

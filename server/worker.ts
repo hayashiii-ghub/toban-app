@@ -4,6 +4,7 @@ import { lt } from "drizzle-orm";
 import { schedules } from "./db/schema";
 import {
   isBot,
+  isKnownAppRoute,
   handleScheduleOgp,
   renderLandingPageHtml,
   renderTemplateListHtml,
@@ -100,6 +101,12 @@ export default {
           },
         }));
       }
+    }
+
+    // bot×未知ルートは 404 status を返す（SPA fallback の 200 による soft-404 防止）。
+    // 拡張子付きパスは静的アセットなので ASSETS に任せる。人間には SPA fallback を維持。
+    if (botRequest && !pathname.includes(".") && !isKnownAppRoute(pathname)) {
+      return withSecurityHeaders(new Response("Not found", { status: 404 }));
     }
 
     return withSecurityHeaders(await env.ASSETS.fetch(request));

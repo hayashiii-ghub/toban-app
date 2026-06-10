@@ -21,6 +21,24 @@ export function isBot(ua: string): boolean {
   return BOT_UA_PATTERN.test(ua);
 }
 
+// SPA が実際に画面を持つルート（client/src/App.tsx の Route 定義と対応）。
+// bot がここに無いパスを踏んだら 404 status を返し、SPA fallback の 200 による soft-404 を防ぐ。
+const KNOWN_APP_ROUTES: RegExp[] = [
+  /^\/$/,
+  /^\/about$/,
+  /^\/templates$/,
+  /^\/s\/[a-zA-Z0-9_-]+$/,
+  /^\/transfer$/,
+  // /404 は意図的に含めない: 404 ページ自体は bot に実 404 status を返す
+];
+
+export function isKnownAppRoute(pathname: string): boolean {
+  // テンプレ詳細は実在 slug のみ既知扱い（実在しない slug を index させない）
+  const templateMatch = pathname.match(/^\/templates\/([a-z0-9-]+)$/);
+  if (templateMatch) return TEMPLATE_SEO_MAP.has(templateMatch[1]);
+  return KNOWN_APP_ROUTES.some((re) => re.test(pathname));
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, "&amp;")
@@ -63,6 +81,39 @@ export function buildSocialMetaTags(args: {
 
 // ─── 共有スケジュールのOGP注入 ───
 
+/**
+ * SPA の index.html に共有スケジュール用の title/canonical/OGP を注入する。
+ * 元 HTML にはトップページ用の og:/twitter:/canonical が焼き込まれており、
+ * 残すとスクレイパー（先頭タグ優先）がトップの OGP を拾うため、先に除去してから注入する。
+ */
+export function injectScheduleOgp(
+  html: string,
+  args: { name: string; url: string; origin: string },
+): string {
+  const title = `${args.name} - toban`;
+
+  // 置換文字列は replacer 関数で渡す: user 由来の name に $` / $& 等の
+  // substitution pattern が含まれても発火させない（escapeHtml は $ を無害化しない）。
+  // 除去 regex は行アンカーに依存させず、minify された HTML でも除去できる形にする。
+  const out = html
+    .replace(/<title>[^<]*<\/title>/, () => `<title>${escapeHtml(title)}</title>`)
+    .replace(/<meta (?:property="og:|name="twitter:)[^>]*\/?>\s*/g, "")
+    .replace(/<link rel="canonical"[^>]*\/?>\s*/g, "");
+
+  const tags = [
+    `<link rel="canonical" href="${escapeHtml(args.url)}">`,
+    ...buildSocialMetaTags({
+      title,
+      description: `「${args.name}」の当番表`,
+      url: args.url,
+      origin: args.origin,
+      type: "website",
+    }).split("\n"),
+  ];
+  const indented = tags.map((line) => `    ${line}`).join("\n");
+  return out.replace("</head>", () => `${indented}\n  </head>`);
+}
+
 export async function handleScheduleOgp(
   url: URL,
   env: Env,
@@ -81,23 +132,11 @@ export async function handleScheduleOgp(
   }
 
   const assetResponse = await env.ASSETS.fetch(new Request(`${url.origin}/`));
-  let html = await assetResponse.text();
-
-  html = html.replace(
-    /<title>[^<]*<\/title>/,
-    `<title>${escapeHtml(schedule.name)} - toban</title>`,
-  );
-
-  const ogTags = buildSocialMetaTags({
-    title: `${schedule.name} - toban`,
-    description: `「${schedule.name}」の当番表`,
+  const html = injectScheduleOgp(await assetResponse.text(), {
+    name: schedule.name,
     url: url.href,
     origin: url.origin,
-    type: "website",
   });
-
-  const indentedOgTags = ogTags.split("\n").map((line) => `    ${line}`).join("\n");
-  html = html.replace("</head>", `${indentedOgTags}\n  </head>`);
 
   return new Response(html, {
     headers: {
@@ -166,7 +205,7 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 <h2>tobanの特徴</h2>
 <ul>
 <li>登録不要 — アカウント不要、ブラウザだけで完結</li>
-<li>印刷がきれい — カード・一覧表・カレンダーの3形式</li>
+<li>印刷がきれい — カード・一覧表・カレンダー・円盤の4形式</li>
 <li>URLで共有 — LINEやメールで送れる</li>
 <li>完全無料 — すべての機能を無料で利用可能</li>
 </ul>
@@ -321,6 +360,12 @@ export async function handleSitemap(origin: string, env: Env): Promise<Response>
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${origin}/about</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>${origin}/templates</loc>
