@@ -61,6 +61,7 @@ export default defineConfig({
     include: [
       "client/src/**/*.test.{ts,tsx}",
       "server/**/*.test.{ts,tsx}",
+      "shared/**/*.test.{ts,tsx}",
     ],
     setupFiles: ["client/src/test/setup.ts"],
     coverage: {
