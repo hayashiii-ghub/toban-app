@@ -12,6 +12,21 @@ describe("useViewTab", () => {
   beforeEach(() => {
     vi.mocked(safeGetItem).mockReset();
     vi.mocked(safeSetItem).mockReset();
+    window.history.replaceState({}, "", "/");
+  });
+
+  it("URL の ?view= が有効なとき localStorage より優先して採用する（/junban からの着地）", () => {
+    vi.mocked(safeGetItem).mockReturnValue("table");
+    window.history.replaceState({}, "", "/?view=disc");
+    const { result } = renderHook(() => useViewTab());
+    expect(result.current.viewTab).toBe("disc");
+  });
+
+  it("URL の ?view= が無効な値なら localStorage / デフォルトにフォールバック", () => {
+    vi.mocked(safeGetItem).mockReturnValue(null);
+    window.history.replaceState({}, "", "/?view=bogus");
+    const { result } = renderHook(() => useViewTab());
+    expect(result.current.viewTab).toBe("cards");
   });
 
   it("localStorageが空のときデフォルト'cards'を返す", () => {

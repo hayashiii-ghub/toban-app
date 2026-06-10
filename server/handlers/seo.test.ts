@@ -7,6 +7,7 @@ import {
   handleSitemap,
   injectScheduleOgp,
   isKnownAppRoute,
+  renderJunbanHtml,
 } from "./seo";
 
 describe("buildSocialMetaTags", () => {
@@ -205,10 +206,56 @@ describe("handleSitemap", () => {
     expect(xml).toContain("<loc>https://toban.app/templates/office-cleaning</loc>");
     expect(xml).toContain("<loc>https://toban.app/templates/school-lunch</loc>");
   });
+
+  it("順番決めページ /junban を含む", async () => {
+    const res = await handleSitemap("https://toban.app", envWithoutDb);
+    const xml = await res.text();
+    expect(xml).toContain("<loc>https://toban.app/junban</loc>");
+  });
+});
+
+describe("renderJunbanHtml", () => {
+  const origin = "https://toban.app";
+
+  it("title/description/canonical と検索語彙（順番・ルーレット）を含む", () => {
+    const html = renderJunbanHtml(origin);
+    expect(html).toContain("<title>当番の順番をルーレット感覚で決める");
+    expect(html).toContain('<link rel="canonical" href="https://toban.app/junban">');
+    expect(html).toMatch(/順番/);
+    expect(html).toMatch(/ルーレット/);
+  });
+
+  it("OGP/Twitter Card と FAQ 構造化データを含む", () => {
+    const html = renderJunbanHtml(origin);
+    expect(html).toContain('<meta property="og:image" content="https://toban.app/og-image.png">');
+    expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
+    expect(html).toContain('"@type":"FAQPage"');
+  });
+
+  it("円盤ビューへ着地する CTA（/?view=disc）を含む", () => {
+    const html = renderJunbanHtml(origin);
+    expect(html).toContain(`${origin}/?view=disc`);
+  });
+
+  it("ランダム抽選を約束せず、抽選ではない旨を明記する（intent ミスマッチ回避）", () => {
+    const html = renderJunbanHtml(origin);
+    expect(html).toMatch(/抽選とは異な|ランダムに当たりを引く抽選とは/);
+  });
+
+  it("JSON-LD ブロックに生の < を出さない（</script> ブレイク防止・defense-in-depth）", () => {
+    const html = renderJunbanHtml(origin);
+    const ld = html.slice(html.indexOf('application/ld+json">') + 21, html.indexOf("</script>"));
+    expect(ld).not.toContain("<");
+  });
+
+  it("パンくず position1 は React 側と同じ「toban について」（bot/UI の構造化データ整合）", () => {
+    const html = renderJunbanHtml(origin);
+    expect(html).toContain('"name":"toban について"');
+  });
 });
 
 describe("isKnownAppRoute", () => {
-  it.each(["/", "/about", "/templates", "/templates/office-cleaning", "/s/abc_123-X", "/transfer"])(
+  it.each(["/", "/about", "/templates", "/templates/office-cleaning", "/s/abc_123-X", "/transfer", "/junban"])(
     "既知ルート %s は true",
     (path) => {
       expect(isKnownAppRoute(path)).toBe(true);

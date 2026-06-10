@@ -73,6 +73,7 @@ export const ja: Record<string, string> = {
   "lp.templatesHeading": "すぐ使えるテンプレート",
   "lp.templatesSubtitle": "{count}種類のテンプレートから選んで、メンバーを入れるだけ。",
   "lp.viewAllTemplates": "テンプレート一覧を見る",
+  "lp.viewJunban": "順番決め・当番ルーレットで作る",
   "lp.faqHeading": "よくある質問",
 
   // お問い合わせフォーム

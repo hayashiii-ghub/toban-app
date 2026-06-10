@@ -75,6 +75,7 @@ export const en: Record<string, string> = {
   "lp.templatesHeading": "Ready-to-use templates",
   "lp.templatesSubtitle": "Pick from {count} templates and just add your members.",
   "lp.viewAllTemplates": "See all templates",
+  "lp.viewJunban": "Decide order with the wheel",
   "lp.faqHeading": "FAQ",
 
   // Contact form
