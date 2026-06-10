@@ -76,6 +76,13 @@ describe("buildSocialMetaTags", () => {
 describe("render functions emit consistent OGP/Twitter tags", () => {
   const origin = "https://toban.app";
 
+  it("renderLandingPageHtml は当番表アプリ/エクセル不要の検索語彙を含む", () => {
+    // ③当番表アプリ・②エクセル代替クエリの受け皿。文言変更で語彙が落ちないよう固定。
+    const html = renderLandingPageHtml(origin);
+    expect(html).toContain("当番表アプリ");
+    expect(html).toMatch(/エクセル|Excel/);
+  });
+
   it("renderLandingPageHtml uses /og-image.png and twitter card", () => {
     const html = renderLandingPageHtml(origin);
     expect(html).toContain('<meta property="og:image" content="https://toban.app/og-image.png">');

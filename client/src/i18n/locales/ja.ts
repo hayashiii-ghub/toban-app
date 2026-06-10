@@ -47,7 +47,7 @@ export const ja: Record<string, string> = {
     "このURLを知っている人は当番表を編集できます。信頼できる相手にのみ共有してください。",
 
   // ランディングページ
-  "lp.docTitle": "当番表メーカー toban（トバン）｜無料で作成・印刷・共有",
+  "lp.docTitle": "当番表メーカー toban（トバン）｜無料アプリで作成・印刷・共有",
   "lp.shareText":
     "かんたん当番表、すぐ完成。掃除・給食・日直のローテーション表を無料で作成できます。",
   "lp.shareTitle": "toban｜かんたん当番表",
@@ -63,7 +63,7 @@ export const ja: Record<string, string> = {
   "lp.heroSubB": "無料でかんたんに作成・印刷・共有できます。",
   "lp.featuresHeading": "tobanの特徴",
   "lp.feat.noSignup.label": "登録不要",
-  "lp.feat.noSignup.desc": "アカウント不要。ブラウザだけで完結します。",
+  "lp.feat.noSignup.desc": "アカウント不要・エクセル不要。ブラウザだけで完結します。",
   "lp.feat.print.label": "印刷がきれい",
   "lp.feat.print.desc": "カード・一覧表・カレンダー・円盤の4形式で印刷できます。",
   "lp.feat.share.label": "URLで共有",

@@ -48,7 +48,7 @@ export const en: Record<string, string> = {
     "Anyone with this URL can edit the schedule. Share only with people you trust.",
 
   // Landing page
-  "lp.docTitle": "toban — Free Duty Roster Maker | Create, Print & Share",
+  "lp.docTitle": "toban — Free Duty Roster App & Maker | Create, Print & Share",
   "lp.shareText":
     "Easy duty rosters, ready in minutes. Create rotation schedules for cleaning, lunch, and daily duties for free.",
   "lp.shareTitle": "toban | Easy Duty Rosters",
@@ -65,7 +65,7 @@ export const en: Record<string, string> = {
   "lp.heroSubB": "free, easy to make, print, and share.",
   "lp.featuresHeading": "Why toban",
   "lp.feat.noSignup.label": "No sign-up",
-  "lp.feat.noSignup.desc": "No account needed. Works right in your browser.",
+  "lp.feat.noSignup.desc": "No account, no Excel needed. Works right in your browser.",
   "lp.feat.print.label": "Clean printing",
   "lp.feat.print.desc": "Print in four formats: cards, table, calendar, or wheel.",
   "lp.feat.share.label": "Share by URL",
