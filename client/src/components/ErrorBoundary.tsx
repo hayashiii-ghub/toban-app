@@ -43,18 +43,19 @@ class ErrorBoundary extends Component<Props, State> {
             className="theme-border theme-shadow w-full max-w-xl p-8 flex flex-col items-center"
             style={{ borderRadius: "var(--dt-border-radius)", backgroundColor: "var(--dt-card-bg)" }}
           >
+            {/* クラッシュ画面でも警告は注意系のアンバー（ShareModal の注意チップと同系統）。赤は破壊操作専用 */}
             <div
               className="theme-border size-14 flex items-center justify-center mb-6"
-              style={{ borderRadius: "50%", backgroundColor: "#FEE2E2" }}
+              style={{ borderRadius: "50%", backgroundColor: "#FEF3C7" }}
             >
-              <AlertTriangle className="size-7" style={{ color: "#DC2626" }} aria-hidden="true" />
+              <AlertTriangle className="size-7" style={{ color: "#D97706" }} aria-hidden="true" />
             </div>
 
             <h2 className="text-xl font-extrabold mb-2" style={{ color: "var(--dt-text)" }}>
               {tStandalone("error.unexpected")}
             </h2>
 
-            <p className="text-sm mb-6 text-center" style={{ color: "#777" }}>
+            <p className="text-sm mb-6 text-center" style={{ color: "var(--dt-text-secondary)" }}>
               {errorMessage}
             </p>
 
@@ -63,7 +64,7 @@ class ErrorBoundary extends Component<Props, State> {
                 <button type="button"
                   onClick={() => this.setState((s) => ({ showDetails: !s.showDetails }))}
                   className="text-xs font-medium mb-2 underline underline-offset-2"
-                  style={{ color: "#888" }}
+                  style={{ color: "var(--dt-text-muted)" }}
                 >
                   {this.state.showDetails ? tStandalone("error.hideDetails") : tStandalone("error.showDetails")}
                 </button>
@@ -82,7 +83,7 @@ class ErrorBoundary extends Component<Props, State> {
               <a
                 href="/"
                 className="theme-border theme-shadow-sm inline-flex items-center gap-2 px-5 py-2.5 font-bold text-sm transition-all duration-150 theme-hover-lift"
-                style={{ borderRadius: "10px", backgroundColor: "#fff", color: "#1a1a1a" }}
+                style={{ borderRadius: "10px", backgroundColor: "var(--dt-card-bg)", color: "var(--dt-text)" }}
               >
                 <Home className="size-4" aria-hidden="true" />
                 {tStandalone("error.backHome")}

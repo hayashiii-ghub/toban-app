@@ -287,6 +287,7 @@ export const en: Record<string, string> = {
   "notFound.title": "Page not found",
   "notFound.message": "The page you're looking for doesn't exist or may have moved.",
   "notFound.home": "Home",
+  "notFound.templates": "Browse templates",
 
   // Error boundary
   "error.unknown": "Unknown error",
