@@ -1,9 +1,16 @@
 import { startTransition, useCallback, useMemo, useState } from "react";
-import type { AppState, AssignmentMode, Member, RotationConfig, Schedule, ScheduleTemplate, TaskGroup } from "@/rotation/types";
+import type { AppState, Schedule, ScheduleTemplate } from "@/rotation/types";
 import { createScheduleFromTemplate, deepClone, generateId, loadState, normalizeRotation, saveState } from "@/rotation/utils";
 import { deleteSchedule } from "@/lib/api";
 import { useT } from "@/i18n";
 import { toast } from "sonner";
+
+/**
+ * handleSaveSettings の保存ペイロード（Schedule の設定系フィールド）。
+ * partial merge ではなく設定全体の置換。ただし rotationConfig のみ未指定時は現値維持で、
+ * 他の optional（pinned / assignmentMode / designThemeId）は undefined で上書きされる。
+ */
+export type ScheduleSettings = Omit<Schedule, "id" | "rotation" | "slug" | "editToken">;
 
 export function useScheduleManager() {
   const t = useT();
@@ -81,13 +88,14 @@ export function useScheduleManager() {
     });
   }, [activeSchedule, t]);
 
-  const handleSaveSettings = useCallback((name: string, nextGroups: TaskGroup[], nextMembers: Member[], rotationConfig?: RotationConfig, pinned?: boolean, assignmentMode?: AssignmentMode, designThemeId?: string) => {
+  const handleSaveSettings = useCallback((settings: ScheduleSettings) => {
+    const { name, groups, members, rotationConfig, pinned, assignmentMode, designThemeId } = settings;
     updateActiveSchedule((schedule) => ({
       ...schedule,
       name,
-      groups: nextGroups,
-      members: nextMembers,
-      rotation: normalizeRotation(schedule.rotation, nextMembers.filter(m => !m.skipped).length || nextMembers.length),
+      groups,
+      members,
+      rotation: normalizeRotation(schedule.rotation, members.filter(m => !m.skipped).length || members.length),
       rotationConfig: rotationConfig ?? schedule.rotationConfig,
       pinned,
       assignmentMode,

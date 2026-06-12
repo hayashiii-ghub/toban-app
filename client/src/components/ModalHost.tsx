@@ -5,7 +5,8 @@ import { NewScheduleModal } from "@/components/NewScheduleModal";
 import { SettingsModal } from "@/components/SettingsModal";
 import { ShareModal } from "@/components/ShareModal";
 import type { ModalType } from "@/hooks/useModalManager";
-import type { Schedule, TaskGroup, Member, RotationConfig, AssignmentMode } from "@/rotation/types";
+import type { ScheduleSettings } from "@/hooks/useScheduleManager";
+import type { Schedule } from "@/rotation/types";
 
 interface ModalHostProps {
   modalType: ModalType;
@@ -16,7 +17,7 @@ interface ModalHostProps {
   onAddSchedule: (template: Parameters<typeof NewScheduleModal>[0]["onSelect"] extends (t: infer T) => void ? T : never) => void;
   onDeleteSchedule: (id: string) => void;
   onDuplicateSchedule: () => void;
-  onSaveSettings: (name: string, groups: TaskGroup[], members: Member[], rotationConfig?: RotationConfig, pinned?: boolean, assignmentMode?: AssignmentMode, designThemeId?: string) => void;
+  onSaveSettings: (settings: ScheduleSettings) => void;
   onCloseModal: () => void;
   onRequestDelete: () => void;
   onCloseShare: () => void;

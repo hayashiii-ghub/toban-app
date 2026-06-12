@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { buildTobanTools, useTobanTools } from "./useTobanTools";
 import type { useHomeState } from "@/pages/useHomeState";
+import type { ScheduleSettings } from "@/hooks/useScheduleManager";
 import type { Assignment, Member, Schedule, TaskGroup } from "@/rotation/types";
 
 type HomeState = ReturnType<typeof useHomeState>;
@@ -309,25 +310,25 @@ describe("create_schedule", () => {
 describe("add_member", () => {
   it("名前を指定してメンバーを追加する（色は preset 割当）", async () => {
     const a = sched({ name: "掃除当番", members: [member("m1", "佐藤"), member("m2", "鈴木")] });
-    let saved: unknown[] | null = null;
+    let saved: ScheduleSettings | null = null;
     const get = makeGet({
       state: { schedules: [a], activeScheduleId: a.id },
       activeSchedule: a,
-      onSaveSettings: ((...args: unknown[]) => {
-        saved = args;
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
       }) as HomeState["onSaveSettings"],
     });
 
     const text = (await toolNamed("add_member", get).execute({ name: "田中" })).content[0].text;
 
     expect(text).toContain("田中");
-    const members = saved![2] as Member[];
+    const members = saved!.members;
     expect(members.map((m) => m.name)).toEqual(["佐藤", "鈴木", "田中"]);
     const added = members[2];
     expect(added.color).toBeTruthy();
     expect(added.bgColor).toBeTruthy();
     expect(added.textColor).toBeTruthy();
-    expect(saved![0]).toBe("掃除当番");
+    expect(saved!.name).toBe("掃除当番");
   });
 });
 
@@ -337,30 +338,30 @@ describe("remove_member", () => {
       members: [member("m1", "佐藤"), member("m2", "鈴木")],
       groups: [{ id: "g1", emoji: "🧹", tasks: ["床"], memberIds: ["m1", "m2"] }],
     });
-    let saved: unknown[] | null = null;
+    let saved: ScheduleSettings | null = null;
     const get = makeGet({
       state: { schedules: [a], activeScheduleId: a.id },
       activeSchedule: a,
-      onSaveSettings: ((...args: unknown[]) => {
-        saved = args;
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
       }) as HomeState["onSaveSettings"],
     });
 
     const text = (await toolNamed("remove_member", get).execute({ name: "鈴木" })).content[0].text;
 
     expect(text).toContain("鈴木");
-    expect((saved![2] as Member[]).map((m) => m.name)).toEqual(["佐藤"]);
-    expect((saved![1] as TaskGroup[])[0].memberIds).toEqual(["m1"]);
+    expect(saved!.members.map((m) => m.name)).toEqual(["佐藤"]);
+    expect(saved!.groups[0].memberIds).toEqual(["m1"]);
   });
 
   it("最後の1人は削除できない", async () => {
     const a = sched({ members: [member("m1", "佐藤")] });
-    let saved: unknown[] | null = null;
+    let saved: ScheduleSettings | null = null;
     const get = makeGet({
       state: { schedules: [a], activeScheduleId: a.id },
       activeSchedule: a,
-      onSaveSettings: ((...args: unknown[]) => {
-        saved = args;
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
       }) as HomeState["onSaveSettings"],
     });
 
@@ -372,12 +373,12 @@ describe("remove_member", () => {
 
   it("該当しない名前は候補付きで知らせる", async () => {
     const a = sched({ members: [member("m1", "佐藤"), member("m2", "鈴木")] });
-    let saved: unknown[] | null = null;
+    let saved: ScheduleSettings | null = null;
     const get = makeGet({
       state: { schedules: [a], activeScheduleId: a.id },
       activeSchedule: a,
-      onSaveSettings: ((...args: unknown[]) => {
-        saved = args;
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
       }) as HomeState["onSaveSettings"],
     });
 
@@ -506,12 +507,12 @@ describe("get_share_link", () => {
 describe("update_schedule", () => {
   const setup = () => {
     const a = sched({ name: "掃除当番", assignmentMode: "member", pinned: false });
-    let saved: unknown[] | null = null;
+    let saved: ScheduleSettings | null = null;
     const get = makeGet({
       state: { schedules: [a], activeScheduleId: a.id },
       activeSchedule: a,
-      onSaveSettings: ((...args: unknown[]) => {
-        saved = args;
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
       }) as HomeState["onSaveSettings"],
     });
     return { a, get, getSaved: () => saved };
@@ -520,22 +521,22 @@ describe("update_schedule", () => {
   it("名前を変更し他は保持する", async () => {
     const { get, getSaved } = setup();
     const text = (await toolNamed("update_schedule", get).execute({ name: "新・掃除当番" })).content[0].text;
-    expect(getSaved()![0]).toBe("新・掃除当番");
-    expect(getSaved()![5]).toBe("member");
+    expect(getSaved()!.name).toBe("新・掃除当番");
+    expect(getSaved()!.assignmentMode).toBe("member");
     expect(text).toContain("新・掃除当番");
   });
 
   it("担当者⇄タスクモードを切り替える", async () => {
     const { get, getSaved } = setup();
     await toolNamed("update_schedule", get).execute({ assignment_mode: "task" });
-    expect(getSaved()![5]).toBe("task");
-    expect(getSaved()![0]).toBe("掃除当番");
+    expect(getSaved()!.assignmentMode).toBe("task");
+    expect(getSaved()!.name).toBe("掃除当番");
   });
 
   it("ピン留めを設定する", async () => {
     const { get, getSaved } = setup();
     await toolNamed("update_schedule", get).execute({ pinned: true });
-    expect(getSaved()![4]).toBe(true);
+    expect(getSaved()!.pinned).toBe(true);
   });
 
   it("何も指定しないとエラー", async () => {
@@ -556,12 +557,12 @@ describe("update_schedule", () => {
 describe("update_member", () => {
   const setup = () => {
     const a = sched({ members: [member("m1", "佐藤"), member("m2", "鈴木")] });
-    let saved: unknown[] | null = null;
+    let saved: ScheduleSettings | null = null;
     const get = makeGet({
       state: { schedules: [a], activeScheduleId: a.id },
       activeSchedule: a,
-      onSaveSettings: ((...args: unknown[]) => {
-        saved = args;
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
       }) as HomeState["onSaveSettings"],
     });
     return { a, get, getSaved: () => saved };
@@ -570,14 +571,14 @@ describe("update_member", () => {
   it("メンバーを休みにする", async () => {
     const { get, getSaved } = setup();
     await toolNamed("update_member", get).execute({ name: "佐藤", skip: true });
-    const m = (getSaved()![2] as Member[]).find((x) => x.name === "佐藤");
+    const m = getSaved()!.members.find((x) => x.name === "佐藤");
     expect(m?.skipped).toBe(true);
   });
 
   it("メンバーを改名する", async () => {
     const { get, getSaved } = setup();
     await toolNamed("update_member", get).execute({ name: "佐藤", new_name: "佐藤太郎" });
-    const names = (getSaved()![2] as Member[]).map((x) => x.name);
+    const names = getSaved()!.members.map((x) => x.name);
     expect(names).toContain("佐藤太郎");
     expect(names).not.toContain("佐藤");
   });
@@ -600,12 +601,12 @@ describe("update_member", () => {
 describe("configure_rotation", () => {
   const setup = (rotationConfig?: import("@/rotation/types").RotationConfig) => {
     const a = sched(rotationConfig ? { rotationConfig } : {});
-    let saved: unknown[] | null = null;
+    let saved: ScheduleSettings | null = null;
     const get = makeGet({
       state: { schedules: [a], activeScheduleId: a.id },
       activeSchedule: a,
-      onSaveSettings: ((...args: unknown[]) => {
-        saved = args;
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
       }) as HomeState["onSaveSettings"],
     });
     return { a, get, getSaved: () => saved };
@@ -614,7 +615,7 @@ describe("configure_rotation", () => {
   it("日付モードに設定する", async () => {
     const { get, getSaved } = setup({ mode: "manual" });
     await toolNamed("configure_rotation", get).execute({ mode: "date", start_date: "2026-04-01", cycle_days: 7 });
-    const rc = getSaved()![3] as import("@/rotation/types").RotationConfig;
+    const rc = getSaved()!.rotationConfig!;
     expect(rc.mode).toBe("date");
     expect(rc.startDate).toBe("2026-04-01");
     expect(rc.cycleDays).toBe(7);
@@ -630,13 +631,13 @@ describe("configure_rotation", () => {
   it("手動モードに戻す", async () => {
     const { get, getSaved } = setup({ mode: "date", startDate: "2026-01-01", cycleDays: 7 });
     await toolNamed("configure_rotation", get).execute({ mode: "manual" });
-    expect((getSaved()![3] as import("@/rotation/types").RotationConfig).mode).toBe("manual");
+    expect(getSaved()!.rotationConfig!.mode).toBe("manual");
   });
 
   it("既存の日付設定に土曜スキップをマージする", async () => {
     const { get, getSaved } = setup({ mode: "date", startDate: "2026-01-01", cycleDays: 7 });
     await toolNamed("configure_rotation", get).execute({ skip_saturday: true });
-    const rc = getSaved()![3] as import("@/rotation/types").RotationConfig;
+    const rc = getSaved()!.rotationConfig!;
     expect(rc.skipSaturday).toBe(true);
     expect(rc.mode).toBe("date");
     expect(rc.startDate).toBe("2026-01-01");

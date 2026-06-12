@@ -149,15 +149,15 @@ describe("useScheduleManager", () => {
     ];
 
     act(() => {
-      result.current.handleSaveSettings(
-        "更新後の名前",
-        newGroups,
-        newMembers,
-        { mode: "date", startDate: "2026-04-01", cycleDays: 1 },
-        true,
-        "task",
-        "chalkboard",
-      );
+      result.current.handleSaveSettings({
+        name: "更新後の名前",
+        groups: newGroups,
+        members: newMembers,
+        rotationConfig: { mode: "date", startDate: "2026-04-01", cycleDays: 1 },
+        pinned: true,
+        assignmentMode: "task",
+        designThemeId: "chalkboard",
+      });
     });
 
     const active = result.current.activeSchedule!;

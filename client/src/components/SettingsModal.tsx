@@ -6,6 +6,7 @@ import { deepClone, generateId } from "@/rotation/utils";
 import { MEMBER_PRESETS } from "@/rotation/constants";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import type { ScheduleSettings } from "@/hooks/useScheduleManager";
 import { TaskGroupEditor } from "./settings/TaskGroupEditor";
 import { AccordionSection } from "./settings/AccordionSection";
 import { DesignThemePicker } from "./settings/DesignThemePicker";
@@ -23,7 +24,7 @@ interface Props {
   assignmentMode?: AssignmentMode;
   designThemeId?: string;
   canDelete: boolean;
-  onSave: (name: string, groups: TaskGroup[], members: Member[], rotationConfig?: RotationConfig, pinned?: boolean, assignmentMode?: AssignmentMode, designThemeId?: string) => void;
+  onSave: (settings: ScheduleSettings) => void;
   onDuplicate: () => void;
   onDelete: () => void;
   onClose: () => void;
@@ -216,7 +217,15 @@ export function SettingsModal({
       setValidationError(t("settings.errorNeedMember"));
       return;
     }
-    onSave(editName.trim() || scheduleName, cleanedGroups, cleanedMembers, editRotationConfig, editPinned, editAssignmentMode, editDesignThemeId);
+    onSave({
+      name: editName.trim() || scheduleName,
+      groups: cleanedGroups,
+      members: cleanedMembers,
+      rotationConfig: editRotationConfig,
+      pinned: editPinned,
+      assignmentMode: editAssignmentMode,
+      designThemeId: editDesignThemeId,
+    });
   };
 
   const rotationModeLabel = editRotationConfig.mode === "date" ? t("settings.rotationDate") : t("settings.rotationManual");
