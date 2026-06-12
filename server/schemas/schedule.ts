@@ -4,6 +4,7 @@ import {
   memberSchema as baseMemberSchema,
   rotationConfigSchema as baseRotationConfigSchema,
 } from "../../shared/schemas";
+import { LIMITS } from "../../shared/limits";
 
 // Server-side: stricter validation with length limits and patterns
 // #RGB, #RRGGBB, #RRGGBBAA のみ許可（実際にクライアントが生成する形式）
@@ -11,14 +12,14 @@ const CSS_COLOR_PATTERN = /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3}([0-9a-fA-F]{2})?)?$/;
 
 export const taskGroupSchema = baseTaskGroupSchema.extend({
   id: z.string().trim().min(1).max(100),
-  tasks: z.array(z.string().trim().min(1).max(100)).min(1).max(20),
-  emoji: z.string().trim().min(1).max(10),
+  tasks: z.array(z.string().trim().min(1).max(LIMITS.task)).min(1).max(LIMITS.tasksPerGroup),
+  emoji: z.string().trim().min(1).max(LIMITS.emoji),
   memberIds: z.array(z.string().trim().min(1).max(100)).optional(),
 });
 
 export const memberSchema = baseMemberSchema.extend({
   id: z.string().trim().min(1).max(100),
-  name: z.string().trim().min(1).max(100),
+  name: z.string().trim().min(1).max(LIMITS.memberName),
   color: z.string().trim().min(1).max(100).regex(CSS_COLOR_PATTERN),
   bgColor: z.string().trim().min(1).max(100).regex(CSS_COLOR_PATTERN),
   textColor: z.string().trim().min(1).max(100).regex(CSS_COLOR_PATTERN),
@@ -35,10 +36,10 @@ export const rotationConfigObjectSchema = baseRotationConfigSchema.extend({
 const rotationConfigSchema = rotationConfigObjectSchema.optional();
 
 export const createScheduleSchema = z.object({
-  name: z.string().trim().min(1).max(100),
+  name: z.string().trim().min(1).max(LIMITS.scheduleName),
   rotation: z.number().int().default(0),
-  groups: z.array(taskGroupSchema).min(1).max(20),
-  members: z.array(memberSchema).min(1).max(50),
+  groups: z.array(taskGroupSchema).min(1).max(LIMITS.groups),
+  members: z.array(memberSchema).min(1).max(LIMITS.members),
   rotationConfig: rotationConfigSchema,
   assignmentMode: z.enum(["member", "task"]).optional(),
   designThemeId: z.string().trim().min(1).max(50).optional(),

@@ -7,6 +7,7 @@ import { MEMBER_PRESETS } from "@/rotation/constants";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { ScheduleSettings } from "@/hooks/useScheduleManager";
+import { LIMITS } from "@shared/limits";
 import { TaskGroupEditor } from "./settings/TaskGroupEditor";
 import { AccordionSection } from "./settings/AccordionSection";
 import { DesignThemePicker } from "./settings/DesignThemePicker";
@@ -291,6 +292,7 @@ export function SettingsModal({
                     type="text"
                     value={editName}
                     onChange={(e) => applyEditorPatch({ name: e.target.value })}
+                    maxLength={LIMITS.scheduleName}
                     className="flex-1 min-w-0 theme-border px-3 py-2 text-sm font-bold"
                     style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#FAFAFA" }}
                     placeholder={t("settings.scheduleNamePlaceholder")}

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { z } from "zod";
+import { LIMITS } from "@shared/limits";
 import type { useHomeState } from "@/pages/useHomeState";
 import type { AssignmentMode, RotationConfig } from "@/rotation/types";
 import { MEMBER_PRESETS, TEMPLATES } from "@/rotation/constants";
@@ -28,7 +29,7 @@ const lenientOptBool = z.boolean().optional().catch(undefined);
 const lenientOptNum = z.number().optional().catch(undefined);
 
 /** 保存系の名前（メンバー名・表名）の上限。lookup 専用フィールドには適用しない */
-const MAX_NAME_LENGTH = 50;
+const MAX_NAME_LENGTH = LIMITS.memberName;
 
 const nameInputSchema = z.object({ name: lenientStr }).catch({ name: "" });
 const directionInputSchema = z.object({ direction: lenientStr }).catch({ direction: "" });
