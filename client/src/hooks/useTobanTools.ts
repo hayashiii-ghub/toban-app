@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { z } from "zod";
 import type { useHomeState } from "@/pages/useHomeState";
 import type { AssignmentMode, RotationConfig } from "@/rotation/types";
 import { MEMBER_PRESETS, TEMPLATES } from "@/rotation/constants";
@@ -16,31 +17,39 @@ function rotationLabel(rotation: number): string {
   return rotation === 0 ? "初期" : `${rotation}回目`;
 }
 
-/** input(JSON) から文字列フィールドを安全に取り出す。schema は緩いのでここで検証する。 */
-function strField(input: unknown, key: string): string {
-  const obj = (input ?? {}) as Record<string, unknown>;
-  return typeof obj[key] === "string" ? (obj[key] as string).trim() : "";
-}
+/**
+ * WebMCP の inputSchema には強制力が無いので、実行時の input はここで検証する。
+ * 既存挙動どおり欠落・型違いはエラーにせず空値（"" / null / undefined）に落とし、
+ * 入力エラーのメッセージは各 tool が組み立てる（lenient = .catch() で吸収）。
+ */
+const lenientStr = z.string().trim().catch("");
+const lenientOptStr = z.string().trim().optional().catch(undefined);
+const lenientOptBool = z.boolean().optional().catch(undefined);
+const lenientOptNum = z.number().optional().catch(undefined);
 
-/** input(JSON) から数値フィールドを安全に取り出す。数値でなければ null。 */
-function numField(input: unknown, key: string): number | null {
-  const obj = (input ?? {}) as Record<string, unknown>;
-  return typeof obj[key] === "number" ? (obj[key] as number) : null;
-}
-
-/** 部分更新用: 該当 key が無い/型違いなら undefined（= 未指定）を返す。 */
-function optStr(input: unknown, key: string): string | undefined {
-  const obj = (input ?? {}) as Record<string, unknown>;
-  return typeof obj[key] === "string" ? (obj[key] as string).trim() : undefined;
-}
-function optBool(input: unknown, key: string): boolean | undefined {
-  const obj = (input ?? {}) as Record<string, unknown>;
-  return typeof obj[key] === "boolean" ? (obj[key] as boolean) : undefined;
-}
-function optNum(input: unknown, key: string): number | undefined {
-  const obj = (input ?? {}) as Record<string, unknown>;
-  return typeof obj[key] === "number" ? (obj[key] as number) : undefined;
-}
+const nameInput = z.object({ name: lenientStr }).catch({ name: "" });
+const directionInput = z.object({ direction: lenientStr }).catch({ direction: "" });
+const viewInput = z.object({ view: lenientStr }).catch({ view: "" });
+const templateInput = z.object({ template: lenientStr }).catch({ template: "" });
+const rotationInput = z
+  .object({ rotation: z.number().nullable().catch(null) })
+  .catch({ rotation: null });
+const updateScheduleInput = z
+  .object({ name: lenientOptStr, pinned: lenientOptBool, assignment_mode: lenientOptStr })
+  .catch({});
+const updateMemberInput = z
+  .object({ name: lenientStr, new_name: lenientOptStr, skip: lenientOptBool })
+  .catch({ name: "" });
+const configureRotationInput = z
+  .object({
+    mode: lenientOptStr,
+    start_date: lenientOptStr,
+    cycle_days: lenientOptNum,
+    skip_saturday: lenientOptBool,
+    skip_sunday: lenientOptBool,
+    skip_holidays: lenientOptBool,
+  })
+  .catch({});
 
 /**
  * activeSchedule の現値をベースに patch だけ差し替えて onSaveSettings(full) を呼ぶ。
@@ -144,7 +153,7 @@ function switchScheduleTool(get: () => HomeState): WebMCPTool {
     },
     async execute(input) {
       const { state, selectSchedule } = get();
-      const name = strField(input, "name");
+      const { name } = nameInput.parse(input);
       const target = state.schedules.find((s) => s.name === name);
       if (!target) {
         const names = state.schedules.map((s) => s.name).join("、");
@@ -171,7 +180,7 @@ function advanceRotationTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, handleRotate } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const direction = strField(input, "direction");
+      const { direction } = directionInput.parse(input);
       if (direction !== "forward" && direction !== "backward") {
         return result('direction は "forward" または "backward" を指定してください。');
       }
@@ -198,7 +207,7 @@ function changeViewTool(get: () => HomeState): WebMCPTool {
     },
     async execute(input) {
       const { changeTab } = get();
-      const view = strField(input, "view");
+      const { view } = viewInput.parse(input);
       if (!isViewTab(view)) {
         return result(`view は ${VIEW_VALUES.map(v => `"${v}"`).join(" / ")} のいずれかを指定してください。`);
       }
@@ -220,7 +229,7 @@ function createScheduleTool(get: () => HomeState): WebMCPTool {
     },
     async execute(input) {
       const { onAddSchedule } = get();
-      const name = strField(input, "template");
+      const { template: name } = templateInput.parse(input);
       const template = TEMPLATES.find((t) => t.name === name);
       if (!template) {
         const names = TEMPLATES.map((t) => t.name).join("、");
@@ -245,7 +254,7 @@ function addMemberTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const name = strField(input, "name");
+      const { name } = nameInput.parse(input);
       if (!name) return result("追加するメンバーの名前を指定してください。");
       const preset = MEMBER_PRESETS[activeSchedule.members.length % MEMBER_PRESETS.length];
       const nextMembers = [...activeSchedule.members, { id: generateId("m"), name, ...preset }];
@@ -267,7 +276,7 @@ function removeMemberTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const name = strField(input, "name");
+      const { name } = nameInput.parse(input);
       const target = activeSchedule.members.find((m) => m.name === name);
       if (!target) {
         const names = activeSchedule.members.map((m) => m.name).join("、");
@@ -304,7 +313,7 @@ function setRotationTool(get: () => HomeState): WebMCPTool {
           `「${activeSchedule.name}」は日付ベースで自動的に当番が変わる設定のため、回数を手動で設定できません。`,
         );
       }
-      const rotation = numField(input, "rotation");
+      const { rotation } = rotationInput.parse(input);
       if (rotation === null || !Number.isInteger(rotation) || rotation < 0) {
         return result("rotation は 0 以上の整数で指定してください。");
       }
@@ -365,9 +374,7 @@ function updateScheduleTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const name = optStr(input, "name");
-      const pinned = optBool(input, "pinned");
-      const mode = optStr(input, "assignment_mode");
+      const { name, pinned, assignment_mode: mode } = updateScheduleInput.parse(input);
       if (name === undefined && pinned === undefined && mode === undefined) {
         return result("更新する項目（name / pinned / assignment_mode）を指定してください。");
       }
@@ -409,14 +416,12 @@ function updateMemberTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const name = strField(input, "name");
+      const { name, new_name: newName, skip } = updateMemberInput.parse(input);
       const target = activeSchedule.members.find((m) => m.name === name);
       if (!target) {
         const names = activeSchedule.members.map((m) => m.name).join("、");
         return result(`「${name}」というメンバーは見つかりませんでした。現在のメンバー: ${names}`);
       }
-      const newName = optStr(input, "new_name");
-      const skip = optBool(input, "skip");
       if (newName === undefined && skip === undefined) {
         return result("変更内容（new_name / skip）を指定してください。");
       }
@@ -455,12 +460,14 @@ function configureRotationTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const mode = optStr(input, "mode");
-      const startDate = optStr(input, "start_date");
-      const cycleDays = optNum(input, "cycle_days");
-      const skipSat = optBool(input, "skip_saturday");
-      const skipSun = optBool(input, "skip_sunday");
-      const skipHol = optBool(input, "skip_holidays");
+      const {
+        mode,
+        start_date: startDate,
+        cycle_days: cycleDays,
+        skip_saturday: skipSat,
+        skip_sunday: skipSun,
+        skip_holidays: skipHol,
+      } = configureRotationInput.parse(input);
       if (
         mode === undefined &&
         startDate === undefined &&
