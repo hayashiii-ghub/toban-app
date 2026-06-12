@@ -11,6 +11,7 @@
 
 ## Key Conventions
 - Client/server共有の型は `shared/types.ts`、Zodスキーマは `shared/schemas.ts`
+- 入力の文字数・件数上限は `shared/limits.ts` が単一の真実源（server スキーマ / UI maxLength / WebMCP 検証が共有）
 - クライアントのimportは `@/*`（client/src）と `@shared/*`（shared）エイリアスを使用
 - localStorage が主データストア。D1 はクラウド永続化層
 - UIは全て日本語
