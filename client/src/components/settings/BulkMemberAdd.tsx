@@ -3,6 +3,8 @@ import type { Member, TaskGroup } from "@/rotation/types";
 import { MEMBER_PRESETS } from "@/rotation/constants";
 import { generateId, deepClone } from "@/rotation/utils";
 import { useT } from "@/i18n";
+import { toast } from "sonner";
+import { LIMITS } from "@shared/limits";
 
 interface Props {
   members: Member[];
@@ -27,6 +29,14 @@ export function BulkMemberAdd({ members, groups, activeMemberIds, isTaskMode, on
 
   const handleBulkAdd = () => {
     if (bulkNames.length === 0) return;
+    if (members.length + bulkNames.length > LIMITS.members) {
+      toast.error(t("settings.maxMembersReached", { n: LIMITS.members }));
+      return;
+    }
+    if (!isTaskMode && groups.length + bulkNames.length > LIMITS.groups) {
+      toast.error(t("settings.maxGroupsReached", { n: LIMITS.groups }));
+      return;
+    }
     const newMembers = bulkNames.map((name, i) => {
       const preset = MEMBER_PRESETS[(members.length + i) % MEMBER_PRESETS.length];
       return { id: generateId("m"), name, ...preset } as Member;

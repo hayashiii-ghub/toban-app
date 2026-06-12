@@ -261,6 +261,9 @@ function addMemberTool(get: () => HomeState): WebMCPTool {
       const { name } = nameInputSchema.parse(input);
       if (!name) return result("追加するメンバーの名前を指定してください。");
       if (name.length > MAX_NAME_LENGTH) return result(`名前は${MAX_NAME_LENGTH}文字以内で指定してください。`);
+      if (activeSchedule.members.length >= LIMITS.members) {
+        return result(`メンバーは最大${LIMITS.members}人までです。`);
+      }
       const preset = MEMBER_PRESETS[activeSchedule.members.length % MEMBER_PRESETS.length];
       const nextMembers = [...activeSchedule.members, { id: generateId("m"), name, ...preset }];
       saveEdit(activeSchedule, onSaveSettings, { members: nextMembers });
