@@ -1,23 +1,16 @@
 import { startTransition, useCallback, useMemo, useState } from "react";
-import type { AppState, AssignmentMode, Member, RotationConfig, Schedule, ScheduleTemplate, TaskGroup } from "@/rotation/types";
-
-/**
- * handleSaveSettings の保存ペイロード。partial merge ではなく設定全体の置換
- * （optional フィールドは未指定なら undefined で上書きされる）。
- */
-export interface ScheduleSettings {
-  name: string;
-  groups: TaskGroup[];
-  members: Member[];
-  rotationConfig?: RotationConfig;
-  pinned?: boolean;
-  assignmentMode?: AssignmentMode;
-  designThemeId?: string;
-}
+import type { AppState, Schedule, ScheduleTemplate } from "@/rotation/types";
 import { createScheduleFromTemplate, deepClone, generateId, loadState, normalizeRotation, saveState } from "@/rotation/utils";
 import { deleteSchedule } from "@/lib/api";
 import { useT } from "@/i18n";
 import { toast } from "sonner";
+
+/**
+ * handleSaveSettings の保存ペイロード（Schedule の設定系フィールド）。
+ * partial merge ではなく設定全体の置換。ただし rotationConfig のみ未指定時は現値維持で、
+ * 他の optional（pinned / assignmentMode / designThemeId）は undefined で上書きされる。
+ */
+export type ScheduleSettings = Omit<Schedule, "id" | "rotation" | "slug" | "editToken">;
 
 export function useScheduleManager() {
   const t = useT();

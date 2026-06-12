@@ -27,20 +27,20 @@ const lenientOptStr = z.string().trim().optional().catch(undefined);
 const lenientOptBool = z.boolean().optional().catch(undefined);
 const lenientOptNum = z.number().optional().catch(undefined);
 
-const nameInput = z.object({ name: lenientStr }).catch({ name: "" });
-const directionInput = z.object({ direction: lenientStr }).catch({ direction: "" });
-const viewInput = z.object({ view: lenientStr }).catch({ view: "" });
-const templateInput = z.object({ template: lenientStr }).catch({ template: "" });
-const rotationInput = z
+const nameInputSchema = z.object({ name: lenientStr }).catch({ name: "" });
+const directionInputSchema = z.object({ direction: lenientStr }).catch({ direction: "" });
+const viewInputSchema = z.object({ view: lenientStr }).catch({ view: "" });
+const templateInputSchema = z.object({ template: lenientStr }).catch({ template: "" });
+const rotationInputSchema = z
   .object({ rotation: z.number().nullable().catch(null) })
   .catch({ rotation: null });
-const updateScheduleInput = z
+const updateScheduleInputSchema = z
   .object({ name: lenientOptStr, pinned: lenientOptBool, assignment_mode: lenientOptStr })
   .catch({});
-const updateMemberInput = z
+const updateMemberInputSchema = z
   .object({ name: lenientStr, new_name: lenientOptStr, skip: lenientOptBool })
   .catch({ name: "" });
-const configureRotationInput = z
+const configureRotationInputSchema = z
   .object({
     mode: lenientOptStr,
     start_date: lenientOptStr,
@@ -153,7 +153,7 @@ function switchScheduleTool(get: () => HomeState): WebMCPTool {
     },
     async execute(input) {
       const { state, selectSchedule } = get();
-      const { name } = nameInput.parse(input);
+      const { name } = nameInputSchema.parse(input);
       const target = state.schedules.find((s) => s.name === name);
       if (!target) {
         const names = state.schedules.map((s) => s.name).join("、");
@@ -180,7 +180,7 @@ function advanceRotationTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, handleRotate } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const { direction } = directionInput.parse(input);
+      const { direction } = directionInputSchema.parse(input);
       if (direction !== "forward" && direction !== "backward") {
         return result('direction は "forward" または "backward" を指定してください。');
       }
@@ -207,7 +207,7 @@ function changeViewTool(get: () => HomeState): WebMCPTool {
     },
     async execute(input) {
       const { changeTab } = get();
-      const { view } = viewInput.parse(input);
+      const { view } = viewInputSchema.parse(input);
       if (!isViewTab(view)) {
         return result(`view は ${VIEW_VALUES.map(v => `"${v}"`).join(" / ")} のいずれかを指定してください。`);
       }
@@ -229,7 +229,7 @@ function createScheduleTool(get: () => HomeState): WebMCPTool {
     },
     async execute(input) {
       const { onAddSchedule } = get();
-      const { template: name } = templateInput.parse(input);
+      const { template: name } = templateInputSchema.parse(input);
       const template = TEMPLATES.find((t) => t.name === name);
       if (!template) {
         const names = TEMPLATES.map((t) => t.name).join("、");
@@ -254,7 +254,7 @@ function addMemberTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const { name } = nameInput.parse(input);
+      const { name } = nameInputSchema.parse(input);
       if (!name) return result("追加するメンバーの名前を指定してください。");
       const preset = MEMBER_PRESETS[activeSchedule.members.length % MEMBER_PRESETS.length];
       const nextMembers = [...activeSchedule.members, { id: generateId("m"), name, ...preset }];
@@ -276,7 +276,7 @@ function removeMemberTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const { name } = nameInput.parse(input);
+      const { name } = nameInputSchema.parse(input);
       const target = activeSchedule.members.find((m) => m.name === name);
       if (!target) {
         const names = activeSchedule.members.map((m) => m.name).join("、");
@@ -313,7 +313,7 @@ function setRotationTool(get: () => HomeState): WebMCPTool {
           `「${activeSchedule.name}」は日付ベースで自動的に当番が変わる設定のため、回数を手動で設定できません。`,
         );
       }
-      const { rotation } = rotationInput.parse(input);
+      const { rotation } = rotationInputSchema.parse(input);
       if (rotation === null || !Number.isInteger(rotation) || rotation < 0) {
         return result("rotation は 0 以上の整数で指定してください。");
       }
@@ -374,7 +374,7 @@ function updateScheduleTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const { name, pinned, assignment_mode: mode } = updateScheduleInput.parse(input);
+      const { name, pinned, assignment_mode: mode } = updateScheduleInputSchema.parse(input);
       if (name === undefined && pinned === undefined && mode === undefined) {
         return result("更新する項目（name / pinned / assignment_mode）を指定してください。");
       }
@@ -416,7 +416,7 @@ function updateMemberTool(get: () => HomeState): WebMCPTool {
     async execute(input) {
       const { activeSchedule, onSaveSettings } = get();
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
-      const { name, new_name: newName, skip } = updateMemberInput.parse(input);
+      const { name, new_name: newName, skip } = updateMemberInputSchema.parse(input);
       const target = activeSchedule.members.find((m) => m.name === name);
       if (!target) {
         const names = activeSchedule.members.map((m) => m.name).join("、");
@@ -467,7 +467,7 @@ function configureRotationTool(get: () => HomeState): WebMCPTool {
         skip_saturday: skipSat,
         skip_sunday: skipSun,
         skip_holidays: skipHol,
-      } = configureRotationInput.parse(input);
+      } = configureRotationInputSchema.parse(input);
       if (
         mode === undefined &&
         startDate === undefined &&
