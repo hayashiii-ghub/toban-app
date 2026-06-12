@@ -284,6 +284,7 @@ export const ja: Record<string, string> = {
   "notFound.title": "ページが見つかりません",
   "notFound.message": "お探しのページは存在しないか、移動した可能性があります。",
   "notFound.home": "ホームへ",
+  "notFound.templates": "テンプレートをみる",
 
   // エラー境界
   "error.unknown": "不明なエラー",
