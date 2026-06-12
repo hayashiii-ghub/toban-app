@@ -333,6 +333,26 @@ describe("add_member", () => {
   });
 });
 
+describe("add_member のメンバー数上限", () => {
+  it("上限人数に達していると追加せず上限を伝えるエラーを返す", async () => {
+    const full = Array.from({ length: LIMITS.members }, (_, i) => member(`m${i}`, `名前${i}`));
+    const a = sched({ members: full });
+    let saved: ScheduleSettings | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
+      }) as HomeState["onSaveSettings"],
+    });
+
+    const text = (await toolNamed("add_member", get).execute({ name: "田中" })).content[0].text;
+
+    expect(saved).toBeNull();
+    expect(text).toContain(`${LIMITS.members}人`);
+  });
+});
+
 describe("保存系 name フィールドの文字数上限", () => {
   const setup = () => {
     const a = sched({ name: "掃除当番", members: [member("m1", "佐藤"), member("m2", "鈴木")] });

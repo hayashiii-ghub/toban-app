@@ -7,6 +7,8 @@ import { GroupCard } from "./GroupCard";
 import { GroupCardProvider, type GroupCardContextValue } from "./GroupCardContext";
 import { BulkMemberAdd } from "./BulkMemberAdd";
 import { useT } from "@/i18n";
+import { toast } from "sonner";
+import { LIMITS } from "@shared/limits";
 
 interface Props {
   groups: TaskGroup[];
@@ -246,6 +248,10 @@ export function TaskGroupEditor({ groups, members, onGroupsChange, onMembersChan
   };
 
   const addNewMemberToGroup = (gIdx: number) => {
+    if (members.length >= LIMITS.members) {
+      toast.error(t("settings.maxMembersReached", { n: LIMITS.members }));
+      return;
+    }
     const preset = MEMBER_PRESETS[members.length % MEMBER_PRESETS.length];
     const newMember: Member = { id: generateId("m"), name: "", ...preset };
     onMembersChange([...members, newMember]);
@@ -303,6 +309,14 @@ export function TaskGroupEditor({ groups, members, onGroupsChange, onMembersChan
   };
 
   const addGroup = () => {
+    if (groups.length >= LIMITS.groups) {
+      toast.error(t("settings.maxGroupsReached", { n: LIMITS.groups }));
+      return;
+    }
+    if (!isTaskMode && members.length >= LIMITS.members) {
+      toast.error(t("settings.maxMembersReached", { n: LIMITS.members }));
+      return;
+    }
     if (isTaskMode) {
       const newGroup: TaskGroup = { id: generateId("g"), tasks: [t("settings.newTask")], emoji: "✨" };
       if (activeMemberIds.length > 0) newGroup.memberIds = activeMemberIds;
@@ -329,6 +343,10 @@ export function TaskGroupEditor({ groups, members, onGroupsChange, onMembersChan
   };
 
   const addTask = (gIdx: number) => {
+    if ((groups[gIdx]?.tasks.length ?? 0) >= LIMITS.tasksPerGroup) {
+      toast.error(t("settings.maxTasksReached", { n: LIMITS.tasksPerGroup }));
+      return;
+    }
     onGroupsChange(groups.map((g, i) => i === gIdx ? { ...g, tasks: [...g.tasks, ""] } : g));
   };
 
