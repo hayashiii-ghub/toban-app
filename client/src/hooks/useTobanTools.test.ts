@@ -332,6 +332,54 @@ describe("add_member", () => {
   });
 });
 
+describe("保存系 name フィールドの文字数上限", () => {
+  const setup = () => {
+    const a = sched({ name: "掃除当番", members: [member("m1", "佐藤"), member("m2", "鈴木")] });
+    let saved: ScheduleSettings | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
+      }) as HomeState["onSaveSettings"],
+    });
+    return { get, getSaved: () => saved };
+  };
+
+  it("50文字超の名前は保存せず上限を伝えるエラーを返し、50文字ちょうどは通る", async () => {
+    const over = "あ".repeat(51);
+    const exact = "い".repeat(50);
+
+    // add_member: 51文字 → 保存されず上限エラー
+    {
+      const { get, getSaved } = setup();
+      const text = (await toolNamed("add_member", get).execute({ name: over })).content[0].text;
+      expect(getSaved()).toBeNull();
+      expect(text).toContain("50文字以内");
+    }
+    // add_member: 50文字ちょうど → 通る
+    {
+      const { get, getSaved } = setup();
+      await toolNamed("add_member", get).execute({ name: exact });
+      expect(getSaved()!.members.map((m) => m.name)).toContain(exact);
+    }
+    // update_member: new_name 51文字 → 保存されず上限エラー
+    {
+      const { get, getSaved } = setup();
+      const text = (await toolNamed("update_member", get).execute({ name: "佐藤", new_name: over })).content[0].text;
+      expect(getSaved()).toBeNull();
+      expect(text).toContain("50文字以内");
+    }
+    // update_schedule: name 51文字 → 保存されず上限エラー
+    {
+      const { get, getSaved } = setup();
+      const text = (await toolNamed("update_schedule", get).execute({ name: over })).content[0].text;
+      expect(getSaved()).toBeNull();
+      expect(text).toContain("50文字以内");
+    }
+  });
+});
+
 describe("remove_member", () => {
   it("名前一致のメンバーを削除し group.memberIds からも除去する", async () => {
     const a = sched({
