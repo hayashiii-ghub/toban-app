@@ -27,6 +27,9 @@ const lenientOptStr = z.string().trim().optional().catch(undefined);
 const lenientOptBool = z.boolean().optional().catch(undefined);
 const lenientOptNum = z.number().optional().catch(undefined);
 
+/** 保存系の名前（メンバー名・表名）の上限。lookup 専用フィールドには適用しない */
+const MAX_NAME_LENGTH = 50;
+
 const nameInputSchema = z.object({ name: lenientStr }).catch({ name: "" });
 const directionInputSchema = z.object({ direction: lenientStr }).catch({ direction: "" });
 const viewInputSchema = z.object({ view: lenientStr }).catch({ view: "" });
@@ -256,6 +259,7 @@ function addMemberTool(get: () => HomeState): WebMCPTool {
       if (!activeSchedule) return result("現在選択されている当番表がありません。");
       const { name } = nameInputSchema.parse(input);
       if (!name) return result("追加するメンバーの名前を指定してください。");
+      if (name.length > MAX_NAME_LENGTH) return result(`名前は${MAX_NAME_LENGTH}文字以内で指定してください。`);
       const preset = MEMBER_PRESETS[activeSchedule.members.length % MEMBER_PRESETS.length];
       const nextMembers = [...activeSchedule.members, { id: generateId("m"), name, ...preset }];
       saveEdit(activeSchedule, onSaveSettings, { members: nextMembers });
@@ -379,6 +383,9 @@ function updateScheduleTool(get: () => HomeState): WebMCPTool {
         return result("更新する項目（name / pinned / assignment_mode）を指定してください。");
       }
       if (name === "") return result("name は空にできません。");
+      if (name !== undefined && name.length > MAX_NAME_LENGTH) {
+        return result(`name は${MAX_NAME_LENGTH}文字以内で指定してください。`);
+      }
       if (mode !== undefined && mode !== "member" && mode !== "task") {
         return result('assignment_mode は "member" または "task" を指定してください。');
       }
@@ -426,6 +433,9 @@ function updateMemberTool(get: () => HomeState): WebMCPTool {
         return result("変更内容（new_name / skip）を指定してください。");
       }
       if (newName === "") return result("new_name は空にできません。");
+      if (newName !== undefined && newName.length > MAX_NAME_LENGTH) {
+        return result(`new_name は${MAX_NAME_LENGTH}文字以内で指定してください。`);
+      }
       const nextMembers = activeSchedule.members.map((m) =>
         m.id === target.id ? { ...m, name: newName ?? m.name, skipped: skip ?? m.skipped } : m,
       );
