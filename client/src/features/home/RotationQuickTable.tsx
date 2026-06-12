@@ -49,6 +49,18 @@ export function RotationQuickTable({
     return () => { ro.disconnect(); el.removeEventListener("scroll", handleScroll); };
   }, [activeMembers.length]);
 
+  // 回転が進んだら現在列が見えるよう中央へ横スクロール（はみ出していない時は何もしない）
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || typeof el.scrollTo !== "function") return;
+    if (el.scrollWidth <= el.clientWidth + 1) return;
+    const cell = el.querySelector<HTMLElement>("th[aria-current]");
+    if (!cell) return;
+    const left = cell.offsetLeft - (el.clientWidth - cell.offsetWidth) / 2;
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo({ left: Math.max(0, left), behavior: reduceMotion ? "auto" : "smooth" });
+  }, [rotation]);
+
   return (
     <div className="px-3 sm:px-4 py-3 sm:py-4 pb-8 sm:pb-12 rotation-print-table-section">
       <div className="max-w-4xl mx-auto">

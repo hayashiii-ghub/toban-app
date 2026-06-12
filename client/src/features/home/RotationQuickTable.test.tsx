@@ -6,17 +6,24 @@ import type { Member, TaskGroup } from "@shared/types";
 vi.mock("framer-motion", () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const ReactMod = require("react");
+  // コンポーネント identity をキャッシュで安定させる。get のたびに新規生成すると
+  // React が毎レンダーで subtree を remount し、rerender をまたぐ DOM 参照が無効になる
+  const componentCache = new Map<string, unknown>();
   const motionProxy = new Proxy(
     {},
     {
-      get: (_target: unknown, prop: string) =>
-        ReactMod.forwardRef((props: Record<string, unknown>, ref: unknown) => {
-          const {
-            initial: _initial, animate: _animate, exit: _exit, transition: _transition, variants: _variants,
-            whileHover: _whileHover, whileTap: _whileTap, layout: _layout, ...rest
-          } = props;
-          return ReactMod.createElement(prop, { ...rest, ref });
-        }),
+      get: (_target: unknown, prop: string) => {
+        if (!componentCache.has(prop)) {
+          componentCache.set(prop, ReactMod.forwardRef((props: Record<string, unknown>, ref: unknown) => {
+            const {
+              initial: _initial, animate: _animate, exit: _exit, transition: _transition, variants: _variants,
+              whileHover: _whileHover, whileTap: _whileTap, layout: _layout, ...rest
+            } = props;
+            return ReactMod.createElement(prop, { ...rest, ref });
+          }));
+        }
+        return componentCache.get(prop);
+      },
     },
   );
   return {
@@ -102,6 +109,43 @@ describe("RotationQuickTable", () => {
     const headerCells = container.querySelectorAll("thead th");
     // 1 header + 3 active (m4 skipped)
     expect(headerCells.length).toBe(4);
+  });
+
+  it("scrolls current column into view when rotation changes and table overflows", () => {
+    const { container, rerender } = render(
+      <RotationQuickTable groups={groups} members={members} rotation={0} />,
+    );
+    const scroller = container.querySelector<HTMLElement>(".overflow-x-auto")!;
+    const scrollTo = vi.fn();
+    scroller.scrollTo = scrollTo as unknown as typeof scroller.scrollTo;
+    Object.defineProperty(scroller, "scrollWidth", { value: 600, configurable: true });
+    Object.defineProperty(scroller, "clientWidth", { value: 300, configurable: true });
+
+    rerender(<RotationQuickTable groups={groups} members={members} rotation={2} />);
+
+    const cell = scroller.querySelector<HTMLElement>("th[aria-current]")!;
+    Object.defineProperty(cell, "offsetLeft", { value: 400, configurable: true });
+    Object.defineProperty(cell, "offsetWidth", { value: 100, configurable: true });
+    rerender(<RotationQuickTable groups={groups} members={members} rotation={1} />);
+
+    expect(scrollTo).toHaveBeenCalled();
+    const lastCall = scrollTo.mock.calls.at(-1)![0] as ScrollToOptions;
+    expect(lastCall.left).toBeGreaterThanOrEqual(0);
+  });
+
+  it("does not scroll when table fits without overflow", () => {
+    const { container, rerender } = render(
+      <RotationQuickTable groups={groups} members={members} rotation={0} />,
+    );
+    const scroller = container.querySelector<HTMLElement>(".overflow-x-auto")!;
+    const scrollTo = vi.fn();
+    scroller.scrollTo = scrollTo as unknown as typeof scroller.scrollTo;
+    Object.defineProperty(scroller, "scrollWidth", { value: 300, configurable: true });
+    Object.defineProperty(scroller, "clientWidth", { value: 300, configurable: true });
+
+    rerender(<RotationQuickTable groups={groups} members={members} rotation={1} />);
+
+    expect(scrollTo).not.toHaveBeenCalled();
   });
 
   it("has correct aria-label on table", () => {
