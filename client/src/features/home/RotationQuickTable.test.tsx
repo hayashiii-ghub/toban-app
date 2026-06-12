@@ -71,9 +71,24 @@ describe("RotationQuickTable", () => {
     );
     const headerCells = container.querySelectorAll("thead th");
     // headerCells[0] = "担当", [1] = "初期", [2] = "1回目 ◀", [3] = "2回目"
+    // ◀ は列幅予約のため全ヘッダに存在し、現在列だけ visible + aria-current
     expect(headerCells[2].textContent).toContain("1回目");
-    expect(headerCells[2].textContent).toContain("◀");
-    expect(headerCells[1].textContent).not.toContain("◀");
+    expect(headerCells[2].getAttribute("aria-current")).toBe("true");
+    expect(headerCells[1].getAttribute("aria-current")).toBeNull();
+    const marker = (cell: Element) => cell.querySelector("span[aria-hidden]") as HTMLElement;
+    expect(marker(headerCells[2]).style.visibility).toBe("visible");
+    expect(marker(headerCells[1]).style.visibility).toBe("hidden");
+  });
+
+  it("keeps column borders reserved on non-current cells (layout stability)", () => {
+    const { container } = render(
+      <RotationQuickTable groups={groups} members={members} rotation={1} />,
+    );
+    const firstRowCells = container.querySelectorAll<HTMLElement>("tbody tr:first-child td");
+    // 現在列（rotation=1 → 2番目の td）は着色、それ以外も同幅の透明 border が常時確保される
+    expect(firstRowCells[1].style.borderLeft).toContain("2.5px solid");
+    expect(firstRowCells[0].style.borderLeft).toBe("2.5px solid transparent");
+    expect(firstRowCells[2].style.borderLeft).toBe("2.5px solid transparent");
   });
 
   it("excludes skipped members from columns", () => {
