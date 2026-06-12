@@ -2,6 +2,7 @@ import { Plus, Trash2, GripVertical, ChevronDown, ChevronUp, ArrowUp, ArrowDown,
 import type { Member, TaskGroup } from "@/rotation/types";
 import { ColorPalette } from "./ColorPalette";
 import { useGroupCardContext } from "./GroupCardContext";
+import { LIMITS } from "@shared/limits";
 import { useT } from "@/i18n";
 
 interface Props {
@@ -57,6 +58,7 @@ export function GroupCard({
               type="text"
               value={group.tasks[0] ?? ""}
               onChange={(e) => ctx.onUpdateTask(gIdx, 0, e.target.value)}
+              maxLength={LIMITS.task}
               placeholder={t("group.taskNamePlaceholder")}
               className="w-full theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
               style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
@@ -75,6 +77,7 @@ export function GroupCard({
                   type="text"
                   value={ownerMember.name}
                   onChange={(e) => ctx.onMemberNameChange(ownerMember.id, e.target.value)}
+                  maxLength={LIMITS.memberName}
                   placeholder={t("group.namePlaceholder")}
                   className="flex-1 min-w-0 theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
                   style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
@@ -114,6 +117,7 @@ export function GroupCard({
               type="text"
               value={group.emoji}
               onChange={(e) => ctx.onUpdateEmoji(gIdx, e.target.value)}
+              maxLength={LIMITS.emoji}
               className="w-12 text-center text-lg theme-border px-1 py-0.5"
               style={{ borderRadius: "6px", backgroundColor: "#fff" }}
               aria-label={t("group.changeEmoji", { n: gIdx + 1 })}
@@ -225,6 +229,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                 type="text"
                 value={member.name}
                 onChange={(e) => ctx.onMemberNameChange(member.id, e.target.value)}
+                maxLength={LIMITS.memberName}
                 placeholder={t("group.namePlaceholder")}
                 className="flex-1 min-w-0 theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
                 style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}
@@ -321,6 +326,7 @@ function AssigneeModeTaskList({ group, gIdx }: { group: TaskGroup; gIdx: number 
               type="text"
               value={task}
               onChange={(e) => ctx.onUpdateTask(gIdx, tIdx, e.target.value)}
+              maxLength={LIMITS.task}
               placeholder={t("group.taskNamePlaceholder")}
               className="flex-1 min-w-0 theme-border px-3 py-2 text-sm font-medium"
               style={{ borderRadius: "var(--dt-border-radius-sm)", backgroundColor: "#fff" }}

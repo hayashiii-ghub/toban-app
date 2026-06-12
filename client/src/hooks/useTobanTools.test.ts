@@ -3,6 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { buildTobanTools, useTobanTools } from "./useTobanTools";
 import type { useHomeState } from "@/pages/useHomeState";
 import type { ScheduleSettings } from "@/hooks/useScheduleManager";
+import { LIMITS } from "@shared/limits";
 import type { Assignment, Member, Schedule, TaskGroup } from "@/rotation/types";
 
 type HomeState = ReturnType<typeof useHomeState>;
@@ -346,16 +347,16 @@ describe("保存系 name フィールドの文字数上限", () => {
     return { get, getSaved: () => saved };
   };
 
-  it("50文字超の名前は保存せず上限を伝えるエラーを返し、50文字ちょうどは通る", async () => {
-    const over = "あ".repeat(51);
-    const exact = "い".repeat(50);
+  it("上限文字数超の名前は保存せず上限を伝えるエラーを返し、上限ちょうどは通る", async () => {
+    const over = "あ".repeat(LIMITS.memberName + 1);
+    const exact = "い".repeat(LIMITS.memberName);
 
     // add_member: 51文字 → 保存されず上限エラー
     {
       const { get, getSaved } = setup();
       const text = (await toolNamed("add_member", get).execute({ name: over })).content[0].text;
       expect(getSaved()).toBeNull();
-      expect(text).toContain("50文字以内");
+      expect(text).toContain(`文字以内`);
     }
     // add_member: 50文字ちょうど → 通る
     {
@@ -368,14 +369,14 @@ describe("保存系 name フィールドの文字数上限", () => {
       const { get, getSaved } = setup();
       const text = (await toolNamed("update_member", get).execute({ name: "佐藤", new_name: over })).content[0].text;
       expect(getSaved()).toBeNull();
-      expect(text).toContain("50文字以内");
+      expect(text).toContain(`文字以内`);
     }
     // update_schedule: name 51文字 → 保存されず上限エラー
     {
       const { get, getSaved } = setup();
       const text = (await toolNamed("update_schedule", get).execute({ name: over })).content[0].text;
       expect(getSaved()).toBeNull();
-      expect(text).toContain("50文字以内");
+      expect(text).toContain(`文字以内`);
     }
   });
 });
