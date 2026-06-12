@@ -44,22 +44,22 @@ function optNum(input: unknown, key: string): number | undefined {
 
 /**
  * activeSchedule の現値をベースに patch だけ差し替えて onSaveSettings(full) を呼ぶ。
- * 7 引数 positional の取り違えを 1 箇所に閉じ込める。
+ * onSaveSettings は設定全体の置換なので、未指定フィールドの現値埋めをここに閉じ込める。
  */
 function saveEdit(
   active: NonNullable<HomeState["activeSchedule"]>,
   onSaveSettings: HomeState["onSaveSettings"],
   patch: Partial<NonNullable<HomeState["activeSchedule"]>>,
 ): void {
-  onSaveSettings(
-    patch.name ?? active.name,
-    patch.groups ?? active.groups,
-    patch.members ?? active.members,
-    patch.rotationConfig ?? active.rotationConfig,
-    patch.pinned ?? active.pinned,
-    patch.assignmentMode ?? active.assignmentMode,
-    patch.designThemeId ?? active.designThemeId,
-  );
+  onSaveSettings({
+    name: patch.name ?? active.name,
+    groups: patch.groups ?? active.groups,
+    members: patch.members ?? active.members,
+    rotationConfig: patch.rotationConfig ?? active.rotationConfig,
+    pinned: patch.pinned ?? active.pinned,
+    assignmentMode: patch.assignmentMode ?? active.assignmentMode,
+    designThemeId: patch.designThemeId ?? active.designThemeId,
+  });
 }
 
 function listSchedulesTool(get: () => HomeState): WebMCPTool {

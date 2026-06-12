@@ -1,5 +1,19 @@
 import { startTransition, useCallback, useMemo, useState } from "react";
 import type { AppState, AssignmentMode, Member, RotationConfig, Schedule, ScheduleTemplate, TaskGroup } from "@/rotation/types";
+
+/**
+ * handleSaveSettings の保存ペイロード。partial merge ではなく設定全体の置換
+ * （optional フィールドは未指定なら undefined で上書きされる）。
+ */
+export interface ScheduleSettings {
+  name: string;
+  groups: TaskGroup[];
+  members: Member[];
+  rotationConfig?: RotationConfig;
+  pinned?: boolean;
+  assignmentMode?: AssignmentMode;
+  designThemeId?: string;
+}
 import { createScheduleFromTemplate, deepClone, generateId, loadState, normalizeRotation, saveState } from "@/rotation/utils";
 import { deleteSchedule } from "@/lib/api";
 import { useT } from "@/i18n";
@@ -81,13 +95,14 @@ export function useScheduleManager() {
     });
   }, [activeSchedule, t]);
 
-  const handleSaveSettings = useCallback((name: string, nextGroups: TaskGroup[], nextMembers: Member[], rotationConfig?: RotationConfig, pinned?: boolean, assignmentMode?: AssignmentMode, designThemeId?: string) => {
+  const handleSaveSettings = useCallback((settings: ScheduleSettings) => {
+    const { name, groups, members, rotationConfig, pinned, assignmentMode, designThemeId } = settings;
     updateActiveSchedule((schedule) => ({
       ...schedule,
       name,
-      groups: nextGroups,
-      members: nextMembers,
-      rotation: normalizeRotation(schedule.rotation, nextMembers.filter(m => !m.skipped).length || nextMembers.length),
+      groups,
+      members,
+      rotation: normalizeRotation(schedule.rotation, members.filter(m => !m.skipped).length || members.length),
       rotationConfig: rotationConfig ?? schedule.rotationConfig,
       pinned,
       assignmentMode,
