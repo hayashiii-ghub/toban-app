@@ -24,21 +24,21 @@
     "react-doctor": "react-doctor"
   },
   "dependencies": {
-    "@radix-ui/react-tooltip": "^1.2.8",
+    "@radix-ui/react-tooltip": "^1.2.9",
     "@sentry/react": "^10.52.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
-    "framer-motion": "^12.38.0",
+    "framer-motion": "^12.40.0",
     "hono": "^4.12.18",
     "lucide-react": "^1.14.0",
     "nanoid": "^5.1.11",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-qr-code": "^2.0.21",
-    "resend": "^6.12.3",
+    "resend": "^6.12.4",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.5.0",
-    "wouter": "^3.9.0",
+    "tailwind-merge": "^3.6.0",
+    "wouter": "^3.10.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
