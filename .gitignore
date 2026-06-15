@@ -122,3 +122,6 @@ ds-bundle/
 .design-sync/.cache/
 .design-sync/learnings/
 .design-sync/kit/dist/
+
+# OG image generation — Kiwi Maru font cache (downloaded on demand by og:generate)
+scripts/fonts/
