@@ -98,10 +98,10 @@ const sunflower: DesignTheme = {
     cardLg: "0 4px 12px rgba(212, 168, 48, 0.15)",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
+    fontFamily: "'Kiwi Maru', serif",
     fontWeightNormal: "400",
-    fontWeightBold: "700",
-    fontWeightExtra: "800",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "0px",
@@ -145,10 +145,10 @@ const crayon: DesignTheme = {
     cardLg: "3px 3px 0px #5C3A1E",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
-    fontWeightNormal: "500",
-    fontWeightBold: "700",
-    fontWeightExtra: "900",
+    fontFamily: "'Kiwi Maru', serif",
+    fontWeightNormal: "400",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "-1px",
@@ -192,10 +192,10 @@ const lavender: DesignTheme = {
     cardLg: "0 4px 14px rgba(155, 133, 204, 0.17)",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
+    fontFamily: "'Kiwi Maru', serif",
     fontWeightNormal: "400",
-    fontWeightBold: "600",
-    fontWeightExtra: "700",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "0px",
@@ -239,10 +239,10 @@ const whiteboard: DesignTheme = {
     cardLg: "0 2px 6px rgba(0, 0, 0, 0.1)",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
+    fontFamily: "'Kiwi Maru', serif",
     fontWeightNormal: "400",
-    fontWeightBold: "700",
-    fontWeightExtra: "800",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "0px",
@@ -286,10 +286,10 @@ const nature: DesignTheme = {
     cardLg: "0 4px 12px rgba(45, 91, 39, 0.12)",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
+    fontFamily: "'Kiwi Maru', serif",
     fontWeightNormal: "400",
-    fontWeightBold: "700",
-    fontWeightExtra: "800",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "0px",
@@ -333,10 +333,10 @@ const sakura: DesignTheme = {
     cardLg: "0 4px 14px rgba(249, 168, 184, 0.2)",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
+    fontFamily: "'Kiwi Maru', serif",
     fontWeightNormal: "400",
-    fontWeightBold: "600",
-    fontWeightExtra: "700",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "0px",
@@ -380,10 +380,10 @@ const nightsky: DesignTheme = {
     cardLg: "0 4px 12px rgba(44, 68, 102, 0.13)",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
+    fontFamily: "'Kiwi Maru', serif",
     fontWeightNormal: "400",
-    fontWeightBold: "700",
-    fontWeightExtra: "800",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "0px",
@@ -427,10 +427,10 @@ const chalkboard: DesignTheme = {
     cardLg: "0 4px 12px rgba(46, 107, 79, 0.12)",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
+    fontFamily: "'Kiwi Maru', serif",
     fontWeightNormal: "400",
-    fontWeightBold: "700",
-    fontWeightExtra: "800",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "0px",
@@ -474,10 +474,10 @@ const ocean: DesignTheme = {
     cardLg: "0 4px 12px rgba(80, 176, 224, 0.15)",
   },
   typography: {
-    fontFamily: "'M PLUS Rounded 1c', sans-serif",
+    fontFamily: "'Kiwi Maru', serif",
     fontWeightNormal: "400",
-    fontWeightBold: "700",
-    fontWeightExtra: "800",
+    fontWeightBold: "500",
+    fontWeightExtra: "500",
   },
   effects: {
     hoverTranslate: "0px",

@@ -40,7 +40,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sans: 'M PLUS Rounded 1c', sans-serif;
+  --font-sans: 'Kiwi Maru', serif;
 }
 
 :root {
@@ -104,10 +104,11 @@
   --dt-table-border-light: #d8d8d8;
   --dt-focus-ring: #666666;
   --dt-current-highlight: #e0e0e0;
-  --dt-font-family: 'M PLUS Rounded 1c', sans-serif;
+  --dt-font-family: 'Kiwi Maru', serif;
   --dt-font-weight-normal: 400;
-  --dt-font-weight-bold: 700;
-  --dt-font-weight-extra: 800;
+  /* Kiwi Maru は 300/400/500 のみ（太字なし）。bold/extra は最大の 500 に揃える */
+  --dt-font-weight-bold: 500;
+  --dt-font-weight-extra: 500;
   --dt-hover-translate: 0px;
 }
 
@@ -118,7 +119,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-family: 'Kiwi Maru', serif;
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   button:not(:disabled),
