@@ -43,16 +43,10 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
   <rect width="1200" height="630" fill="#FFF8E7"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
 
-  <rect x="80" y="120" width="6" height="56" rx="3" fill="#92400E"/>
-  <text x="110" y="166" font-family="${FF}" font-weight="500" font-size="32" fill="#92400E" letter-spacing="0.04em">かんたん当番表</text>
+  <text x="80" y="300" font-family="${FF}" font-weight="500" font-size="180" fill="#2D4A3E" letter-spacing="-0.02em">toban</text>
 
-  <text x="80" y="320" font-family="${FF}" font-weight="500" font-size="180" fill="#2D4A3E" letter-spacing="-0.02em">toban</text>
-
-  <text x="80" y="416" font-family="${FF}" font-weight="500" font-size="52" fill="#1F2937">当番表を、かんたんに作って</text>
-  <text x="80" y="480" font-family="${FF}" font-weight="500" font-size="52" fill="#1F2937">そのまま、きれいに印刷。</text>
-
-  <line x1="80" y1="540" x2="200" y2="540" stroke="#92400E" stroke-width="2.5" stroke-linecap="round"/>
-  <text x="80" y="582" font-family="${FF}" font-weight="500" font-size="26" fill="#92400E">無料・登録不要・すぐ使える</text>
+  <text x="80" y="404" font-family="${FF}" font-weight="500" font-size="52" fill="#1F2937">当番表を、かんたんに作って</text>
+  <text x="80" y="468" font-family="${FF}" font-weight="500" font-size="52" fill="#1F2937">そのまま、きれいに印刷。</text>
 
   <text x="1120" y="582" text-anchor="end" font-family="${FF}" font-weight="500" font-size="28" fill="#2D4A3E">toban.app</text>
 </svg>`;
