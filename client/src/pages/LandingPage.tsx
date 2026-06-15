@@ -309,7 +309,7 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="lp min-h-screen" style={{ backgroundColor: C.pageBg, fontFamily: "'M PLUS Rounded 1c', sans-serif" }}>
+    <main className="lp min-h-screen" style={{ backgroundColor: C.pageBg, fontFamily: "'Kiwi Maru', serif" }}>
       {/* ── ヒーロー ── */}
       <section
         className="px-4 py-16 sm:py-24 text-center"
