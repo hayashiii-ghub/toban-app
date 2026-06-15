@@ -1,0 +1,8 @@
+{
+  "pkg": "toban-kit",
+  "globalName": "TobanKit",
+  "projectId": "1214450f-5330-4406-a5da-86e64bbbb37e",
+  "shape": "package",
+  "buildCmd": "npm --prefix .design-sync/kit run build",
+  "cssEntry": "src/tokens.css"
+}
