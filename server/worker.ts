@@ -66,38 +66,49 @@ export default {
 
     // LP — bot用プリレンダリング
     if (pathname === "/about" && botRequest) {
-      return withSecurityHeaders(new Response(renderLandingPageHtml(origin), {
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          "Cache-Control": "public, max-age=86400",
-        },
-      }));
+      return withSecurityHeaders(
+        new Response(renderLandingPageHtml(origin), {
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "public, max-age=86400",
+          },
+        })
+      );
     }
 
     // 共有スケジュールページ — bot用OGP注入
     const slugMatch = pathname.match(/^\/s\/([a-zA-Z0-9_-]+)$/);
-    if (slugMatch && botRequest) {
-      return withSecurityHeaders(await handleScheduleOgp(url, env, slugMatch[1]));
+    if (slugMatch) {
+      const response = botRequest
+        ? await handleScheduleOgp(url, env, slugMatch[1])
+        : await env.ASSETS.fetch(request);
+      const securedResponse = withSecurityHeaders(response);
+      securedResponse.headers.set("X-Robots-Tag", "noindex");
+      return securedResponse;
     }
 
     // 順番決め/ルーレットページ — bot用プリレンダリング
     if (pathname === "/junban" && botRequest) {
-      return withSecurityHeaders(new Response(renderJunbanHtml(origin), {
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          "Cache-Control": "public, max-age=86400",
-        },
-      }));
+      return withSecurityHeaders(
+        new Response(renderJunbanHtml(origin), {
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "public, max-age=86400",
+          },
+        })
+      );
     }
 
     // テンプレート一覧ページ — bot用プリレンダリング
     if (pathname === "/templates" && botRequest) {
-      return withSecurityHeaders(new Response(renderTemplateListHtml(origin), {
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          "Cache-Control": "public, max-age=86400",
-        },
-      }));
+      return withSecurityHeaders(
+        new Response(renderTemplateListHtml(origin), {
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "public, max-age=86400",
+          },
+        })
+      );
     }
 
     // テンプレート詳細ページ — bot用プリレンダリング
@@ -105,12 +116,14 @@ export default {
     if (templateMatch && botRequest) {
       const html = renderTemplateDetailHtml(origin, templateMatch[1]);
       if (html) {
-        return withSecurityHeaders(new Response(html, {
-          headers: {
-            "Content-Type": "text/html; charset=utf-8",
-            "Cache-Control": "public, max-age=86400",
-          },
-        }));
+        return withSecurityHeaders(
+          new Response(html, {
+            headers: {
+              "Content-Type": "text/html; charset=utf-8",
+              "Cache-Control": "public, max-age=86400",
+            },
+          })
+        );
       }
     }
 
@@ -125,10 +138,16 @@ export default {
 
   async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext) {
     try {
-      const cutoff = new Date(Date.now() - CLEANUP_RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+      const cutoff = new Date(
+        Date.now() - CLEANUP_RETENTION_DAYS * 24 * 60 * 60 * 1000
+      ).toISOString();
       const db = drizzle(env.DB);
-      const result = await db.delete(schedules).where(lt(schedules.updatedAt, cutoff));
-      console.log(`Scheduled cleanup completed: cutoff=${cutoff}, deleted=${result.meta?.changes ?? "unknown"}`);
+      const result = await db
+        .delete(schedules)
+        .where(lt(schedules.updatedAt, cutoff));
+      console.log(
+        `Scheduled cleanup completed: cutoff=${cutoff}, deleted=${result.meta?.changes ?? "unknown"}`
+      );
     } catch (error) {
       console.error("Scheduled cleanup failed:", error);
     }
