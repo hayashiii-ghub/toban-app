@@ -20,8 +20,12 @@ describe("buildSocialMetaTags", () => {
       type: "article",
     });
     expect(html).toContain('<meta property="og:title" content="テスト記事"');
-    expect(html).toContain('<meta property="og:description" content="テスト説明"');
-    expect(html).toContain('<meta property="og:url" content="https://toban.app/test"');
+    expect(html).toContain(
+      '<meta property="og:description" content="テスト説明"'
+    );
+    expect(html).toContain(
+      '<meta property="og:url" content="https://toban.app/test"'
+    );
     expect(html).toContain('<meta property="og:type" content="article"');
   });
 
@@ -42,7 +46,9 @@ describe("buildSocialMetaTags", () => {
       url: "https://toban.app/",
       origin: "https://toban.app",
     });
-    expect(html).toContain('<meta property="og:image" content="https://toban.app/og-image.png"');
+    expect(html).toContain(
+      '<meta property="og:image" content="https://toban.app/og-image.png"'
+    );
     expect(html).toContain('<meta property="og:image:width" content="1200"');
     expect(html).toContain('<meta property="og:image:height" content="630"');
   });
@@ -54,10 +60,16 @@ describe("buildSocialMetaTags", () => {
       url: "https://toban.app/",
       origin: "https://toban.app",
     });
-    expect(html).toContain('<meta name="twitter:card" content="summary_large_image"');
+    expect(html).toContain(
+      '<meta name="twitter:card" content="summary_large_image"'
+    );
     expect(html).toContain('<meta name="twitter:title" content="テスト"');
-    expect(html).toContain('<meta name="twitter:description" content="せつめい"');
-    expect(html).toContain('<meta name="twitter:image" content="https://toban.app/og-image.png"');
+    expect(html).toContain(
+      '<meta name="twitter:description" content="せつめい"'
+    );
+    expect(html).toContain(
+      '<meta name="twitter:image" content="https://toban.app/og-image.png"'
+    );
   });
 
   it("escapes HTML special characters in title and description", () => {
@@ -87,30 +99,54 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
 
   it("renderLandingPageHtml uses /og-image.png and twitter card", () => {
     const html = renderLandingPageHtml(origin);
-    expect(html).toContain('<meta property="og:image" content="https://toban.app/og-image.png">');
+    expect(html).toContain(
+      '<meta property="og:image" content="https://toban.app/og-image.png">'
+    );
     expect(html).toContain('<meta property="og:image:width" content="1200">');
     expect(html).toContain('<meta property="og:image:height" content="630">');
-    expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
-    expect(html).toContain('<meta name="twitter:image" content="https://toban.app/og-image.png">');
+    expect(html).toContain(
+      '<meta name="twitter:card" content="summary_large_image">'
+    );
+    expect(html).toContain(
+      '<meta name="twitter:image" content="https://toban.app/og-image.png">'
+    );
     expect(html).not.toMatch(/property="og:image"[^>]*pwa-512/);
     expect(html).not.toMatch(/name="twitter:image"[^>]*pwa-512/);
   });
 
   it("renderTemplateListHtml uses /og-image.png and twitter card", () => {
     const html = renderTemplateListHtml(origin);
-    expect(html).toContain('<meta property="og:image" content="https://toban.app/og-image.png">');
+    expect(html).toContain(
+      '<meta property="og:image" content="https://toban.app/og-image.png">'
+    );
     expect(html).toContain('<meta property="og:image:width" content="1200">');
-    expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
-    expect(html).toContain('<meta name="twitter:image" content="https://toban.app/og-image.png">');
+    expect(html).toContain(
+      '<meta name="twitter:card" content="summary_large_image">'
+    );
+    expect(html).toContain(
+      '<meta name="twitter:image" content="https://toban.app/og-image.png">'
+    );
+  });
+
+  it("renderTemplateListHtml は人間向け画面にない共通FAQを出さない", () => {
+    const html = renderTemplateListHtml(origin);
+    expect(html).not.toContain('"@type":"FAQPage"');
+    expect(html).not.toContain("<h2>よくある質問</h2>");
   });
 
   it("renderTemplateDetailHtml uses /og-image.png and twitter card", () => {
     const html = renderTemplateDetailHtml(origin, "office-cleaning");
     expect(html).not.toBeNull();
-    expect(html).toContain('<meta property="og:image" content="https://toban.app/og-image.png">');
+    expect(html).toContain(
+      '<meta property="og:image" content="https://toban.app/og-image.png">'
+    );
     expect(html).toContain('<meta property="og:image:width" content="1200">');
-    expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
-    expect(html).toContain('<meta name="twitter:image" content="https://toban.app/og-image.png">');
+    expect(html).toContain(
+      '<meta name="twitter:card" content="summary_large_image">'
+    );
+    expect(html).toContain(
+      '<meta name="twitter:image" content="https://toban.app/og-image.png">'
+    );
   });
 });
 
@@ -153,12 +189,24 @@ describe("injectScheduleOgp", () => {
 
   it("canonical を共有 URL に張り替える（sitemap 掲載と整合）", () => {
     const html = injectScheduleOgp(baseHtml, args);
-    expect(html).toContain('<link rel="canonical" href="https://toban.app/s/abc123">');
-    expect(html).not.toContain('<link rel="canonical" href="https://toban.app/" />');
+    expect(html).toContain(
+      '<link rel="canonical" href="https://toban.app/s/abc123">'
+    );
+    expect(html).not.toContain(
+      '<link rel="canonical" href="https://toban.app/" />'
+    );
+  });
+
+  it("検索結果には共有スケジュールを出さない", () => {
+    const html = injectScheduleOgp(baseHtml, args);
+    expect(html).toContain('<meta name="robots" content="noindex">');
   });
 
   it("スケジュール名の HTML 特殊文字をエスケープする", () => {
-    const html = injectScheduleOgp(baseHtml, { ...args, name: '<script>"x"</script>' });
+    const html = injectScheduleOgp(baseHtml, {
+      ...args,
+      name: '<script>"x"</script>',
+    });
     expect(html).not.toContain("<script>");
     expect(html).toContain("&lt;script&gt;");
   });
@@ -184,7 +232,9 @@ describe("injectScheduleOgp", () => {
     expect(html).not.toMatch(/twitter:title" content="当番表作成アプリ/);
     expect(html.match(/property="og:title"/g)).toHaveLength(1);
     expect(html.match(/rel="canonical"/g)).toHaveLength(1);
-    expect(html).toContain('<link rel="canonical" href="https://toban.app/s/abc123">');
+    expect(html).toContain(
+      '<link rel="canonical" href="https://toban.app/s/abc123">'
+    );
   });
 });
 
@@ -192,26 +242,40 @@ describe("handleSitemap", () => {
   // DB なし（ensureSchedulesSchema が throw）でも静的ルート分の sitemap は返る設計。
   const envWithoutDb = {} as never;
 
-  it("DB が無くても / と /about と /templates を含む sitemap を返す", async () => {
+  it("DB が無くても / と /templates を含む sitemap を返す", async () => {
     const res = await handleSitemap("https://toban.app", envWithoutDb);
     expect(res.headers.get("Content-Type")).toContain("application/xml");
     const xml = await res.text();
     expect(xml).toContain("<loc>https://toban.app/</loc>");
-    expect(xml).toContain("<loc>https://toban.app/about</loc>");
     expect(xml).toContain("<loc>https://toban.app/templates</loc>");
   });
 
   it("全テンプレート詳細 URL を含む", async () => {
     const res = await handleSitemap("https://toban.app", envWithoutDb);
     const xml = await res.text();
-    expect(xml).toContain("<loc>https://toban.app/templates/office-cleaning</loc>");
-    expect(xml).toContain("<loc>https://toban.app/templates/school-lunch</loc>");
+    expect(xml).toContain(
+      "<loc>https://toban.app/templates/office-cleaning</loc>"
+    );
+    expect(xml).toContain(
+      "<loc>https://toban.app/templates/school-lunch</loc>"
+    );
   });
 
   it("順番決めページ /junban を含む", async () => {
     const res = await handleSitemap("https://toban.app", envWithoutDb);
     const xml = await res.text();
     expect(xml).toContain("<loc>https://toban.app/junban</loc>");
+  });
+
+  it("正規URLだけを掲載し、共有URLや疑似更新情報を含めない", async () => {
+    const res = await handleSitemap("https://toban.app", envWithoutDb);
+    const xml = await res.text();
+
+    expect(xml).not.toContain("<loc>https://toban.app/about</loc>");
+    expect(xml).not.toContain("<loc>https://toban.app/s/");
+    expect(xml).not.toContain("<lastmod>");
+    expect(xml).not.toContain("<changefreq>");
+    expect(xml).not.toContain("<priority>");
   });
 });
 
@@ -221,15 +285,21 @@ describe("renderJunbanHtml", () => {
   it("title/description/canonical と検索語彙（順番・ルーレット）を含む", () => {
     const html = renderJunbanHtml(origin);
     expect(html).toContain("<title>当番の順番をルーレット感覚で決める");
-    expect(html).toContain('<link rel="canonical" href="https://toban.app/junban">');
+    expect(html).toContain(
+      '<link rel="canonical" href="https://toban.app/junban">'
+    );
     expect(html).toMatch(/順番/);
     expect(html).toMatch(/ルーレット/);
   });
 
   it("OGP/Twitter Card と FAQ 構造化データを含む", () => {
     const html = renderJunbanHtml(origin);
-    expect(html).toContain('<meta property="og:image" content="https://toban.app/og-image.png">');
-    expect(html).toContain('<meta name="twitter:card" content="summary_large_image">');
+    expect(html).toContain(
+      '<meta property="og:image" content="https://toban.app/og-image.png">'
+    );
+    expect(html).toContain(
+      '<meta name="twitter:card" content="summary_large_image">'
+    );
     expect(html).toContain('"@type":"FAQPage"');
   });
 
@@ -245,7 +315,10 @@ describe("renderJunbanHtml", () => {
 
   it("JSON-LD ブロックに生の < を出さない（</script> ブレイク防止・defense-in-depth）", () => {
     const html = renderJunbanHtml(origin);
-    const ld = html.slice(html.indexOf('application/ld+json">') + 21, html.indexOf("</script>"));
+    const ld = html.slice(
+      html.indexOf('application/ld+json">') + 21,
+      html.indexOf("</script>")
+    );
     expect(ld).not.toContain("<");
   });
 
@@ -256,12 +329,17 @@ describe("renderJunbanHtml", () => {
 });
 
 describe("isKnownAppRoute", () => {
-  it.each(["/", "/about", "/templates", "/templates/office-cleaning", "/s/abc_123-X", "/transfer", "/junban"])(
-    "既知ルート %s は true",
-    (path) => {
-      expect(isKnownAppRoute(path)).toBe(true);
-    },
-  );
+  it.each([
+    "/",
+    "/about",
+    "/templates",
+    "/templates/office-cleaning",
+    "/s/abc_123-X",
+    "/transfer",
+    "/junban",
+  ])("既知ルート %s は true", path => {
+    expect(isKnownAppRoute(path)).toBe(true);
+  });
 
   it.each([
     "/templates/not-a-real-template", // 実在しない slug は soft-404 にしない
@@ -269,7 +347,7 @@ describe("isKnownAppRoute", () => {
     "/about/extra",
     "/s/",
     "/404", // 404 ページ自体を bot に 200 で返すと自己矛盾するため未知扱い
-  ])("未知ルート %s は false（bot へ 404 status を返す根拠）", (path) => {
+  ])("未知ルート %s は false（bot へ 404 status を返す根拠）", path => {
     expect(isKnownAppRoute(path)).toBe(false);
   });
 });
@@ -281,16 +359,32 @@ describe("renderTemplateDetailHtml related templates", () => {
     const html = renderTemplateDetailHtml(origin, "office-cleaning");
     expect(html).not.toBeNull();
     expect(html).toContain("関連するテンプレート");
-    expect(html).not.toMatch(/<a href="https:\/\/toban\.app\/templates\/office-cleaning"/);
+    expect(html).not.toMatch(
+      /<a href="https:\/\/toban\.app\/templates\/office-cleaning"/
+    );
   });
 
   it("emits up to 4 related template anchor tags inside the related section", () => {
     const html = renderTemplateDetailHtml(origin, "office-cleaning");
     expect(html).not.toBeNull();
-    const sectionMatch = html!.match(/<section>\s*<h2>関連するテンプレート<\/h2>[\s\S]*?<\/section>/);
+    const sectionMatch = html!.match(
+      /<section>\s*<h2>関連するテンプレート<\/h2>[\s\S]*?<\/section>/
+    );
     expect(sectionMatch).not.toBeNull();
-    const anchorCount = (sectionMatch![0].match(/<a href="https:\/\/toban\.app\/templates\//g) || []).length;
+    const anchorCount = (
+      sectionMatch![0].match(/<a href="https:\/\/toban\.app\/templates\//g) ||
+      []
+    ).length;
     expect(anchorCount).toBeGreaterThan(0);
     expect(anchorCount).toBeLessThanOrEqual(4);
+  });
+
+  it("人間向け画面と同じテンプレート内容を出し、bot専用の共通FAQを出さない", () => {
+    const html = renderTemplateDetailHtml(origin, "office-cleaning");
+    expect(html).not.toBeNull();
+    expect(html).toContain("掃除機・モップ");
+    expect(html).toContain("メンバー例（4名）");
+    expect(html).not.toContain('"@type":"FAQPage"');
+    expect(html).not.toContain("<h2>よくある質問</h2>");
   });
 });
