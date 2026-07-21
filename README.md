@@ -57,15 +57,14 @@
 │   ├── api.ts                # Hono APIアプリ定義
 │   ├── routes/               # APIルートハンドラ（schedules, contact）
 │   └── db/                   # Drizzle スキーマ・マイグレーション
-├── shared/                   # フロント・バックエンド共有の型定義・Zodスキーマ
-└── functions/                # Cloudflare Pages Functions エントリーポイント
+└── shared/                   # フロント・バックエンド共有の型定義・Zodスキーマ
 ```
 
 ## コマンド
 
 ```sh
 pnpm dev          # Vite 開発サーバー (port 3000)
-pnpm dev:api      # Wrangler Pages dev サーバー (port 8788)。dist/ が無ければ自動で build
+pnpm dev:api      # Wrangler Workers 開発サーバー (port 8788)。dist/ が無ければ自動で build
 pnpm dev:full     # フロント + API を同時起動
 pnpm build        # 本番ビルド
 pnpm check        # TypeScript 型チェック

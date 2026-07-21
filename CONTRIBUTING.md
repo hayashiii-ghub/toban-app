@@ -26,7 +26,7 @@ pnpm dev:full
 | コマンド | 説明 |
 | --- | --- |
 | `pnpm dev` | Vite 開発サーバー（ポート 3000） |
-| `pnpm dev:api` | Wrangler Pages 開発サーバー（ポート 8788） |
+| `pnpm dev:api` | Wrangler Workers 開発サーバー（ポート 8788） |
 | `pnpm dev:full` | フロントエンド + API を同時起動 |
 | `pnpm build` | プロダクションビルド |
 | `pnpm check` | TypeScript 型検査 |
