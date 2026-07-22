@@ -21,8 +21,21 @@ interface Env {
   DB: D1Database;
 }
 
-const BOT_UA_PATTERN =
-  /facebookexternalhit|Twitterbot|LinkedInBot|Line\/|Slackbot|Discordbot|Googlebot|bingbot|Applebot/i;
+// SNS の OGP 展開と、従来型検索エンジンのクローラー。
+const SOCIAL_AND_SEARCH_BOT_UA =
+  "facebookexternalhit|Twitterbot|LinkedInBot|Line\\/|Slackbot|Discordbot|Googlebot|bingbot|Applebot";
+
+// 生成AI検索のクローラー。いずれも JS を実行しないため、プリレンダリングを返さないと
+// 本文が届かず「JavaScriptを有効にしてください」だけをインデックスされる。
+// Google-Extended / Applebot-Extended は robots.txt の学習オプトアウト用トークンであり
+// UA 文字列としては送られてこないため、ここには含めない。
+const AI_CRAWLER_UA =
+  "GPTBot|OAI-SearchBot|ChatGPT-User|PerplexityBot|Perplexity-User|ClaudeBot|Claude-User|Claude-SearchBot|Amazonbot|meta-externalagent|CCBot|DuckAssistBot|YouBot|Bytespider";
+
+const BOT_UA_PATTERN = new RegExp(
+  `${SOCIAL_AND_SEARCH_BOT_UA}|${AI_CRAWLER_UA}`,
+  "i"
+);
 
 export function isBot(ua: string): boolean {
   return BOT_UA_PATTERN.test(ua);
