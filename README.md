@@ -37,18 +37,17 @@
 
 ```
 ├── client/src/
-│   ├── pages/                # ページコンポーネント
+│   ├── pages/                # ページコンポーネント（ルートに対応）
 │   │   ├── Home.tsx          # メインページ（/ — 当番表の作成・編集）
-│   │   ├── useHomeState.ts   # Homeページの状態管理・hook集約
 │   │   ├── LandingPage.tsx   # ランディングページ（/about）
 │   │   ├── SharedScheduleView.tsx  # 共有リンクの閲覧ページ
 │   │   ├── TemplatesPage.tsx # テンプレート一覧（SEO用LP）
 │   │   ├── TemplateDetailPage.tsx # テンプレート詳細（個別LP）
 │   │   └── Transfer.tsx      # 編集権限の引き継ぎページ
 │   ├── features/home/        # ホーム画面の機能コンポーネント
-│   ├── components/           # 共通UIコンポーネント（shadcn/ui）
+│   ├── components/           # モーダル等の機能コンポーネント（ui/ は shadcn/ui）
 │   ├── rotation/             # コア型・ユーティリティ・定数・デフォルト状態
-│   ├── hooks/                # カスタムフック（useAutoSync・WebMCP登録 useTobanTools 等）
+│   ├── hooks/                # カスタムフック（Home の状態集約 useHomeState・useAutoSync・WebMCP登録 useTobanTools 等）
 │   ├── lib/                  # APIクライアント・同期マネージャ
 │   ├── i18n/                 # 多言語対応（自作i18n・辞書 ja/en、UIの枠のみ翻訳）
 │   └── types/                # 型定義（webmcp.d.ts 等）

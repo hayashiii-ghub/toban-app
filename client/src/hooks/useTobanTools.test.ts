@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { buildTobanTools, useTobanTools } from "./useTobanTools";
-import type { useHomeState } from "@/pages/useHomeState";
+import type { useHomeState } from "@/hooks/useHomeState";
 import type { ScheduleSettings } from "@/hooks/useScheduleManager";
 import { LIMITS } from "@shared/limits";
 import type { Assignment, Member, Schedule, TaskGroup } from "@/rotation/types";
