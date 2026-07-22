@@ -8,5 +8,4 @@ export type {
   AppState,
   ScheduleTemplate,
   ScheduleDTO,
-  CreateScheduleResponse,
 } from "@shared/types";

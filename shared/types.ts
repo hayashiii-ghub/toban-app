@@ -73,8 +73,3 @@ export interface ScheduleDTO {
   createdAt: string;
   updatedAt: string;
 }
-
-export interface CreateScheduleResponse {
-  slug: string;
-  editToken: string;
-}

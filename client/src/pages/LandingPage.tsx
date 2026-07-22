@@ -18,6 +18,7 @@ import {
 } from "@shared/seo-templates";
 import { faqPageSchema, serializeJsonLd } from "@shared/jsonLd";
 import { CONTACT_CATEGORIES } from "@shared/schemas";
+import { LIMITS } from "@shared/limits";
 import { TEMPLATES } from "@/rotation/constants";
 import { useT, useLocale } from "@/i18n";
 import "./landing.css";
@@ -196,7 +197,7 @@ function ContactForm() {
           id="contact-email"
           type="email"
           required
-          maxLength={254}
+          maxLength={LIMITS.contactEmail}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-shadow"
@@ -212,7 +213,7 @@ function ContactForm() {
         <textarea
           id="contact-message"
           required
-          maxLength={1000}
+          maxLength={LIMITS.contactMessage}
           rows={5}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
