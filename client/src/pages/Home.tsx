@@ -11,7 +11,7 @@ import { ScheduleHeader } from "@/features/home/ScheduleHeader";
 import { ScheduleTabs } from "@/features/home/ScheduleTabs";
 import { TodayBanner } from "@/features/home/TodayBanner";
 import { InstallPrompt } from "@/components/InstallPrompt";
-import { useHomeState } from "./useHomeState";
+import { useHomeState } from "@/hooks/useHomeState";
 import { useTobanTools } from "@/hooks/useTobanTools";
 import { useT } from "@/i18n";
 import "./home.css";

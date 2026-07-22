@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { z } from "zod";
 import { LIMITS } from "@shared/limits";
-import type { useHomeState } from "@/pages/useHomeState";
+import type { useHomeState } from "@/hooks/useHomeState";
 import type { AssignmentMode, RotationConfig } from "@/rotation/types";
 import { MEMBER_PRESETS, TEMPLATES } from "@/rotation/constants";
 import { addMemberToSchedule, generateId, normalizeRotation, removeMemberFromSchedule } from "@/rotation/utils";

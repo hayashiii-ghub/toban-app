@@ -13,6 +13,7 @@
 - Client/server共有の型は `shared/types.ts`、Zodスキーマは `shared/schemas.ts`
 - 入力の文字数・件数上限は `shared/limits.ts` が単一の真実源（server スキーマ / UI maxLength / WebMCP 検証が共有）
 - クライアントのimportは `@/*`（client/src）と `@shared/*`（shared）エイリアスを使用
+- 新規の機能コンポーネントは `client/src/features/<機能名>/` に置く。`components/` は横断的に再利用するものだけ（`components/ui/` は shadcn/ui）。`pages/` はルートに対応するページのみ、hook は `hooks/` に置く
 - localStorage が主データストア。D1 はクラウド永続化層
 - UIは全て日本語
 - コードや構成を変更した場合は README.md も合わせて更新すること
