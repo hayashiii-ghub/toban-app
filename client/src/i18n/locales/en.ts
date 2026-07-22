@@ -61,7 +61,7 @@ export const en: Record<string, string> = {
   "lp.heroTitleA": "Easy duty rosters,",
   "lp.heroTitleB": "ready in minutes.",
   "lp.heroSubA":
-    "Create rotation schedules for cleaning, lunch, and daily duties—",
+    "Create duty rosters for schools, nurseries, care homes, community groups, offices, and homes—",
   "lp.heroSubB": "free, easy to make, print, and share.",
   "lp.featuresHeading": "Why toban",
   "lp.feat.noSignup.label": "No sign-up",

@@ -14,7 +14,7 @@ export default defineConfig({
       manifest: {
         name: "toban — かんたん当番表",
         short_name: "toban",
-        description: "掃除当番・給食当番・日直などのローテーション表を作成・印刷・共有",
+        description: "学校・介護施設・自治会・家庭の当番表を作成・印刷・共有",
         theme_color: "#2D4A3E",
         background_color: "#2D4A3E",
         display: "standalone",

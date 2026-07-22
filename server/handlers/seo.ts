@@ -176,7 +176,7 @@ export async function handleScheduleOgp(
 export function renderLandingPageHtml(origin: string): string {
   const title = "当番表作成アプリ toban（トバン）｜無料で作成・印刷・共有";
   const desc =
-    "掃除当番・給食当番・日直のローテーション表をかんたんに作れる無料の当番表作成アプリ。アカウント登録・インストール不要、エクセルがなくてもブラウザだけで印刷品質の当番表がすぐ完成します。";
+    "学校・保育園・介護施設・自治会・オフィス・家庭の当番表をかんたんに作れる無料の当番表作成アプリ。掃除当番からシフト・家事分担まで対応。アカウント登録・インストール不要、エクセルがなくてもブラウザだけで印刷品質の当番表がすぐ完成します。";
 
   const faqHtml = COMMON_FAQ.map(
     f => `<dt>${escapeHtml(f.question)}</dt><dd>${escapeHtml(f.answer)}</dd>`
@@ -244,7 +244,7 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 
 export function renderTemplateListHtml(origin: string): string {
   const title = "当番表テンプレート一覧｜無料で使えるtoban（トバン）";
-  const desc = `掃除当番・給食当番・日直など、すぐ使える無料テンプレートを${TEMPLATE_SEO_DATA.length}種類ご用意。テンプレートを選んで、メンバーや担当を編集するだけで当番表が完成します。`;
+  const desc = `学校・保育園・介護施設・自治会・飲食店・家庭など、すぐ使える無料テンプレートを${TEMPLATE_SEO_DATA.length}種類ご用意。テンプレートを選んで、メンバーや担当を編集するだけで当番表が完成します。`;
 
   const categoryHtml = TEMPLATE_CATEGORIES.map(cat => {
     const templates = TEMPLATE_SEO_DATA.filter(t => t.categoryId === cat.id);
