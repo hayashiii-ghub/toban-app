@@ -21,8 +21,21 @@ interface Env {
   DB: D1Database;
 }
 
-const BOT_UA_PATTERN =
-  /facebookexternalhit|Twitterbot|LinkedInBot|Line\/|Slackbot|Discordbot|Googlebot|bingbot|Applebot/i;
+// SNS の OGP 展開と、従来型検索エンジンのクローラー。
+const SOCIAL_AND_SEARCH_BOT_UA =
+  "facebookexternalhit|Twitterbot|LinkedInBot|Line\\/|Slackbot|Discordbot|Googlebot|bingbot|Applebot";
+
+// 生成AI検索のクローラー。いずれも JS を実行しないため、プリレンダリングを返さないと
+// 本文が届かず「JavaScriptを有効にしてください」だけをインデックスされる。
+// Google-Extended / Applebot-Extended は robots.txt の学習オプトアウト用トークンであり
+// UA 文字列としては送られてこないため、ここには含めない。
+const AI_CRAWLER_UA =
+  "GPTBot|OAI-SearchBot|ChatGPT-User|PerplexityBot|Perplexity-User|ClaudeBot|Claude-User|Claude-SearchBot|Amazonbot|meta-externalagent|CCBot|DuckAssistBot|YouBot|Bytespider";
+
+const BOT_UA_PATTERN = new RegExp(
+  `${SOCIAL_AND_SEARCH_BOT_UA}|${AI_CRAWLER_UA}`,
+  "i"
+);
 
 export function isBot(ua: string): boolean {
   return BOT_UA_PATTERN.test(ua);
@@ -163,7 +176,7 @@ export async function handleScheduleOgp(
 export function renderLandingPageHtml(origin: string): string {
   const title = "当番表作成アプリ toban（トバン）｜無料で作成・印刷・共有";
   const desc =
-    "掃除当番・給食当番・日直のローテーション表をかんたんに作れる無料の当番表作成アプリ。アカウント登録・インストール不要、エクセルがなくてもブラウザだけで印刷品質の当番表がすぐ完成します。";
+    "学校・保育園・介護施設・自治会・オフィス・家庭の当番表をかんたんに作れる無料の当番表作成アプリ。掃除当番からシフト・家事分担まで対応。アカウント登録・インストール不要、エクセルがなくてもブラウザだけで印刷品質の当番表がすぐ完成します。";
 
   const faqHtml = COMMON_FAQ.map(
     f => `<dt>${escapeHtml(f.question)}</dt><dd>${escapeHtml(f.answer)}</dd>`
@@ -231,7 +244,7 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 
 export function renderTemplateListHtml(origin: string): string {
   const title = "当番表テンプレート一覧｜無料で使えるtoban（トバン）";
-  const desc = `掃除当番・給食当番・日直など、すぐ使える無料テンプレートを${TEMPLATE_SEO_DATA.length}種類ご用意。テンプレートを選んで、メンバーや担当を編集するだけで当番表が完成します。`;
+  const desc = `学校・保育園・介護施設・自治会・飲食店・家庭など、すぐ使える無料テンプレートを${TEMPLATE_SEO_DATA.length}種類ご用意。テンプレートを選んで、メンバーや担当を編集するだけで当番表が完成します。`;
 
   const categoryHtml = TEMPLATE_CATEGORIES.map(cat => {
     const templates = TEMPLATE_SEO_DATA.filter(t => t.categoryId === cat.id);

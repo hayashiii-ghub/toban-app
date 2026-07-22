@@ -59,7 +59,7 @@ export const ja: Record<string, string> = {
   "lp.createSchedule": "当番表を作る",
   "lp.heroTitleA": "かんたん当番表、",
   "lp.heroTitleB": "すぐ完成。",
-  "lp.heroSubA": "掃除当番・給食当番・日直のローテーション表を",
+  "lp.heroSubA": "学校・保育園・介護施設・自治会・オフィス・家庭の当番表を",
   "lp.heroSubB": "無料でかんたんに作成・印刷・共有できます。",
   "lp.featuresHeading": "tobanの特徴",
   "lp.feat.noSignup.label": "登録不要",
@@ -336,7 +336,7 @@ export const ja: Record<string, string> = {
   "templates.breadcrumb": "テンプレート一覧",
   "templates.breadcrumbAria": "パンくず",
   "templates.heading": "当番表テンプレート一覧",
-  "templates.subA": "掃除当番・給食当番・日直など、すぐ使える",
+  "templates.subA": "学校・保育園・介護施設・自治会・飲食店・家庭など、すぐ使える",
   "templates.subFree": "無料テンプレート",
   "templates.subB": "を{count}種類ご用意しました。テンプレートを選んで、メンバーや担当を自由に編集するだけで当番表が完成します。",
 

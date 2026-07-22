@@ -396,7 +396,25 @@ export const TEMPLATE_SEO_MAP = new Map(
 
 
 /** 共通FAQ（全テンプレートページに表示） */
+// 先頭 4 問は用途・作り方の質問。生成AI検索は見出しを質問、直下を答えとして引用するため、
+// 各回答は前後の文脈なしで単独で意味が通る形にしてある。件数などの可変値は書かない（陳腐化するため）。
 export const COMMON_FAQ = [
+  {
+    question: "当番表はどうやって作りますか？",
+    answer: "テンプレートを選んでメンバーの名前を入れるだけで完成します。担当の数や人数、並び順は後から自由に編集できます。アカウント登録もインストールも不要で、ブラウザだけで作れます。作った表はそのまま印刷やPDF保存ができます。",
+  },
+  {
+    question: "どんな場面で使えますか？",
+    answer: "学校の掃除・給食当番、保育園の午睡チェックやバス添乗、介護施設のフロア担当や夜勤、町内会の清掃、マンション共用部の管理、飲食店の開店・閉店作業、オフィスの電話・来客当番、家庭の家事分担など、用途別のテンプレートを用意しています。",
+  },
+  {
+    question: "当番の順番はどう決めると公平ですか？",
+    answer: "全員が同じ回数だけそれぞれの担当を経験するよう、順番をひとつずつずらしていくローテーション方式が公平です。tobanはこのずらしを自動で行うため、誰がどの担当を何回やったかを数える必要がありません。最初の並び順に迷うときは、ルーレットでランダムに決められます。",
+  },
+  {
+    question: "何人まで登録できますか？",
+    answer: "メンバーは1人から50人まで、担当は20個まで登録できます。担当の数とメンバーの人数は別々に設定できるため、3つの担当を5人で回すような、人数と担当数が一致しない構成にも対応しています。",
+  },
   {
     question: "tobanは無料ですか？",
     answer: "はい、完全無料でお使いいただけます。アカウント登録も不要で、ブラウザだけですぐに当番表を作成できます。",
@@ -489,6 +507,10 @@ export const TEMPLATE_SEO_EN: Record<string, { heading: string; intro: string }>
 
 /** 共通FAQ の英語訳（COMMON_FAQ と同順） */
 export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
+  { question: "How do I make a duty roster?", answer: "Pick a template and type in your members' names—that's it. The number of assignments, the number of people, and the order are all editable afterwards. No account and no install required; it works in the browser alone. You can print the finished roster or save it as a PDF." },
+  { question: "What can I use it for?", answer: "School cleaning and lunch duties, nursery nap checks and bus escorts, care-home floor assignments and night shifts, neighbourhood clean-ups, shared-area management in apartment buildings, opening and closing tasks at restaurants, office phone and reception duty, and household chores at home—there are templates for each." },
+  { question: "How do I decide the order fairly?", answer: "The fairest approach is a rotation that shifts the order by one each time, so everyone takes on each assignment the same number of times. toban shifts it automatically, so you never have to count who did what and how often. If you're unsure about the starting order, you can decide it at random with the wheel." },
+  { question: "How many people can I add?", answer: "You can register from 1 to 50 members and up to 20 assignments. The number of assignments and the number of people are set separately, so you can run three assignments among five people—the two counts don't have to match." },
   { question: "Is toban free?", answer: "Yes, it's completely free. No account needed—you can create a roster right in your browser." },
   { question: "Can I print the roster I made?", answer: "Yes. Use your browser's print feature to print or save an image with a clean layout, or save as PDF from the print dialog. Choose from four formats: cards, table, calendar, or wheel." },
   { question: "How do I share a roster with others?", answer: "Issue a URL from the Share button. Send a view-only URL so anyone can see the roster, or share an edit URL to collaborate. QR-code sharing is also supported." },

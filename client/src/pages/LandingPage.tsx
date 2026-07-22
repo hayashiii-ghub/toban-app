@@ -501,7 +501,7 @@ export default function LandingPage() {
               "@type": "WebApplication",
               name: "toban",
               url: "https://toban.app",
-              description: "掃除当番・給食当番・日直のローテーション表を無料で作成・印刷・共有できるWebアプリ",
+              description: "学校・保育園・介護施設・自治会・オフィス・家庭の当番表を無料で作成・印刷・共有できるWebアプリ",
               applicationCategory: "UtilitiesApplication",
               operatingSystem: "All",
               offers: { "@type": "Offer", price: "0", priceCurrency: "JPY" },
