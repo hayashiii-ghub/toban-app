@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { Schedule } from "@/rotation/types";
-import { createSchedule } from "@/lib/api";
+import { createSchedule, toScheduleData } from "@/lib/api";
 import {
   scheduleSyncDebounced,
   setSyncStatusCallback,
@@ -73,15 +73,7 @@ function useAutoBackup(
       backupInFlightRef.current = true;
       setSyncStatus("syncing");
       try {
-        const result = await createSchedule({
-          name: s.name,
-          rotation: s.rotation,
-          groups: s.groups,
-          members: s.members,
-          rotationConfig: s.rotationConfig,
-          assignmentMode: s.assignmentMode,
-          designThemeId: s.designThemeId,
-        });
+        const result = await createSchedule(toScheduleData(s));
         const updatedSchedule = {
           ...s,
           slug: result.slug,
@@ -149,15 +141,7 @@ function useSyncOnChange(
   useEffect(() => {
     if (!schedule) return;
 
-    const json = JSON.stringify({
-      name: schedule.name,
-      rotation: schedule.rotation,
-      groups: schedule.groups,
-      members: schedule.members,
-      rotationConfig: schedule.rotationConfig,
-      assignmentMode: schedule.assignmentMode,
-      designThemeId: schedule.designThemeId,
-    });
+    const json = JSON.stringify(toScheduleData(schedule));
 
     const changed = prevJsonRef.current && prevJsonRef.current !== json;
     prevJsonRef.current = json;

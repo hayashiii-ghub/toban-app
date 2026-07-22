@@ -1,6 +1,7 @@
 import { startTransition, useCallback, useMemo, useState } from "react";
 import type { AppState, Schedule, ScheduleTemplate } from "@/rotation/types";
-import { createScheduleFromTemplate, deepClone, generateId, loadState, normalizeRotation, saveState } from "@/rotation/utils";
+import { createScheduleFromTemplate, deepClone, generateId, normalizeRotation } from "@/rotation/utils";
+import { loadState, saveState } from "@/lib/appState";
 import { deleteSchedule } from "@/lib/api";
 import { useT } from "@/i18n";
 import { toast } from "sonner";

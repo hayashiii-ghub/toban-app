@@ -3,7 +3,8 @@ import { renderHook, act } from "@testing-library/react";
 import { useAutoSync } from "./useAutoSync";
 import type { Schedule } from "@/rotation/types";
 
-vi.mock("@/lib/api", () => ({
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal()),
   createSchedule: vi.fn(),
 }));
 

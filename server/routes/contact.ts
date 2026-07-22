@@ -2,13 +2,14 @@ import { Hono } from "hono";
 import { Resend } from "resend";
 import { z } from "zod";
 import { contactCategorySchema } from "../../shared/schemas";
+import { LIMITS } from "../../shared/limits";
 
 type Env = { Bindings: { RESEND_API_KEY: string } };
 
 const contactSchema = z.object({
   category: contactCategorySchema,
-  email: z.string().trim().email().max(254),
-  message: z.string().trim().min(1).max(1000),
+  email: z.string().trim().email().max(LIMITS.contactEmail),
+  message: z.string().trim().min(1).max(LIMITS.contactMessage),
   // ハニーポット: bot はこのフィールドを埋めてしまう。
   // 値があれば下で静かに 200 を返すため、ここでは長さ制約を掛けない
   // （max(0) だと非空 url が 400 になり honeypot 分岐に到達しない）

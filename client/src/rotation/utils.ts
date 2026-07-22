@@ -1,10 +1,6 @@
 import type { AppState, Assignment, AssignmentMode, Member, RotationConfig, Schedule, ScheduleTemplate, TaskGroup } from "./types";
-import { STORAGE_KEY, TEMPLATES } from "./constants";
-import { DEFAULT_APP_STATE, DEFAULT_APP_STATE_EN } from "./defaultState";
-import { detectLocale } from "@/i18n/core";
 import { countSkipDays, isSkippedDate } from "./holidays";
 import { addDays, diffLocalCalendarDays, parseIsoDateLocal, startOfLocalDay } from "./dateUtils";
-import { safeGetItem, safeSetItem } from "@/lib/storage";
 
 export function generateId(prefix: string): string {
   return `${prefix}${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
@@ -205,39 +201,6 @@ export function createScheduleFromTemplate(template: ScheduleTemplate): Schedule
   return schedule;
 }
 
-export function loadState(): AppState {
-  try {
-    const raw = safeGetItem(STORAGE_KEY);
-    if (raw) {
-      const parsedState = sanitizeAppState(JSON.parse(raw));
-      if (parsedState) {
-        return parsedState;
-      }
-    }
-  } catch { /* ignore corrupted data */ }
-
-  // 初回（保存データなし）は locale に合わせた default を seed する。
-  // key は i18n の LANG_STORAGE_KEY と同じ "toban-lang"（Provider 初回 effect 前でも
-  // navigator から英語を拾えるよう detectLocale に navigator.language も渡す）。
-  const locale = detectLocale(
-    safeGetItem("toban-lang"),
-    typeof navigator !== "undefined" ? navigator.language : undefined,
-  );
-  const defaultState = sanitizeAppState(
-    locale === "en" ? DEFAULT_APP_STATE_EN : DEFAULT_APP_STATE,
-  );
-  if (defaultState) {
-    return defaultState;
-  }
-
-  const customSchedule = createScheduleFromTemplate(TEMPLATES[TEMPLATES.length - 1]);
-  return { schedules: [customSchedule], activeScheduleId: customSchedule.id };
-}
-
-export function saveState(state: AppState): void {
-  safeSetItem(STORAGE_KEY, JSON.stringify(state));
-}
-
 export function computeAssignments(
   groups: TaskGroup[],
   members: Member[],
@@ -302,6 +265,32 @@ export function computeDateRotationForDate(
   const effectiveDays = diffDays - skipDays;
   const cycles = Math.floor(effectiveDays / config.cycleDays);
   return ((cycles % memberCount) + memberCount) % memberCount;
+}
+
+export function addMemberToSchedule(schedule: Schedule, member: Member, newGroupTaskLabel: string): Schedule {
+  const members = [...schedule.members, member];
+  if (schedule.assignmentMode === "task") {
+    return { ...schedule, members };
+  }
+  const newGroup: TaskGroup = { id: generateId("g"), emoji: "✨", tasks: [newGroupTaskLabel] };
+  return { ...schedule, members, groups: [...schedule.groups, newGroup] };
+}
+
+export function removeMemberFromSchedule(schedule: Schedule, memberId: string): Schedule {
+  const idx = schedule.members.findIndex((m) => m.id === memberId);
+  if (idx === -1) return schedule;
+
+  const members = schedule.members.filter((m) => m.id !== memberId);
+
+  if (schedule.assignmentMode === "task") {
+    const groups = schedule.groups.map((g) =>
+      g.memberIds ? { ...g, memberIds: g.memberIds.filter((id) => id !== memberId) } : g,
+    );
+    return { ...schedule, members, groups };
+  }
+
+  const groups = schedule.groups.filter((_, i) => i !== idx);
+  return { ...schedule, members, groups };
 }
 
 export function getEffectiveRotation(schedule: Schedule): number {

@@ -331,6 +331,27 @@ describe("add_member", () => {
     expect(added.textColor).toBeTruthy();
     expect(saved!.name).toBe("掃除当番");
   });
+
+  it("member モード（担当者ごと）では対応するグループも同時に追加する", async () => {
+    const a = sched({
+      assignmentMode: "member",
+      members: [member("m1", "佐藤")],
+      groups: [group("g1", "🧹", ["床そうじ"])],
+    });
+    let saved: ScheduleSettings | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
+      }) as HomeState["onSaveSettings"],
+    });
+
+    await toolNamed("add_member", get).execute({ name: "田中" });
+
+    expect(saved!.members.map((m) => m.name)).toEqual(["佐藤", "田中"]);
+    expect(saved!.groups).toHaveLength(2);
+  });
 });
 
 describe("add_member のメンバー数上限", () => {
@@ -404,6 +425,7 @@ describe("保存系 name フィールドの文字数上限", () => {
 describe("remove_member", () => {
   it("名前一致のメンバーを削除し group.memberIds からも除去する", async () => {
     const a = sched({
+      assignmentMode: "task",
       members: [member("m1", "佐藤"), member("m2", "鈴木")],
       groups: [{ id: "g1", emoji: "🧹", tasks: ["床"], memberIds: ["m1", "m2"] }],
     });
@@ -455,6 +477,27 @@ describe("remove_member", () => {
 
     expect(saved).toBeNull();
     expect(text).toContain("佐藤");
+  });
+
+  it("member モード（担当者ごと）では対応するグループも同時に削除する", async () => {
+    const a = sched({
+      assignmentMode: "member",
+      members: [member("m1", "佐藤"), member("m2", "鈴木")],
+      groups: [group("g1", "🧹", ["床そうじ"]), group("g2", "🍚", ["配膳"])],
+    });
+    let saved: ScheduleSettings | null = null;
+    const get = makeGet({
+      state: { schedules: [a], activeScheduleId: a.id },
+      activeSchedule: a,
+      onSaveSettings: ((settings: ScheduleSettings) => {
+        saved = settings;
+      }) as HomeState["onSaveSettings"],
+    });
+
+    await toolNamed("remove_member", get).execute({ name: "佐藤" });
+
+    expect(saved!.members.map((m) => m.name)).toEqual(["鈴木"]);
+    expect(saved!.groups.map((g) => g.id)).toEqual(["g2"]);
   });
 });
 

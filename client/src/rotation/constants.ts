@@ -1,7 +1,5 @@
 export { TEMPLATES } from "@shared/templates";
 
-export const BRAND_NAME = "toban";
-export const BRAND_FULL = "toban — かんたん当番表";
 export const APP_TITLE = "toban（トバン）｜無料で当番表を作成・印刷・共有";
 
 export const ANIMATION_DURATION_MS = 500;

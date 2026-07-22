@@ -18,4 +18,8 @@ export const LIMITS = {
   groups: 20,
   /** 1グループあたりのタスク数 */
   tasksPerGroup: 20,
+  /** お問い合わせフォームのメールアドレス */
+  contactEmail: 254,
+  /** お問い合わせフォームの本文 */
+  contactMessage: 1000,
 } as const;

@@ -4,7 +4,7 @@ import { LIMITS } from "@shared/limits";
 import type { useHomeState } from "@/pages/useHomeState";
 import type { AssignmentMode, RotationConfig } from "@/rotation/types";
 import { MEMBER_PRESETS, TEMPLATES } from "@/rotation/constants";
-import { generateId, normalizeRotation } from "@/rotation/utils";
+import { addMemberToSchedule, generateId, normalizeRotation, removeMemberFromSchedule } from "@/rotation/utils";
 import { VIEW_VALUES, isViewTab, viewMcpLabel } from "@/features/home/viewTabsConfig";
 
 /** useHomeState() の戻り値。tool はこの派生値/ハンドラだけを介して動く。 */
@@ -264,9 +264,13 @@ function addMemberTool(get: () => HomeState): WebMCPTool {
       if (activeSchedule.members.length >= LIMITS.members) {
         return result(`メンバーは最大${LIMITS.members}人までです。`);
       }
+      if (activeSchedule.assignmentMode !== "task" && activeSchedule.groups.length >= LIMITS.groups) {
+        return result(`グループは最大${LIMITS.groups}件までです。`);
+      }
       const preset = MEMBER_PRESETS[activeSchedule.members.length % MEMBER_PRESETS.length];
-      const nextMembers = [...activeSchedule.members, { id: generateId("m"), name, ...preset }];
-      saveEdit(activeSchedule, onSaveSettings, { members: nextMembers });
+      const newMember = { id: generateId("m"), name, ...preset };
+      const updated = addMemberToSchedule(activeSchedule, newMember, "新しいタスク");
+      saveEdit(activeSchedule, onSaveSettings, { members: updated.members, groups: updated.groups });
       return result(`「${name}」をメンバーに追加しました。`);
     },
   };
@@ -293,11 +297,8 @@ function removeMemberTool(get: () => HomeState): WebMCPTool {
       if (activeSchedule.members.length <= 1) {
         return result("最後のメンバーは削除できません。");
       }
-      const nextMembers = activeSchedule.members.filter((m) => m.id !== target.id);
-      const nextGroups = activeSchedule.groups.map((g) =>
-        g.memberIds ? { ...g, memberIds: g.memberIds.filter((id) => id !== target.id) } : g,
-      );
-      saveEdit(activeSchedule, onSaveSettings, { groups: nextGroups, members: nextMembers });
+      const updated = removeMemberFromSchedule(activeSchedule, target.id);
+      saveEdit(activeSchedule, onSaveSettings, { groups: updated.groups, members: updated.members });
       return result(`「${target.name}」をメンバーから削除しました。`);
     },
   };
