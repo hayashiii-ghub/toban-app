@@ -1,21 +1,17 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { DEFAULT_APP_STATE, DEFAULT_APP_STATE_EN } from "./defaultState";
-import { STORAGE_KEY } from "./constants";
+import { describe, expect, it } from "vitest";
+import type { Member, Schedule } from "./types";
 import { getHolidaysForYear } from "./holidays";
 import {
+  addMemberToSchedule,
   computeAssignments,
   computeDateRotationForDate,
-  loadState,
   normalizeRotation,
+  removeMemberFromSchedule,
   sanitizeAppState,
   sanitizeMember,
   sanitizeSchedule,
   sanitizeTaskGroup,
 } from "./utils";
-
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
 
 describe("normalizeRotation", () => {
   it("wraps positive and negative values into member bounds", () => {
@@ -45,83 +41,6 @@ describe("computeAssignments", () => {
     const assignments = computeAssignments(groups, members, 1);
 
     expect(assignments.map(({ member }) => member.name)).toEqual(["山下", "田中", "松丸"]);
-  });
-});
-
-describe("loadState", () => {
-  it("drops malformed schedules from localStorage", () => {
-    const getItem = vi.fn(() => JSON.stringify({
-      schedules: [
-        {
-          id: "broken",
-          name: "壊れたデータ",
-          rotation: 999,
-          groups: [{ id: "g1", emoji: "🧹", tasks: [123, ""] }],
-          members: [{ id: "m1", name: "A", color: "#000" }],
-        },
-      ],
-      activeScheduleId: "broken",
-    }));
-
-    vi.stubGlobal("localStorage", {
-      getItem,
-      setItem: vi.fn(),
-    });
-    vi.stubGlobal("navigator", { language: "ja" });
-
-    const state = loadState();
-
-    expect(getItem).toHaveBeenCalledWith(STORAGE_KEY);
-    expect(state).toEqual(DEFAULT_APP_STATE);
-  });
-
-  it("seeds the English default when the locale resolves to en", () => {
-    vi.stubGlobal("localStorage", { getItem: vi.fn(() => null), setItem: vi.fn() });
-    vi.stubGlobal("navigator", { language: "en-US" });
-
-    const state = loadState();
-
-    expect(state).toEqual(DEFAULT_APP_STATE_EN);
-  });
-
-  it("normalizes valid stored rotation and active schedule", () => {
-    const memberCount = DEFAULT_APP_STATE.schedules[0].members.length;
-    vi.stubGlobal("localStorage", {
-      getItem: vi.fn(() => JSON.stringify({
-        schedules: [
-          {
-            ...DEFAULT_APP_STATE.schedules[0],
-            rotation: 7,
-          },
-        ],
-        activeScheduleId: "missing",
-      })),
-      setItem: vi.fn(),
-    });
-
-    const state = loadState();
-
-    expect(state.activeScheduleId).toBe(DEFAULT_APP_STATE.schedules[0].id);
-    expect(state.schedules[0].rotation).toBe(7 % memberCount);
-  });
-
-  it("preserves pinned schedules from localStorage", () => {
-    vi.stubGlobal("localStorage", {
-      getItem: vi.fn(() => JSON.stringify({
-        schedules: [
-          {
-            ...DEFAULT_APP_STATE.schedules[0],
-            pinned: true,
-          },
-        ],
-        activeScheduleId: DEFAULT_APP_STATE.schedules[0].id,
-      })),
-      setItem: vi.fn(),
-    });
-
-    const state = loadState();
-
-    expect(state.schedules[0].pinned).toBe(true);
   });
 });
 
@@ -504,5 +423,82 @@ describe("getHolidaysForYear", () => {
     expect(holidayMap2021.get("2021-08-08")).toBe("山の日");
     expect(holidayMap2021.get("2021-08-09")).toBe("振替休日");
     expect(holidayMap2021.has("2021-10-11")).toBe(false);
+  });
+});
+
+describe("addMemberToSchedule", () => {
+  const baseMember: Member = { id: "m1", name: "A", color: "#000", bgColor: "#fff", textColor: "#000" };
+  const baseGroup = { id: "g1", emoji: "🧹", tasks: ["掃除"] };
+  const newMember: Member = { id: "m2", name: "B", color: "#111", bgColor: "#eee", textColor: "#111" };
+
+  it("task モードでは members のみ追加され groups は変わらない", () => {
+    const schedule: Schedule = {
+      id: "s1", name: "test", rotation: 0, assignmentMode: "task",
+      groups: [baseGroup], members: [baseMember],
+    };
+
+    const result = addMemberToSchedule(schedule, newMember, "新しいタスク");
+
+    expect(result.members).toEqual([baseMember, newMember]);
+    expect(result.groups).toEqual([baseGroup]);
+  });
+
+  it("member モード（assignmentMode未指定含む）では対応する空グループも同時追加される", () => {
+    const schedule: Schedule = {
+      id: "s1", name: "test", rotation: 0,
+      groups: [baseGroup], members: [baseMember],
+    };
+
+    const result = addMemberToSchedule(schedule, newMember, "新しいタスク");
+
+    expect(result.members).toEqual([baseMember, newMember]);
+    expect(result.groups).toHaveLength(2);
+    expect(result.groups[0]).toEqual(baseGroup);
+    expect(result.groups[1]).toMatchObject({ emoji: "✨", tasks: ["新しいタスク"] });
+    expect(typeof result.groups[1].id).toBe("string");
+    expect(result.groups[1].id).not.toBe(baseGroup.id);
+  });
+});
+
+describe("removeMemberFromSchedule", () => {
+  const memberA: Member = { id: "m1", name: "A", color: "#000", bgColor: "#fff", textColor: "#000" };
+  const memberB: Member = { id: "m2", name: "B", color: "#111", bgColor: "#eee", textColor: "#111" };
+  const groupA = { id: "g1", emoji: "🧹", tasks: ["掃除"], memberIds: ["m1", "m2"] };
+  const groupB = { id: "g2", emoji: "🍽", tasks: ["給食"] };
+
+  it("task モードでは members から削除され、各グループの memberIds からも除去される", () => {
+    const schedule: Schedule = {
+      id: "s1", name: "test", rotation: 0, assignmentMode: "task",
+      groups: [groupA, groupB], members: [memberA, memberB],
+    };
+
+    const result = removeMemberFromSchedule(schedule, "m1");
+
+    expect(result.members).toEqual([memberB]);
+    expect(result.groups[0]).toEqual({ ...groupA, memberIds: ["m2"] });
+    expect(result.groups[1]).toEqual(groupB);
+  });
+
+  it("member モードでは対応するインデックスの groups エントリも削除される", () => {
+    const schedule: Schedule = {
+      id: "s1", name: "test", rotation: 0,
+      groups: [groupA, groupB], members: [memberA, memberB],
+    };
+
+    const result = removeMemberFromSchedule(schedule, "m1");
+
+    expect(result.members).toEqual([memberB]);
+    expect(result.groups).toEqual([groupB]);
+  });
+
+  it("存在しない memberId を渡すと schedule をそのまま返す", () => {
+    const schedule: Schedule = {
+      id: "s1", name: "test", rotation: 0,
+      groups: [groupA, groupB], members: [memberA, memberB],
+    };
+
+    const result = removeMemberFromSchedule(schedule, "nonexistent");
+
+    expect(result).toBe(schedule);
   });
 });

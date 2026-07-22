@@ -1,4 +1,4 @@
-import { updateSchedule, ApiError } from "./api";
+import { updateSchedule, toScheduleData, ApiError } from "./api";
 import type { Schedule } from "@shared/types";
 
 const DEBOUNCE_MS = 3000;
@@ -16,6 +16,12 @@ export function setSyncStatusCallback(cb: SyncStatusCallback | null): void {
   statusCallback = cb;
 }
 
+/**
+ * schedule単位の同期停止フラグ。PUT更新のdebounce（本ファイル内）だけでなく、
+ * POST初回作成（useAutoSync.tsのattemptAutoBackup）のガードとしても参照される。
+ * 手動共有（useShareFlow）中に自動同期が競合しないよう、経路を問わず
+ * 「このscheduleへのあらゆる自動同期を止める」という意味で共有されている。
+ */
 export function isScheduleSyncPaused(scheduleId: string): boolean {
   return pausedScheduleIds.has(scheduleId);
 }
@@ -51,15 +57,7 @@ async function doSync(
 
   statusCallback?.(schedule.id, "syncing");
   try {
-    await updateSchedule(schedule.slug, schedule.editToken, {
-      name: schedule.name,
-      rotation: schedule.rotation,
-      groups: schedule.groups,
-      members: schedule.members,
-      rotationConfig: schedule.rotationConfig,
-      assignmentMode: schedule.assignmentMode,
-      designThemeId: schedule.designThemeId,
-    }, options);
+    await updateSchedule(schedule.slug, schedule.editToken, toScheduleData(schedule), options);
     statusCallback?.(schedule.id, "synced");
     return true;
   } catch (error) {

@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { createSchedule, updateSchedule, publishSchedule } from "@/lib/api";
+import { createSchedule, updateSchedule, publishSchedule, toScheduleData } from "@/lib/api";
 import { getShareErrorMessage, type ShareStage } from "@/lib/shareFlow";
 import { clearPendingSync, pauseScheduleSync, resumeScheduleSync } from "@/lib/syncManager";
 import type { Schedule } from "@/rotation/types";
@@ -24,15 +24,7 @@ export function useShareFlow({ activeSchedule, prepareForManualSave, updateActiv
     let stage: ShareStage = "save";
     try {
       const preparedSchedule = (await prepareForManualSave()) ?? initialSchedule;
-      const data = {
-        name: preparedSchedule.name,
-        rotation: preparedSchedule.rotation,
-        groups: preparedSchedule.groups,
-        members: preparedSchedule.members,
-        rotationConfig: preparedSchedule.rotationConfig,
-        assignmentMode: preparedSchedule.assignmentMode,
-        designThemeId: preparedSchedule.designThemeId,
-      };
+      const data = toScheduleData(preparedSchedule);
 
       let shareTarget = preparedSchedule;
       if (preparedSchedule.slug && preparedSchedule.editToken) {

@@ -1,10 +1,16 @@
 import type { ScheduleData } from "@shared/schemas";
+import type { Schedule } from "@/rotation/types";
 import {
   createScheduleResponseSchema,
   scheduleResponseSchema,
   type CreateScheduleResponseData,
   type ScheduleResponseData,
 } from "./apiSchemas";
+
+export function toScheduleData(schedule: Schedule): ScheduleData {
+  const { name, rotation, groups, members, rotationConfig, assignmentMode, designThemeId } = schedule;
+  return { name, rotation, groups, members, rotationConfig, assignmentMode, designThemeId };
+}
 
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
