@@ -340,8 +340,8 @@ function printScheduleTool(get: () => HomeState): WebMCPTool {
     description: "Open the browser print dialog for the active roster in its current view (cards / table / calendar).",
     inputSchema: { type: "object", properties: {} },
     async execute() {
-      const { handlePrint, viewTab } = get();
-      handlePrint(viewTab);
+      const { handlePrint, viewTab, activeSchedule, effectiveRotation } = get();
+      handlePrint(viewTab, activeSchedule?.name, rotationLabel(effectiveRotation));
       return result(`印刷ダイアログを開きました（${viewMcpLabel(viewTab)}表示）。`);
     },
   };

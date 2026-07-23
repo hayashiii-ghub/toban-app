@@ -37,7 +37,7 @@ export function ScheduleHeader({
 
           <div
             className="rotation-print-only mt-3 pt-2 text-sm font-bold"
-            style={{ color: "var(--dt-text-secondary)", borderBottom: "2px solid var(--dt-current-highlight)" }}
+            style={{ color: "var(--dt-text-secondary)", borderBottom: "3px solid var(--dt-border-color)" }}
           >
             <span className="inline-block pb-2">
               {t("shared.printHeader", { label: rotationLabel, date: printDate })}

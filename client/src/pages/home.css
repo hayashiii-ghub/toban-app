@@ -48,11 +48,17 @@
     width: 100%;
     padding: 4mm 0 !important;
     box-sizing: border-box;
+    /* 印刷は白紙に。pageBg の色ブロック（白マージン枠・部分ページの色切れ・インク消費）を避ける。
+       世界観はカードの色ヘッダー／テーマ色の枠／ヘッダー下線のアクセントで担保する。 */
+    background: #ffffff !important;
   }
 
   .rotation-print-card-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+    /* auto-fit + 1fr だと少人数（1行未満）でカードが全幅に間延びする。
+       auto-fill + 上限付き固定幅 + 左寄せで、人数によらずカードサイズを一定に保つ。 */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 210px)) !important;
+    justify-content: start !important;
     gap: 12px !important;
     font-size: 13px !important;
   }

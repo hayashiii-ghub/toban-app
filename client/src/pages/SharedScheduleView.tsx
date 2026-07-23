@@ -177,7 +177,7 @@ export default function SharedScheduleView() {
           </p>
           <div
             className="rotation-print-only mt-3 pt-2 text-sm font-bold"
-            style={{ color: "var(--dt-text-secondary)", borderBottom: "2px solid var(--dt-current-highlight)" }}
+            style={{ color: "var(--dt-text-secondary)", borderBottom: "3px solid var(--dt-border-color)" }}
           >
             <span className="inline-block pb-2">
               {t("shared.printHeader", { label: rotationLabel, date: printDate })}
@@ -205,7 +205,7 @@ export default function SharedScheduleView() {
 
       <div className="px-3 sm:px-4 pb-8 sm:pb-12 rotation-no-print">
         <div className="max-w-4xl mx-auto text-center flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
-          <PrintMenu onPrint={() => handlePrint(viewTab)} />
+          <PrintMenu onPrint={() => handlePrint(viewTab, schedule.name, rotationLabel)} />
           <button type="button"
             onClick={handleImport}
             className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"

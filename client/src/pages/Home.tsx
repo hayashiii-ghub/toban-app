@@ -63,7 +63,7 @@ export default function Home() {
         isSharing={s.isSharing}
         isDateMode={s.isDateMode}
         isAnimating={s.isAnimating}
-        onPrint={() => s.handlePrint(s.viewTab)}
+        onPrint={() => s.handlePrint(s.viewTab, s.activeSchedule.name, rotationLabel)}
         onOpenSettings={s.openSettings}
         onShare={s.handleShare}
         onRotateForward={() => s.handleRotate("forward")}
