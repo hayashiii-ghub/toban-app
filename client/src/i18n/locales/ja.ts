@@ -130,7 +130,7 @@ export const ja: Record<string, string> = {
   "settings.chooseView": "見方をえらぶ",
   "settings.whoDoesWhat": "だれが何をするか",
   "settings.whatByWhom": "何をだれがやるか",
-  "settings.sectionDesign": "デザインテンプレート",
+  "settings.sectionDesign": "テーマ",
   "settings.sectionContent": "内容を編集",
 
   // グループ/メンバー/タスク編集

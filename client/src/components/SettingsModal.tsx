@@ -344,7 +344,7 @@ export function SettingsModal({
             </div>
           </AccordionSection>
 
-          {/* デザインテンプレート */}
+          {/* テーマ */}
           <AccordionSection title={t("settings.sectionDesign")} summary={getThemeById(editDesignThemeId).name} defaultOpen={false}>
             <DesignThemePicker
               selectedThemeId={editDesignThemeId}

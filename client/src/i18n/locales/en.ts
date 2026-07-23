@@ -133,7 +133,7 @@ export const en: Record<string, string> = {
   "settings.chooseView": "Choose a view",
   "settings.whoDoesWhat": "Who does what",
   "settings.whatByWhom": "What, by whom",
-  "settings.sectionDesign": "Design theme",
+  "settings.sectionDesign": "Theme",
   "settings.sectionContent": "Edit content",
 
   // Group / member / task editing
