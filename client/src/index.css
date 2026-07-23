@@ -119,7 +119,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Kiwi Maru', serif;
+    font-family: var(--dt-font-family, 'Kiwi Maru', serif);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   button:not(:disabled),
