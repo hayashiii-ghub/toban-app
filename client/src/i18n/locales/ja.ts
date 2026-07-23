@@ -251,6 +251,15 @@ export const ja: Record<string, string> = {
   "theme.selectAria": "{name}テーマを選択",
   "theme.forPrint": "印刷向け",
 
+  // フォント選択（アプリ全体）
+  "settings.sectionFont": "文字",
+  "font.appliesToAll": "すべての当番表に適用されます",
+  "font.selectAria": "{name}の文字を選択",
+  "font.standard": "標準",
+  "font.handwriting": "手書き",
+  "font.elegant": "エレガント",
+  "font.print": "印刷",
+
   // 一括追加
   "bulk.bulkAdd": "📋 一括追加",
   "bulk.placeholderTask": "メンバー名を入力（1行に1人、またはカンマ区切り）\n例：田中, 佐藤, 鈴木\n（全タスクに追加されます）",

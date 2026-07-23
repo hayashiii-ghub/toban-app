@@ -254,6 +254,15 @@ export const en: Record<string, string> = {
   "theme.selectAria": "Select the {name} theme",
   "theme.forPrint": "Print-friendly",
 
+  // Font selection (whole app)
+  "settings.sectionFont": "Font",
+  "font.appliesToAll": "Applies to every roster",
+  "font.selectAria": "Select the {name} font",
+  "font.standard": "Standard",
+  "font.handwriting": "Handwriting",
+  "font.elegant": "Elegant",
+  "font.print": "Print",
+
   // Bulk add
   "bulk.bulkAdd": "📋 Bulk add",
   "bulk.placeholderTask": "Enter member names (one per line or comma-separated)\ne.g. Alex, Sam, Riley\n(added to all tasks)",

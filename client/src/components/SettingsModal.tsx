@@ -11,8 +11,10 @@ import { LIMITS } from "@shared/limits";
 import { TaskGroupEditor } from "./settings/TaskGroupEditor";
 import { AccordionSection } from "./settings/AccordionSection";
 import { DesignThemePicker } from "./settings/DesignThemePicker";
+import { FontPicker } from "./settings/FontPicker";
 import { RotationConfigEditor } from "./settings/RotationConfigEditor";
 import { getThemeById } from "@/rotation/designThemes";
+import { getFontById, getSavedFontId } from "@/fonts";
 import { applyThemeToRoot } from "@/contexts/DesignThemeContext";
 import { useT } from "@/i18n";
 
@@ -65,6 +67,9 @@ export function SettingsModal({
   const [editPinned, setEditPinned] = useState(pinned ?? false);
   const [editAssignmentMode, setEditAssignmentMode] = useState<AssignmentMode>(assignmentMode ?? "member");
   const [editDesignThemeId, setEditDesignThemeId] = useState<string | undefined>(designThemeId);
+  // フォントはアプリ全体設定（schedule 保存フローに乗せず即適用・localStorage 保存）。
+  // ここでは AccordionSection のサマリー表示のためだけに現在値を持つ。
+  const [fontId, setFontId] = useState(getSavedFontId());
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
 
@@ -345,6 +350,12 @@ export function SettingsModal({
               selectedThemeId={editDesignThemeId}
               onSelect={handleThemePreview}
             />
+          </AccordionSection>
+
+          {/* 文字（アプリ全体） */}
+          <AccordionSection title={t("settings.sectionFont")} summary={t(getFontById(fontId).labelKey)} defaultOpen={false}>
+            <p className="text-xs mb-2" style={{ color: "var(--dt-text-muted)" }}>{t("font.appliesToAll")}</p>
+            <FontPicker onChange={setFontId} />
           </AccordionSection>
 
           {/* タスク */}

@@ -7,9 +7,12 @@ interface DesignThemeContextType {
 
 const DesignThemeContext = createContext<DesignThemeContextType | undefined>(undefined);
 
+// フォント（--dt-font-family と太字トークン）は色テーマから独立したアプリ全体設定で、
+// client/src/fonts.ts が単独で所有・適用する。ここでは触らない（テーマ切替でフォントが
+// 巻き戻らないようにするため）。theme.typography は現状未使用。
 export function applyThemeToRoot(theme: DesignTheme) {
   const root = document.documentElement;
-  const { colors, borders, shadows, typography, effects } = theme;
+  const { colors, borders, shadows, effects } = theme;
 
   root.style.setProperty("--dt-page-bg", colors.pageBg);
   root.style.setProperty("--dt-card-bg", colors.cardBg);
@@ -38,11 +41,6 @@ export function applyThemeToRoot(theme: DesignTheme) {
   root.style.setProperty("--dt-shadow-card-sm", shadows.cardSm);
   root.style.setProperty("--dt-shadow-card-hover", shadows.cardHover);
   root.style.setProperty("--dt-shadow-card-lg", shadows.cardLg);
-
-  root.style.setProperty("--dt-font-family", typography.fontFamily);
-  root.style.setProperty("--dt-font-weight-normal", typography.fontWeightNormal);
-  root.style.setProperty("--dt-font-weight-bold", typography.fontWeightBold);
-  root.style.setProperty("--dt-font-weight-extra", typography.fontWeightExtra);
 
   root.style.setProperty("--dt-hover-translate", effects.hoverTranslate);
 }
