@@ -92,7 +92,7 @@
   --dt-text: #1a1a1a;
   --dt-text-secondary: #666666;
   --dt-text-muted: #888888;
-  --dt-border-color: #b8b8b8;
+  --dt-border-color: #a8a8a8;
   --dt-border-width: 1px;
   --dt-border-radius: 8px;
   --dt-border-radius-sm: 4px;
@@ -100,7 +100,7 @@
   --dt-shadow-card-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --dt-shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.12);
   --dt-shadow-card-lg: 0 2px 6px rgba(0, 0, 0, 0.1);
-  --dt-table-border-strong: #888888;
+  --dt-table-border-strong: #7e7e7e;
   --dt-table-border-light: #d8d8d8;
   --dt-focus-ring: #666666;
   --dt-current-highlight: #e0e0e0;
