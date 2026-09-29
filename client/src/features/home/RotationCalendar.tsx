@@ -73,12 +73,22 @@ const COMPACT_ENGLISH_HOLIDAYS: Record<string, string> = {
   "Emperor's Accession Day": "Accession Day",
 };
 
+const HOLIDAY_COLOR = "#EF4444";
+const SATURDAY_COLOR = "#3B82F6";
+
+/** 日曜・祝日は赤、土曜は青。平日は undefined（呼び出し側の既定色を使う） */
+function weekendColor(dow: number, isHoliday = false): string | undefined {
+  if (isHoliday || dow === 0) return HOLIDAY_COLOR;
+  if (dow === 6) return SATURDAY_COLOR;
+  return undefined;
+}
+
 function HolidayLabel({ name, locale }: { name: string; locale: "ja" | "en" }) {
   if (locale === "ja") {
     return (
       <span
         className="text-[8px] sm:text-[10px] leading-tight truncate"
-        style={{ color: "#EF4444" }}
+        style={{ color: HOLIDAY_COLOR }}
         title={name}
       >
         {name}
@@ -89,7 +99,7 @@ function HolidayLabel({ name, locale }: { name: string; locale: "ja" | "en" }) {
   return (
     <span
       className="text-[8px] sm:text-[10px] leading-tight w-full overflow-hidden whitespace-normal [overflow-wrap:normal] [word-break:normal]"
-      style={{ color: "#EF4444" }}
+      style={{ color: HOLIDAY_COLOR }}
       title={name}
     >
       <span className="sr-only">{name}</span>
@@ -103,6 +113,44 @@ function HolidayLabel({ name, locale }: { name: string; locale: "ja" | "en" }) {
         {name}
       </span>
     </span>
+  );
+}
+
+/** セル上端の日付と祝日名。押せるセルと押せないセルで共通 */
+function DayNumber({
+  date,
+  dow,
+  isToday,
+  holidayName,
+  locale,
+}: {
+  date: Date;
+  dow: number;
+  isToday: boolean | null;
+  holidayName: string | undefined;
+  locale: "ja" | "en";
+}) {
+  return (
+    <div
+      className={`flex ${locale === "en" && holidayName ? "flex-col items-start" : "items-center"} gap-0.5 mb-0.5 min-h-[16px] sm:min-h-[20px]`}
+    >
+      <span
+        className={`text-xs sm:text-sm font-bold leading-none shrink-0 ${
+          isToday
+            ? "rounded-full min-w-[1rem] sm:min-w-[1.25rem] h-4 sm:h-5 flex items-center justify-center px-0.5"
+            : ""
+        }`}
+        style={{
+          color: isToday
+            ? "var(--dt-card-bg)"
+            : (weekendColor(dow, !!holidayName) ?? "var(--dt-text)"),
+          backgroundColor: isToday ? "var(--dt-text)" : undefined,
+        }}
+      >
+        {date.getDate()}
+      </span>
+      {holidayName && <HolidayLabel name={holidayName} locale={locale} />}
+    </div>
   );
 }
 
@@ -330,12 +378,7 @@ export function RotationCalendar({
                 key={label}
                 className="text-center py-1.5 text-xs"
                 style={{
-                  color:
-                    i === 0
-                      ? "#EF4444"
-                      : i === 6
-                        ? "#3B82F6"
-                        : "var(--dt-text-secondary)",
+                  color: weekendColor(i) ?? "var(--dt-text-secondary)",
                   fontWeight: "var(--dt-font-weight-extra)",
                 }}
               >
@@ -397,34 +440,13 @@ export function RotationCalendar({
                 >
                   {day && (
                     <>
-                      <div
-                        className={`flex ${locale === "en" && holidayName ? "flex-col items-start" : "items-center"} gap-0.5 mb-0.5 min-h-[16px] sm:min-h-[20px]`}
-                      >
-                        <span
-                          className={`text-xs sm:text-sm font-bold leading-none shrink-0 ${
-                            isToday
-                              ? "rounded-full min-w-[1rem] sm:min-w-[1.25rem] h-4 sm:h-5 flex items-center justify-center px-0.5"
-                              : ""
-                          }`}
-                          style={{
-                            color: isToday
-                              ? "var(--dt-card-bg)"
-                              : holidayName || dow === 0
-                                ? "#EF4444"
-                                : dow === 6
-                                  ? "#3B82F6"
-                                  : "var(--dt-text)",
-                            backgroundColor: isToday
-                              ? "var(--dt-text)"
-                              : undefined,
-                          }}
-                        >
-                          {day.getDate()}
-                        </span>
-                        {holidayName && (
-                          <HolidayLabel name={holidayName} locale={locale} />
-                        )}
-                      </div>
+                      <DayNumber
+                        date={day}
+                        dow={dow}
+                        isToday={isToday}
+                        holidayName={holidayName}
+                        locale={locale}
+                      />
                       {!isSkipped && assignments && (
                         <div className="flex flex-col gap-px flex-1 overflow-hidden">
                           {assignments.map(({ group, member }) => (
@@ -478,7 +500,7 @@ export function RotationCalendar({
                                 weekday: weekdayLabels[dow],
                               })}
                               {holidayName && (
-                                <span style={{ color: "#EF4444" }}>
+                                <span style={{ color: HOLIDAY_COLOR }}>
                                   {" "}
                                   {holidayName}
                                 </span>
@@ -524,34 +546,13 @@ export function RotationCalendar({
                   style={cellStyle}
                 >
                   {day && (
-                    <div
-                      className={`flex ${locale === "en" && holidayName ? "flex-col items-start" : "items-center"} gap-0.5 mb-0.5 min-h-[16px] sm:min-h-[20px]`}
-                    >
-                      <span
-                        className={`text-xs sm:text-sm font-bold leading-none shrink-0 ${
-                          isToday
-                            ? "rounded-full min-w-[1rem] sm:min-w-[1.25rem] h-4 sm:h-5 flex items-center justify-center px-0.5"
-                            : ""
-                        }`}
-                        style={{
-                          color: isToday
-                            ? "var(--dt-card-bg)"
-                            : holidayName || dow === 0
-                              ? "#EF4444"
-                              : dow === 6
-                                ? "#3B82F6"
-                                : "var(--dt-text)",
-                          backgroundColor: isToday
-                            ? "var(--dt-text)"
-                            : undefined,
-                        }}
-                      >
-                        {day.getDate()}
-                      </span>
-                      {holidayName && (
-                        <HolidayLabel name={holidayName} locale={locale} />
-                      )}
-                    </div>
+                    <DayNumber
+                      date={day}
+                      dow={dow}
+                      isToday={isToday}
+                      holidayName={holidayName}
+                      locale={locale}
+                    />
                   )}
                 </div>
               );
