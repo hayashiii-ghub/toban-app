@@ -390,11 +390,11 @@ describe("PUT /api/schedules/:slug (Update)", () => {
 
     const mockDB = createMockD1(sql => {
       if (sql.includes("select")) {
-        // Auth middleware query selects only edit_token, edit_token_hash.
+        // Auth middleware query selects only edit_token_hash.
         // Drizzle uses positional mapping from raw(), so the returned object
         // must contain ONLY the selected columns in the correct order.
         if (!sql.includes('"name"')) {
-          return { results: [{ edit_token: "", edit_token_hash: tokenHash }] };
+          return { results: [{ edit_token_hash: tokenHash }] };
         }
         // Full select query (if needed)
         return {
@@ -482,7 +482,7 @@ describe("DELETE /api/schedules/:slug", () => {
 
     const mockDB = createMockD1(sql => {
       if (sql.includes("select")) {
-        return { results: [{ edit_token: "", edit_token_hash: tokenHash }] };
+        return { results: [{ edit_token_hash: tokenHash }] };
       }
       return { results: [] };
     });
@@ -504,7 +504,7 @@ describe("DELETE /api/schedules/:slug", () => {
 
     const mockDB = createMockD1(sql => {
       if (sql.includes("select")) {
-        return { results: [{ edit_token: "", edit_token_hash: tokenHash }] };
+        return { results: [{ edit_token_hash: tokenHash }] };
       }
       return { results: [] };
     });

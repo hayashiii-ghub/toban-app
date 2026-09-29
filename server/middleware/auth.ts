@@ -25,22 +25,13 @@ export function timingSafeEqual(a: string, b: string): boolean {
   return result === 0;
 }
 
-// トークン検証（ハッシュ優先、旧平文トークンにもフォールバック）
+// 編集トークンは SHA-256 のハッシュだけを保存している
 export async function verifyToken(
-  row: { editToken: string; editTokenHash: string | null },
+  row: { editTokenHash: string | null },
   token: string
-): Promise<{ valid: boolean; needsMigration: boolean }> {
-  if (row.editTokenHash) {
-    const hashed = await hashToken(token);
-    return {
-      valid: timingSafeEqual(hashed, row.editTokenHash),
-      needsMigration: false,
-    };
-  }
-  if (row.editToken && timingSafeEqual(row.editToken, token)) {
-    return { valid: true, needsMigration: true };
-  }
-  return { valid: false, needsMigration: false };
+): Promise<boolean> {
+  if (!row.editTokenHash) return false;
+  return timingSafeEqual(await hashToken(token), row.editTokenHash);
 }
 
 // トークン検証付きでスケジュールを取得するヘルパー
@@ -65,31 +56,14 @@ export async function authenticateEditRequest(c: {
   const db = drizzle(c.env.DB);
 
   const [row] = await db
-    .select({
-      editToken: schedules.editToken,
-      editTokenHash: schedules.editTokenHash,
-    })
+    .select({ editTokenHash: schedules.editTokenHash })
     .from(schedules)
     .where(eq(schedules.slug, slug))
     .limit(1);
 
   // スケジュールの存在有無に関わらず同じ 403 を返す（slug の存在を推測させない）
-  if (!row) {
+  if (!row || !(await verifyToken(row, token))) {
     return { error: c.json({ error: "Unauthorized" }, 403) };
-  }
-
-  const { valid, needsMigration } = await verifyToken(row, token);
-  if (!valid) {
-    return { error: c.json({ error: "Unauthorized" }, 403) };
-  }
-
-  // 旧データの editTokenHash を自動マイグレーション
-  if (needsMigration) {
-    const newHash = await hashToken(token);
-    await db
-      .update(schedules)
-      .set({ editTokenHash: newHash, editToken: "" })
-      .where(eq(schedules.slug, slug));
   }
 
   return { slug, db };

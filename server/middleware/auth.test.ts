@@ -35,53 +35,20 @@ describe("timingSafeEqual", () => {
 });
 
 describe("verifyToken", () => {
-  it("validates against editTokenHash when present", async () => {
+  it("validates against editTokenHash", async () => {
     const token = "my-secret-token";
     const hash = await hashToken(token);
-
-    const result = await verifyToken(
-      { editToken: "", editTokenHash: hash },
-      token
-    );
-    expect(result.valid).toBe(true);
-    expect(result.needsMigration).toBe(false);
+    expect(await verifyToken({ editTokenHash: hash }, token)).toBe(true);
   });
 
   it("rejects wrong token against hash", async () => {
     const hash = await hashToken("correct-token");
-
-    const result = await verifyToken(
-      { editToken: "", editTokenHash: hash },
-      "wrong-token"
+    expect(await verifyToken({ editTokenHash: hash }, "wrong-token")).toBe(
+      false
     );
-    expect(result.valid).toBe(false);
-    expect(result.needsMigration).toBe(false);
   });
 
-  it("falls back to plaintext editToken when no hash", async () => {
-    const result = await verifyToken(
-      { editToken: "plain-token", editTokenHash: null },
-      "plain-token"
-    );
-    expect(result.valid).toBe(true);
-    expect(result.needsMigration).toBe(true);
-  });
-
-  it("rejects wrong plaintext token", async () => {
-    const result = await verifyToken(
-      { editToken: "plain-token", editTokenHash: null },
-      "wrong"
-    );
-    expect(result.valid).toBe(false);
-    expect(result.needsMigration).toBe(false);
-  });
-
-  it("rejects when both editToken and editTokenHash are empty", async () => {
-    const result = await verifyToken(
-      { editToken: "", editTokenHash: null },
-      "any-token"
-    );
-    expect(result.valid).toBe(false);
-    expect(result.needsMigration).toBe(false);
+  it("rejects a row without a hash", async () => {
+    expect(await verifyToken({ editTokenHash: null }, "any-token")).toBe(false);
   });
 });
