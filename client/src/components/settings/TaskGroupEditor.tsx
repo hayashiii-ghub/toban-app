@@ -13,6 +13,26 @@ import { useT } from "@/i18n";
 import { toast } from "sonner";
 import { LIMITS } from "@shared/limits";
 
+/** list の from 番目を to 番目へ移した新しい配列。隣への移動は入れ替えと同じ結果になる */
+function moveItem<T>(list: readonly T[], from: number, to: number): T[] {
+  const next = [...list];
+  const [moved] = next.splice(from, 1);
+  next.splice(to, 0, moved);
+  return next;
+}
+
+/** つかんだ要素そのものを、ドラッグ中の見た目にする */
+function startMoveDrag(e: React.DragEvent) {
+  e.dataTransfer.effectAllowed = "move";
+  if (e.currentTarget instanceof HTMLElement) {
+    e.dataTransfer.setDragImage(
+      e.currentTarget,
+      e.currentTarget.offsetWidth / 2,
+      20
+    );
+  }
+}
+
 interface Props {
   groups: TaskGroup[];
   members: Member[];
@@ -89,20 +109,18 @@ export function TaskGroupEditor({
     tIdx: number;
   } | null>(null);
 
+  const handleTaskDragEnd = useCallback(() => {
+    setDragTask(null);
+    setDropTarget(null);
+  }, []);
+
   const handleTaskDragStart = (
     e: React.DragEvent,
     gIdx: number,
     tIdx: number
   ) => {
     setDragTask({ gIdx, tIdx });
-    e.dataTransfer.effectAllowed = "move";
-    if (e.currentTarget instanceof HTMLElement) {
-      e.dataTransfer.setDragImage(
-        e.currentTarget,
-        e.currentTarget.offsetWidth / 2,
-        20
-      );
-    }
+    startMoveDrag(e);
   };
 
   const handleTaskDragOver = (
@@ -128,23 +146,14 @@ export function TaskGroupEditor({
     e.preventDefault();
     if (!dragTask) return;
     const { gIdx: srcGIdx, tIdx: srcTIdx } = dragTask;
-    if (srcGIdx === targetGIdx && srcTIdx === targetTIdx) {
-      setDragTask(null);
-      setDropTarget(null);
-      return;
+    if (srcGIdx !== targetGIdx || srcTIdx !== targetTIdx) {
+      const next = deepClone(groups);
+      const [movedTask] = next[srcGIdx].tasks.splice(srcTIdx, 1);
+      next[targetGIdx].tasks.splice(targetTIdx, 0, movedTask);
+      onGroupsChange(next);
     }
-    const next = deepClone(groups);
-    const [movedTask] = next[srcGIdx].tasks.splice(srcTIdx, 1);
-    next[targetGIdx].tasks.splice(targetTIdx, 0, movedTask);
-    onGroupsChange(next);
-    setDragTask(null);
-    setDropTarget(null);
+    handleTaskDragEnd();
   };
-
-  const handleTaskDragEnd = useCallback(() => {
-    setDragTask(null);
-    setDropTarget(null);
-  }, []);
 
   const handleGroupDropZone = (e: React.DragEvent, gIdx: number) => {
     e.preventDefault();
@@ -154,8 +163,7 @@ export function TaskGroupEditor({
     const [movedTask] = next[srcGIdx].tasks.splice(srcTIdx, 1);
     next[gIdx].tasks.push(movedTask);
     onGroupsChange(next);
-    setDragTask(null);
-    setDropTarget(null);
+    handleTaskDragEnd();
   };
 
   const handleGroupDragOver = (e: React.DragEvent) => {
@@ -168,17 +176,15 @@ export function TaskGroupEditor({
   const [dragGroupIdx, setDragGroupIdx] = useState<number | null>(null);
   const [dropGroupIdx, setDropGroupIdx] = useState<number | null>(null);
 
+  const handleGroupReorderDragEnd = useCallback(() => {
+    setDragGroupIdx(null);
+    setDropGroupIdx(null);
+  }, []);
+
   const handleGroupDragStart = (e: React.DragEvent, gIdx: number) => {
     e.stopPropagation();
     setDragGroupIdx(gIdx);
-    e.dataTransfer.effectAllowed = "move";
-    if (e.currentTarget instanceof HTMLElement) {
-      e.dataTransfer.setDragImage(
-        e.currentTarget,
-        e.currentTarget.offsetWidth / 2,
-        20
-      );
-    }
+    startMoveDrag(e);
   };
 
   const handleGroupReorderDragOver = (e: React.DragEvent, gIdx: number) => {
@@ -190,29 +196,11 @@ export function TaskGroupEditor({
 
   const handleGroupReorderDrop = (e: React.DragEvent, targetIdx: number) => {
     e.preventDefault();
-    if (dragGroupIdx === null || dragGroupIdx === targetIdx) {
-      setDragGroupIdx(null);
-      setDropGroupIdx(null);
-      return;
+    if (dragGroupIdx !== null && dragGroupIdx !== targetIdx) {
+      moveGroupTo(dragGroupIdx, targetIdx);
     }
-    const nextGroups = [...groups];
-    const [movedGroup] = nextGroups.splice(dragGroupIdx, 1);
-    nextGroups.splice(targetIdx, 0, movedGroup);
-    if (!isTaskMode) {
-      const nextMembers = [...members];
-      const [movedMember] = nextMembers.splice(dragGroupIdx, 1);
-      nextMembers.splice(targetIdx, 0, movedMember);
-      onMembersChange(nextMembers);
-    }
-    onGroupsChange(nextGroups);
-    setDragGroupIdx(null);
-    setDropGroupIdx(null);
+    handleGroupReorderDragEnd();
   };
-
-  const handleGroupReorderDragEnd = useCallback(() => {
-    setDragGroupIdx(null);
-    setDropGroupIdx(null);
-  }, []);
 
   // --- メンバー行ドラッグ&ドロップ（タスクモード用） ---
   const [dragMember, setDragMember] = useState<{
@@ -224,6 +212,11 @@ export function TaskGroupEditor({
     mIdx: number;
   } | null>(null);
 
+  const handleMemberDragEnd = useCallback(() => {
+    setDragMember(null);
+    setDropMemberTarget(null);
+  }, []);
+
   const handleMemberDragStart = (
     e: React.DragEvent,
     gIdx: number,
@@ -231,14 +224,7 @@ export function TaskGroupEditor({
   ) => {
     e.stopPropagation();
     setDragMember({ gIdx, mIdx });
-    e.dataTransfer.effectAllowed = "move";
-    if (e.currentTarget instanceof HTMLElement) {
-      e.dataTransfer.setDragImage(
-        e.currentTarget,
-        e.currentTarget.offsetWidth / 2,
-        20
-      );
-    }
+    startMoveDrag(e);
   };
 
   const handleMemberDragOver = (
@@ -264,32 +250,16 @@ export function TaskGroupEditor({
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!dragMember || dragMember.gIdx !== targetGIdx) {
-      setDragMember(null);
-      setDropMemberTarget(null);
-      return;
+    // 別のグループの担当者の上には落とせない（グループをまたぐ移動は「追加」で行う）
+    if (
+      dragMember &&
+      dragMember.gIdx === targetGIdx &&
+      dragMember.mIdx !== targetMIdx
+    ) {
+      moveMemberTo(targetGIdx, dragMember.mIdx, targetMIdx);
     }
-    const { mIdx: srcMIdx } = dragMember;
-    if (srcMIdx === targetMIdx) {
-      setDragMember(null);
-      setDropMemberTarget(null);
-      return;
-    }
-    const next = deepClone(groups);
-    const group = next[targetGIdx];
-    const memberIds = group.memberIds ?? [...activeMemberIds];
-    const [moved] = memberIds.splice(srcMIdx, 1);
-    memberIds.splice(targetMIdx, 0, moved);
-    group.memberIds = memberIds;
-    onGroupsChange(next);
-    setDragMember(null);
-    setDropMemberTarget(null);
+    handleMemberDragEnd();
   };
-
-  const handleMemberDragEnd = useCallback(() => {
-    setDragMember(null);
-    setDropMemberTarget(null);
-  }, []);
 
   // --- メンバーグループ操作（タスクモード） ---
   const removeMemberFromGroup = (gIdx: number, memberId: string) => {
@@ -336,43 +306,44 @@ export function TaskGroupEditor({
     onGroupsChange(next);
   };
 
+  const moveMemberTo = (gIdx: number, from: number, to: number) => {
+    const next = deepClone(groups);
+    next[gIdx].memberIds = moveItem(
+      next[gIdx].memberIds ?? activeMemberIds,
+      from,
+      to
+    );
+    onGroupsChange(next);
+  };
+
   const reorderMember = (gIdx: number, mIdx: number, direction: -1 | 1) => {
     const newIdx = mIdx + direction;
-    const next = deepClone(groups);
-    const ids = next[gIdx].memberIds ?? [...activeMemberIds];
+    const ids = groups[gIdx].memberIds ?? activeMemberIds;
     if (newIdx < 0 || newIdx >= ids.length) return;
-    [ids[mIdx], ids[newIdx]] = [ids[newIdx], ids[mIdx]];
-    next[gIdx].memberIds = ids;
-    onGroupsChange(next);
+    moveMemberTo(gIdx, mIdx, newIdx);
   };
 
   // --- グループ操作ヘルパー ---
+  // 担当者から見るモードでは、グループと担当者が同じ順番で対になっている
+  function moveGroupTo(from: number, to: number) {
+    if (!isTaskMode) onMembersChange(moveItem(members, from, to));
+    onGroupsChange(moveItem(groups, from, to));
+  }
+
   const moveGroup = (gIdx: number, direction: -1 | 1) => {
     const newIdx = gIdx + direction;
     if (newIdx < 0 || newIdx >= groups.length) return;
-    const nextGroups = [...groups];
-    [nextGroups[gIdx], nextGroups[newIdx]] = [
-      nextGroups[newIdx],
-      nextGroups[gIdx],
-    ];
-    if (!isTaskMode) {
-      const nextMembers = [...members];
-      [nextMembers[gIdx], nextMembers[newIdx]] = [
-        nextMembers[newIdx],
-        nextMembers[gIdx],
-      ];
-      onMembersChange(nextMembers);
-    }
-    onGroupsChange(nextGroups);
+    moveGroupTo(gIdx, newIdx);
   };
 
   const moveTask = (gIdx: number, tIdx: number, direction: -1 | 1) => {
-    const next = deepClone(groups);
-    const tasks = next[gIdx].tasks;
     const newIdx = tIdx + direction;
-    if (newIdx < 0 || newIdx >= tasks.length) return;
-    [tasks[tIdx], tasks[newIdx]] = [tasks[newIdx], tasks[tIdx]];
-    onGroupsChange(next);
+    if (newIdx < 0 || newIdx >= groups[gIdx].tasks.length) return;
+    onGroupsChange(
+      groups.map((g, i) =>
+        i === gIdx ? { ...g, tasks: moveItem(g.tasks, tIdx, newIdx) } : g
+      )
+    );
   };
 
   const addGroup = () => {
