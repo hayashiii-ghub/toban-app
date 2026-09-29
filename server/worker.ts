@@ -62,11 +62,6 @@ export default {
       return handleRobots(origin);
     }
 
-    // 旧・順番決めページ。検索で上位に出ず 2026-09 に撤去した。登録済みの URL を行き止まりにしない
-    if (pathname === "/junban") {
-      return Response.redirect(`${origin}/about`, 301);
-    }
-
     const ua = request.headers.get("user-agent") ?? "";
     const botRequest = isBot(ua);
 

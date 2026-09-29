@@ -15,6 +15,7 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 - `client/index.html` は SPA シェルで全ルートに配られる。ここの meta / JSON-LD は全ページに載る
 - `/` はアプリ本体、LP は `/about`
 - ビルドは D1 の ID を差し込んだ `wrangler.deploy.jsonc` を Vite プラグインに読ませ（`build` が先に `prepare-wrangler-config.mjs` を実行）、デプロイは出力の `dist/toban/wrangler.json` を使う。Vite の root が `client/` なので、プラグインの状態の置き場所と設定のパスは `vite.config.ts` で直下に向けている。PWA プラグインは client 環境だけで動かす
+- ブラウザのページ遷移（`Sec-Fetch-Mode: navigate`）は、Cloudflare の `not_found_handling: single-page-application` により Worker を通らずに `index.html` が返る。Worker の分岐やヘッダーが効くのは bot と fetch だけ。転送は `client/public/_redirects` に書く（Service Worker が先に返さないよう `navigateFallbackDenylist` にも足す）
 - bot は UA 判定で `/about` `/templates` `/templates/:slug` のプリレンダリングを受け取る（`server/handlers/seo.ts`）。`/` は対象外
 - ルートを足したら `seo.ts` の `KNOWN_APP_ROUTES` にも足す。無いと bot に 404 を返す
 - 利用者向けの静的ページ（今は `client/public/privacy.html`）は拡張子なしの URL で配られる。足すときは `KNOWN_APP_ROUTES` と `vite.config.ts` の `navigateFallbackDenylist` にも足す（無いと Service Worker が index.html で返し、SPA の 404 になる）
