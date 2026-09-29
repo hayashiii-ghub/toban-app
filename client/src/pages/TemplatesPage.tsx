@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
-import { ArrowRight, ArrowLeft } from "lucide-react";
 import {
   TEMPLATE_CATEGORIES,
   TEMPLATE_CATEGORIES_EN,
@@ -9,6 +8,9 @@ import {
 } from "@shared/seo-templates";
 import { getTemplates } from "@shared/template-localization";
 import { LpCtaLink } from "@/features/landing/LpCtaLink";
+import { ChalkEdge, LpCtaBand, TemplateCard } from "@/features/landing/parts";
+import { LP_COLORS as C, alpha } from "@/features/landing/theme";
+import { MEMBER_PRESETS } from "@shared/appearance";
 import {
   breadcrumbSchema,
   itemListSchema,
@@ -36,111 +38,143 @@ export default function TemplatesPage() {
     window.scrollTo(0, 0);
   }, []);
 
-  // ItemList は画面に出ているカードと同じ順序・同じ件数・同じ表示名で作る。
-  // 下のカード描画と同じ条件（template が引けないものは出さない）を使う。
-  const listedTemplates = TEMPLATE_CATEGORIES.flatMap(cat =>
-    (byCategory.get(cat.id) ?? []).flatMap(tpl => {
+  // 画面のカードと ItemList は同じ並び・同じ条件（template が引けないものは出さない）で作る
+  const categories = TEMPLATE_CATEGORIES.flatMap(cat => {
+    const templates = (byCategory.get(cat.id) ?? []).flatMap(tpl => {
       const template = localizedTemplates[tpl.templateIndex];
-      return template ? [{ slug: tpl.slug, name: template.name }] : [];
-    })
+      return template ? [{ tpl, template }] : [];
+    });
+    if (templates.length === 0) return [];
+    const catEn = locale === "en" ? TEMPLATE_CATEGORIES_EN[cat.id] : undefined;
+    return [
+      {
+        cat,
+        label: catEn?.label ?? cat.label,
+        description: catEn?.description ?? cat.description,
+        templates,
+      },
+    ];
+  });
+  const listedTemplates = categories.flatMap(c =>
+    c.templates.map(({ tpl, template }) => ({
+      slug: tpl.slug,
+      name: template.name,
+    }))
   );
 
   return (
-    <main className="lp-surface min-h-screen">
-      {/* パンくず */}
-      <nav
-        className="px-4 pt-6 pb-2 max-w-3xl mx-auto"
-        aria-label={t("templates.breadcrumbAria")}
+    <main className="lp lp-surface min-h-screen">
+      {/* ── 黒板の見出し帯 ── */}
+      <header
+        className="relative px-4 pt-8 pb-12 sm:pt-10 sm:pb-14"
+        style={{ backgroundColor: C.heroBg }}
       >
-        <ol className="flex flex-wrap items-center gap-1 text-xs text-lp-text-muted">
-          <li>
-            <Link href="/about" className="hover:underline text-lp-primary">
-              {t("footer.about")}
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li className="text-lp-text-secondary font-bold">
-            {t("templates.breadcrumb")}
-          </li>
-        </ol>
-      </nav>
+        <div className="max-w-4xl mx-auto">
+          <nav aria-label={t("templates.breadcrumbAria")}>
+            <ol
+              className="flex flex-wrap items-center gap-1 text-xs"
+              style={{ color: C.heroSubtext }}
+            >
+              <li>
+                <Link
+                  href="/about"
+                  className="underline underline-offset-4"
+                  style={{ color: C.heroText }}
+                >
+                  {t("footer.about")}
+                </Link>
+              </li>
+              <li aria-hidden="true">/</li>
+              <li>{t("templates.breadcrumb")}</li>
+            </ol>
+          </nav>
+          <h1
+            className="mt-6 text-3xl sm:text-4xl leading-tight"
+            style={{ color: C.heroText }}
+          >
+            {t("templates.heading")}
+          </h1>
+          <p
+            className="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed"
+            style={{ color: C.heroSubtext }}
+          >
+            {t("templates.subA")}
+            <strong style={{ color: C.heroText }}>
+              {t("templates.subFree")}
+            </strong>
+            {t("templates.subB", { count: TEMPLATE_SEO_DATA.length })}
+          </p>
+          <ul className="mt-6 -mx-4 px-4 flex gap-2 overflow-x-auto pb-1 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible">
+            {categories.map(({ cat, label }) => (
+              <li key={cat.id}>
+                <a
+                  href={`#${cat.id}`}
+                  className="inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-1.5 text-xs transition-colors"
+                  style={{
+                    backgroundColor: alpha(C.heroText, 12),
+                    color: C.heroText,
+                  }}
+                >
+                  <span aria-hidden="true">{cat.emoji}</span>
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <ChalkEdge />
+      </header>
 
-      {/* ヘッダー */}
-      <div className="px-4 pb-6 max-w-3xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-lp-text leading-tight">
-          {t("templates.heading")}
-        </h1>
-        <p className="mt-4 text-sm sm:text-base text-lp-text-secondary leading-relaxed">
-          {t("templates.subA")}
-          <strong>{t("templates.subFree")}</strong>
-          {t("templates.subB", { count: TEMPLATE_SEO_DATA.length })}
-        </p>
-      </div>
-
-      {/* カテゴリ別テンプレート */}
-      <div className="px-4 pb-10">
-        <div className="max-w-3xl mx-auto flex flex-col gap-10">
-          {TEMPLATE_CATEGORIES.map(cat => {
-            const templates = byCategory.get(cat.id);
-            if (!templates || templates.length === 0) return null;
-            const catEn =
-              locale === "en" ? TEMPLATE_CATEGORIES_EN[cat.id] : undefined;
+      {/* ── カテゴリ別テンプレート ── */}
+      <div className="px-4 py-12 sm:py-16">
+        <div className="max-w-4xl mx-auto flex flex-col gap-14">
+          {categories.map(({ cat, label, description, templates }, ci) => {
+            const tone = MEMBER_PRESETS[ci % MEMBER_PRESETS.length];
             return (
-              <section key={cat.id} id={cat.id}>
-                <h2 className="text-lg sm:text-xl font-extrabold text-lp-text mb-1">
-                  <span className="mr-2">{cat.emoji}</span>
-                  {catEn?.label ?? cat.label}
-                </h2>
-                <p className="text-sm text-lp-text-muted mb-4">
-                  {catEn?.description ?? cat.description}
+              <section key={cat.id} id={cat.id} className="scroll-mt-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <span
+                    aria-hidden="true"
+                    className="size-10 rounded-xl flex items-center justify-center text-xl"
+                    style={{ backgroundColor: tone.bgColor }}
+                  >
+                    {cat.emoji}
+                  </span>
+                  <h2 className="text-xl sm:text-2xl" style={{ color: C.text }}>
+                    {label}
+                  </h2>
+                </div>
+                <p className="text-sm mb-5" style={{ color: C.textMuted }}>
+                  {description}
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {templates.map(tpl => {
-                    const template = localizedTemplates[tpl.templateIndex];
-                    if (!template) return null;
-                    return (
-                      <Link
-                        key={tpl.slug}
-                        href={`/templates/${tpl.slug}`}
-                        className="group block rounded-xl border border-lp-line bg-lp-card p-4 shadow-sm hover:shadow-md hover:border-lp-primary transition-all duration-150"
-                      >
-                        <div className="flex items-start gap-3">
-                          <span
-                            className="text-2xl flex-shrink-0"
-                            aria-hidden="true"
-                          >
-                            {template.emoji}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm font-extrabold text-lp-text group-hover:text-lp-primary transition-colors">
-                              {template.name}
-                            </div>
-                            <div className="text-xs text-lp-text-muted mt-1 line-clamp-2">
-                              {template.groups
-                                .map(g =>
-                                  g.tasks.join(locale === "en" ? ", " : "、")
-                                )
-                                .join(" / ")}
-                            </div>
-                            <div className="text-xs text-lp-text-muted mt-1">
-                              {t(
-                                `templateSummary.${template.assignmentMode === "task" ? "task" : "group"}.${template.groups.length === 1 ? "one" : "other"}`,
-                                { count: template.groups.length }
-                              )}
-                              {locale === "en" ? " · " : "・"}
-                              {locale === "en"
-                                ? t(
-                                    `templateSummary.member.${template.members.length === 1 ? "one" : "other"}`,
-                                    { count: template.members.length }
-                                  )
-                                : `${template.members.length}名`}
-                            </div>
-                          </div>
-                          <ArrowRight className="size-4 text-lp-line group-hover:text-lp-primary flex-shrink-0 mt-1 transition-colors" />
-                        </div>
-                      </Link>
-                    );
-                  })}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {templates.map(({ tpl, template }) => (
+                    <TemplateCard
+                      key={tpl.slug}
+                      href={`/templates/${tpl.slug}`}
+                      emoji={template.emoji}
+                      name={template.name}
+                      tasks={template.groups
+                        .map(g => g.tasks.join(locale === "en" ? ", " : "、"))
+                        .join(" / ")}
+                      meta={
+                        <>
+                          {t(
+                            `templateSummary.${template.assignmentMode === "task" ? "task" : "group"}.${template.groups.length === 1 ? "one" : "other"}`,
+                            { count: template.groups.length }
+                          )}
+                          {locale === "en" ? " · " : "・"}
+                          {locale === "en"
+                            ? t(
+                                `templateSummary.member.${template.members.length === 1 ? "one" : "other"}`,
+                                { count: template.members.length }
+                              )
+                            : `${template.members.length}名`}
+                        </>
+                      }
+                      tone={tone}
+                    />
+                  ))}
                 </div>
               </section>
             );
@@ -148,16 +182,7 @@ export default function TemplatesPage() {
         </div>
       </div>
 
-      {/* toban についてに戻るリンク */}
-      <div className="px-4 pb-24 max-w-3xl mx-auto text-center">
-        <Link
-          href="/about"
-          className="inline-flex items-center gap-2 text-sm font-bold text-lp-primary hover:underline"
-        >
-          <ArrowLeft className="size-4" />
-          {t("footer.about")}
-        </Link>
-      </div>
+      <LpCtaBand />
 
       {/* JSON-LD: BreadcrumbList + ItemList（serializeJsonLd が < をエスケープ） */}
       <script

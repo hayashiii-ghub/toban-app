@@ -22,6 +22,7 @@ import { LIMITS } from "@shared/limits";
 import { getTemplates } from "@shared/template-localization";
 import { LP_COLORS as C, alpha } from "@/features/landing/theme";
 import { HeroRosterMock } from "@/features/landing/HeroRosterMock";
+import { ChalkEdge, LpCtaBand, TemplateCard } from "@/features/landing/parts";
 import { MEMBER_PRESETS } from "@shared/appearance";
 import { useT, useLocale, type MessageKey } from "@/i18n";
 import "./landing.css";
@@ -443,11 +444,7 @@ export default function LandingPage() {
               "radial-gradient(ellipse at 15% 20%, rgba(255,255,255,0.07), transparent 45%), radial-gradient(ellipse at 85% 80%, rgba(255,255,255,0.05), transparent 50%)",
           }}
         />
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-3"
-          style={{ backgroundColor: C.border }}
-        />
+        <ChalkEdge />
         <div className="relative max-w-5xl mx-auto grid md:grid-cols-[1.1fr_1fr] gap-12 md:gap-8 items-center">
           <div className="text-center md:text-left">
             <span
@@ -680,42 +677,17 @@ export default function LandingPage() {
             {featuredTemplates.map((tpl, i) => {
               const template = getTemplates(locale)[tpl.templateIndex];
               if (!template) return null;
-              const tone = MEMBER_PRESETS[i % MEMBER_PRESETS.length];
               return (
-                <Link
+                <TemplateCard
                   key={tpl.slug}
                   href={`/templates/${tpl.slug}`}
-                  className="group flex items-start gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md"
-                  style={{
-                    backgroundColor: C.cardBg,
-                    border: `1px solid ${C.line}`,
-                    borderTop: `4px solid ${tone.color}`,
-                    borderRadius: "8px",
-                  }}
-                >
-                  <span
-                    className="size-10 flex-shrink-0 rounded-lg flex items-center justify-center text-xl"
-                    style={{ backgroundColor: tone.bgColor }}
-                  >
-                    {template.emoji}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div
-                      className="text-sm group-hover:underline"
-                      style={{ color: C.text }}
-                    >
-                      {template.name}
-                    </div>
-                    <div
-                      className="text-xs mt-1 line-clamp-2"
-                      style={{ color: C.textMuted }}
-                    >
-                      {template.groups
-                        .map(g => g.tasks.join(locale === "en" ? ", " : "、"))
-                        .join(" / ")}
-                    </div>
-                  </div>
-                </Link>
+                  emoji={template.emoji}
+                  name={template.name}
+                  tasks={template.groups
+                    .map(g => g.tasks.join(locale === "en" ? ", " : "、"))
+                    .join(" / ")}
+                  tone={MEMBER_PRESETS[i % MEMBER_PRESETS.length]}
+                />
               );
             })}
           </div>
@@ -751,34 +723,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 最後のひと押し ── */}
-      <section
-        className="relative px-4 py-16 sm:py-20 text-center"
-        style={{ backgroundColor: C.heroBg }}
-      >
-        <h2 className="text-2xl sm:text-3xl" style={{ color: C.heroText }}>
-          {t("lp.cta.heading")}
-        </h2>
-        <p
-          className="mt-3 text-sm sm:text-base"
-          style={{ color: C.heroSubtext }}
-        >
-          {t("lp.cta.sub")}
-        </p>
-        <Link
-          href="/"
-          className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl px-8 py-3.5 text-base sm:text-lg shadow-lg transition-transform hover:-translate-y-0.5"
-          style={{ backgroundColor: C.heroText, color: C.primary }}
-        >
-          {t("lp.createSchedule")}
-          <ArrowRight className="size-5" />
-        </Link>
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-3"
-          style={{ backgroundColor: C.border }}
-        />
-      </section>
+      <LpCtaBand />
 
       {/* ── お問い合わせ ── */}
       <section id="contact" className="px-4 py-12 sm:py-16">
