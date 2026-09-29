@@ -10,61 +10,109 @@
     />
     <link rel="canonical" href="https://toban.app/privacy" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&display=swap"
+    />
     <style>
+      /* 配色は index.css の --lp-*（LP・こくばんテーマ）と同じ値 */
       body {
         margin: 0;
         background: #eee7da;
         color: #2a3a30;
         font:
-          16px/1.85 system-ui,
-          -apple-system,
+          16px/1.9 "Kiwi Maru",
+          "Hiragino Maru Gothic ProN",
           "Hiragino Sans",
           "Noto Sans JP",
-          sans-serif;
+          serif;
+        word-break: auto-phrase;
       }
+      header {
+        background: #294a3a;
+        color: #f3eedf;
+        border-bottom: 12px solid #6b4a2e;
+        padding: 18px 20px 22px;
+      }
+      header .inner,
       main {
         max-width: 720px;
         margin: 0 auto;
-        padding: 24px 20px 64px;
+      }
+      header nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+      }
+      header a {
+        color: #f3eedf;
+        text-underline-offset: 4px;
+      }
+      header .brand {
+        font-size: 1.25rem;
+        text-decoration: none;
+      }
+      main {
+        padding: 32px 20px 64px;
       }
       article {
         background: #fbfaf4;
-        border: 1px solid #dcd2c2;
-        border-radius: 6px;
-        padding: 8px 24px 24px;
-        margin-top: 16px;
+        border-radius: 10px;
+        box-shadow:
+          0 10px 30px rgba(41, 74, 58, 0.12),
+          0 1px 3px rgba(41, 74, 58, 0.1);
+        padding: 12px 28px 28px;
+        margin-bottom: 32px;
       }
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+        font-weight: 500;
         color: #294a3a;
         margin: 1em 0 0.2em;
       }
       h2 {
         font-size: 1.1rem;
+        font-weight: 500;
         color: #294a3a;
-        margin: 2em 0 0.4em;
-        padding-bottom: 0.2em;
-        border-bottom: 1px solid #dcd2c2;
+        margin: 2.2em 0 0.5em;
+        padding-left: 12px;
+        border-left: 4px solid #e7d08a;
       }
       a {
         color: #294a3a;
-      }
-      nav {
-        font-size: 0.9rem;
+        text-underline-offset: 3px;
       }
       .meta {
-        color: #4a6050;
-        font-size: 0.9rem;
+        color: #708878;
+        font-size: 0.85rem;
         margin: 0;
       }
       ul {
         padding-left: 1.3em;
       }
+      li + li {
+        margin-top: 0.3em;
+      }
+      @media (max-width: 480px) {
+        article {
+          padding: 8px 20px 24px;
+        }
+      }
     </style>
   </head>
   <body>
+    <header>
+      <div class="inner">
+        <nav>
+          <a class="brand" href="/">toban</a>
+          <a href="#en">English</a>
+        </nav>
+      </div>
+    </header>
     <main>
-      <nav><a href="/">toban トップへ</a> ・ <a href="#en">English</a></nav>
 
       <article>
         <h1>プライバシーポリシー</h1>
