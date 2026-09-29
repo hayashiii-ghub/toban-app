@@ -5,10 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --host",
-    "dev:api": "node scripts/ensure-dist.mjs && wrangler dev --port 8788",
-    "dev:full": "concurrently \"pnpm dev\" \"pnpm dev:api\"",
-    "build": "vite build",
-    "deploy:cf": "node scripts/prepare-wrangler-config.mjs --require && wrangler d1 migrations apply toban-maker-db --remote --config wrangler.deploy.jsonc && wrangler deploy --config wrangler.deploy.jsonc",
+    "build": "node scripts/prepare-wrangler-config.mjs && vite build",
+    "deploy:cf": "node scripts/prepare-wrangler-config.mjs --require && wrangler d1 migrations apply toban-maker-db --remote --config wrangler.deploy.jsonc && wrangler deploy --config dist/toban/wrangler.json",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
     "lint": "eslint .",
@@ -37,6 +35,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.57.2",
     "@cloudflare/workers-types": "^4.20260527.1",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
@@ -49,7 +48,6 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/coverage-v8": "^4.1.10",
-    "concurrently": "^10.0.5",
     "eslint": "^10.11.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "jsdom": "^30.1.1",

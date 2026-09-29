@@ -8,12 +8,13 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 - PR 前: `pnpm format:check && pnpm check && pnpm lint && pnpm test:coverage && pnpm build && pnpm test:e2e`
   - `pnpm check` は `e2e/` と直下の `*.config.ts` も型検査する
   - カバレッジの下限は `vite.config.ts`（行 70 / 分岐 60 / 関数 65 / 文 70）
-- e2e は vite を 3000 番で自前起動する。3000 番が塞がっていても止めない（利用者の dev サーバーのことがある）。一時設定でポートを変えて回す
+- `pnpm dev` と e2e は Cloudflare の Vite プラグインで Worker ごと動く（手元の D1 は直下の `.wrangler/state`。`pnpm db:migrate:local` と共有）。e2e は vite を 3000 番で自前起動する。3000 番が塞がっていても止めない（利用者の dev サーバーのことがある）。一時設定でポートを変えて回す
 
 ## 配信とルーティング（壊れやすい所）
 
 - `client/index.html` は SPA シェルで全ルートに配られる。ここの meta / JSON-LD は全ページに載る
 - `/` はアプリ本体、LP は `/about`
+- ビルドは D1 の ID を差し込んだ `wrangler.deploy.jsonc` を Vite プラグインに読ませ（`build` が先に `prepare-wrangler-config.mjs` を実行）、デプロイは出力の `dist/toban/wrangler.json` を使う。Vite の root が `client/` なので、プラグインの状態の置き場所と設定のパスは `vite.config.ts` で直下に向けている。PWA プラグインは client 環境だけで動かす
 - bot は UA 判定で `/about` `/templates` `/templates/:slug` `/junban` のプリレンダリングを受け取る（`server/handlers/seo.ts`）。`/` は対象外
 - ルートを足したら `seo.ts` の `KNOWN_APP_ROUTES` にも足す。無いと bot に 404 を返す
 - 利用者向けの静的ページ（今は `client/public/privacy.html`）は拡張子なしの URL で配られる。足すときは `KNOWN_APP_ROUTES` と `vite.config.ts` の `navigateFallbackDenylist` にも足す（無いと Service Worker が index.html で返し、SPA の 404 になる）

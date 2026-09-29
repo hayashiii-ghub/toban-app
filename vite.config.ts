@@ -1,15 +1,21 @@
 /// <reference types="vitest/config" />
+import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-export default defineConfig({
+// 本番ビルドは、D1 の ID を差し込んだ wrangler.deploy.jsonc（scripts/prepare-wrangler-config.mjs が作る）を読む
+const deployConfig = path.resolve(import.meta.dirname, "wrangler.deploy.jsonc");
+const devConfig = path.resolve(import.meta.dirname, "wrangler.jsonc");
+
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
-    VitePWA({
+    ...VitePWA({
       registerType: "autoUpdate",
       manifest: {
         name: "toban — かんたん当番表",
@@ -38,7 +44,26 @@ export default defineConfig({
         // オフライン時の読み取りは localStorage が担っているので、外して困らない。
         // 既存端末に残る api-cache は、読む経路が無くなるので参照されない。
       },
-    }),
+    }).map(plugin => ({
+      ...plugin,
+      // Worker（toban 環境）に registerSW.js などを出さない
+      applyToEnvironment: (env: { name: string }) => env.name === "client",
+    })),
+    // Vitest では Worker を起動しない
+    ...(process.env.VITEST
+      ? []
+      : [
+          cloudflare({
+            // Vite の root は client/ なので、wrangler の CLI と同じリポジトリ直下の状態を使う
+            persistState: {
+              path: path.resolve(import.meta.dirname, ".wrangler/state"),
+            },
+            configPath:
+              command === "build" && existsSync(deployConfig)
+                ? deployConfig
+                : devConfig,
+          }),
+        ]),
   ],
   resolve: {
     alias: {
@@ -95,8 +120,5 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    proxy: {
-      "/api": "http://localhost:8788",
-    },
   },
-});
+}));
