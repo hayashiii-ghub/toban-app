@@ -14,8 +14,10 @@ import {
   translate,
   type Locale,
 } from "./core";
-import { ja } from "./locales/ja";
+import { ja, type MessageKey } from "./locales/ja";
 import { en } from "./locales/en";
+
+export type { MessageKey };
 
 const LANG_STORAGE_KEY = "toban-lang";
 
@@ -24,7 +26,7 @@ const dicts: Record<Locale, Record<string, string>> = { ja, en };
 interface I18nContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: string, params?: Record<string, string | number>) => string;
+  t: (key: MessageKey, params?: Record<string, string | number>) => string;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -43,7 +45,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [locale]);
 
   const t = useCallback(
-    (key: string, params?: Record<string, string | number>) =>
+    (key: MessageKey, params?: Record<string, string | number>) =>
       translate(dicts, locale, key, params),
     [locale]
   );
@@ -89,7 +91,7 @@ export function useDateLocale(): string {
 // hook を使えない場所（class component の ErrorBoundary、純関数の lib）向けの翻訳。
 // Provider が document.documentElement.lang を同期しているのでそこから locale を読む。
 export function tStandalone(
-  key: string,
+  key: MessageKey,
   params?: Record<string, string | number>
 ): string {
   const lang =

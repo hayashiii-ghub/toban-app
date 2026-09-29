@@ -6,7 +6,7 @@ import { generateId } from "@/rotation/utils";
 import { loadState, saveState } from "@/lib/appState";
 import { ApiError, getScheduleForEdit } from "@/lib/api";
 import { decodeShareTransferData } from "@/lib/shareTransfer";
-import { useT, tStandalone } from "@/i18n";
+import { useT, tStandalone, type MessageKey } from "@/i18n";
 import { Loader2 } from "lucide-react";
 import { getSavedFontId } from "@/fonts";
 
@@ -20,7 +20,7 @@ export default function Transfer() {
   const search = useSearch();
   const [, navigate] = useLocation();
   const t = useT();
-  const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<MessageKey | null>(null);
 
   useEffect(() => {
     let cancelled = false;

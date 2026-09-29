@@ -3,11 +3,12 @@
 // index.html で先読みし、それ以外は選択時に初めて取得する。
 
 import { FONT_IDS, type FontId } from "@shared/appearance";
+import type { MessageKey } from "@/i18n/locales/ja";
 
 interface AppFont {
   id: FontId;
   /** i18n キー（表示名） */
-  labelKey: string;
+  labelKey: MessageKey;
   /** CSS font-family 値 */
   family: string;
   /** Google Fonts の CSS URL。未指定＝先読み済み（Kiwi Maru） */

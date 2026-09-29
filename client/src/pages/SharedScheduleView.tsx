@@ -16,7 +16,7 @@ import { Copy, Loader2 } from "lucide-react";
 import { PrintMenu } from "@/components/PrintMenu";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
 import { usePrintMode } from "@/hooks/usePrintMode";
-import { useT } from "@/i18n";
+import { useT, type MessageKey } from "@/i18n";
 import { getSavedFontId } from "@/fonts";
 import "./home.css";
 
@@ -28,7 +28,7 @@ export default function SharedScheduleView() {
   const [loaded, setLoaded] = useState<{
     slug: string;
     schedule: ScheduleDTO | null;
-    errorKey: string | null;
+    errorKey: MessageKey | null;
   } | null>(null);
   const current = loaded?.slug === slug ? loaded : null;
   const loading = !current;
@@ -50,7 +50,7 @@ export default function SharedScheduleView() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        let key = "shared.error.network";
+        let key: MessageKey = "shared.error.network";
         if (err instanceof ApiError) {
           if (err.status === 404) key = "shared.error.notFound";
           else if (err.status >= 500) key = "shared.error.server";

@@ -1,3 +1,5 @@
+import type { MessageKey } from "@/i18n/locales/ja";
+
 interface DesignThemeColors {
   pageBg: string;
   cardBg: string;
@@ -592,7 +594,7 @@ interface DesignTexture {
   /** 日本語名。合成テーマの name を組み立てるのに使う */
   name: string;
   /** 表示名の i18n キー。英語は質感に合う短いラベルを使う */
-  labelKey: string;
+  labelKey: MessageKey;
   description: string;
   borders: DesignThemeBorders;
   shadows: DesignThemeShadows;
@@ -605,7 +607,7 @@ interface DesignColor {
   /** 日本語名。合成テーマの name を組み立てるのに使う */
   name: string;
   /** 表示名の i18n キー */
-  labelKey: string;
+  labelKey: MessageKey;
   preview: DesignTheme["preview"];
   colors: DesignThemeColors;
 }
@@ -740,7 +742,7 @@ export const THEME_TEXTURES: DesignTexture[] = [sarasara, zarazara, mochimochi];
 /**
  * 色軸の表示名。IDは据え置きなので、名前を変えても保存データには影響しない。
  */
-const COLOR_LABELS: Record<string, { name: string; labelKey: string }> = {
+const COLOR_LABELS: Record<string, { name: string; labelKey: MessageKey }> = {
   whiteboard: { name: "いんさつ", labelKey: "themeColor.print" },
   chalkboard: { name: "こくばん", labelKey: "themeColor.blackboard" },
   crayon: { name: "だいだい", labelKey: "themeColor.daidai" },
@@ -936,6 +938,12 @@ export function composeTheme(textureId: string, colorId: string): DesignTheme {
   };
 }
 
+// 旧テーマの表示名キーは ID から組み立てるので型では確かめられない。全 ID が辞書にあることは
+// designThemes.test の「日本語では旧テーマ名…を維持する」が保証する（無いとキーがそのまま出て落ちる）
+function legacyThemeLabelKey(id: string): MessageKey {
+  return `legacyTheme.${id}` as MessageKey;
+}
+
 /**
  * 表示用のテーマ名。合成テーマは質感・色それぞれの i18n キーを引くので、
  * DesignTheme.name（日本語固定）ではなくこちらを画面で使う。
@@ -943,15 +951,15 @@ export function composeTheme(textureId: string, colorId: string): DesignTheme {
  */
 export function getThemeLabel(
   id: string | undefined,
-  t: (key: string, params?: Record<string, string | number>) => string
+  t: (key: MessageKey, params?: Record<string, string | number>) => string
 ): string {
   const legacy = id ? DESIGN_THEMES.find(theme => theme.id === id) : undefined;
-  if (legacy) return t(`legacyTheme.${legacy.id}`);
+  if (legacy) return t(legacyThemeLabelKey(legacy.id));
 
   const { textureId, colorId } = splitThemeId(id);
   const texture = THEME_TEXTURES.find(tx => tx.id === textureId);
   const color = THEME_COLORS.find(c => c.id === colorId);
-  if (!texture || !color) return t(`legacyTheme.${DESIGN_THEMES[0].id}`);
+  if (!texture || !color) return t(legacyThemeLabelKey(DESIGN_THEMES[0].id));
 
   const colorLabel = t(color.labelKey);
   return textureId === DEFAULT_TEXTURE_ID

@@ -1,7 +1,8 @@
 // English UI dictionary. Template content is localized separately.
-// Keys mirror ja.ts; missing keys fall back to ja at runtime.
+// Keys must match ja.ts exactly; the type makes a missing or extra key a type error.
+import type { MessageKey } from "./ja";
 
-export const en: Record<string, string> = {
+export const en: Record<MessageKey, string> = {
   "lang.switchLabel": "Language",
   "lang.ja": "日本語",
   "lang.en": "English",
