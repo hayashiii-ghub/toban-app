@@ -9,6 +9,7 @@ export const LP_COLORS = {
   textSecondary: "var(--lp-text-secondary)",
   textMuted: "var(--lp-text-muted)",
   border: "var(--lp-border)",
+  line: "var(--lp-line)",
   highlight: "var(--lp-highlight)",
   heroBg: "var(--lp-hero-bg)",
   heroText: "var(--lp-hero-text)",
