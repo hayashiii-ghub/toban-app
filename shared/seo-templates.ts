@@ -3,6 +3,8 @@
  * Worker SSR / クライアントページ双方で使用
  */
 
+import { AI_AGENTS } from "./site";
+
 export {
   TEMPLATE_CATEGORIES,
   TEMPLATE_CATEGORIES_EN,
@@ -399,6 +401,10 @@ export const COMMON_FAQ = [
       "テンプレートを選んでメンバーの名前を入れるだけで完成します。担当の数や人数、並び順は後から自由に編集できます。アカウント登録もインストールも不要で、ブラウザだけで作れます。作った表はそのまま印刷やPDF保存ができます。",
   },
   {
+    question: "AI（ChatGPTなど）で当番表を作れますか？",
+    answer: `はい。${AI_AGENTS.ja}で toban.app を開き、作りたい当番表をふだんの言葉で伝えるだけで、作成・修正・印刷までできます。メンバーの割り当てやローテーションの計算は toban が行います。表を公開（共有）するときだけは、必ずご自身で確定します。`,
+  },
+  {
     question: "どんな場面で使えますか？",
     answer:
       "学校の掃除・給食当番、保育園の午睡チェックやバス添乗、介護施設のフロア担当や夜勤、町内会の清掃、マンション共用部の管理、飲食店の開店・閉店作業、オフィスの電話・来客当番、家庭の家事分担など、用途別のテンプレートを用意しています。",
@@ -629,6 +635,10 @@ export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
     question: "How do I make a duty roster?",
     answer:
       "Pick a template and type in your members' names—that's it. The number of assignments, the number of people, and the order are all editable afterwards. No account and no install required; it works in the browser alone. You can print the finished roster or save it as a PDF.",
+  },
+  {
+    question: "Can I make a roster with AI, such as ChatGPT?",
+    answer: `Yes. Open toban.app in ${AI_AGENTS.en} and describe the roster you want in plain words; the AI can create, edit, and print it for you. toban handles the assignments and rotation math. Publishing (sharing) a roster always needs your own confirmation.`,
   },
   {
     question: "What can I use it for?",

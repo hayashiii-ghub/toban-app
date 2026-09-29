@@ -32,6 +32,7 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 
 - 入力の上限: `shared/limits.ts`（server のスキーマ、UI の maxLength、WebMCP の検証が共有）
 - トップと LP の検索タイトル: `shared/site.ts` の `SITE_TITLE`。`client/index.html` の title / og:title / twitter:title は手書きで、`shared/seo-templates.test.ts` が一致を見張る
+- toban を操作できる AI の名前: `shared/site.ts` の `AI_AGENTS`（LP・FAQ・bot 向け LP に差し込む）。実際に使えるものだけを書き、予定は書かない。LP の AI の節は `seo.ts` にも手書きしてあり、`seo.test.ts` が一致を見張る
 - UI 文字列: `client/src/i18n/locales/ja.ts` がキーの正本（`MessageKey`）。`en.ts` と `t()` の引数は型でこれに縛られる。利用者が保存した名前・仕事は言語を切り替えても翻訳しない
 - テンプレートは 32 件、LP は 31 件で正常（「カスタム（空白）」は LP を持たない）
 

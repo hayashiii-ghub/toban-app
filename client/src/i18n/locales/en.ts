@@ -1,5 +1,6 @@
 // English UI dictionary. Template content is localized separately.
 // Keys must match ja.ts exactly; the type makes a missing or extra key a type error.
+import { AI_AGENTS } from "@shared/site";
 import type { MessageKey } from "./ja";
 
 export const en: Record<MessageKey, string> = {
@@ -75,9 +76,8 @@ export const en: Record<MessageKey, string> = {
   "lp.createSchedule": "Create a schedule",
   "lp.heroTitleA": "Easy duty rosters,",
   "lp.heroTitleB": "ready in minutes.",
-  "lp.heroSubA":
-    "Create duty rosters for schools, nurseries, care homes, community groups, offices, and homes—",
-  "lp.heroSubB": "free, easy to make, print, and share.",
+  "lp.heroSubA": "Just type the names, or just ask AI.",
+  "lp.heroSubB": "Make a duty roster for free, then print it or share it.",
   "lp.featuresHeading": "Why toban",
   "lp.feat.noSignup.label": "No sign-up",
   "lp.feat.noSignup.desc":
@@ -95,6 +95,33 @@ export const en: Record<MessageKey, string> = {
   "lp.viewAllTemplates": "See all templates",
   "lp.viewJunban": "Decide order with the wheel",
   "lp.faqHeading": "FAQ",
+  "lp.hero.badge": "No sign-up · Free",
+  "lp.mock.title": "Cleaning duty",
+  "lp.mock.week": "Week 2",
+  "lp.mock.task1": "Floors",
+  "lp.mock.task2": "Trash",
+  "lp.mock.task3": "Kitchen",
+  "lp.mock.task4": "Windows",
+  "lp.mock.member1": "Alex",
+  "lp.mock.member2": "Sam",
+  "lp.mock.member3": "Kim",
+  "lp.mock.member4": "Lee",
+  "lp.mock.askLabel": "Ask AI",
+  "lp.mock.ask": '"Rotate cleaning among the 4 of us weekly"',
+  "lp.ways.or": "or",
+  "lp.cta.heading": "Ready to make your roster?",
+  "lp.cta.sub": "No sign-up. Start right now.",
+  "lp.faq.lead": "Can't find your question? Use the contact form below.",
+  "lp.ways.heading": "Two ways to make one",
+  "lp.ways.template.label": "From a template",
+  "lp.ways.template.desc":
+    "Pick one that fits, then type in your members' names.",
+  "lp.ways.template.link": "Choose a template",
+  "lp.ways.ai.label": "Ask AI",
+  "lp.ways.ai.desc": `Open toban.app in ${AI_AGENTS.en} and describe the roster you want.`,
+  "lp.ways.ai.example":
+    '"Make a lunch duty roster for groups 1–6. Rotate serving, milk, and cleanup weekly, and skip weekends."',
+  "lp.ways.ai.note": "Only publishing (sharing) needs your own confirmation.",
 
   // Contact form
   "contact.heading": "Contact",

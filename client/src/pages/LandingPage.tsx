@@ -21,6 +21,8 @@ import { CONTACT_CATEGORIES } from "@shared/schemas";
 import { LIMITS } from "@shared/limits";
 import { getTemplates } from "@shared/template-localization";
 import { LP_COLORS as C, alpha } from "@/features/landing/theme";
+import { HeroRosterMock } from "@/features/landing/HeroRosterMock";
+import { MEMBER_PRESETS } from "@shared/appearance";
 import { useT, useLocale, type MessageKey } from "@/i18n";
 import "./landing.css";
 
@@ -285,20 +287,21 @@ function ContactForm() {
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div
-      className="border overflow-hidden"
-      style={{
-        borderColor: C.border,
-        backgroundColor: C.cardBg,
-        borderRadius: "6px",
-      }}
-    >
+    <div style={{ borderBottom: `1px solid ${C.line}` }}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left"
+        aria-expanded={open}
+        className="w-full flex items-center gap-3 py-4 text-left"
       >
-        <span className="text-sm font-bold pr-4" style={{ color: C.text }}>
+        <span
+          aria-hidden="true"
+          className="size-7 flex-shrink-0 rounded-full flex items-center justify-center text-xs"
+          style={{ backgroundColor: C.primary, color: C.heroText }}
+        >
+          Q
+        </span>
+        <span className="flex-1 text-sm sm:text-base" style={{ color: C.text }}>
           {question}
         </span>
         <ChevronDown
@@ -310,15 +313,70 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         />
       </button>
       {open && (
-        <div className="px-4 pb-4">
-          <p
-            className="text-sm leading-relaxed"
-            style={{ color: C.textSecondary }}
-          >
-            {answer}
-          </p>
-        </div>
+        <p
+          className="pl-10 pr-6 pb-5 -mt-1 text-sm leading-relaxed"
+          style={{ color: C.textSecondary }}
+        >
+          {answer}
+        </p>
       )}
+    </div>
+  );
+}
+
+const FEATURES: { emoji: string; label: MessageKey; desc: MessageKey }[] = [
+  {
+    emoji: "📝",
+    label: "lp.feat.noSignup.label",
+    desc: "lp.feat.noSignup.desc",
+  },
+  { emoji: "🖨️", label: "lp.feat.print.label", desc: "lp.feat.print.desc" },
+  { emoji: "🔗", label: "lp.feat.share.label", desc: "lp.feat.share.desc" },
+  { emoji: "🆓", label: "lp.feat.free.label", desc: "lp.feat.free.desc" },
+];
+// MEMBER_PRESETS の添字（青・緑・オレンジ・紫）。アプリのメンバー色と同じ色味にそろえる
+const FEATURE_COLORS = [4, 3, 1, 5];
+
+// 作り方の 1 枚。紙を貼ったように少し傾ける
+function WayPanel({
+  emoji,
+  label,
+  tilt,
+  children,
+}: {
+  emoji: string;
+  label: string;
+  tilt: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="relative flex flex-col p-6 sm:p-7"
+      style={{
+        backgroundColor: C.cardBg,
+        borderRadius: "10px",
+        boxShadow:
+          "0 10px 30px rgba(41, 74, 58, 0.12), 0 1px 3px rgba(41, 74, 58, 0.1)",
+        transform: `rotate(${tilt * 0.6}deg)`,
+      }}
+    >
+      <span
+        aria-hidden="true"
+        className="absolute -top-3 left-1/2 h-6 w-20"
+        style={{
+          backgroundColor: alpha(C.highlight, 70),
+          transform: `translateX(-50%) rotate(${-tilt * 3}deg)`,
+        }}
+      />
+      <div className="flex items-center gap-3 mb-3">
+        <span aria-hidden="true" className="text-3xl">
+          {emoji}
+        </span>
+        <span className="text-lg sm:text-xl" style={{ color: C.text }}>
+          {label}
+        </span>
+      </div>
+      {children}
     </div>
   );
 }
@@ -372,172 +430,278 @@ export default function LandingPage() {
       className="lp lp-surface min-h-screen"
       style={{ fontFamily: "'Kiwi Maru', serif" }}
     >
-      {/* ── ヒーロー ── */}
+      {/* ── ヒーロー（黒板に貼った当番表） ── */}
       <section
-        className="px-4 py-16 sm:py-24 text-center"
+        className="relative overflow-hidden px-4 pt-14 pb-20 sm:pt-20 sm:pb-24"
         style={{ backgroundColor: C.heroBg }}
       >
-        <h1
-          className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight"
-          style={{ color: C.heroText }}
-        >
-          {t("lp.heroTitleA")}
-          <br className="sm:hidden" />
-          {t("lp.heroTitleB")}
-        </h1>
-        <p
-          className="mt-4 text-sm sm:text-base max-w-xl mx-auto leading-relaxed"
-          style={{ color: C.heroSubtext }}
-        >
-          {t("lp.heroSubA")}
-          <br className="hidden sm:block" />
-          {t("lp.heroSubB")}
-        </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-md sm:max-w-none mx-auto">
-          <div className="relative">
-            <button
-              type="button"
-              onClick={handleShare}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl font-bold px-8 py-3 text-base sm:text-lg border-2 transition-colors cursor-pointer min-w-[200px] sm:min-w-[220px]"
-              style={{ borderColor: C.heroText, color: C.heroText }}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(ellipse at 15% 20%, rgba(255,255,255,0.07), transparent 45%), radial-gradient(ellipse at 85% 80%, rgba(255,255,255,0.05), transparent 50%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-3"
+          style={{ backgroundColor: C.border }}
+        />
+        <div className="relative max-w-5xl mx-auto grid md:grid-cols-[1.1fr_1fr] gap-12 md:gap-8 items-center">
+          <div className="text-center md:text-left">
+            <span
+              className="inline-block text-xs px-3 py-1 rounded-full mb-5"
+              style={{ backgroundColor: C.highlight, color: C.primary }}
             >
-              <Share2 className="size-5" />
-              {t("lp.shareToban")}
-            </button>
-            {showShareMenu && (
-              <ShareDropdown onClose={() => setShowShareMenu(false)} />
-            )}
+              {t("lp.hero.badge")}
+            </span>
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl leading-tight lg:[&:lang(en)]:text-5xl"
+              style={{ color: C.heroText }}
+            >
+              {t("lp.heroTitleA")}
+              <br />
+              <span className="relative inline-block sm:whitespace-nowrap">
+                {t("lp.heroTitleB")}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 200 12"
+                  preserveAspectRatio="none"
+                  className="absolute left-0 -bottom-2 w-full h-3"
+                >
+                  <path
+                    d="M3 8 C 50 2, 110 11, 197 4"
+                    fill="none"
+                    stroke="var(--lp-highlight)"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+            </h1>
+            <p
+              className="mt-6 text-base sm:text-lg leading-relaxed"
+              style={{ color: C.heroSubtext }}
+            >
+              {t("lp.heroSubA")}
+              <br />
+              {t("lp.heroSubB")}
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-8 py-3.5 text-base sm:text-lg shadow-lg transition-transform hover:-translate-y-0.5"
+                style={{ backgroundColor: C.heroText, color: C.primary }}
+              >
+                {t("lp.createSchedule")}
+                <ArrowRight className="size-5" />
+              </Link>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-base border-2 transition-colors cursor-pointer"
+                  style={{
+                    borderColor: alpha(C.heroText, 50),
+                    color: C.heroText,
+                  }}
+                >
+                  <Share2 className="size-5" />
+                  {t("lp.shareToban")}
+                </button>
+                {showShareMenu && (
+                  <ShareDropdown onClose={() => setShowShareMenu(false)} />
+                )}
+              </div>
+            </div>
           </div>
-          <Link
-            href="/"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl font-bold px-8 py-3 text-base sm:text-lg shadow-lg transition-colors min-w-[200px] sm:min-w-[220px]"
-            style={{ backgroundColor: C.heroText, color: C.primary }}
-          >
-            {t("lp.createSchedule")}
-            <ArrowRight className="size-5" />
-          </Link>
+          <HeroRosterMock />
         </div>
       </section>
 
       {/* ── 特徴 ── */}
-      <section className="px-4 py-12 sm:py-16">
-        <div className="max-w-4xl mx-auto">
+      <section className="px-4 py-16 sm:py-20">
+        <div className="max-w-5xl mx-auto">
           <h2
-            className="text-xl sm:text-2xl font-extrabold text-center mb-8"
+            className="text-2xl sm:text-3xl text-center mb-12"
             style={{ color: C.text }}
           >
             {t("lp.featuresHeading")}
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            {[
-              {
-                emoji: "📝",
-                label: t("lp.feat.noSignup.label"),
-                desc: t("lp.feat.noSignup.desc"),
-              },
-              {
-                emoji: "🖨️",
-                label: t("lp.feat.print.label"),
-                desc: t("lp.feat.print.desc"),
-              },
-              {
-                emoji: "🔗",
-                label: t("lp.feat.share.label"),
-                desc: t("lp.feat.share.desc"),
-              },
-              {
-                emoji: "🆓",
-                label: t("lp.feat.free.label"),
-                desc: t("lp.feat.free.desc"),
-              },
-            ].map(({ label, emoji, desc }) => (
-              <div
-                key={label}
-                className="overflow-hidden"
-                style={{
-                  border: `1.5px solid ${C.border}`,
-                  borderRadius: "6px",
-                  backgroundColor: C.cardBg,
-                  boxShadow: "0 2px 8px rgba(46, 107, 79, 0.1)",
-                }}
-              >
-                {/* ヘッダー（アプリのカード上部と同じスタイル） */}
+          <ul className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+            {FEATURES.map(({ emoji, label, desc }, i) => (
+              <li key={label} className="text-center">
                 <div
-                  className="p-3 sm:py-4 text-center"
+                  aria-hidden="true"
+                  className="mx-auto mb-4 size-16 rounded-2xl flex items-center justify-center text-3xl"
                   style={{
-                    backgroundColor: `color-mix(in srgb, ${C.pageBg} 60%, #ffffff)`,
+                    backgroundColor: MEMBER_PRESETS[FEATURE_COLORS[i]].bgColor,
+                    transform: `rotate(${i % 2 === 0 ? -4 : 4}deg)`,
                   }}
                 >
-                  <div className="text-3xl sm:text-4xl mb-1" aria-hidden="true">
-                    {emoji}
-                  </div>
-                  <div
-                    className="text-sm sm:text-base"
-                    style={{ color: C.text, fontWeight: 800 }}
-                  >
-                    {label}
-                  </div>
+                  {emoji}
                 </div>
-                {/* ボディ */}
-                <div className="px-3 py-2.5 sm:py-3">
-                  <div
-                    className="lp-pretty text-xs leading-relaxed p-1.5 text-center"
-                    style={{
-                      backgroundColor: alpha(C.highlight, 25),
-                      borderRadius: "4px",
-                      border: `2px solid ${alpha(C.primary, 12)}`,
-                      color: C.textSecondary,
-                    }}
-                  >
-                    {desc}
-                  </div>
+                <div className="text-base sm:text-lg" style={{ color: C.text }}>
+                  {t(label)}
                 </div>
-              </div>
+                <p
+                  className="mt-2 text-xs sm:text-sm leading-relaxed max-w-[15rem] mx-auto"
+                  style={{ color: C.textSecondary }}
+                >
+                  {t(desc)}
+                </p>
+              </li>
             ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ── 作り方（テンプレート / AI） ── */}
+      <section
+        className="px-4 py-16 sm:py-20"
+        style={{ backgroundColor: alpha(C.primary, 5) }}
+      >
+        <div className="max-w-5xl mx-auto">
+          <h2
+            className="text-2xl sm:text-3xl text-center mb-12"
+            style={{ color: C.text }}
+          >
+            {t("lp.ways.heading")}
+          </h2>
+          <div className="grid md:grid-cols-[1fr_auto_1fr] gap-6 md:gap-4 items-stretch">
+            <WayPanel emoji="📋" label={t("lp.ways.template.label")} tilt={-1}>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: C.textSecondary }}
+              >
+                {t("lp.ways.template.desc")}
+              </p>
+              <ul aria-hidden="true" className="mt-5 flex flex-col gap-2">
+                {featuredTemplates.slice(0, 3).map((tpl, i) => {
+                  const template = getTemplates(locale)[tpl.templateIndex];
+                  if (!template) return null;
+                  return (
+                    <li
+                      key={tpl.slug}
+                      className="flex items-center gap-2 px-3 py-2 text-sm"
+                      style={{
+                        backgroundColor: "#ffffff",
+                        border: `1px solid ${C.line}`,
+                        borderRadius: "8px",
+                        color: C.text,
+                        marginLeft: `${i * 12}px`,
+                      }}
+                    >
+                      <span>{template.emoji}</span>
+                      {template.name}
+                    </li>
+                  );
+                })}
+              </ul>
+              <a
+                href="#templates"
+                className="mt-auto pt-5 inline-flex items-center gap-1 text-sm underline underline-offset-4"
+                style={{ color: C.primary }}
+              >
+                {t("lp.ways.template.link")}
+                <ChevronDown className="size-4" />
+              </a>
+            </WayPanel>
+            <div
+              aria-hidden="true"
+              className="flex md:flex-col items-center justify-center gap-3"
+            >
+              <span
+                className="h-px w-12 md:h-12 md:w-px"
+                style={{ backgroundColor: C.line }}
+              />
+              <span
+                className="size-12 rounded-full flex items-center justify-center text-xs"
+                style={{ backgroundColor: C.primary, color: C.heroText }}
+              >
+                {t("lp.ways.or")}
+              </span>
+              <span
+                className="h-px w-12 md:h-12 md:w-px"
+                style={{ backgroundColor: C.line }}
+              />
+            </div>
+            <WayPanel emoji="🤖" label={t("lp.ways.ai.label")} tilt={1}>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: C.textSecondary }}
+              >
+                {t("lp.ways.ai.desc")}
+              </p>
+              <p
+                className="lp-pretty mt-5 ml-auto max-w-[92%] px-4 py-3 text-sm leading-relaxed"
+                style={{
+                  backgroundColor: C.primary,
+                  color: C.heroText,
+                  borderRadius: "18px 18px 4px 18px",
+                }}
+              >
+                {t("lp.ways.ai.example")}
+              </p>
+              <p
+                className="mt-auto pt-5 text-xs"
+                style={{ color: C.textMuted }}
+              >
+                {t("lp.ways.ai.note")}
+              </p>
+            </WayPanel>
           </div>
         </div>
       </section>
 
       {/* ── テンプレート紹介 ── */}
-      <section
-        className="px-4 py-12 sm:py-16"
-        style={{ backgroundColor: alpha(C.primary, 3) }}
-      >
-        <div className="max-w-4xl mx-auto">
-          <h2
-            className="text-xl sm:text-2xl font-extrabold text-center mb-2"
-            style={{ color: C.text }}
-          >
-            {t("lp.templatesHeading")}
-          </h2>
-          <p
-            className="text-sm text-center mb-8"
-            style={{ color: C.textMuted }}
-          >
-            {t("lp.templatesSubtitle", { count: TEMPLATE_SEO_DATA.length })}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {featuredTemplates.map(tpl => {
-              if (!tpl) return null;
+      <section id="templates" className="px-4 py-16 sm:py-20 scroll-mt-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-8">
+            <div>
+              <h2 className="text-2xl sm:text-3xl" style={{ color: C.text }}>
+                {t("lp.templatesHeading")}
+              </h2>
+              <p className="mt-2 text-sm" style={{ color: C.textMuted }}>
+                {t("lp.templatesSubtitle", { count: TEMPLATE_SEO_DATA.length })}
+              </p>
+            </div>
+            <Link
+              href="/templates"
+              className="inline-flex items-center gap-1 text-sm underline underline-offset-4"
+              style={{ color: C.primary }}
+            >
+              {t("lp.viewAllTemplates")}
+              <ArrowRight className="size-3" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {featuredTemplates.map((tpl, i) => {
               const template = getTemplates(locale)[tpl.templateIndex];
               if (!template) return null;
+              const tone = MEMBER_PRESETS[i % MEMBER_PRESETS.length];
               return (
                 <Link
                   key={tpl.slug}
                   href={`/templates/${tpl.slug}`}
-                  className="group flex items-start gap-3 border p-4 transition-all duration-150 hover:shadow-md"
+                  className="group flex items-start gap-3 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md"
                   style={{
-                    borderColor: C.border,
                     backgroundColor: C.cardBg,
-                    borderRadius: "6px",
+                    border: `1px solid ${C.line}`,
+                    borderTop: `4px solid ${tone.color}`,
+                    borderRadius: "8px",
                   }}
                 >
-                  <span className="text-2xl flex-shrink-0">
+                  <span
+                    className="size-10 flex-shrink-0 rounded-lg flex items-center justify-center text-xl"
+                    style={{ backgroundColor: tone.bgColor }}
+                  >
                     {template.emoji}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div
-                      className="text-sm font-bold group-hover:underline"
+                      className="text-sm group-hover:underline"
                       style={{ color: C.text }}
                     >
                       {template.name}
@@ -551,26 +715,14 @@ export default function LandingPage() {
                         .join(" / ")}
                     </div>
                   </div>
-                  <ArrowRight
-                    className="size-4 flex-shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ color: C.primary }}
-                  />
                 </Link>
               );
             })}
           </div>
-          <div className="text-center mt-6 flex flex-col items-center gap-2">
-            <Link
-              href="/templates"
-              className="inline-flex items-center gap-1 text-sm font-bold underline"
-              style={{ color: C.primary }}
-            >
-              {t("lp.viewAllTemplates")}
-              <ArrowRight className="size-3" />
-            </Link>
+          <div className="text-center mt-8">
             <Link
               href="/junban"
-              className="inline-flex items-center gap-1 text-sm font-bold underline"
+              className="inline-flex items-center gap-1 text-sm underline underline-offset-4"
               style={{ color: C.primary }}
             >
               {t("lp.viewJunban")}
@@ -581,15 +733,23 @@ export default function LandingPage() {
       </section>
 
       {/* ── Q&A ── */}
-      <section className="px-4 py-12 sm:py-16">
-        <div className="max-w-3xl mx-auto">
-          <h2
-            className="text-xl sm:text-2xl font-extrabold text-center mb-8"
-            style={{ color: C.text }}
-          >
-            {t("lp.faqHeading")}
-          </h2>
-          <div className="flex flex-col gap-3">
+      <section
+        className="px-4 py-16 sm:py-20"
+        style={{ backgroundColor: alpha(C.primary, 5) }}
+      >
+        <div className="max-w-5xl mx-auto grid md:grid-cols-[16rem_1fr] gap-8 md:gap-12">
+          <div className="md:sticky md:top-8 self-start text-center md:text-left">
+            <h2 className="text-2xl sm:text-3xl" style={{ color: C.text }}>
+              {t("lp.faqHeading")}
+            </h2>
+            <p
+              className="mt-3 text-sm leading-relaxed"
+              style={{ color: C.textMuted }}
+            >
+              {t("lp.faq.lead")}
+            </p>
+          </div>
+          <div style={{ borderTop: `1px solid ${C.line}` }}>
             {faqs.map(faq => (
               <FAQItem
                 key={faq.question}
@@ -601,12 +761,37 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── お問い合わせ ── */}
+      {/* ── 最後のひと押し ── */}
       <section
-        id="contact"
-        className="px-4 py-12 sm:py-16"
-        style={{ backgroundColor: alpha(C.primary, 3) }}
+        className="relative px-4 py-16 sm:py-20 text-center"
+        style={{ backgroundColor: C.heroBg }}
       >
+        <h2 className="text-2xl sm:text-3xl" style={{ color: C.heroText }}>
+          {t("lp.cta.heading")}
+        </h2>
+        <p
+          className="mt-3 text-sm sm:text-base"
+          style={{ color: C.heroSubtext }}
+        >
+          {t("lp.cta.sub")}
+        </p>
+        <Link
+          href="/"
+          className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl px-8 py-3.5 text-base sm:text-lg shadow-lg transition-transform hover:-translate-y-0.5"
+          style={{ backgroundColor: C.heroText, color: C.primary }}
+        >
+          {t("lp.createSchedule")}
+          <ArrowRight className="size-5" />
+        </Link>
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-3"
+          style={{ backgroundColor: C.border }}
+        />
+      </section>
+
+      {/* ── お問い合わせ ── */}
+      <section id="contact" className="px-4 py-12 sm:py-16">
         <div className="max-w-xl mx-auto">
           <h2
             className="text-xl sm:text-2xl font-extrabold text-center mb-2"
@@ -621,11 +806,12 @@ export default function LandingPage() {
             {t("contact.subtitle")}
           </p>
           <div
-            className="border p-4 sm:p-6"
+            className="p-5 sm:p-7"
             style={{
-              borderColor: C.border,
               backgroundColor: C.cardBg,
-              borderRadius: "6px",
+              borderRadius: "10px",
+              boxShadow:
+                "0 10px 30px rgba(41, 74, 58, 0.12), 0 1px 3px rgba(41, 74, 58, 0.1)",
             }}
           >
             <ContactForm />

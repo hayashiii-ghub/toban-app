@@ -12,6 +12,7 @@ import {
 } from "./seo";
 import { COMMON_FAQ, TEMPLATE_SEO_DATA } from "../../shared/seo-templates";
 import { TEMPLATE_CONTENT } from "../../shared/template-content";
+import { ja } from "../../client/src/i18n/locales/ja";
 
 describe("isBot", () => {
   // 生成AI検索のクローラーは JS を実行しない。bot 判定を外すとプリレンダリングが返らず、
@@ -180,6 +181,22 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
     const html = renderLandingPageHtml(origin);
     expect(html).toContain("当番表作成アプリ");
     expect(html).toMatch(/エクセル|Excel/);
+  });
+
+  it("renderLandingPageHtml が画面の LP と同じ作り方の節を持つ", () => {
+    // 人向けの LP にだけある本文は、bot 向けと食い違って見える。文言を直すときは両方直す。
+    const html = renderLandingPageHtml(origin);
+    for (const key of [
+      "lp.ways.heading",
+      "lp.ways.template.label",
+      "lp.ways.template.desc",
+      "lp.ways.ai.label",
+      "lp.ways.ai.desc",
+      "lp.ways.ai.example",
+      "lp.ways.ai.note",
+    ] as const) {
+      expect(html).toContain(ja[key]);
+    }
   });
 
   it("renderLandingPageHtml の description がテンプレートに言及する", () => {

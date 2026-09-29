@@ -1,7 +1,7 @@
 // 日本語UI辞書。テンプレートの内容は別のデータ定義で管理する。
 // キーは namespace.key 形式。この辞書がキーの正本で、en.ts と t() の引数は型でこれに縛られる。
 
-import { SITE_TITLE } from "@shared/site";
+import { AI_AGENTS, SITE_TITLE } from "@shared/site";
 
 export const ja = {
   "lang.switchLabel": "言語",
@@ -79,8 +79,8 @@ export const ja = {
   "lp.createSchedule": "当番表を作る",
   "lp.heroTitleA": "かんたん当番表、",
   "lp.heroTitleB": "すぐ完成。",
-  "lp.heroSubA": "学校・保育園・介護施設・自治会・オフィス・家庭の当番表を",
-  "lp.heroSubB": "無料でかんたんに作成・印刷・共有できます。",
+  "lp.heroSubA": "名前を入れるだけでも、AIに頼むだけでも。",
+  "lp.heroSubB": "無料で作って、印刷やLINEで共有できます。",
   "lp.featuresHeading": "tobanの特徴",
   "lp.feat.noSignup.label": "登録不要",
   "lp.feat.noSignup.desc":
@@ -98,6 +98,33 @@ export const ja = {
   "lp.viewAllTemplates": "テンプレート一覧を見る",
   "lp.viewJunban": "順番決め・当番ルーレットで作る",
   "lp.faqHeading": "よくある質問",
+  "lp.hero.badge": "登録不要・完全無料",
+  "lp.mock.title": "掃除当番",
+  "lp.mock.week": "第2週",
+  "lp.mock.task1": "床そうじ",
+  "lp.mock.task2": "ゴミ出し",
+  "lp.mock.task3": "給湯室",
+  "lp.mock.task4": "窓ふき",
+  "lp.mock.member1": "佐藤",
+  "lp.mock.member2": "鈴木",
+  "lp.mock.member3": "高橋",
+  "lp.mock.member4": "田中",
+  "lp.mock.askLabel": "AIに頼むと",
+  "lp.mock.ask": "「掃除当番を4人で毎週回して」",
+  "lp.ways.or": "または",
+  "lp.cta.heading": "さっそく、当番表を作ってみませんか",
+  "lp.cta.sub": "登録なしで、いますぐ始められます。",
+  "lp.faq.lead": "ここにない質問は、ページ下のお問い合わせからどうぞ。",
+  "lp.ways.heading": "作り方は、ふたつ",
+  "lp.ways.template.label": "テンプレートから",
+  "lp.ways.template.desc":
+    "場面に合った表を選んで、メンバーの名前を入れるだけ。",
+  "lp.ways.template.link": "テンプレートを選ぶ",
+  "lp.ways.ai.label": "AIに頼んで",
+  "lp.ways.ai.desc": `${AI_AGENTS.ja}で toban.app を開いて、作りたい当番表を伝えるだけ。`,
+  "lp.ways.ai.example":
+    "「1班〜6班で給食当番表を作って。配膳・牛乳・片付けを毎週交代、土日はお休み」",
+  "lp.ways.ai.note": "表の公開（共有）だけは、必ずご自身で確定します。",
 
   // お問い合わせフォーム
   "contact.heading": "お問い合わせ",
