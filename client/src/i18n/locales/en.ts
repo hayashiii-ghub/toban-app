@@ -341,12 +341,15 @@ export const en: Record<MessageKey, string> = {
   "confirmDelete.confirm": "Delete",
 
   // Install prompt
-  "install.androidTitle": "Install toban",
-  "install.androidDesc": "Quick access from your home screen",
+  "install.promptTitle": "Install toban",
+  "install.mobileDesc": "Open it right from your home screen",
+  "install.desktopDesc": "Open it right from your Dock or taskbar",
   "install.add": "Add",
   "install.iosTitle": "Add to home screen",
-  "install.iosDescA": "Tap the Share button below",
-  "install.iosDescB": '→ "Add to Home Screen" to install',
+  "install.iosDesc":
+    'Tap Share (inside "…" on iOS 26) → "Add to Home Screen" to install',
+  "install.macSafariTitle": "Add to Dock",
+  "install.macSafariDesc": 'Choose File → "Add to Dock" to install',
 
   // Schedule actions
   "schedule.deleteFailed": "Failed to delete from the server",

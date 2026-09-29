@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { X, Download, Share } from "lucide-react";
 import { safeGetItem, safeSetItem } from "@/lib/storage";
 import { useT } from "@/i18n";
@@ -8,14 +8,19 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-function isIOSSafari(): boolean {
+// Safari は beforeinstallprompt を出さないので、手順を文章で案内する
+function detectSafariGuide(): "ios" | "macSafari" | null {
   const ua = navigator.userAgent;
-  return (
-    /iPad|iPhone|iPod/.test(ua) &&
-    !("MSStream" in window) &&
-    /Safari/.test(ua) &&
-    !/CriOS|FxiOS|OPiOS/.test(ua)
-  );
+  const isSafari =
+    /Safari/.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|OPiOS|EdgiOS/.test(ua);
+  if (!isSafari) return null;
+  // iPadOS の Safari は Mac と同じ UA を名乗るので、タッチ対応で見分ける
+  const isIPad = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+  if (/iPad|iPhone|iPod/.test(ua) || isIPad) return "ios";
+  // 「Dock に追加」は Safari 17 から
+  const version = Number(/Version\/(\d+)/.exec(ua)?.[1] ?? 0);
+  if (/Macintosh/.test(ua) && version >= 17) return "macSafari";
+  return null;
 }
 
 function isStandalone(): boolean {
@@ -27,6 +32,53 @@ function isStandalone(): boolean {
 }
 
 const DISMISS_KEY = "toban-install-dismissed";
+
+function Banner({
+  icon,
+  title,
+  description,
+  action,
+  onDismiss,
+}: {
+  icon: ReactNode;
+  title: string;
+  description: string;
+  action?: ReactNode;
+  onDismiss: () => void;
+}) {
+  const t = useT();
+  return (
+    <div
+      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 theme-border theme-shadow p-3 flex items-center gap-3"
+      style={{
+        backgroundColor: "var(--dt-current-highlight)",
+        borderRadius: "var(--dt-border-radius)",
+      }}
+    >
+      {icon}
+      <div className="flex-1">
+        <div className="text-sm font-bold" style={{ color: "var(--dt-text)" }}>
+          {title}
+        </div>
+        <div
+          className="text-xs font-medium"
+          style={{ color: "var(--dt-text-secondary)" }}
+        >
+          {description}
+        </div>
+      </div>
+      {action}
+      <button
+        type="button"
+        onClick={onDismiss}
+        className="p-1 hover:bg-yellow-400 rounded-lg transition-colors shrink-0"
+        aria-label={t("common.close")}
+      >
+        <X className="size-4" />
+      </button>
+    </div>
+  );
+}
 
 export function InstallPrompt() {
   const t = useT();
@@ -45,16 +97,17 @@ export function InstallPrompt() {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  // dismissed と環境から直接導出 (useEffect/useState 不要)
-  const showIOSGuide = !dismissed && isIOSSafari() && !isStandalone();
+  if (dismissed) return null;
 
   const handleDismiss = () => {
     setDismissed(true);
     safeSetItem(DISMISS_KEY, "1");
   };
+  const iconClass = "size-5 shrink-0";
+  const iconStyle = { color: "var(--dt-text)" };
 
-  // Android/Chrome: standard install prompt
-  if (deferredPrompt && !dismissed) {
+  // Chrome / Edge（Android と PC）: ブラウザのインストール画面を呼ぶ
+  if (deferredPrompt) {
     const handleInstall = async () => {
       await deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
@@ -62,92 +115,50 @@ export function InstallPrompt() {
         setDeferredPrompt(null);
       }
     };
+    const isMobile = /Android|Mobi/.test(navigator.userAgent);
 
     return (
-      <div
-        className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 theme-border theme-shadow p-3 flex items-center gap-3"
-        style={{
-          backgroundColor: "var(--dt-current-highlight)",
-          borderRadius: "var(--dt-border-radius)",
-        }}
-      >
-        <Download
-          className="size-5 shrink-0"
-          style={{ color: "var(--dt-text)" }}
-        />
-        <div className="flex-1">
-          <div
-            className="text-sm font-bold"
-            style={{ color: "var(--dt-text)" }}
+      <Banner
+        icon={<Download className={iconClass} style={iconStyle} />}
+        title={t("install.promptTitle")}
+        description={t(isMobile ? "install.mobileDesc" : "install.desktopDesc")}
+        action={
+          <button
+            type="button"
+            onClick={handleInstall}
+            className="theme-border px-3 py-1.5 text-xs font-bold transition-all hover:translate-y-[-1px]"
+            style={{
+              backgroundColor: "var(--dt-card-bg)",
+              borderRadius: "6px",
+            }}
           >
-            {t("install.androidTitle")}
-          </div>
-          <div
-            className="text-xs font-medium"
-            style={{ color: "var(--dt-text-secondary)" }}
-          >
-            {t("install.androidDesc")}
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={handleInstall}
-          className="theme-border px-3 py-1.5 text-xs font-bold transition-all hover:translate-y-[-1px]"
-          style={{ backgroundColor: "var(--dt-card-bg)", borderRadius: "6px" }}
-        >
-          {t("install.add")}
-        </button>
-        <button
-          type="button"
-          onClick={handleDismiss}
-          className="p-1 hover:bg-yellow-400 rounded-lg transition-colors"
-          aria-label={t("common.close")}
-        >
-          <X className="size-4" />
-        </button>
-      </div>
+            {t("install.add")}
+          </button>
+        }
+        onDismiss={handleDismiss}
+      />
     );
   }
 
-  // iOS Safari: manual guide
-  if (showIOSGuide) {
+  const guide = isStandalone() ? null : detectSafariGuide();
+  if (guide === "ios") {
     return (
-      <div
-        className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 theme-border theme-shadow p-3 flex items-center gap-3"
-        style={{
-          backgroundColor: "var(--dt-current-highlight)",
-          borderRadius: "var(--dt-border-radius)",
-        }}
-      >
-        <Share
-          className="size-5 shrink-0"
-          style={{ color: "var(--dt-text)" }}
-        />
-        <div className="flex-1">
-          <div
-            className="text-sm font-bold"
-            style={{ color: "var(--dt-text)" }}
-          >
-            {t("install.iosTitle")}
-          </div>
-          <div
-            className="text-xs font-medium"
-            style={{ color: "var(--dt-text-secondary)" }}
-          >
-            {t("install.iosDescA")}
-            <span className="inline-block mx-0.5">↗</span>
-            {t("install.iosDescB")}
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={handleDismiss}
-          className="p-1 hover:bg-yellow-400 rounded-lg transition-colors shrink-0"
-          aria-label={t("common.close")}
-        >
-          <X className="size-4" />
-        </button>
-      </div>
+      <Banner
+        icon={<Share className={iconClass} style={iconStyle} />}
+        title={t("install.iosTitle")}
+        description={t("install.iosDesc")}
+        onDismiss={handleDismiss}
+      />
+    );
+  }
+  if (guide === "macSafari") {
+    return (
+      <Banner
+        icon={<Download className={iconClass} style={iconStyle} />}
+        title={t("install.macSafariTitle")}
+        description={t("install.macSafariDesc")}
+        onDismiss={handleDismiss}
+      />
     );
   }
 

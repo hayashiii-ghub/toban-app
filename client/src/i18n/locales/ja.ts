@@ -342,12 +342,16 @@ export const ja = {
   "confirmDelete.confirm": "削除する",
 
   // インストール案内
-  "install.androidTitle": "アプリとして追加",
-  "install.androidDesc": "ホーム画面からすぐアクセス",
+  "install.promptTitle": "アプリとして追加",
+  "install.mobileDesc": "ホーム画面からすぐ開けます",
+  "install.desktopDesc": "Dock やタスクバーからすぐ開けます",
   "install.add": "追加",
   "install.iosTitle": "ホーム画面に追加",
-  "install.iosDescA": "下の共有ボタン",
-  "install.iosDescB": "→「ホーム画面に追加」でアプリにできます",
+  "install.iosDesc":
+    "共有ボタン（iOS 26 は「…」の中）→「ホーム画面に追加」でアプリにできます",
+  "install.macSafariTitle": "Dock に追加",
+  "install.macSafariDesc":
+    "メニューの「ファイル」→「Dock に追加」でアプリにできます",
 
   // スケジュール操作
   "schedule.deleteFailed": "サーバーからの削除に失敗しました",
