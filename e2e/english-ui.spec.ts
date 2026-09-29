@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { DEFAULT_APP_STATE } from "../client/src/rotation/defaultState";
 import type { AppState } from "../shared/types";
+import { SITE_TITLE } from "../shared/site";
 
 const MULTITASK_STATE = {
   schedules: [
@@ -73,9 +74,7 @@ test("English first visit, blank creation and language switch preserve roster co
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Getting started"
   );
-  await expect(page).toHaveTitle(
-    "当番表作成アプリ toban｜無料で簡単作成・印刷・共有"
-  );
+  await expect(page).toHaveTitle(SITE_TITLE);
   await expect(page.locator("main")).not.toContainText(
     /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u
   );

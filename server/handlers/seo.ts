@@ -16,6 +16,7 @@ import {
   serializeJsonLd,
 } from "../../shared/jsonLd";
 import { TEMPLATES } from "../../shared/templates";
+import { SITE_TITLE } from "../../shared/site";
 import { TEMPLATE_CONTENT } from "../../shared/template-content";
 
 interface Env {
@@ -178,7 +179,7 @@ export async function handleScheduleOgp(
 // ─── LP のプリレンダリング (bot用) ───
 
 export function renderLandingPageHtml(origin: string): string {
-  const title = "当番表作成アプリ toban｜無料で簡単作成・印刷・共有";
+  const title = SITE_TITLE;
   const desc = `学校・保育園・介護施設・自治会・オフィス・家庭などの当番表をかんたんに作れる無料の当番表作成アプリ。アカウント登録・インストール不要、エクセルがなくてもスマホ・パソコンのブラウザだけで印刷品質の当番表がすぐ完成し、LINEやメールで共有できます。用途別のテンプレートを${TEMPLATE_SEO_DATA.length}種類用意。`;
 
   const faqHtml = COMMON_FAQ.map(

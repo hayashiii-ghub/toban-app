@@ -16,6 +16,7 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 import { useHomeState } from "@/hooks/useHomeState";
 import { useTobanTools } from "@/hooks/useTobanTools";
 import { useT } from "@/i18n";
+import { SITE_TITLE } from "@shared/site";
 import "./home.css";
 
 export default function Home() {
@@ -25,7 +26,7 @@ export default function Home() {
     // Keep the canonical root URL's search title stable. The visible app can
     // follow the visitor's language without exposing crawler locale detection
     // as a different title for the same URL.
-    document.title = "当番表作成アプリ toban｜無料で簡単作成・印刷・共有";
+    document.title = SITE_TITLE;
   }, []);
   useTobanTools(s); // WebMCP tools を登録（非対応ブラウザでは no-op）
 
