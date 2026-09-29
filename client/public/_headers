@@ -1,0 +1,12 @@
+# ブラウザのページ遷移は Worker を通らないので、Worker と同じヘッダーをここでも付ける。
+# 値は server/worker.ts の HTML_SECURITY_HEADERS と同じ（worker.test.ts が見張る）
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: object-src 'none'; base-uri 'self'; frame-ancestors 'none'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/s/*
+  X-Robots-Tag: noindex
