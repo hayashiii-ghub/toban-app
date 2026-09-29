@@ -77,11 +77,12 @@ export default defineConfig({
         "client/src/vite-env.d.ts",
         "client/src/components/ui/**",
       ],
+      // 実測（2026-09: 行 74% / 分岐 65%）の少し下。下がったら理由を確かめる
       thresholds: {
-        statements: 35,
-        branches: 35,
-        functions: 35,
-        lines: 35,
+        statements: 70,
+        branches: 60,
+        functions: 65,
+        lines: 70,
       },
     },
   } satisfies VitestUserConfig["test"],

@@ -35,6 +35,8 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
   }, [step.selector]);
 
   useEffect(() => {
+    // 対象要素の位置は描画後にしか測れないので、effect の中で state に写す
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     updateTargetRect();
 
     const handleResize = () => updateTargetRect();
