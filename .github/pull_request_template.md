@@ -12,6 +12,8 @@ closes #
 
 ## チェックリスト
 
+- [ ] `pnpm format:check` — 整形が崩れていないこと
 - [ ] `pnpm check` — 型検査が通ること
+- [ ] `pnpm lint` — lint が通ること
 - [ ] `pnpm test` — テストが通ること
 - [ ] `pnpm build` — ビルドが成功すること

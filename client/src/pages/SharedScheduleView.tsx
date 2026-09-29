@@ -25,9 +25,16 @@ export default function SharedScheduleView() {
   const { slug } = useParams<{ slug: string }>();
   const [, navigate] = useLocation();
   const t = useT();
-  const [schedule, setSchedule] = useState<ScheduleDTO | null>(null);
-  const [errorKey, setErrorKey] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  // 取得した slug ごと結果を持ち、表示中の slug と違えば読み込み中とみなす
+  const [loaded, setLoaded] = useState<{
+    slug: string;
+    schedule: ScheduleDTO | null;
+    errorKey: string | null;
+  } | null>(null);
+  const current = loaded?.slug === slug ? loaded : null;
+  const loading = !current;
+  const schedule = current?.schedule ?? null;
+  const errorKey = current?.errorKey ?? null;
   const [viewTab, setViewTab] = useState<ViewTabValue>("cards");
   const printDate = usePrintDateString();
 
@@ -37,31 +44,20 @@ export default function SharedScheduleView() {
   useEffect(() => {
     if (!slug) return;
     let cancelled = false;
-    setLoading(true);
-    setErrorKey(null);
-    setSchedule(null);
     getSchedule(slug)
       .then(data => {
         if (cancelled) return;
-        setSchedule(data);
+        setLoaded({ slug, schedule: data, errorKey: null });
       })
       .catch((err: unknown) => {
         if (cancelled) return;
+        let key = "shared.error.network";
         if (err instanceof ApiError) {
-          if (err.status === 404) {
-            setErrorKey("shared.error.notFound");
-          } else if (err.status >= 500) {
-            setErrorKey("shared.error.server");
-          } else {
-            setErrorKey("shared.error.fetch");
-          }
-        } else {
-          setErrorKey("shared.error.network");
+          if (err.status === 404) key = "shared.error.notFound";
+          else if (err.status >= 500) key = "shared.error.server";
+          else key = "shared.error.fetch";
         }
-      })
-      .finally(() => {
-        if (cancelled) return;
-        setLoading(false);
+        setLoaded({ slug, schedule: null, errorKey: key });
       });
     return () => {
       cancelled = true;

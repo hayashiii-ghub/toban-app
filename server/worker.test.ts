@@ -51,3 +51,67 @@ describe("SEO response policy", () => {
     expect(response.headers.get("X-Robots-Tag")).toBe("noindex");
   });
 });
+
+describe("bot とそれ以外の振り分け", () => {
+  const assetsResponse = () => new Response("asset", { status: 200 });
+
+  function envWithAssets() {
+    const assets = { fetch: vi.fn(async () => assetsResponse()) };
+    return {
+      env: { ASSETS: assets, DB: {}, SLACK_WEBHOOK_URL: "" } as never,
+      assets,
+    };
+  }
+
+  function get(path: string, userAgent: string) {
+    return new Request(`https://toban.app${path}`, {
+      headers: { "User-Agent": userAgent },
+    });
+  }
+
+  it("bot には /about をプリレンダリングした HTML で返す", async () => {
+    const { env, assets } = envWithAssets();
+    const res = await worker.fetch(
+      get("/about", "Googlebot"),
+      env,
+      {} as ExecutionContext
+    );
+    expect(res.headers.get("Content-Type")).toContain("text/html");
+    expect(await res.text()).toContain("<h1");
+    expect(res.headers.get("X-Frame-Options")).toBe("DENY");
+    expect(assets.fetch).not.toHaveBeenCalled();
+  });
+
+  it("bot が知らないページを踏んだら 404 を返す（SPA の 200 で soft-404 にしない）", async () => {
+    const { env, assets } = envWithAssets();
+    const res = await worker.fetch(
+      get("/no-such-page", "Googlebot"),
+      env,
+      {} as ExecutionContext
+    );
+    expect(res.status).toBe(404);
+    expect(assets.fetch).not.toHaveBeenCalled();
+  });
+
+  it("拡張子付きのパス（ads.txt など）は bot にも静的ファイルとして渡す", async () => {
+    const { env, assets } = envWithAssets();
+    const res = await worker.fetch(
+      get("/ads.txt", "Mediapartners-Google"),
+      env,
+      {} as ExecutionContext
+    );
+    expect(res.status).toBe(200);
+    expect(assets.fetch).toHaveBeenCalledOnce();
+  });
+
+  it("人には知らないページも SPA に任せる", async () => {
+    const { env, assets } = envWithAssets();
+    const res = await worker.fetch(
+      get("/no-such-page", "Mozilla/5.0"),
+      env,
+      {} as ExecutionContext
+    );
+    expect(res.status).toBe(200);
+    expect(assets.fetch).toHaveBeenCalledOnce();
+  });
+});

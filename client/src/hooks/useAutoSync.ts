@@ -40,6 +40,8 @@ function useSyncStatusSubscription(scheduleId: string | undefined): {
 
   useEffect(() => {
     scheduleIdRef.current = scheduleId ?? "";
+    // 表示する当番表が変わったら、前の表の同期状態を持ち越さない
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSyncStatus("idle");
   }, [scheduleId]);
 
