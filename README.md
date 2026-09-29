@@ -72,13 +72,29 @@ Cloudflare 側で設定する環境変数:
 
 **CI:** GitHub Actions が push（main）と PR で整形・型・lint・テスト・ビルド・E2E を実行する。Lighthouse CI は毎週月曜 3:00 UTC と手動で計測する。
 
-## WebMCP 対応（実験的）
+## WebMCP 対応
 
-AI エージェントがブラウザ上で当番表を作成・修正・印刷できるよう、[WebMCP](https://developer.chrome.com/docs/ai/webmcp) のツールを公開している（実装は `client/src/hooks/useTobanTools.ts`）。対応ブラウザでのみ有効になる。デモ動画（英語・2分）: https://youtu.be/4CSxh6WW51w
+AI エージェントが、利用者の開いている toban の画面をそのまま操作して、当番表の作成・修正・印刷ができる。[WebMCP](https://developer.chrome.com/docs/ai/webmcp) のツールを 18 個公開している（実装は `client/src/hooks/useTobanTools.ts`）。デモ動画（英語・2分）: https://youtu.be/4CSxh6WW51w
 
-- 当番表の公開（共有）はツールから実行できない。誤って実名入りの表を公開しないよう、共有ボタンでの操作に限っている
-- Cloudflare がダッシュボードで提供する同名の WebMCP 機能とは別物で、そちらは有効にしていない
-- 手元で試すときは `chrome://flags/#enable-webmcp-testing` を有効にして `pnpm dev` を開き、WebMCP を呼べるクライアントから操作する
+使える環境:
+
+- ChatGPT デスクトップアプリの内蔵ブラウザ（対応モデルなどは [ChatGPT のヘルプ](https://learn.chatgpt.com/docs/webmcp)）
+- Chrome 149〜156（Origin Trial。期限は下の「人が対応すること」）
+
+ツール:
+
+| 種類 | ツール                                                                                                                                                           |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 読む | `list_schedules` `get_current_assignments` `get_schedule_details` `get_share_link`                                                                               |
+| 作る | `create_schedule` `duplicate_schedule` `update_schedule` `add_member` `update_member` `remove_member` `set_rotation` `configure_rotation` `configure_appearance` |
+| 操作 | `switch_schedule` `advance_rotation` `change_view` `print_schedule` `prepare_share`                                                                              |
+
+設計で決めていること:
+
+- **公開は必ず人が確定する。** 当番表には実名が入るので、エージェントが公開まで進められないようにしている。`prepare_share` は確認画面を開くだけで、確認が開いている間はほかの書き込みも止める
+- **入力は実行時に検証する。** `inputSchema` はブラウザが強制しないので、ツールの中で Zod で検証する（上限は画面と同じ `shared/limits.ts`）
+- **出力は 1,500 字以内の JSON に分けて返す。** 利用者の入力を含む出力には `untrustedContentHint`、状態を変えないツールには `readOnlyHint` を付ける（[Chrome の指針](https://developer.chrome.com/docs/ai/webmcp/secure-tools)どおり）
+- 手元で試すときは `chrome://flags/#enable-webmcp-testing` を有効にして `pnpm dev` を開く
 
 ## ライセンス
 
