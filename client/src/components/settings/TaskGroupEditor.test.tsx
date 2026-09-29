@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { LIMITS } from "@shared/limits";
 import type { AssignmentMode, Member, TaskGroup } from "@/rotation/types";
@@ -128,5 +128,64 @@ describe("TaskGroupEditor（タスクから見る）", () => {
       target: { value: "黒板けし" },
     });
     expect(state.groups[0].tasks).toEqual(["黒板けし"]);
+  });
+});
+
+// jsdom には DataTransfer が無いので、ハンドラが触る分だけの偽物を渡す
+function drag(from: Element, to: Element) {
+  const dataTransfer = {
+    effectAllowed: "",
+    dropEffect: "",
+    setDragImage: vi.fn(),
+  };
+  fireEvent.dragStart(from, { dataTransfer });
+  fireEvent.dragOver(to, { dataTransfer });
+  fireEvent.drop(to, { dataTransfer });
+  fireEvent.dragEnd(from, { dataTransfer });
+}
+
+const draggableOf = (el: Element) => el.closest('[draggable="true"]')!;
+
+describe("TaskGroupEditor のドラッグ", () => {
+  it("仕事を別のグループの行に落とすと、その位置へ移る", () => {
+    const state = renderEditor({
+      groups: [
+        { id: "g1", tasks: ["黒板", "窓"], emoji: "🧽" },
+        { id: "g2", tasks: ["床はき"], emoji: "🧹" },
+      ],
+    });
+    drag(
+      draggableOf(screen.getByRole("textbox", { name: "グループ1のタスク1" })),
+      draggableOf(screen.getByRole("textbox", { name: "グループ2のタスク1" }))
+    );
+    expect(state.groups.map(g => g.tasks)).toEqual([
+      ["窓"],
+      ["黒板", "床はき"],
+    ]);
+  });
+
+  it("グループを並べ替えると、担当者の順番も一緒に動く", () => {
+    const state = renderEditor();
+    const header = (n: number) =>
+      draggableOf(screen.getByRole("textbox", { name: `担当者${n}の名前` }));
+    // グループ全体（見出しの親）の上に落とす
+    drag(header(1), header(2).parentElement!);
+    expect(state.groups.map(g => g.id)).toEqual(["g2", "g1"]);
+    expect(state.members.map(m => m.name)).toEqual(["そら", "あおい"]);
+  });
+
+  it("タスクモードでは、グループの中で担当者を並べ替えられる", () => {
+    const state = renderEditor({
+      assignmentMode: "task",
+      groups: [
+        { id: "g1", tasks: ["黒板"], emoji: "🧽", memberIds: ["m1", "m2"] },
+        { id: "g2", tasks: ["床はき"], emoji: "🧹" },
+      ],
+    });
+    const [aoi, sora] = screen
+      .getAllByRole("textbox", { name: "メンバーの名前" })
+      .map(draggableOf);
+    drag(aoi, sora);
+    expect(state.groups[0].memberIds).toEqual(["m2", "m1"]);
   });
 });
