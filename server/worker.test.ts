@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("./handlers/seo", async importOriginal => {
@@ -14,23 +15,15 @@ vi.mock("./handlers/seo", async importOriginal => {
 
 import worker from "./worker";
 
-describe("SEO response policy", () => {
-  it("撤去した /junban は人にも bot にも /about へ 301 で転送する", async () => {
-    const env = {
-      ASSETS: { fetch: vi.fn() },
-      DB: {},
-      SLACK_WEBHOOK_URL: "",
-    } as never;
-    for (const ua of ["Googlebot", "Mozilla/5.0"]) {
-      const request = new Request("https://toban.app/junban", {
-        headers: { "User-Agent": ua },
-      });
-      const response = await worker.fetch(request, env, {} as ExecutionContext);
-      expect(response.status).toBe(301);
-      expect(response.headers.get("Location")).toBe("https://toban.app/about");
-    }
+describe("撤去したページの転送（client/public/_redirects）", () => {
+  // ブラウザのページ遷移は Worker を通らないので、転送は Worker ではなく静的アセットの _redirects に書く
+  it("旧・順番決めページ /junban を /about へ 301 で転送する", () => {
+    const rules = readFileSync("client/public/_redirects", "utf8");
+    expect(rules).toMatch(/^\/junban \/about 301$/m);
   });
+});
 
+describe("SEO response policy", () => {
   it("Googlebot へ返す共有スケジュールを noindex にする", async () => {
     const request = new Request("https://toban.app/s/test-schedule", {
       headers: { "User-Agent": "Googlebot" },
