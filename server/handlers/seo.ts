@@ -16,7 +16,7 @@ import {
   serializeJsonLd,
 } from "../../shared/jsonLd";
 import { TEMPLATES } from "../../shared/templates";
-import { SITE_TITLE } from "../../shared/site";
+import { AI_AGENTS, SITE_TITLE } from "../../shared/site";
 import { TEMPLATE_CONTENT } from "../../shared/template-content";
 
 interface Env {
@@ -231,6 +231,15 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 <li>URLで共有 — LINEやメールで送れる</li>
 <li>完全無料 — すべての機能を無料で利用可能</li>
 </ul>
+<h2>AIに頼むだけで、当番表ができあがる</h2>
+<p>${AI_AGENTS.ja}なら、作りたい当番表を伝えるだけ。メンバーの割り当てやローテーションの計算は toban が正確に行います。</p>
+<p>例:「1班〜6班で給食当番表を作って。配膳・牛乳・片付けを毎週交代、土日はお休み」</p>
+<ol>
+<li>${AI_AGENTS.ja}で toban.app を開く</li>
+<li>作りたい当番表を、ふだんの言葉で伝える</li>
+<li>できた表を確かめて、印刷やLINEで共有</li>
+</ol>
+<p>表の公開（共有）は、必ずご自身で確定します。</p>
 <h2>すぐ使えるテンプレート</h2>
 <ul>${templateListHtml}</ul>
 <a href="${origin}/templates">テンプレート一覧を見る</a>

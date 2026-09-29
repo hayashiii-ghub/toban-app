@@ -417,6 +417,15 @@ export default function LandingPage() {
             <ArrowRight className="size-5" />
           </Link>
         </div>
+        <a
+          href="#ai"
+          className="mt-5 inline-flex items-center gap-1 text-sm font-bold underline"
+          style={{ color: C.heroText }}
+        >
+          <span aria-hidden="true">🤖</span>
+          {t("lp.ai.heroLink")}
+          <ChevronDown className="size-4" />
+        </a>
       </section>
 
       {/* ── 特徴 ── */}
@@ -498,11 +507,72 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── テンプレート紹介 ── */}
+      {/* ── AI に頼んで作る ── */}
       <section
-        className="px-4 py-12 sm:py-16"
+        id="ai"
+        className="px-4 py-12 sm:py-16 scroll-mt-4"
         style={{ backgroundColor: alpha(C.primary, 3) }}
       >
+        <div className="max-w-3xl mx-auto">
+          <h2
+            className="text-xl sm:text-2xl font-extrabold text-center mb-2"
+            style={{ color: C.text }}
+          >
+            {t("lp.ai.heading")}
+          </h2>
+          <p
+            className="lp-pretty text-sm text-center mb-6"
+            style={{ color: C.textMuted }}
+          >
+            {t("lp.ai.subtitle")}
+          </p>
+          <p
+            className="lp-pretty text-sm sm:text-base font-bold text-center mb-8 px-4 py-3"
+            style={{
+              color: C.text,
+              backgroundColor: C.cardBg,
+              border: `1.5px solid ${C.border}`,
+              borderRadius: "6px",
+            }}
+          >
+            {t("lp.ai.example")}
+          </p>
+          <ol className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {(["lp.ai.step1", "lp.ai.step2", "lp.ai.step3"] as const).map(
+              (key, i) => (
+                <li
+                  key={key}
+                  className="flex items-start gap-3 border p-4"
+                  style={{
+                    borderColor: C.border,
+                    backgroundColor: C.cardBg,
+                    borderRadius: "6px",
+                  }}
+                >
+                  <span
+                    className="flex-shrink-0 size-7 rounded-full flex items-center justify-center text-sm font-extrabold"
+                    style={{ backgroundColor: C.primary, color: C.heroText }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="text-sm font-bold" style={{ color: C.text }}>
+                    {t(key)}
+                  </span>
+                </li>
+              )
+            )}
+          </ol>
+          <p
+            className="text-xs text-center mt-4"
+            style={{ color: C.textMuted }}
+          >
+            {t("lp.ai.note")}
+          </p>
+        </div>
+      </section>
+
+      {/* ── テンプレート紹介 ── */}
+      <section className="px-4 py-12 sm:py-16">
         <div className="max-w-4xl mx-auto">
           <h2
             className="text-xl sm:text-2xl font-extrabold text-center mb-2"
@@ -581,7 +651,10 @@ export default function LandingPage() {
       </section>
 
       {/* ── Q&A ── */}
-      <section className="px-4 py-12 sm:py-16">
+      <section
+        className="px-4 py-12 sm:py-16"
+        style={{ backgroundColor: alpha(C.primary, 3) }}
+      >
         <div className="max-w-3xl mx-auto">
           <h2
             className="text-xl sm:text-2xl font-extrabold text-center mb-8"
@@ -602,11 +675,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── お問い合わせ ── */}
-      <section
-        id="contact"
-        className="px-4 py-12 sm:py-16"
-        style={{ backgroundColor: alpha(C.primary, 3) }}
-      >
+      <section id="contact" className="px-4 py-12 sm:py-16">
         <div className="max-w-xl mx-auto">
           <h2
             className="text-xl sm:text-2xl font-extrabold text-center mb-2"

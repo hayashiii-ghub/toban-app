@@ -1,5 +1,6 @@
 // English UI dictionary. Template content is localized separately.
 // Keys must match ja.ts exactly; the type makes a missing or extra key a type error.
+import { AI_AGENTS } from "@shared/site";
 import type { MessageKey } from "./ja";
 
 export const en: Record<MessageKey, string> = {
@@ -95,6 +96,16 @@ export const en: Record<MessageKey, string> = {
   "lp.viewAllTemplates": "See all templates",
   "lp.viewJunban": "Decide order with the wheel",
   "lp.faqHeading": "FAQ",
+  "lp.ai.heroLink": "Or just ask AI to make one",
+  "lp.ai.heading": "Ask AI, and your roster is ready",
+  "lp.ai.subtitle": `In ${AI_AGENTS.en}, just describe the roster you want. toban does the assignments and rotation math precisely.`,
+  "lp.ai.example":
+    '"Make a lunch duty roster for groups 1–6. Rotate serving, milk, and cleanup weekly, and skip weekends."',
+  "lp.ai.step1": `Open toban.app in ${AI_AGENTS.en}`,
+  "lp.ai.step2": "Describe the roster you want in plain words",
+  "lp.ai.step3": "Check the result, then print it or share it",
+  "lp.ai.note":
+    "Publishing (sharing) a roster always needs your own confirmation.",
 
   // Contact form
   "contact.heading": "Contact",

@@ -5,3 +5,12 @@
  */
 export const SITE_TITLE =
   "当番表アプリ toban｜無料で簡単作成・印刷・LINEで共有";
+
+/**
+ * toban を操作できる AI（WebMCP 対応のエージェント）。LP・FAQ・bot 向け LP の文言に差し込む。
+ * 実際に使えるようになったものだけを書く（予定は書かない）。
+ */
+export const AI_AGENTS = {
+  ja: "ChatGPT デスクトップアプリ",
+  en: "the ChatGPT desktop app",
+};

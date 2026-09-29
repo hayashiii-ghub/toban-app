@@ -1,7 +1,7 @@
 // 日本語UI辞書。テンプレートの内容は別のデータ定義で管理する。
 // キーは namespace.key 形式。この辞書がキーの正本で、en.ts と t() の引数は型でこれに縛られる。
 
-import { SITE_TITLE } from "@shared/site";
+import { AI_AGENTS, SITE_TITLE } from "@shared/site";
 
 export const ja = {
   "lang.switchLabel": "言語",
@@ -98,6 +98,15 @@ export const ja = {
   "lp.viewAllTemplates": "テンプレート一覧を見る",
   "lp.viewJunban": "順番決め・当番ルーレットで作る",
   "lp.faqHeading": "よくある質問",
+  "lp.ai.heroLink": "AIに頼んで作ることもできます",
+  "lp.ai.heading": "AIに頼むだけで、当番表ができあがる",
+  "lp.ai.subtitle": `${AI_AGENTS.ja}なら、作りたい当番表を伝えるだけ。メンバーの割り当てやローテーションの計算は toban が正確に行います。`,
+  "lp.ai.example":
+    "「1班〜6班で給食当番表を作って。配膳・牛乳・片付けを毎週交代、土日はお休み」",
+  "lp.ai.step1": `${AI_AGENTS.ja}で toban.app を開く`,
+  "lp.ai.step2": "作りたい当番表を、ふだんの言葉で伝える",
+  "lp.ai.step3": "できた表を確かめて、印刷やLINEで共有",
+  "lp.ai.note": "表の公開（共有）は、必ずご自身で確定します。",
 
   // お問い合わせフォーム
   "contact.heading": "お問い合わせ",
