@@ -180,7 +180,7 @@ export async function handleScheduleOgp(
 
 export function renderLandingPageHtml(origin: string): string {
   const title = SITE_TITLE;
-  const desc = `学校・保育園・介護施設・自治会・オフィス・家庭などの当番表をかんたんに作れる無料の当番表作成アプリ。アカウント登録・インストール不要、エクセルがなくてもスマホ・パソコンのブラウザだけで印刷品質の当番表がすぐ完成し、LINEやメールで共有できます。用途別のテンプレートを${TEMPLATE_SEO_DATA.length}種類用意。`;
+  const desc = `名前を入れるだけで当番表がすぐ完成する、無料の当番表作成アプリ。アカウント登録・インストール不要、エクセルがなくてもスマホやパソコンのブラウザから作成・印刷し、LINEやメールで共有できます。職場・学校・家庭などで使える用途別のテンプレートを${TEMPLATE_SEO_DATA.length}種類用意。`;
 
   const faqHtml = COMMON_FAQ.map(
     f => `<dt>${escapeHtml(f.question)}</dt><dd>${escapeHtml(f.answer)}</dd>`
@@ -231,15 +231,13 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 <li>URLで共有 — LINEやメールで送れる</li>
 <li>完全無料 — すべての機能を無料で利用可能</li>
 </ul>
-<h2>AIに頼むだけで、当番表ができあがる</h2>
-<p>${AI_AGENTS.ja}なら、作りたい当番表を伝えるだけ。メンバーの割り当てやローテーションの計算は toban が正確に行います。</p>
-<p>例:「1班〜6班で給食当番表を作って。配膳・牛乳・片付けを毎週交代、土日はお休み」</p>
-<ol>
-<li>${AI_AGENTS.ja}で toban.app を開く</li>
-<li>作りたい当番表を、ふだんの言葉で伝える</li>
-<li>できた表を確かめて、印刷やLINEで共有</li>
-</ol>
-<p>表の公開（共有）は、必ずご自身で確定します。</p>
+<h2>作り方は、ふたつ</h2>
+<h3>テンプレートから</h3>
+<p>場面に合った表を選んで、メンバーの名前を入れるだけ。</p>
+<h3>AIに頼んで</h3>
+<p>${AI_AGENTS.ja}で toban.app を開いて、作りたい当番表を伝えるだけ。</p>
+<p>「1班〜6班で給食当番表を作って。配膳・牛乳・片付けを毎週交代、土日はお休み」</p>
+<p>表の公開（共有）だけは、必ずご自身で確定します。</p>
 <h2>すぐ使えるテンプレート</h2>
 <ul>${templateListHtml}</ul>
 <a href="${origin}/templates">テンプレート一覧を見る</a>

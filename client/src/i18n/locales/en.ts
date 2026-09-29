@@ -76,9 +76,8 @@ export const en: Record<MessageKey, string> = {
   "lp.createSchedule": "Create a schedule",
   "lp.heroTitleA": "Easy duty rosters,",
   "lp.heroTitleB": "ready in minutes.",
-  "lp.heroSubA":
-    "Create duty rosters for schools, nurseries, care homes, community groups, offices, and homes—",
-  "lp.heroSubB": "free, easy to make, print, and share.",
+  "lp.heroSubA": "Just type the names, or just ask AI.",
+  "lp.heroSubB": "Make a duty roster for free, then print it or share it.",
   "lp.featuresHeading": "Why toban",
   "lp.feat.noSignup.label": "No sign-up",
   "lp.feat.noSignup.desc":
@@ -96,16 +95,16 @@ export const en: Record<MessageKey, string> = {
   "lp.viewAllTemplates": "See all templates",
   "lp.viewJunban": "Decide order with the wheel",
   "lp.faqHeading": "FAQ",
-  "lp.ai.heroLink": "Or just ask AI to make one",
-  "lp.ai.heading": "Ask AI, and your roster is ready",
-  "lp.ai.subtitle": `In ${AI_AGENTS.en}, just describe the roster you want. toban does the assignments and rotation math precisely.`,
-  "lp.ai.example":
+  "lp.ways.heading": "Two ways to make one",
+  "lp.ways.template.label": "From a template",
+  "lp.ways.template.desc":
+    "Pick one that fits, then type in your members' names.",
+  "lp.ways.template.link": "Choose a template",
+  "lp.ways.ai.label": "Ask AI",
+  "lp.ways.ai.desc": `Open toban.app in ${AI_AGENTS.en} and describe the roster you want.`,
+  "lp.ways.ai.example":
     '"Make a lunch duty roster for groups 1–6. Rotate serving, milk, and cleanup weekly, and skip weekends."',
-  "lp.ai.step1": `Open toban.app in ${AI_AGENTS.en}`,
-  "lp.ai.step2": "Describe the roster you want in plain words",
-  "lp.ai.step3": "Check the result, then print it or share it",
-  "lp.ai.note":
-    "Publishing (sharing) a roster always needs your own confirmation.",
+  "lp.ways.ai.note": "Only publishing (sharing) needs your own confirmation.",
 
   // Contact form
   "contact.heading": "Contact",

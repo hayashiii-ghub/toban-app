@@ -183,20 +183,20 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
     expect(html).toMatch(/エクセル|Excel/);
   });
 
-  it("renderLandingPageHtml が画面の LP と同じ AI の節を持つ", () => {
+  it("renderLandingPageHtml が画面の LP と同じ作り方の節を持つ", () => {
     // 人向けの LP にだけある本文は、bot 向けと食い違って見える。文言を直すときは両方直す。
     const html = renderLandingPageHtml(origin);
     for (const key of [
-      "lp.ai.heading",
-      "lp.ai.subtitle",
-      "lp.ai.step1",
-      "lp.ai.step2",
-      "lp.ai.step3",
-      "lp.ai.note",
+      "lp.ways.heading",
+      "lp.ways.template.label",
+      "lp.ways.template.desc",
+      "lp.ways.ai.label",
+      "lp.ways.ai.desc",
+      "lp.ways.ai.example",
+      "lp.ways.ai.note",
     ] as const) {
       expect(html).toContain(ja[key]);
     }
-    expect(html).toContain(ja["lp.ai.example"]);
   });
 
   it("renderLandingPageHtml の description がテンプレートに言及する", () => {

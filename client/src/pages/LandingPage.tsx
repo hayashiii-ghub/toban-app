@@ -323,6 +323,63 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
   );
 }
 
+// 特徴・作り方のカード（アプリのカードと同じ、見出し付きの枠）
+function LpCard({
+  emoji,
+  label,
+  children,
+}: {
+  emoji: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="overflow-hidden"
+      style={{
+        border: `1.5px solid ${C.border}`,
+        borderRadius: "6px",
+        backgroundColor: C.cardBg,
+        boxShadow: "0 2px 8px rgba(46, 107, 79, 0.1)",
+      }}
+    >
+      <div
+        className="p-3 sm:py-4 text-center"
+        style={{
+          backgroundColor: `color-mix(in srgb, ${C.pageBg} 60%, #ffffff)`,
+        }}
+      >
+        <div className="text-3xl sm:text-4xl mb-1" aria-hidden="true">
+          {emoji}
+        </div>
+        <div
+          className="text-sm sm:text-base"
+          style={{ color: C.text, fontWeight: 800 }}
+        >
+          {label}
+        </div>
+      </div>
+      <div className="px-3 py-2.5 sm:py-3">{children}</div>
+    </div>
+  );
+}
+
+function CardNote({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="lp-pretty text-xs leading-relaxed p-1.5 text-center"
+      style={{
+        backgroundColor: alpha(C.highlight, 25),
+        borderRadius: "4px",
+        border: `2px solid ${alpha(C.primary, 12)}`,
+        color: C.textSecondary,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 // カテゴリから代表テンプレートを抜粋（各カテゴリ1つずつ、最大6つ）
 const featuredTemplates = TEMPLATE_CATEGORIES.flatMap(cat => {
   const t = TEMPLATE_SEO_DATA.find(t => t.categoryId === cat.id);
@@ -390,7 +447,7 @@ export default function LandingPage() {
           style={{ color: C.heroSubtext }}
         >
           {t("lp.heroSubA")}
-          <br className="hidden sm:block" />
+          <br />
           {t("lp.heroSubB")}
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center max-w-md sm:max-w-none mx-auto">
@@ -417,15 +474,6 @@ export default function LandingPage() {
             <ArrowRight className="size-5" />
           </Link>
         </div>
-        <a
-          href="#ai"
-          className="mt-5 inline-flex items-center gap-1 text-sm font-bold underline"
-          style={{ color: C.heroText }}
-        >
-          <span aria-hidden="true">🤖</span>
-          {t("lp.ai.heroLink")}
-          <ChevronDown className="size-4" />
-        </a>
       </section>
 
       {/* ── 特徴 ── */}
@@ -460,119 +508,59 @@ export default function LandingPage() {
                 desc: t("lp.feat.free.desc"),
               },
             ].map(({ label, emoji, desc }) => (
-              <div
-                key={label}
-                className="overflow-hidden"
-                style={{
-                  border: `1.5px solid ${C.border}`,
-                  borderRadius: "6px",
-                  backgroundColor: C.cardBg,
-                  boxShadow: "0 2px 8px rgba(46, 107, 79, 0.1)",
-                }}
-              >
-                {/* ヘッダー（アプリのカード上部と同じスタイル） */}
-                <div
-                  className="p-3 sm:py-4 text-center"
-                  style={{
-                    backgroundColor: `color-mix(in srgb, ${C.pageBg} 60%, #ffffff)`,
-                  }}
-                >
-                  <div className="text-3xl sm:text-4xl mb-1" aria-hidden="true">
-                    {emoji}
-                  </div>
-                  <div
-                    className="text-sm sm:text-base"
-                    style={{ color: C.text, fontWeight: 800 }}
-                  >
-                    {label}
-                  </div>
-                </div>
-                {/* ボディ */}
-                <div className="px-3 py-2.5 sm:py-3">
-                  <div
-                    className="lp-pretty text-xs leading-relaxed p-1.5 text-center"
-                    style={{
-                      backgroundColor: alpha(C.highlight, 25),
-                      borderRadius: "4px",
-                      border: `2px solid ${alpha(C.primary, 12)}`,
-                      color: C.textSecondary,
-                    }}
-                  >
-                    {desc}
-                  </div>
-                </div>
-              </div>
+              <LpCard key={label} emoji={emoji} label={label}>
+                <CardNote>{desc}</CardNote>
+              </LpCard>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── AI に頼んで作る ── */}
+      {/* ── 作り方（テンプレート / AI） ── */}
       <section
-        id="ai"
-        className="px-4 py-12 sm:py-16 scroll-mt-4"
+        className="px-4 py-12 sm:py-16"
         style={{ backgroundColor: alpha(C.primary, 3) }}
       >
         <div className="max-w-3xl mx-auto">
           <h2
-            className="text-xl sm:text-2xl font-extrabold text-center mb-2"
+            className="text-xl sm:text-2xl font-extrabold text-center mb-8"
             style={{ color: C.text }}
           >
-            {t("lp.ai.heading")}
+            {t("lp.ways.heading")}
           </h2>
-          <p
-            className="lp-pretty text-sm text-center mb-6"
-            style={{ color: C.textMuted }}
-          >
-            {t("lp.ai.subtitle")}
-          </p>
-          <p
-            className="lp-pretty text-sm sm:text-base font-bold text-center mb-8 px-4 py-3"
-            style={{
-              color: C.text,
-              backgroundColor: C.cardBg,
-              border: `1.5px solid ${C.border}`,
-              borderRadius: "6px",
-            }}
-          >
-            {t("lp.ai.example")}
-          </p>
-          <ol className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {(["lp.ai.step1", "lp.ai.step2", "lp.ai.step3"] as const).map(
-              (key, i) => (
-                <li
-                  key={key}
-                  className="flex items-start gap-3 border p-4"
-                  style={{
-                    borderColor: C.border,
-                    backgroundColor: C.cardBg,
-                    borderRadius: "6px",
-                  }}
-                >
-                  <span
-                    className="flex-shrink-0 size-7 rounded-full flex items-center justify-center text-sm font-extrabold"
-                    style={{ backgroundColor: C.primary, color: C.heroText }}
-                  >
-                    {i + 1}
-                  </span>
-                  <span className="text-sm font-bold" style={{ color: C.text }}>
-                    {t(key)}
-                  </span>
-                </li>
-              )
-            )}
-          </ol>
-          <p
-            className="text-xs text-center mt-4"
-            style={{ color: C.textMuted }}
-          >
-            {t("lp.ai.note")}
-          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <LpCard emoji="📋" label={t("lp.ways.template.label")}>
+              <CardNote>{t("lp.ways.template.desc")}</CardNote>
+              <a
+                href="#templates"
+                className="mt-3 flex items-center justify-center gap-1 text-sm font-bold underline"
+                style={{ color: C.primary }}
+              >
+                {t("lp.ways.template.link")}
+                <ChevronDown className="size-4" />
+              </a>
+            </LpCard>
+            <LpCard emoji="🤖" label={t("lp.ways.ai.label")}>
+              <CardNote>{t("lp.ways.ai.desc")}</CardNote>
+              <p
+                className="lp-pretty mt-3 text-sm font-bold leading-relaxed text-center"
+                style={{ color: C.text }}
+              >
+                {t("lp.ways.ai.example")}
+              </p>
+              <p
+                className="mt-2 text-xs text-center"
+                style={{ color: C.textMuted }}
+              >
+                {t("lp.ways.ai.note")}
+              </p>
+            </LpCard>
+          </div>
         </div>
       </section>
 
       {/* ── テンプレート紹介 ── */}
-      <section className="px-4 py-12 sm:py-16">
+      <section id="templates" className="px-4 py-12 sm:py-16 scroll-mt-4">
         <div className="max-w-4xl mx-auto">
           <h2
             className="text-xl sm:text-2xl font-extrabold text-center mb-2"

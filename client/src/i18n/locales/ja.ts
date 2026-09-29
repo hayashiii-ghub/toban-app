@@ -79,8 +79,8 @@ export const ja = {
   "lp.createSchedule": "当番表を作る",
   "lp.heroTitleA": "かんたん当番表、",
   "lp.heroTitleB": "すぐ完成。",
-  "lp.heroSubA": "学校・保育園・介護施設・自治会・オフィス・家庭の当番表を",
-  "lp.heroSubB": "無料でかんたんに作成・印刷・共有できます。",
+  "lp.heroSubA": "名前を入れるだけでも、AIに頼むだけでも。",
+  "lp.heroSubB": "無料で作って、印刷やLINEで共有できます。",
   "lp.featuresHeading": "tobanの特徴",
   "lp.feat.noSignup.label": "登録不要",
   "lp.feat.noSignup.desc":
@@ -98,15 +98,16 @@ export const ja = {
   "lp.viewAllTemplates": "テンプレート一覧を見る",
   "lp.viewJunban": "順番決め・当番ルーレットで作る",
   "lp.faqHeading": "よくある質問",
-  "lp.ai.heroLink": "AIに頼んで作ることもできます",
-  "lp.ai.heading": "AIに頼むだけで、当番表ができあがる",
-  "lp.ai.subtitle": `${AI_AGENTS.ja}なら、作りたい当番表を伝えるだけ。メンバーの割り当てやローテーションの計算は toban が正確に行います。`,
-  "lp.ai.example":
+  "lp.ways.heading": "作り方は、ふたつ",
+  "lp.ways.template.label": "テンプレートから",
+  "lp.ways.template.desc":
+    "場面に合った表を選んで、メンバーの名前を入れるだけ。",
+  "lp.ways.template.link": "テンプレートを選ぶ",
+  "lp.ways.ai.label": "AIに頼んで",
+  "lp.ways.ai.desc": `${AI_AGENTS.ja}で toban.app を開いて、作りたい当番表を伝えるだけ。`,
+  "lp.ways.ai.example":
     "「1班〜6班で給食当番表を作って。配膳・牛乳・片付けを毎週交代、土日はお休み」",
-  "lp.ai.step1": `${AI_AGENTS.ja}で toban.app を開く`,
-  "lp.ai.step2": "作りたい当番表を、ふだんの言葉で伝える",
-  "lp.ai.step3": "できた表を確かめて、印刷やLINEで共有",
-  "lp.ai.note": "表の公開（共有）は、必ずご自身で確定します。",
+  "lp.ways.ai.note": "表の公開（共有）だけは、必ずご自身で確定します。",
 
   // お問い合わせフォーム
   "contact.heading": "お問い合わせ",
