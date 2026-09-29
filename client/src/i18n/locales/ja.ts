@@ -1,9 +1,9 @@
 // 日本語UI辞書。テンプレートの内容は別のデータ定義で管理する。
-// キーは namespace.key 形式。文字列抽出の各 step でここに追記していく。
+// キーは namespace.key 形式。この辞書がキーの正本で、en.ts と t() の引数は型でこれに縛られる。
 
 import { SITE_TITLE } from "@shared/site";
 
-export const ja: Record<string, string> = {
+export const ja = {
   "lang.switchLabel": "言語",
   "lang.ja": "日本語",
   "lang.en": "English",
@@ -446,4 +446,6 @@ export const ja: Record<string, string> = {
   "summary.saveFailed":
     "端末に保存できませんでした。内容を失わないよう、この画面を閉じずに保存先の空き容量・設定を確認してください。",
   "summary.beforeStart": "開始前の配置（{date}開始）",
-};
+} satisfies Record<string, string>;
+
+export type MessageKey = keyof typeof ja;

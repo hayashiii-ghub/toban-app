@@ -21,7 +21,7 @@ import { CONTACT_CATEGORIES } from "@shared/schemas";
 import { LIMITS } from "@shared/limits";
 import { getTemplates } from "@shared/template-localization";
 import { LP_COLORS as C, alpha } from "@/features/landing/theme";
-import { useT, useLocale } from "@/i18n";
+import { useT, useLocale, type MessageKey } from "@/i18n";
 import "./landing.css";
 
 const SHARE_URL =
@@ -31,7 +31,7 @@ const SHARE_URL =
 
 const CONTACT_CATEGORY_LABEL_KEYS: Record<
   (typeof CONTACT_CATEGORIES)[number],
-  string
+  MessageKey
 > = {
   不具合の報告: "contact.category.bug",
   機能のご要望: "contact.category.feature",
