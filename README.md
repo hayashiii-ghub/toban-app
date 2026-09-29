@@ -11,15 +11,14 @@ Node.js >= 24 / pnpm >= 10。
 ```sh
 corepack enable
 pnpm install
-pnpm dev:full     # フロント(3000) + API(8788) を同時起動
+pnpm dev          # 画面と Worker（API・bot 向けページ）を port 3000 で起動
 ```
 
 ## コマンド
 
 ```sh
-pnpm dev          # Vite 開発サーバー (port 3000)
-pnpm dev:api      # Wrangler 開発サーバー (port 8788)。dist/ が無ければ自動で build
-pnpm build        # 本番ビルド
+pnpm dev          # 開発サーバー (port 3000)。Cloudflare の Vite プラグインで Worker も同じ環境で動く
+pnpm build        # 本番ビルド（dist/client に画面、dist/toban に Worker）
 pnpm check        # 型チェック
 pnpm lint         # ESLint
 pnpm format       # Prettier で整形
@@ -50,7 +49,7 @@ e2e/            Playwright
 
 ## デプロイと D1
 
-- main へのマージで Cloudflare の Workers Builds が本番にデプロイする。手元から出すときは `pnpm run deploy:cf`（本番 D1 に migration を適用してからデプロイする）
+- main へのマージで Cloudflare の Workers Builds が本番にデプロイする（ビルド `pnpm run build`、デプロイ `pnpm run deploy:cf`。PR のブランチはビルドしない設定）。手元から出すときは `CLOUDFLARE_D1_DATABASE_ID` を設定して `pnpm build && pnpm run deploy:cf`（本番 D1 に migration を適用してからデプロイする）
 - `wrangler deploy` を単体で使わない。D1 の migration が適用されず、本番のスキーマが食い違うおそれがある
 - `GET /api/health/schema` でスキーマの状態を確認できる（200: 正常 / 503: カラム不足）。サーバーは足りないカラムを自動で補うが、migration を先に当てるのが前提
 - migration は `server/db/migrations/` に連番の SQL を手で足す（drizzle-kit は使わない）
