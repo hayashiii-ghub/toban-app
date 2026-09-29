@@ -54,8 +54,9 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
   }, [step.selector, updateTargetRect]);
 
   const tooltipStyle = useMemo(() => {
-    if (!targetRect)
-      return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
+    // 位置のずらしは transform ではなく x / y で渡す。framer-motion が scale のアニメーションで
+    // transform を上書きするため、transform に書くと上に出すはずの吹き出しが対象に重なる
+    if (!targetRect) return { top: "50%", left: "50%", x: "-50%", y: "-50%" };
 
     const padding = 12;
     const tooltipWidth = Math.min(280, window.innerWidth - 24);
@@ -77,7 +78,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
       top: `${top}px`,
       left: `${left}px`,
       width: `${tooltipWidth}px`,
-      transform: placeBelow ? undefined : "translateY(-100%)",
+      y: placeBelow ? 0 : "-100%",
     };
   }, [targetRect]);
 

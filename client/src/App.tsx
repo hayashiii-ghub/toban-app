@@ -58,7 +58,7 @@ function AppFooter() {
 
   return (
     <footer
-      className="px-3 pt-6 pb-4 print:hidden"
+      className="px-3 pt-6 pb-[calc(1rem+var(--home-toolbar-space,0px))] print:hidden"
       style={{
         backgroundColor: "var(--dt-page-bg)",
         backgroundImage: "var(--dt-page-texture, none)",

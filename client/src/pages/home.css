@@ -16,6 +16,15 @@
   text-wrap: balance;
 }
 
+/* スマホでは操作の帯（RotationControls）を画面の下に固定する。
+   下に置くほかのもの（フッター・通知・アプリ追加の案内）は、この高さの分だけ持ち上げる。
+   iPhone の画面下の余白（safe-area）は含めない（使う側で足す）。帯の高さを変えたら合わせること */
+@media (width < 40rem) {
+  body:has([data-home-toolbar]) {
+    --home-toolbar-space: 3.875rem;
+  }
+}
+
 /* Share content rows across neighboring task cards without fixed title heights.
    Each responsive row sizes itself; member-mode cards keep their flex layout. */
 @supports (grid-template-rows: subgrid) {

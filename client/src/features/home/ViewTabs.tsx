@@ -21,7 +21,7 @@ export function ViewTabs({ viewTab, onChangeTab }: ViewTabsProps) {
             type="button"
             key={value}
             onClick={() => onChangeTab(value)}
-            className={`theme-border px-1 sm:px-4 py-1.5 sm:py-2 font-bold text-sm whitespace-nowrap transition-all duration-150 ${
+            className={`theme-border px-1 sm:px-4 py-1.5 sm:py-2 font-bold text-xs min-[360px]:text-sm whitespace-nowrap transition-all duration-150 ${
               viewTab === value ? "theme-shadow-sm" : "theme-hover-lift"
             }`}
             style={{

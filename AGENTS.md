@@ -40,6 +40,7 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 ## 置き場所
 
 - 画面の機能コンポーネントは `client/src/features/<機能名>/`。`components/` は横断的に使うものだけ
+- ホームの操作の帯（`RotationControls`）は、スマホでは画面の下に固定、PC ではタイトルの下に置く。画面の下に何かを固定するときは `--home-toolbar-space`（`client/src/pages/home.css`）の分だけ持ち上げる（フッター・通知・アプリ追加の案内はそうしてある）
 - `client/src/rotation/` は React / DOM に依存させない（iOS 版で流用する予定）。型の import は可
 
 ## テストの書き方

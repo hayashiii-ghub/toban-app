@@ -19,7 +19,7 @@ export function ScheduleHeader({
   const t = useT();
   const printDate = usePrintDateString();
   return (
-    <header className="rotation-print-header pt-3 sm:pt-5 pb-4 sm:pb-5 px-3 sm:px-4">
+    <header className="rotation-print-header pt-6 sm:pt-8 pb-3 sm:pb-6 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto text-center">
         <m.div
           initial={{ y: -20, opacity: 0 }}

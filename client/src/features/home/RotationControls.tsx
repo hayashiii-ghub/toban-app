@@ -12,6 +12,10 @@ import type { SyncStatus } from "@/lib/syncManager";
 import { PrintMenu } from "@/components/PrintMenu";
 import { useT } from "@/i18n";
 
+// 印刷・共有・編集のボタン。スマホの下の帯ではアイコンの下に文字を置いて幅を詰める
+const ACTION_CLASS =
+  "theme-border theme-shadow-sm flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 min-w-[3.25rem] px-2 sm:px-4 py-1.5 sm:py-2 font-bold text-[11px] sm:text-sm leading-tight transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px]";
+
 interface RotationControlsProps {
   rotation: number;
   rotationLabel: string;
@@ -44,16 +48,18 @@ export function RotationControls({
 }: RotationControlsProps) {
   const t = useT();
   return (
-    <div className="px-3 sm:px-4 pb-3 rotation-no-print">
-      <div className="max-w-4xl mx-auto">
+    // スマホは画面の下に固定（親指の届く位置）、PC はタイトルの下にヘッダーとして置く。
+    // 下に固定するほかの要素は home.css の --home-toolbar-space の分だけ持ち上げる
+    <div
+      data-home-toolbar
+      className="rotation-no-print fixed inset-x-0 bottom-0 z-40 sm:static sm:z-auto sm:px-4 sm:pb-3"
+    >
+      <div className="sm:max-w-4xl sm:mx-auto">
         <m.div
-          className="theme-border theme-shadow px-2.5 py-2.5 sm:px-4 sm:py-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-2.5"
-          style={{
-            backgroundColor: "var(--dt-control-bar-bg)",
-            borderRadius: "var(--dt-border-radius)",
-          }}
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          className="theme-border theme-shadow max-sm:border-x-0 max-sm:border-b-0 max-sm:shadow-[0_-6px_20px_rgba(0,0,0,0.12)] sm:rounded-[var(--dt-border-radius)] px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] sm:px-4 sm:py-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-2"
+          style={{ backgroundColor: "var(--dt-control-bar-bg)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
           <div
@@ -63,20 +69,20 @@ export function RotationControls({
             {isDateMode ? (
               <>
                 <CalendarDays
-                  className="size-5 shrink-0"
+                  className="size-5 shrink-0 hidden sm:block"
                   style={{ color: "var(--dt-control-bar-text)" }}
                   aria-hidden="true"
                 />
                 <div className="min-w-0">
                   <div
-                    className="text-sm sm:text-base font-bold"
+                    className="text-xs sm:text-base font-bold leading-tight"
                     style={{ color: "var(--dt-control-bar-text)" }}
                   >
                     {rotationLabel}
                   </div>
                   {dateDetail && (
                     <div
-                      className="text-xs"
+                      className="text-[11px] sm:text-xs mt-0.5"
                       style={{ color: "var(--dt-control-bar-subtext)" }}
                     >
                       {dateDetail}
@@ -140,13 +146,13 @@ export function RotationControls({
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 ml-auto">
-            <PrintMenu onPrint={onPrint} />
+            <PrintMenu onPrint={onPrint} className={ACTION_CLASS} />
             <button
               type="button"
               onClick={onShare}
               disabled={isSharing}
               data-onboarding="share-button"
-              className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-50"
+              className={`${ACTION_CLASS} disabled:opacity-50`}
               style={{
                 backgroundColor: "var(--dt-button-bg)",
                 borderRadius: "var(--dt-border-radius-sm)",
@@ -154,18 +160,15 @@ export function RotationControls({
               aria-label={t("rotation.shareAria")}
             >
               {isSharing ? (
-                <Loader2
-                  className="size-3.5 sm:size-4 animate-spin"
-                  aria-hidden="true"
-                />
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
               ) : syncStatus === "error" ? (
                 <CloudOff
-                  className="size-3.5 sm:size-4"
+                  className="size-4"
                   style={{ color: "#EF4444" }}
                   aria-label={t("rotation.syncError")}
                 />
               ) : (
-                <Share2 className="size-3.5 sm:size-4" aria-hidden="true" />
+                <Share2 className="size-4" aria-hidden="true" />
               )}
               {t("common.share")}
             </button>
@@ -173,14 +176,14 @@ export function RotationControls({
               type="button"
               onClick={onOpenSettings}
               data-onboarding="edit-button"
-              className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px]"
+              className={ACTION_CLASS}
               style={{
                 backgroundColor: "var(--dt-button-bg)",
                 borderRadius: "var(--dt-border-radius-sm)",
               }}
               aria-label={t("rotation.editAria")}
             >
-              <Pencil className="size-3.5 sm:size-4" aria-hidden="true" />{" "}
+              <Pencil className="size-4" aria-hidden="true" />
               {t("common.edit")}
             </button>
           </div>

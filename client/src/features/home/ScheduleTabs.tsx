@@ -124,7 +124,7 @@ export function ScheduleTabs({
 
   return (
     <div
-      className="px-3 sm:px-4 pt-3 sm:pt-4 rotation-no-print"
+      className="px-3 sm:px-4 pt-2 pb-1 rotation-no-print"
       data-onboarding="schedule-tabs"
     >
       <div className="max-w-4xl mx-auto">

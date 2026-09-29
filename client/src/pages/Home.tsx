@@ -101,20 +101,6 @@ export default function Home() {
         className="rotation-page min-h-screen"
         style={{ backgroundColor: "var(--dt-page-bg)" }}
       >
-        <ScheduleTabs
-          schedules={s.state.schedules}
-          activeScheduleId={s.state.activeScheduleId}
-          draggedTabId={s.draggedTabId}
-          dragOverTabId={s.dragOverTabId}
-          onSelectSchedule={s.selectSchedule}
-          onAddSchedule={s.openNewSchedule}
-          onDragStart={s.onDragStart}
-          onDragOver={s.onDragOver}
-          onDrop={s.onDrop}
-          onDragEnd={s.onDragEnd}
-          onReorderTab={s.onReorderTab}
-        />
-
         <ScheduleHeader
           scheduleName={s.activeSchedule.name}
           localSaveStatus={s.localSaveStatus}
@@ -135,6 +121,20 @@ export default function Home() {
           onRotateForward={() => s.handleRotate("forward")}
           onRotateBackward={() => s.handleRotate("backward")}
           syncStatus={s.syncStatus}
+        />
+
+        <ScheduleTabs
+          schedules={s.state.schedules}
+          activeScheduleId={s.state.activeScheduleId}
+          draggedTabId={s.draggedTabId}
+          dragOverTabId={s.dragOverTabId}
+          onSelectSchedule={s.selectSchedule}
+          onAddSchedule={s.openNewSchedule}
+          onDragStart={s.onDragStart}
+          onDragOver={s.onDragOver}
+          onDrop={s.onDrop}
+          onDragEnd={s.onDragEnd}
+          onReorderTab={s.onReorderTab}
         />
 
         <ViewTabs viewTab={s.viewTab} onChangeTab={s.changeTab} />
