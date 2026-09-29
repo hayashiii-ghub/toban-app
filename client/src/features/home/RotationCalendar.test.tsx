@@ -4,36 +4,6 @@ import { LanguageProvider } from "@/i18n";
 import { RotationCalendar } from "./RotationCalendar";
 import type { Member, RotationConfig, TaskGroup } from "@shared/types";
 
-vi.mock("framer-motion", () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const ReactMod = require("react");
-  const motionProxy = new Proxy(
-    {},
-    {
-      get: (_target: unknown, prop: string) =>
-        ReactMod.forwardRef((props: Record<string, unknown>, ref: unknown) => {
-          const {
-            initial: _initial,
-            animate: _animate,
-            exit: _exit,
-            transition: _transition,
-            variants: _variants,
-            whileHover: _whileHover,
-            whileTap: _whileTap,
-            layout: _layout,
-            ...rest
-          } = props;
-          return ReactMod.createElement(prop, { ...rest, ref });
-        }),
-    }
-  );
-  return {
-    motion: motionProxy,
-    m: motionProxy,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
-  };
-});
-
 afterEach(cleanup);
 
 function makeMember(id: string, name: string): Member {

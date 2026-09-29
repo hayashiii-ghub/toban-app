@@ -9,11 +9,6 @@ vi.mock("sonner", () => ({
   toast: { error: vi.fn() },
 }));
 
-vi.mock("@/lib/storage", () => ({
-  safeGetItem: vi.fn(() => null),
-  safeSetItem: vi.fn(),
-}));
-
 import { useScheduleManager } from "./useScheduleManager";
 import type { Schedule, ScheduleTemplate } from "@/rotation/types";
 

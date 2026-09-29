@@ -2,22 +2,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { ShareConfirmationDialog } from "./ShareConfirmationDialog";
 
-vi.mock("framer-motion", () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const ReactMod = require("react");
-  const MotionDiv = ReactMod.forwardRef(
-    ({ children, ...props }: Record<string, unknown>, ref: unknown) => {
-      const domProps = Object.fromEntries(
-        Object.entries(props).filter(
-          ([key]) => !["initial", "animate", "exit", "transition"].includes(key)
-        )
-      );
-      return ReactMod.createElement("div", { ...domProps, ref }, children);
-    }
-  );
-  return { m: { div: MotionDiv } };
-});
-
 afterEach(cleanup);
 
 function props() {

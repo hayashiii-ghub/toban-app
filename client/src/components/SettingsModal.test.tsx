@@ -4,46 +4,6 @@ import { render, fireEvent } from "@testing-library/react";
 import { SettingsModal } from "./SettingsModal";
 import type { TaskGroup, Member } from "@shared/types";
 
-vi.mock("framer-motion", () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const ReactMod = require("react");
-  const createMotionComponent = (tag: string) =>
-    ReactMod.forwardRef((props: Record<string, unknown>, ref: unknown) => {
-      const {
-        initial: _initial,
-        animate: _animate,
-        exit: _exit,
-        transition: _transition,
-        variants: _variants,
-        whileHover: _whileHover,
-        whileTap: _whileTap,
-        layout: _layout,
-        onAnimationComplete: _onAnimationComplete,
-        ...rest
-      } = props;
-      return ReactMod.createElement(tag, { ref, ...rest });
-    });
-  return {
-    motion: {
-      div: createMotionComponent("div"),
-      span: createMotionComponent("span"),
-      button: createMotionComponent("button"),
-      li: createMotionComponent("li"),
-      ul: createMotionComponent("ul"),
-      section: createMotionComponent("section"),
-    },
-    m: {
-      div: createMotionComponent("div"),
-      span: createMotionComponent("span"),
-      button: createMotionComponent("button"),
-      li: createMotionComponent("li"),
-      ul: createMotionComponent("ul"),
-      section: createMotionComponent("section"),
-    },
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
-  };
-});
-
 vi.mock("./settings/TaskGroupEditor", () => ({
   TaskGroupEditor: () => <div data-testid="task-group-editor" />,
 }));
