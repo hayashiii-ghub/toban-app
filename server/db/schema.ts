@@ -1,11 +1,9 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 /**
- * インデックス分析:
- * - slug: UNIQUE 制約により暗黙的にインデックスが作成される。全クエリは slug 経由のため十分。
- * - is_public: 現在のクエリパターンでは slug との組み合わせで使用されるため追加インデックス不要。
- * - edit_token_hash: slug 経由で行を特定後に照合するため、単独インデックスは不要。
- * ※ 将来「公開スケジュール一覧」機能を追加する場合は is_public のインデックスを検討。
+ * テーブルの正本は server/db/migrations/ の手書き SQL。列を足したら、ここと
+ * ensureSchema.ts の REQUIRED_SCHEDULE_COLUMNS も揃える。
+ * インデックスは migrations 側にだけある（slug は UNIQUE 制約、0006 で is_public, updated_at）。
  */
 export const schedules = sqliteTable("schedules", {
   id: text("id").primaryKey(),

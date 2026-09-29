@@ -4,34 +4,6 @@
 
 **https://toban.app**
 
-## WebMCP Challenge (English)
-
-Toban turns a plain-language request into a structured, editable duty roster. A WebMCP-capable agent interprets the request; Toban validates the typed inputs, calculates the rotation, and saves the roster in the existing app.
-
-- **Live app:** [https://toban.app/](https://toban.app/)
-- **Source repository:** [github.com/hayashiii-ghub/toban-app](https://github.com/hayashiii-ghub/toban-app)
-- **Demo video:** [Watch the 2-minute demo on YouTube](https://youtu.be/4CSxh6WW51w)
-- **WebMCP surface:** 18 typed page tools for creating, reading, refining, viewing, printing, and preparing a roster for sharing
-- **Two-minute demo:** classroom Table creation and targeted refinements → library Calendar calculation and a read-only future-date query → manual Workshop Wheel → a prepared share step that stops at Toban's human confirmation
-- **Publication boundary:** `prepare_share` only opens Toban's confirmation dialog. A person must click **Share schedule** before `get_share_link` can verify a public URL.
-- **Challenge-period source:** the preceding repository commit is [`e03ddbb`](https://github.com/hayashiii-ghub/toban-app/commit/e03ddbb8c14dd49c868d4294969106f72d397cae). The fixed submission range is [`e03ddbb...webmcp-challenge-2026`](https://github.com/hayashiii-ghub/toban-app/compare/e03ddbb...webmcp-challenge-2026).
-
-See [the judge-facing implementation notes](docs/webmcp-challenge.md) and [the final 120-second video map](docs/demo-video-final.md).
-
-To run the same repository checks:
-
-```sh
-corepack enable
-pnpm install --frozen-lockfile
-pnpm format:check
-pnpm check
-pnpm lint
-pnpm test:coverage
-pnpm build
-pnpm exec playwright install chromium  # first run only
-pnpm test:e2e
-```
-
 ## セットアップ
 
 Node.js >= 24 / pnpm >= 10。
@@ -82,8 +54,8 @@ pnpm test:e2e
 │   │   └── NotFound.tsx      # 404ページ
 │   ├── features/home/        # ホーム画面の機能コンポーネント
 │   ├── features/landing/     # LP・SEOページ共通のCTAと配色トークン
-│   ├── components/           # モーダル等（ui/ は shadcn/ui、settings/ は設定モーダルの部品）
-│   ├── contexts/             # DesignThemeContext: デザインテーマ / ThemeContext: ライト・ダーク
+│   ├── components/           # モーダル等（settings/ は設定モーダルの部品）
+│   ├── contexts/             # DesignThemeContext: デザインテーマ
 │   ├── rotation/             # コア型・ユーティリティ・定数・デフォルト状態・デザインテーマ定義
 │   ├── hooks/                # useHomeState（状態集約）・useAutoSync・useTobanTools 等
 │   ├── lib/                  # API クライアント・同期マネージャ
@@ -97,7 +69,7 @@ pnpm test:e2e
 │   ├── handlers/             # bot向けプリレンダリング・sitemap・robots（seo.ts）
 │   ├── middleware/           # 編集権限トークンの検証（auth.ts）
 │   ├── schemas/              # API リクエストの Zod スキーマ
-│   └── db/                   # Drizzle スキーマ・マイグレーション
+│   └── db/                   # Drizzle ORM のテーブル定義・手書きの SQL マイグレーション
 └── shared/                   # フロント・バックエンド共有
     ├── types.ts / schemas.ts # 共有の型と Zod スキーマ
     ├── limits.ts             # 入力の文字数・件数上限（単一の真実源）
@@ -124,6 +96,7 @@ pnpm test:e2e
 - `wrangler deploy` 単体では D1 migration の履歴やインデックスが適用されず、本番スキーマが不整合になるおそれがある
 - `GET /api/health/schema` でスキーマの状態を確認できる（200: 正常 / 503: カラム不足）
 - サーバーは安全網として不足カラムを自動補完するが、migration を先に適用する運用が前提
+- migration は `server/db/migrations/` に連番の SQL を手で足す（drizzle-kit は使わない）。列を足したら `server/db/schema.ts` と `server/db/ensureSchema.ts` も揃える
 
 Cloudflare 側で設定する環境変数:
 
@@ -132,20 +105,18 @@ Cloudflare 側で設定する環境変数:
 | `CLOUDFLARE_D1_DATABASE_ID`         | D1 データベースID                                  |
 | `CLOUDFLARE_D1_PREVIEW_DATABASE_ID` | プレビュー用（任意）                               |
 | `SLACK_WEBHOOK_URL`                 | お問い合わせのSlack通知用（`wrangler secret put`） |
-| `VITE_SENTRY_DSN`                   | Sentry DSN（任意。ビルド時に `.env` か CI で設定） |
 
 ## CI
 
 - **GitHub Actions** — push（main）/ PR で整形・型・lint・ユニットテスト・ビルド・E2Eを実行
 - **Lighthouse CI** — 毎週月曜 3:00 UTC と手動実行でパフォーマンス・アクセシビリティ・SEO を計測
-- **Sentry** — 本番のランタイムエラーを収集（`VITE_SENTRY_DSN` 設定時のみ）
 - 一括整形コミットは `.git-blame-ignore-revs` に登録済み
 
 ## WebMCP 対応（実験的）
 
 チャットでメンバー・仕事・交代条件を伝えると、独自の当番表を一度に作成し、一言で部分修正して印刷へ進める。Toban内にチャットやLLM接続は追加せず、WebMCP対応クライアントを使う。
 
-[英語の実行手順・対応範囲・応募用差分](docs/webmcp-challenge.md)を参照。実装ブランチの検証と、本番公開・応募の完了は区別する。
+デモ動画（英語・2分）: https://youtu.be/4CSxh6WW51w
 
 AIエージェントがブラウザ上で当番表を操作できるよう [WebMCP](https://developer.chrome.com/docs/ai/webmcp) のツールを公開している。対応ブラウザでのみ有効化され、非対応環境では何も登録しない。実装は `client/src/hooks/useTobanTools.ts`、型は `client/src/types/webmcp.d.ts`。公開しているツールは `buildTobanTools()` を参照。
 

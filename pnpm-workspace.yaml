@@ -1,13 +1,5 @@
-# supply chain 防御 (react-doctor/require-pnpm-hardening)
+# supply chain 防御
 # - minimumReleaseAge: 公開直後のマルウェア混入版を install しないよう待機
 # - trustPolicy=no-downgrade は workbox-build 経由の rollup@2.80.0 を弾くため
 #   現状は未設定。導入時は依存ツリーを上流から見直す
 minimumReleaseAge: 10080 # 7 days (minutes)
-# dev-only ツール / 頻繁にリリースされる platform-specific binding は除外
-# (react-doctor / msgpackr 等が引っ張る dev deps)
-minimumReleaseAgeExclude:
-  - oxlint
-  - "@oxlint/*"
-  - msgpackr
-  - msgpackr-extract
-  - "@msgpackr-extract/*"

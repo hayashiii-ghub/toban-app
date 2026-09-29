@@ -66,14 +66,6 @@ export function getSavedFontId(): FontId {
   }
 }
 
-export function saveFontId(id: FontId) {
-  try {
-    localStorage.setItem(FONT_STORAGE_KEY, id);
-  } catch {
-    /* localStorage 不可の環境では保存しない（適用だけ行う） */
-  }
-}
-
 const loadedFontHrefs = new Set<string>();
 
 /** フォントの CSS を <link> で注入する。重複注入はガードする。 */

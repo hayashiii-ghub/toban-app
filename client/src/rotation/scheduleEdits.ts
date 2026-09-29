@@ -57,8 +57,6 @@ export const scheduleEditsSchema = z.strictObject({
     .optional(),
 });
 
-export type ScheduleEdits = z.output<typeof scheduleEditsSchema>;
-
 const messages = {
   INVALID_EDIT_SHAPE:
     "Check the group edits, required IDs, task text and limits.",

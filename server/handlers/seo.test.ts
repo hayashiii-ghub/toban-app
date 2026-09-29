@@ -583,7 +583,7 @@ describe("renderTemplateListHtml", () => {
   });
 
   it("フッターからトップへ戻れる", () => {
-    // 一覧に入ってきた訪問者を本体へ渡す導線。以前は /about にしか繋がっていなかった。
+    // 一覧に入ってきた訪問者を本体へ渡す導線。
     const html = renderTemplateListHtml(origin);
     const footer = html.slice(html.indexOf("<footer>"));
     expect(footer).toContain(`<a href="${origin}/">当番表を作る</a>`);

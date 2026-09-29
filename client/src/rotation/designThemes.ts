@@ -1,4 +1,4 @@
-export interface DesignThemeColors {
+interface DesignThemeColors {
   pageBg: string;
   cardBg: string;
   controlBarBg: string;
@@ -19,27 +19,27 @@ export interface DesignThemeColors {
   currentHighlight: string;
 }
 
-export interface DesignThemeBorders {
+interface DesignThemeBorders {
   width: string;
   radius: string;
   radiusSm: string;
 }
 
-export interface DesignThemeShadows {
+interface DesignThemeShadows {
   card: string;
   cardSm: string;
   cardHover: string;
   cardLg: string;
 }
 
-export interface DesignThemeTypography {
+interface DesignThemeTypography {
   fontFamily: string;
   fontWeightNormal: string;
   fontWeightBold: string;
   fontWeightExtra: string;
 }
 
-export interface DesignThemeEffects {
+interface DesignThemeEffects {
   hoverTranslate: string;
 }
 
@@ -47,7 +47,7 @@ export interface DesignThemeEffects {
  * 質感が持つ、色に依存しない見た目。省略時は applyThemeToRoot が既定値を入れるので、
  * 旧テーマ（下の DESIGN_THEMES）は未指定のままで今までどおり描画される。
  */
-export interface DesignThemeSurface {
+interface DesignThemeSurface {
   /** メンバー/タスクチップの枠の太さ。色は member.color 側が持つ */
   chipBorderWidth: string;
   chipShadow: string;
