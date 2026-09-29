@@ -111,7 +111,7 @@ test("English first visit, blank creation and language switch preserve roster co
   ).toBeVisible();
 });
 
-test("English public pages localize contact choices, wheel samples and fair-order copy", async ({
+test("English public pages localize contact choices and fair-order copy", async ({
   page,
 }, testInfo) => {
   await page.route("**/api/**", route =>
@@ -143,24 +143,6 @@ test("English public pages localize contact choices, wheel samples and fair-orde
   );
   await page.screenshot({
     path: testInfo.outputPath("english-contact-desktop.png"),
-    fullPage: true,
-    animations: "disabled",
-  });
-
-  await page.goto("/junban");
-  await expect(page.getByText("Alex", { exact: true }).first()).toBeVisible();
-  await expect(page.getByText("Cleaning", { exact: true })).toBeVisible();
-  await expect(page.locator("main")).not.toContainText(
-    /たろう|はなこ|ゆうき|そうじ|はいぜん|にっちょく/
-  );
-  await page.setViewportSize({ width: 390, height: 844 });
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth
-    )
-  ).toBe(true);
-  await page.screenshot({
-    path: testInfo.outputPath("english-wheel-sample-mobile.png"),
     fullPage: true,
     animations: "disabled",
   });

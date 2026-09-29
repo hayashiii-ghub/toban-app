@@ -11,7 +11,6 @@ import Home from "./pages/Home";
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const TemplatesPage = lazy(() => import("./pages/TemplatesPage"));
 const TemplateDetailPage = lazy(() => import("./pages/TemplateDetailPage"));
-const JunbanPage = lazy(() => import("./pages/JunbanPage"));
 const SharedScheduleView = lazy(() => import("./pages/SharedScheduleView"));
 const Transfer = lazy(() => import("./pages/Transfer"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -40,7 +39,6 @@ function Router() {
         <Route path={"/about"} component={LandingPage} />
         <Route path={"/templates"} component={TemplatesPage} />
         <Route path={"/templates/:slug"} component={TemplateDetailPage} />
-        <Route path={"/junban"} component={JunbanPage} />
         <Route path={"/s/:slug"} component={SharedScheduleView} />
         <Route path={"/transfer"} component={Transfer} />
         <Route path={"/404"} component={NotFound} />

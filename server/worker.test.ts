@@ -15,6 +15,22 @@ vi.mock("./handlers/seo", async importOriginal => {
 import worker from "./worker";
 
 describe("SEO response policy", () => {
+  it("撤去した /junban は人にも bot にも /about へ 301 で転送する", async () => {
+    const env = {
+      ASSETS: { fetch: vi.fn() },
+      DB: {},
+      SLACK_WEBHOOK_URL: "",
+    } as never;
+    for (const ua of ["Googlebot", "Mozilla/5.0"]) {
+      const request = new Request("https://toban.app/junban", {
+        headers: { "User-Agent": ua },
+      });
+      const response = await worker.fetch(request, env, {} as ExecutionContext);
+      expect(response.status).toBe(301);
+      expect(response.headers.get("Location")).toBe("https://toban.app/about");
+    }
+  });
+
   it("Googlebot へ返す共有スケジュールを noindex にする", async () => {
     const request = new Request("https://toban.app/s/test-schedule", {
       headers: { "User-Agent": "Googlebot" },
