@@ -23,7 +23,8 @@ interface Env {
 // 変更したら利用者への告知（i18n の share.retention / client/public/privacy.html）も合わせること。
 const CLEANUP_RETENTION_DAYS = 365;
 
-const HTML_SECURITY_HEADERS: Record<string, string> = {
+// ブラウザのページ遷移には client/public/_headers が同じ値を付ける（Worker を通らないため）
+export const HTML_SECURITY_HEADERS: Record<string, string> = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",

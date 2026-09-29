@@ -13,13 +13,30 @@ vi.mock("./handlers/seo", async importOriginal => {
   };
 });
 
-import worker from "./worker";
+import worker, { HTML_SECURITY_HEADERS } from "./worker";
 
 describe("撤去したページの転送（client/public/_redirects）", () => {
   // ブラウザのページ遷移は Worker を通らないので、転送は Worker ではなく静的アセットの _redirects に書く
   it("旧・順番決めページ /junban を /about へ 301 で転送する", () => {
     const rules = readFileSync("client/public/_redirects", "utf8");
     expect(rules).toMatch(/^\/junban \/about 301$/m);
+  });
+});
+
+describe("ページ遷移に付けるヘッダー（client/public/_headers）", () => {
+  // ブラウザのページ遷移は Worker を通らない。Worker と同じヘッダーが _headers にあるか見張る
+  const rules = readFileSync("client/public/_headers", "utf8");
+  const block = (path: string) =>
+    rules.split(/\n(?=\S)/).find(b => b.startsWith(`${path}\n`)) ?? "";
+
+  it("全ページに Worker と同じセキュリティヘッダーを付ける", () => {
+    for (const [key, value] of Object.entries(HTML_SECURITY_HEADERS)) {
+      expect(block("/*")).toContain(`  ${key}: ${value}`);
+    }
+  });
+
+  it("共有ページは人が開いても noindex にする", () => {
+    expect(block("/s/*")).toContain("  X-Robots-Tag: noindex");
   });
 });
 
