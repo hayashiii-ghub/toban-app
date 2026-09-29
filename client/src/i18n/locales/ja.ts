@@ -19,6 +19,13 @@ export const ja = {
   // 回転ラベル（共有/Home 共用）
   "rotation.initial": "初期",
   "rotation.nth": "{n}回目",
+  "turn.single": "{date}の当番",
+  "turn.range": "{start}〜{end}の当番",
+  "turn.startsOn": "{date}から開始",
+  "turn.everyDay": "毎日交代",
+  "turn.everyNDays": "{n}日ごとに交代",
+  "turn.columnFrom": "{date}〜",
+  "shared.printHeaderDate": "{label} ／ 印刷日: {date}",
 
   // 共有閲覧ページ
   "shared.printUnsupported":
@@ -49,7 +56,7 @@ export const ja = {
   "share.tabView": "👀 見るだけ",
   "share.tabEdit": "✏️ 編集もできる",
   "share.descView":
-    "みんなに当番表を見せたいときはこちら。「{name}」を誰でも見ることができます。",
+    "リンクを知っている人は、だれでも「{name}」を見られます。検索結果には出ません。",
   "share.descEdit":
     "一緒に編集したいときはこちら。「{name}」の編集権限を相手に渡せます。",
   "share.lineShare": "LINEで共有",
@@ -172,8 +179,6 @@ export const ja = {
   "settings.maxTasksReached": "タスクは1グループ最大{n}個までです。",
   "settings.rotationManual": "手動で切り替え",
   "settings.rotationDate": "日付で自動",
-  "settings.viewByTask": "タスクから見る",
-  "settings.viewByMember": "担当者から見る",
   "settings.summaryTaskMode": "{tasks}タスク・{members}人",
   "settings.summaryMemberMode": "{members}人・{groups}グループ",
   "settings.sectionBasic": "基本設定",
@@ -223,20 +228,19 @@ export const ja = {
   "onboarding.back": "戻る",
   "onboarding.start": "始める！",
   "onboarding.next": "次へ",
-  "onboarding.tabs.title": "当番表の切り替え",
-  "onboarding.tabs.desc": "タブで当番表を切り替えられます",
-  "onboarding.edit.title": "まずは中身を編集",
-  "onboarding.edit.desc": "メンバーやタスクの追加・削除はここから",
+  "onboarding.edit.title": "中身を書き換える",
+  "onboarding.edit.desc":
+    "名前や仕事はここから。いま開いている見本も、そのまま書き換えて使えます",
   "onboarding.rotation.title": "順番を送る",
   "onboarding.rotation.desc": "矢印ボタンで次の当番に進められます",
-  "onboarding.view.title": "見かたを変える",
-  "onboarding.view.desc": "カード・早見表・カレンダーの3種類から選べます",
   "onboarding.print.title": "印刷・PDF保存",
   "onboarding.print.desc": "今の表示をそのまま印刷できます。PDF保存も◎",
   "onboarding.share.title": "みんなに共有",
-  "onboarding.share.desc": "QRコードやLINEでかんたんにシェアできます",
-  "onboarding.add.title": "当番表を追加",
-  "onboarding.add.desc": "掃除・給食・日直など、いくつでも作れます",
+  "onboarding.share.desc":
+    "LINEやQRコードで送れます。見られるのはリンクを知っている人だけです",
+  "onboarding.add.title": "自分の当番表を作る",
+  "onboarding.add.desc":
+    "テンプレートを選ぶか、白紙から作れます。いくつでも増やせます",
 
   // ローテーションバー
   "rotation.prevAria": "前の当番に戻す",
@@ -245,8 +249,7 @@ export const ja = {
   "rotation.current": "現在の順番",
   "rotation.autoByDate": "日付で自動切り替え",
   "rotation.shareAria": "共有する",
-  "rotation.cloudSaved": "クラウド保存済み",
-  "rotation.cloudUnsaved": "クラウド未保存",
+  "rotation.syncError": "バックアップに失敗しました",
   "rotation.editAria": "当番表を編集する",
 
   // ローテーション設定
@@ -291,6 +294,7 @@ export const ja = {
   "tabs.tabAria": "{name}タブ",
   "tabs.pinnedSuffix": "（ピン留め）",
   "tabs.reorderSuffix": "（Alt+矢印キーで並び替え）",
+  "tabs.add": "新しく作る",
   "tabs.addAria": "新しい当番表を追加",
 
   // 早見表
@@ -429,8 +433,6 @@ export const ja = {
     "保存に失敗しました。ネットワーク接続を確認してください",
 
   // 今日のバナー
-  "today.label": "きょうの当番（{date}）",
-  "current.label": "いまの当番（{turn}）",
 
   // カレンダー
   "cal.manualNote": "手動切り替え：当番は固定です",
@@ -475,7 +477,6 @@ export const ja = {
   // Roster notices
   "summary.saveFailed":
     "端末に保存できませんでした。内容を失わないよう、この画面を閉じずに保存先の空き容量・設定を確認してください。",
-  "summary.beforeStart": "開始前の配置（{date}開始）",
 } satisfies Record<string, string>;
 
 export type MessageKey = keyof typeof ja;

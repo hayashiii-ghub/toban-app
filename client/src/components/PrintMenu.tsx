@@ -12,7 +12,7 @@ export function PrintMenu({ onPrint }: PrintMenuProps) {
       type="button"
       onClick={onPrint}
       data-onboarding="print-button"
-      className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px] rotation-no-print"
+      className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px] rotation-no-print"
       style={{
         backgroundColor: "var(--dt-button-bg)",
         borderRadius: "var(--dt-border-radius-sm)",

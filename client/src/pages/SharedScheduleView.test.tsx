@@ -72,13 +72,28 @@ describe("SharedScheduleView", () => {
       await screen.findByRole("heading", { name: "3年2組 掃除当番" })
     ).toBeVisible();
     expect(fetchMock.mock.calls[0][0]).toBe("/api/schedules/AbCdEfGhIj");
-    expect(screen.getByText("1回目")).toBeVisible();
+    // 手動の「1回目」は受け取った人に意味が伝わらないので、画面には出さない
+    expect(screen.queryByText("1回目")).toBeNull();
     const cards = screen.getByRole("list", { name: "当番割り当て一覧" });
     expect(within(cards).getAllByRole("listitem")).toHaveLength(2);
     // 床はきはそら専用のグループなので、何回目でもそらが担当する
     expect(within(cards).getByText("床はき")).toBeInTheDocument();
     expect(within(cards).getByText("黒板")).toBeInTheDocument();
     expect(within(cards).getAllByText("そら").length).toBeGreaterThan(0);
+  });
+
+  it("日付で交代する当番表は、いつの当番かを日付で伝える", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 8, 30, 9));
+    stubFetch(async () =>
+      Response.json({
+        ...shared,
+        rotationConfig: { mode: "date", startDate: "2026-09-28", cycleDays: 7 },
+      })
+    );
+    renderAt("/s/AbCdEfGhIj");
+    expect(await screen.findByText("9/28(月)〜10/4(日)の当番")).toBeVisible();
+    vi.useRealTimers();
   });
 
   it.each([

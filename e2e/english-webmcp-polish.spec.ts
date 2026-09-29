@@ -283,7 +283,9 @@ test("English tools edit groups, print the requested month and require a sharing
   expect(immediatePrint.requests).toHaveLength(1);
   expect(immediatePrint.requests[0]).toMatchObject({ calendar: true });
   expect(immediatePrint.requests[0].text).toContain("September 2026");
-  expect(immediatePrint.requests[0].title).toContain("Office cleaning_Start_");
+  expect(immediatePrint.requests[0].title).toContain(
+    "Office cleaning_2026-09-01_"
+  );
   await expect(page.getByText("September 2026", { exact: true })).toBeVisible();
   await expectNoOverflow(page);
   await page.screenshot({

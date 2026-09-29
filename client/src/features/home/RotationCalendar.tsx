@@ -208,6 +208,9 @@ export function RotationCalendar({
     month: "long",
   });
   const isDateMode = rotationConfig?.mode === "date";
+  const startDate = rotationConfig?.startDate
+    ? parseIsoDateLocal(rotationConfig.startDate)
+    : null;
 
   const activeMembers = useMemo(
     () => members.filter(m => !m.skipped),
@@ -400,12 +403,14 @@ export function RotationCalendar({
                 ? holidayMap.get(day.getDate())
                 : undefined;
 
+              // 開始日より前は、まだ当番が始まっていないので休みの日と同じく空ける
               const isSkipped = !!(
                 day &&
                 isDateMode &&
                 ((rotationConfig?.skipSaturday && dow === 6) ||
                   (rotationConfig?.skipSunday && dow === 0) ||
-                  (rotationConfig?.skipHolidays && holidayName))
+                  (rotationConfig?.skipHolidays && holidayName) ||
+                  (startDate && day < startDate))
               );
               const isSelected = selectedDayIdx === idx;
               const interactive = day && !isSkipped;
@@ -460,9 +465,15 @@ export function RotationCalendar({
                               title={`${group.emoji} ${formatTaskNames(group.tasks, locale)}${locale === "en" ? ": " : "："}${member.name}`}
                             >
                               <span className="hidden sm:inline">
-                                {group.emoji}{" "}
+                                {group.emoji} {member.name}
                               </span>
-                              {member.name}
+                              {/* スマホは 1 マスが狭いので頭文字だけ。日付を押すと詳しく出る */}
+                              <span className="sm:hidden" aria-hidden="true">
+                                {Array.from(member.name)[0]}
+                              </span>
+                              <span className="sr-only sm:hidden">
+                                {member.name}
+                              </span>
                             </div>
                           ))}
                         </div>

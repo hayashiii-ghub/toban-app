@@ -1,15 +1,22 @@
 import { useRef, useState, useEffect, useMemo } from "react";
 import { m } from "framer-motion";
-import type { AssignmentMode, Member, TaskGroup } from "@/rotation/types";
-import { computeAssignments } from "@/rotation/utils";
+import type {
+  AssignmentMode,
+  Member,
+  RotationConfig,
+  TaskGroup,
+} from "@/rotation/types";
+import { computeAssignments, listDateTurns } from "@/rotation/utils";
 import { formatTaskNames } from "@/rotation/taskFormatting";
-import { useLocale, useT } from "@/i18n";
+import { useDateLocale, useLocale, useT } from "@/i18n";
 
 interface RotationQuickTableProps {
   groups: TaskGroup[];
   members: Member[];
   rotation: number;
   assignmentMode?: AssignmentMode;
+  /** 日付モードなら、今の順番から日付の順に並べて列見出しを日付にする */
+  rotationConfig?: RotationConfig;
 }
 
 // 現在列の囲み線は「全セルに同幅の透明 border を常時確保し、現在列だけ着色」で描く。
@@ -23,9 +30,11 @@ export function RotationQuickTable({
   members,
   rotation,
   assignmentMode,
+  rotationConfig,
 }: RotationQuickTableProps) {
   const t = useT();
   const { locale } = useLocale();
+  const dateLocale = useDateLocale();
   const activeMembers = useMemo(
     () => members.filter(m => !m.skipped),
     [members]
@@ -36,6 +45,39 @@ export function RotationQuickTable({
       computeAssignments(groups, members, rotationIndex, assignmentMode)
     );
   }, [groups, members, activeMembers, assignmentMode]);
+
+  const dateTurns = useMemo(
+    () =>
+      rotationConfig?.mode === "date"
+        ? listDateTurns(rotationConfig, activeMembers.length, new Date())
+        : [],
+    [rotationConfig, activeMembers.length]
+  );
+  const columns =
+    dateTurns.length === activeMembers.length && dateTurns.length > 0
+      ? dateTurns.map(turn => ({
+          rotation: turn.rotation,
+          label:
+            rotationConfig?.cycleDays === 1
+              ? turn.start.toLocaleDateString(dateLocale, {
+                  month: "numeric",
+                  day: "numeric",
+                  weekday: "short",
+                })
+              : t("turn.columnFrom", {
+                  date: turn.start.toLocaleDateString(dateLocale, {
+                    month: "numeric",
+                    day: "numeric",
+                  }),
+                }),
+        }))
+      : activeMembers.map((_, rotationIndex) => ({
+          rotation: rotationIndex,
+          label:
+            rotationIndex === 0
+              ? t("rotation.initial")
+              : t("rotation.nth", { n: rotationIndex }),
+        }));
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showScrollHint, setShowScrollHint] = useState(false);
@@ -64,7 +106,10 @@ export function RotationQuickTable({
     if (el.scrollWidth <= el.clientWidth + 1) return;
     const cell = el.querySelector<HTMLElement>("th[aria-current]");
     if (!cell) return;
-    const left = cell.offsetLeft - (el.clientWidth - cell.offsetWidth) / 2;
+    // 担当名の列は左に固定しているので、その右の見える範囲の中央に寄せる
+    const pinned = el.querySelector<HTMLElement>("thead th")?.offsetWidth ?? 0;
+    const visible = el.clientWidth - pinned;
+    const left = cell.offsetLeft - pinned - (visible - cell.offsetWidth) / 2;
     const reduceMotion = window.matchMedia?.(
       "(prefers-reduced-motion: reduce)"
     ).matches;
@@ -115,8 +160,9 @@ export function RotationQuickTable({
               <thead>
                 <tr>
                   <th
-                    className="text-left py-2 sm:py-2.5 px-2 sm:px-3 text-sm"
+                    className="text-left py-2 sm:py-2.5 px-2 sm:px-3 text-sm sticky left-0 z-[1]"
                     style={{
+                      backgroundColor: "var(--dt-card-bg)",
                       color: "var(--dt-text)",
                       borderBottom:
                         "var(--dt-border-width) solid var(--dt-table-border-strong)",
@@ -126,11 +172,11 @@ export function RotationQuickTable({
                   >
                     {t("quickTable.assignee")}
                   </th>
-                  {activeMembers.map((_, rotationIndex) => {
-                    const isCurrent = rotationIndex === rotation;
+                  {columns.map(column => {
+                    const isCurrent = column.rotation === rotation;
                     return (
                       <th
-                        key={rotationIndex}
+                        key={column.rotation}
                         className="text-center py-2 sm:py-2.5 px-1.5 sm:px-2 text-sm whitespace-nowrap"
                         style={{
                           color: isCurrent
@@ -145,9 +191,7 @@ export function RotationQuickTable({
                         scope="col"
                         aria-current={isCurrent ? "true" : undefined}
                       >
-                        {rotationIndex === 0
-                          ? t("rotation.initial")
-                          : t("rotation.nth", { n: rotationIndex })}
+                        {column.label}
                         {/* 非現在列も visibility: hidden で ◀ の幅を確保（ヘッダ幅の変動 = 列ガタつき防止） */}
                         <span
                           aria-hidden="true"
@@ -167,8 +211,9 @@ export function RotationQuickTable({
                   <tr key={group.id}>
                     <th
                       scope="row"
-                      className="py-2 sm:py-2.5 px-2 sm:px-3 font-bold text-sm whitespace-nowrap text-left"
+                      className="py-2 sm:py-2.5 px-2 sm:px-3 font-bold text-sm whitespace-nowrap text-left sticky left-0 z-[1]"
                       style={{
+                        backgroundColor: "var(--dt-card-bg)",
                         borderTop:
                           groupIndex > 0
                             ? `1px solid var(--dt-table-border-light)`
@@ -179,19 +224,19 @@ export function RotationQuickTable({
                       <span className="text-sm sm:text-base" aria-hidden="true">
                         {group.emoji}
                       </span>{" "}
-                      <span className="text-xs sm:text-sm">
+                      <span className="text-xs sm:text-sm inline-block align-bottom max-w-[9rem] sm:max-w-none truncate">
                         {formatTaskNames(group.tasks, locale)}
                       </span>
                     </th>
-                    {activeMembers.map((_, rotationIndex) => {
+                    {columns.map(column => {
                       const member =
-                        allColumnAssignments[rotationIndex]?.[groupIndex]
+                        allColumnAssignments[column.rotation]?.[groupIndex]
                           ?.member;
-                      const isCurrent = rotationIndex === rotation;
+                      const isCurrent = column.rotation === rotation;
                       return (
                         <td
-                          key={rotationIndex}
-                          className="text-center py-2 sm:py-2.5 px-1.5 sm:px-2 font-bold text-sm"
+                          key={column.rotation}
+                          className="text-center py-2 sm:py-2.5 px-1.5 sm:px-2 font-bold text-sm whitespace-nowrap"
                           style={{
                             borderTop:
                               groupIndex === 0

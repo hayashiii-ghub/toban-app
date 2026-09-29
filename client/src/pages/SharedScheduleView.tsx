@@ -16,6 +16,7 @@ import { Copy, Loader2 } from "lucide-react";
 import { PrintMenu } from "@/components/PrintMenu";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
 import { usePrintMode } from "@/hooks/usePrintMode";
+import { useTurnLabel } from "@/hooks/useTurnLabel";
 import { useT, type MessageKey } from "@/i18n";
 import { getSavedFontId } from "@/fonts";
 import "./home.css";
@@ -81,6 +82,11 @@ export default function SharedScheduleView() {
     }
     return schedule.rotation;
   }, [schedule]);
+  const turn = useTurnLabel(
+    schedule?.rotationConfig,
+    schedule?.members ?? [],
+    effectiveRotation
+  );
 
   const assignments = useMemo(() => {
     if (!schedule) return [];
@@ -168,10 +174,7 @@ export default function SharedScheduleView() {
     );
   }
 
-  const rotationLabel =
-    effectiveRotation === 0
-      ? t("rotation.initial")
-      : t("rotation.nth", { n: effectiveRotation });
+  const rotationLabel = turn.label;
 
   return (
     <DesignThemeProvider
@@ -200,12 +203,15 @@ export default function SharedScheduleView() {
             >
               {schedule.name}
             </div>
-            <p
-              className="text-sm font-bold mt-1 rotation-no-print"
-              style={{ color: "var(--dt-text-secondary)" }}
-            >
-              {rotationLabel}
-            </p>
+            {/* 手動の「初期」「3回目」は受け取った人には意味が伝わらないので、日付モードだけ出す */}
+            {turn.isDateMode && (
+              <p
+                className="text-sm sm:text-base font-bold mt-2 rotation-no-print"
+                style={{ color: "var(--dt-text-secondary)" }}
+              >
+                {rotationLabel}
+              </p>
+            )}
             <div
               className="rotation-print-only mt-3 pt-2 text-sm font-bold"
               style={{
@@ -214,10 +220,12 @@ export default function SharedScheduleView() {
               }}
             >
               <span className="inline-block pb-2">
-                {t("shared.printHeader", {
-                  label: rotationLabel,
-                  date: printDate,
-                })}
+                {t(
+                  turn.isDateMode
+                    ? "shared.printHeaderDate"
+                    : "shared.printHeader",
+                  { label: rotationLabel, date: printDate }
+                )}
               </span>
             </div>
           </div>
@@ -241,15 +249,17 @@ export default function SharedScheduleView() {
         <div className="px-3 sm:px-4 pb-8 sm:pb-12 rotation-no-print">
           <div className="max-w-4xl mx-auto text-center flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
             <PrintMenu
-              onPrint={() => handlePrint(viewTab, schedule.name, rotationLabel)}
+              onPrint={() =>
+                handlePrint(viewTab, schedule.name, turn.fileLabel)
+              }
             />
             <button
               type="button"
               onClick={handleImport}
               className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
               style={{
-                backgroundColor: "#10B981",
-                color: "#fff",
+                backgroundColor: "var(--dt-control-bar-bg)",
+                color: "var(--dt-control-bar-text)",
                 borderRadius: "var(--dt-border-radius-sm)",
               }}
             >
@@ -258,11 +268,8 @@ export default function SharedScheduleView() {
             </button>
             <a
               href="/"
-              className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
-              style={{
-                backgroundColor: "var(--dt-current-highlight)",
-                borderRadius: "var(--dt-border-radius-sm)",
-              }}
+              className="inline-flex items-center justify-center px-2 py-2 text-sm font-bold underline underline-offset-4"
+              style={{ color: "var(--dt-text-secondary)" }}
             >
               {t("shared.createYourOwn")}
             </a>

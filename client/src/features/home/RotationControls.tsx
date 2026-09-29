@@ -1,11 +1,12 @@
 import { m } from "framer-motion";
 import {
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
-  Cloud,
   CloudOff,
   Loader2,
   Pencil,
+  Share2,
 } from "lucide-react";
 import type { SyncStatus } from "@/lib/syncManager";
 import { PrintMenu } from "@/components/PrintMenu";
@@ -16,9 +17,10 @@ interface RotationControlsProps {
   rotationLabel: string;
   isSharing: boolean;
   isDateMode?: boolean;
+  /** 日付モードの交代の間隔（「7日ごとに交代」） */
+  dateDetail?: string;
   isAnimating?: boolean;
   syncStatus?: SyncStatus;
-  hasSlug?: boolean;
   onPrint: () => void;
   onOpenSettings: () => void;
   onShare: () => void;
@@ -31,9 +33,9 @@ export function RotationControls({
   rotationLabel,
   isSharing,
   isDateMode,
+  dateDetail,
   isAnimating,
   syncStatus,
-  hasSlug,
   onPrint,
   onOpenSettings,
   onShare,
@@ -45,7 +47,7 @@ export function RotationControls({
     <div className="px-3 sm:px-4 pb-3 rotation-no-print">
       <div className="max-w-4xl mx-auto">
         <m.div
-          className="theme-border theme-shadow p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4"
+          className="theme-border theme-shadow px-2.5 py-2.5 sm:px-4 sm:py-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-2.5"
           style={{
             backgroundColor: "var(--dt-control-bar-bg)",
             borderRadius: "var(--dt-border-radius)",
@@ -55,78 +57,96 @@ export function RotationControls({
           transition={{ delay: 0.2, duration: 0.4 }}
         >
           <div
-            className="flex items-center gap-3 sm:gap-3"
+            className="flex items-center gap-2.5 min-w-0"
             data-onboarding="rotation-controls"
           >
-            <div
-              className="theme-border flex items-center overflow-hidden"
-              style={{
-                backgroundColor: "var(--dt-button-bg)",
-                borderRadius: "var(--dt-border-radius-sm)",
-              }}
-            >
-              {!isDateMode && onRotateBackward && (
-                <button
-                  type="button"
-                  onClick={onRotateBackward}
-                  disabled={isAnimating}
-                  className="h-9 sm:h-10 px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
-                  aria-label={t("rotation.prevAria")}
+            {isDateMode ? (
+              <>
+                <CalendarDays
+                  className="size-5 shrink-0"
+                  style={{ color: "var(--dt-control-bar-text)" }}
+                  aria-hidden="true"
+                />
+                <div className="min-w-0">
+                  <div
+                    className="text-sm sm:text-base font-bold"
+                    style={{ color: "var(--dt-control-bar-text)" }}
+                  >
+                    {rotationLabel}
+                  </div>
+                  {dateDetail && (
+                    <div
+                      className="text-xs"
+                      style={{ color: "var(--dt-control-bar-subtext)" }}
+                    >
+                      {dateDetail}
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <span
+                  className="text-xs font-bold hidden sm:inline"
+                  style={{ color: "var(--dt-control-bar-subtext)" }}
                 >
-                  <ChevronLeft className="size-4" />
-                </button>
-              )}
-              <div
-                className="h-9 sm:h-10 min-w-[2.25rem] sm:min-w-[2.5rem] flex items-center justify-center px-1 text-base sm:text-lg"
-                style={{
-                  fontWeight: "var(--dt-font-weight-extra)",
-                  borderLeft: !isDateMode
-                    ? "var(--dt-border-width) solid var(--dt-border-color)"
-                    : "none",
-                  borderRight: !isDateMode
-                    ? "var(--dt-border-width) solid var(--dt-border-color)"
-                    : "none",
-                }}
-                aria-label={t("rotation.currentAria", { n: rotation })}
-              >
-                {rotation}
-              </div>
-              {!isDateMode && onRotateForward && (
-                <button
-                  type="button"
-                  onClick={onRotateForward}
-                  disabled={isAnimating}
-                  className="h-9 sm:h-10 px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
-                  aria-label={t("rotation.nextAria")}
+                  {t("rotation.current")}
+                </span>
+                <div
+                  className="theme-border flex items-center overflow-hidden"
+                  style={{
+                    backgroundColor: "var(--dt-button-bg)",
+                    borderRadius: "var(--dt-border-radius-sm)",
+                  }}
                 >
-                  <ChevronRight className="size-4" />
-                </button>
-              )}
-            </div>
-            <div className="text-center sm:text-left">
-              <div
-                className="text-sm font-bold"
-                style={{ color: "var(--dt-control-bar-text)" }}
-              >
-                {t("rotation.current")}
-              </div>
-              <div
-                className="text-xs sm:text-sm font-medium"
-                style={{ color: "var(--dt-control-bar-subtext)" }}
-              >
-                {isDateMode ? t("rotation.autoByDate") : rotationLabel}
-              </div>
-            </div>
+                  {onRotateBackward && (
+                    <button
+                      type="button"
+                      onClick={onRotateBackward}
+                      disabled={isAnimating}
+                      className="h-9 sm:h-10 px-1.5 sm:px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
+                      aria-label={t("rotation.prevAria")}
+                    >
+                      <ChevronLeft className="size-4" />
+                    </button>
+                  )}
+                  <div
+                    className="h-9 sm:h-10 min-w-[3rem] sm:min-w-[4.5rem] flex items-center justify-center px-1.5 sm:px-3 text-sm sm:text-base whitespace-nowrap"
+                    style={{
+                      fontWeight: "var(--dt-font-weight-extra)",
+                      borderLeft:
+                        "var(--dt-border-width) solid var(--dt-border-color)",
+                      borderRight:
+                        "var(--dt-border-width) solid var(--dt-border-color)",
+                    }}
+                    aria-label={t("rotation.currentAria", { n: rotation })}
+                  >
+                    {rotationLabel}
+                  </div>
+                  {onRotateForward && (
+                    <button
+                      type="button"
+                      onClick={onRotateForward}
+                      disabled={isAnimating}
+                      className="h-9 sm:h-10 px-1.5 sm:px-2 flex items-center justify-center transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50"
+                      aria-label={t("rotation.nextAria")}
+                    >
+                      <ChevronRight className="size-4" />
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap">
+          <div className="flex items-center gap-1 sm:gap-2 ml-auto">
             <PrintMenu onPrint={onPrint} />
             <button
               type="button"
               onClick={onShare}
               disabled={isSharing}
               data-onboarding="share-button"
-              className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-50"
+              className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-50"
               style={{
                 backgroundColor: "var(--dt-button-bg)",
                 borderRadius: "var(--dt-border-radius-sm)",
@@ -138,42 +158,14 @@ export function RotationControls({
                   className="size-3.5 sm:size-4 animate-spin"
                   aria-hidden="true"
                 />
-              ) : hasSlug ? (
-                <span className="relative inline-flex">
-                  {syncStatus === "error" ? (
-                    <CloudOff
-                      className="size-3.5 sm:size-4"
-                      style={{ color: "#EF4444" }}
-                      aria-hidden="true"
-                    />
-                  ) : syncStatus === "syncing" ? (
-                    <Cloud
-                      className="size-3.5 sm:size-4 animate-pulse"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <>
-                      <Cloud
-                        className="size-3.5 sm:size-4"
-                        aria-hidden="true"
-                      />
-                      <span
-                        className="absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white"
-                        style={{ backgroundColor: "#10B981" }}
-                        aria-label={t("rotation.cloudSaved")}
-                      />
-                    </>
-                  )}
-                </span>
+              ) : syncStatus === "error" ? (
+                <CloudOff
+                  className="size-3.5 sm:size-4"
+                  style={{ color: "#EF4444" }}
+                  aria-label={t("rotation.syncError")}
+                />
               ) : (
-                <span className="relative inline-flex">
-                  <Cloud className="size-3.5 sm:size-4" aria-hidden="true" />
-                  <span
-                    className="absolute -top-0.5 -right-0.5 size-2 rounded-full border border-white"
-                    style={{ backgroundColor: "#F59E0B" }}
-                    aria-label={t("rotation.cloudUnsaved")}
-                  />
-                </span>
+                <Share2 className="size-3.5 sm:size-4" aria-hidden="true" />
               )}
               {t("common.share")}
             </button>
@@ -181,7 +173,7 @@ export function RotationControls({
               type="button"
               onClick={onOpenSettings}
               data-onboarding="edit-button"
-              className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px]"
+              className="theme-border theme-shadow-sm flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px]"
               style={{
                 backgroundColor: "var(--dt-button-bg)",
                 borderRadius: "var(--dt-border-radius-sm)",
