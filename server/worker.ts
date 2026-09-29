@@ -21,7 +21,7 @@ interface Env {
 }
 
 // クラウド保存の保持期間。この日数だけ更新がない行は scheduled で削除する。
-// 変更したら利用者への告知（i18n の share.retention / README）も合わせること。
+// 変更したら利用者への告知（i18n の share.retention / client/public/privacy.html）も合わせること。
 const CLEANUP_RETENTION_DAYS = 365;
 
 const HTML_SECURITY_HEADERS: Record<string, string> = {
