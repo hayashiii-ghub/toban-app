@@ -72,6 +72,12 @@ function AppFooter() {
           <CircleHelp className="size-5" />
         </a>
         <a
+          href="/privacy"
+          className="px-1 text-sm text-muted-foreground/60 hover:text-muted-foreground/80 transition-colors"
+        >
+          {t("footer.privacy")}
+        </a>
+        <a
           href="https://shigoto.dev/works/toban"
           target="_blank"
           rel="noopener noreferrer"

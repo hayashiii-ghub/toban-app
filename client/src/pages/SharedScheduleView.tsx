@@ -11,7 +11,6 @@ import {
 import { loadState, saveState } from "@/lib/appState";
 import { ScheduleViews } from "@/features/home/ScheduleViews";
 import { ViewTabs, type ViewTabValue } from "@/features/home/ViewTabs";
-import { AdBanner } from "@/components/AdBanner";
 import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
 import { Copy, Loader2 } from "lucide-react";
 import { PrintMenu } from "@/components/PrintMenu";
@@ -238,8 +237,6 @@ export default function SharedScheduleView() {
           direction="forward"
           stagger={false}
         />
-
-        <AdBanner />
 
         <div className="px-3 sm:px-4 pb-8 sm:pb-12 rotation-no-print">
           <div className="max-w-4xl mx-auto text-center flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">

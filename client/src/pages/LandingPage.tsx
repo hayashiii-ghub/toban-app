@@ -633,6 +633,12 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <footer className="pb-24 text-center text-sm">
+        <a href="/privacy" style={{ color: C.textMuted }}>
+          {t("footer.privacy")}
+        </a>
+      </footer>
+
       {/* JSON-LD: 構造化データ（serializeJsonLd が < をエスケープ）。
           WebApplication はここでは出さない。index.html が SPA シェルとして
           全ルートに配っており、そちらは @id と featureList を持つ詳しい版なので、

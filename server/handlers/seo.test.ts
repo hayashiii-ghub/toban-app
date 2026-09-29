@@ -589,3 +589,20 @@ describe("renderTemplateListHtml", () => {
     expect(footer).toContain(`<a href="${origin}/">当番表を作る</a>`);
   });
 });
+
+describe("bot 向けページの footer", () => {
+  const origin = "https://toban.app";
+
+  it("どのページからもプライバシーポリシーへ行ける", () => {
+    const pages = [
+      renderLandingPageHtml(origin),
+      renderTemplateListHtml(origin),
+      renderTemplateDetailHtml(origin, "office-cleaning")!,
+      renderJunbanHtml(origin),
+    ];
+    for (const html of pages) {
+      const footer = html.slice(html.indexOf("<footer>"));
+      expect(footer).toContain(`<a href="${origin}/privacy">`);
+    }
+  });
+});

@@ -129,6 +129,32 @@ test.describe("メインフロー", () => {
     });
   });
 
+  test("印刷では AdSense の広告を出さない", async ({ page }) => {
+    // AdSense は ins.adsbygoogle に display:block を直接書くので、!important で消す
+    await page.evaluate(() => {
+      const ins = document.createElement("ins");
+      ins.className = "adsbygoogle";
+      ins.style.cssText = "display:block;width:300px;height:250px";
+      document.body.appendChild(ins);
+    });
+    const ad = page.locator("ins.adsbygoogle").last();
+    await expect(ad).toBeVisible();
+    await page.emulateMedia({ media: "print" });
+    await expect(ad).toBeHidden();
+  });
+
+  test("プライバシーポリシーへの導線と中身", async ({ page }) => {
+    await expect(
+      page.getByRole("link", { name: "プライバシー" })
+    ).toHaveAttribute("href", "/privacy");
+    // 本番は /privacy で配信する。開発サーバーは拡張子付きで読む
+    await page.goto("/privacy.html");
+    await expect(
+      page.getByRole("heading", { name: "プライバシーポリシー", level: 1 })
+    ).toBeVisible();
+    await expect(page.getByText("Google AdSense").first()).toBeVisible();
+  });
+
   test("localStorage にデータが保存される", async ({ page }) => {
     const hasData = await page.evaluate(() => {
       for (const [, value] of Object.entries(localStorage)) {

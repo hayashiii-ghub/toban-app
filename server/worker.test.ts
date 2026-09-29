@@ -104,6 +104,17 @@ describe("bot とそれ以外の振り分け", () => {
     expect(assets.fetch).toHaveBeenCalledOnce();
   });
 
+  it("静的ページの /privacy は bot にも 404 を返さず静的ファイルに渡す", async () => {
+    const { env, assets } = envWithAssets();
+    const res = await worker.fetch(
+      get("/privacy", "Mediapartners-Google"),
+      env,
+      {} as ExecutionContext
+    );
+    expect(res.status).toBe(200);
+    expect(assets.fetch).toHaveBeenCalledOnce();
+  });
+
   it("人には知らないページも SPA に任せる", async () => {
     const { env, assets } = envWithAssets();
     const res = await worker.fetch(

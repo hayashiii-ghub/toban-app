@@ -7,6 +7,7 @@ export const en: Record<string, string> = {
   "lang.en": "English",
 
   "footer.about": "About toban",
+  "footer.privacy": "Privacy",
 
   // Common
   "common.share": "Share",
