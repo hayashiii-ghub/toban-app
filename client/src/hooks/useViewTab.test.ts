@@ -1,64 +1,57 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { safeGetItem, safeSetItem } from "@/lib/storage";
 import { useViewTab } from "./useViewTab";
 
-vi.mock("@/lib/storage", () => ({
-  safeGetItem: vi.fn(),
-  safeSetItem: vi.fn(),
-}));
+const VIEW_TAB_KEY = "toban-view-tab";
 
 describe("useViewTab", () => {
   beforeEach(() => {
-    vi.mocked(safeGetItem).mockReset();
-    vi.mocked(safeSetItem).mockReset();
     window.history.replaceState({}, "", "/");
   });
 
   it("URL の ?view= が有効なとき localStorage より優先して採用する（/junban からの着地）", () => {
-    vi.mocked(safeGetItem).mockReturnValue("table");
+    localStorage.setItem(VIEW_TAB_KEY, "table");
     window.history.replaceState({}, "", "/?view=disc");
     const { result } = renderHook(() => useViewTab());
     expect(result.current.viewTab).toBe("disc");
   });
 
   it("URL の ?view= が無効な値なら localStorage / デフォルトにフォールバック", () => {
-    vi.mocked(safeGetItem).mockReturnValue(null);
     window.history.replaceState({}, "", "/?view=bogus");
     const { result } = renderHook(() => useViewTab());
     expect(result.current.viewTab).toBe("cards");
   });
 
   it("localStorageが空のときデフォルト'cards'を返す", () => {
-    vi.mocked(safeGetItem).mockReturnValue(null);
     const { result } = renderHook(() => useViewTab());
     expect(result.current.viewTab).toBe("cards");
   });
 
   it("localStorageに保存された値を復元する", () => {
-    vi.mocked(safeGetItem).mockReturnValue("table");
+    localStorage.setItem(VIEW_TAB_KEY, "table");
     const { result } = renderHook(() => useViewTab());
     expect(result.current.viewTab).toBe("table");
   });
 
   it("無効な値のとき'cards'にフォールバック", () => {
-    vi.mocked(safeGetItem).mockReturnValue("invalid");
+    localStorage.setItem(VIEW_TAB_KEY, "invalid");
     const { result } = renderHook(() => useViewTab());
     expect(result.current.viewTab).toBe("cards");
   });
 
   it("changeTabで状態更新とlocalStorage保存", () => {
-    vi.mocked(safeGetItem).mockReturnValue(null);
     const { result } = renderHook(() => useViewTab());
     act(() => result.current.changeTab("calendar"));
     expect(result.current.viewTab).toBe("calendar");
-    expect(safeSetItem).toHaveBeenCalledWith("toban-view-tab", "calendar");
+    expect(localStorage.getItem(VIEW_TAB_KEY)).toBe("calendar");
+    // 保存した値が次に開いたときに戻る
+    expect(renderHook(() => useViewTab()).result.current.viewTab).toBe(
+      "calendar"
+    );
   });
 });
 
 it("keeps manual and tool month navigation in one committed display state", () => {
-  vi.mocked(safeGetItem).mockReturnValue(null);
-  vi.mocked(safeSetItem).mockReturnValue(true);
   const { result } = renderHook(() => useViewTab());
   act(() => result.current.changeTabForTool("calendar", "2026-09"));
   expect(result.current.viewTab).toBe("calendar");

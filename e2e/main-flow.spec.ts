@@ -36,49 +36,51 @@ test.describe("メインフロー", () => {
     await expect(page.getByText("テスト当番表", { exact: true })).toBeVisible();
   });
 
-  test("表示切り替え: カード → 早見表 → カレンダー", async ({ page }) => {
+  test("表示切り替え: カード → 早見表 → カレンダー → カード", async ({
+    page,
+  }) => {
+    const cards = page.getByRole("list", { name: "当番割り当て一覧" });
+    const table = page.getByRole("table", { name: "ローテーション早見表" });
+    const calendar = page.getByRole("heading", { name: "カレンダー" });
+    await expect(cards).toBeVisible();
+
     await page.getByRole("button", { name: "早見表" }).click();
-    await page.waitForTimeout(300);
+    await expect(table).toBeVisible();
+    await expect(cards).toBeHidden();
 
     await page.getByRole("button", { name: "カレンダー" }).click();
-    await page.waitForTimeout(300);
+    await expect(calendar).toBeVisible();
+    await expect(table).toBeHidden();
 
     await page.getByRole("button", { name: "カード" }).click();
-    await page.waitForTimeout(300);
+    await expect(cards).toBeVisible();
+    await expect(calendar).toBeHidden();
   });
 
-  test("ローテーション: 次へで切り替わる", async ({ page }) => {
-    const nextButton = page.getByRole("button", { name: "次のローテーション" });
-    if (await nextButton.isVisible()) {
-      await nextButton.click();
-      await page.waitForTimeout(300);
-    }
+  test("ローテーション: 次へで順番が進む", async ({ page }) => {
+    await expect(
+      page.getByLabel("現在の順番: 0", { exact: true })
+    ).toBeVisible();
+    await page.getByRole("button", { name: "次の当番に進める" }).click();
+    await expect(
+      page.getByLabel("現在の順番: 1", { exact: true })
+    ).toBeVisible();
   });
 
-  test("新しいスケジュールを追加", async ({ page }) => {
-    const addButton = page
-      .getByRole("button", { name: /追加|新規|\+/ })
-      .first();
-    if (await addButton.isVisible()) {
-      await addButton.click();
-      await page.waitForTimeout(500);
+  test("新しい当番表を追加するとタブが増える", async ({ page }) => {
+    const tabs = page.getByRole("tab");
+    const before = await tabs.count();
 
-      const templateButton = page.locator("[role=dialog] button").first();
-      if (await templateButton.isVisible()) {
-        await templateButton.click();
-        await page.waitForTimeout(300);
-      }
-    }
+    await page.getByRole("button", { name: "新しい当番表を追加" }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("button", { name: /新しくつくる/ }).click();
+
+    await expect(dialog).toBeHidden();
+    await expect(tabs).toHaveCount(before + 1);
   });
 
-  test("共有ボタンが存在する", async ({ page }) => {
-    await expect(page.getByRole("button", { name: "共有" })).toBeVisible();
-  });
-
-  // 共有モーダルは実 API がないと開けないため、ユニットテストでは
-  // react-qr-code をモックしている。その結果 QRCode の import が壊れていても
-  // 誰も気づけず、本番で共有が丸ごと落ちた（React error #130）。
-  // ここだけは本物のモジュールを描画して、モーダルが開くことを保証する。
+  // QRCode の import が壊れると、共有モーダルごと React error #130 で落ちる。
+  // ユニットテストに加えて、実ブラウザでも本物のモジュールで描画を確かめる。
   test("共有モーダルが開く（API をスタブ）", async ({ page }) => {
     await page.route("**/api/schedules**", route => {
       const isPublish = new URL(route.request().url()).pathname.endsWith(

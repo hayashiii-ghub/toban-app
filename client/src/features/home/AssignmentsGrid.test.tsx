@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, cleanup, within } from "@testing-library/react";
+import { describe, it, expect, afterEach } from "vitest";
+import { render, cleanup, waitFor, within } from "@testing-library/react";
 import { AssignmentsGrid } from "./AssignmentsGrid";
 import type {
   Assignment,
@@ -7,40 +7,6 @@ import type {
   Member,
   TaskGroup,
 } from "@shared/types";
-
-vi.mock("framer-motion", () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const ReactMod = require("react");
-  const motionProxy = new Proxy(
-    {},
-    {
-      get: (_target: unknown, prop: string) =>
-        ReactMod.forwardRef((props: Record<string, unknown>, ref: unknown) => {
-          const {
-            initial: _initial,
-            animate: _animate,
-            exit: _exit,
-            transition: _transition,
-            variants: _variants,
-            whileHover: _whileHover,
-            whileTap: _whileTap,
-            layout: _layout,
-            ...rest
-          } = props;
-          return ReactMod.createElement(prop, { ...rest, ref });
-        }),
-    }
-  );
-  return {
-    motion: motionProxy,
-    m: motionProxy,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
-  };
-});
-
-vi.mock("@/rotation/utils", () => ({
-  getGridCols: () => "grid-cols-2",
-}));
 
 afterEach(cleanup);
 
@@ -111,7 +77,7 @@ describe("AssignmentsGrid", () => {
     expect(view.getByText("日直")).toBeInTheDocument();
   });
 
-  it("タスクモードでも同じグループの仕事を省略せず1枚の印刷カードに表示する", () => {
+  it("タスクモードでも同じグループの仕事を省略せず1枚の印刷カードに表示する", async () => {
     const { container } = render(
       <AssignmentsGrid
         {...baseProps}
@@ -122,7 +88,8 @@ describe("AssignmentsGrid", () => {
     const cards = container.querySelectorAll(".rotation-print-card");
     expect(cards).toHaveLength(1);
     const card = within(cards[0] as HTMLElement);
-    expect(card.getByText("掃除")).toBeVisible();
+    // カードはフェードインで現れる（テストではアニメーションを即時に終わらせている）
+    await waitFor(() => expect(card.getByText("掃除")).toBeVisible());
     expect(card.getByText("ゴミ捨て")).toBeVisible();
     expect(card.getByText("田中太郎")).toBeVisible();
     expect(cards[0]).toHaveAccessibleName("掃除・ゴミ捨て: 田中太郎");

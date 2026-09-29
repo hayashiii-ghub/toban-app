@@ -3,48 +3,6 @@ import { render, cleanup } from "@testing-library/react";
 import { RotationQuickTable } from "./RotationQuickTable";
 import type { Member, TaskGroup } from "@shared/types";
 
-vi.mock("framer-motion", () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const ReactMod = require("react");
-  // コンポーネント identity をキャッシュで安定させる。get のたびに新規生成すると
-  // React が毎レンダーで subtree を remount し、rerender をまたぐ DOM 参照が無効になる
-  const componentCache = new Map<string, unknown>();
-  const motionProxy = new Proxy(
-    {},
-    {
-      get: (_target: unknown, prop: string) => {
-        if (!componentCache.has(prop)) {
-          componentCache.set(
-            prop,
-            ReactMod.forwardRef(
-              (props: Record<string, unknown>, ref: unknown) => {
-                const {
-                  initial: _initial,
-                  animate: _animate,
-                  exit: _exit,
-                  transition: _transition,
-                  variants: _variants,
-                  whileHover: _whileHover,
-                  whileTap: _whileTap,
-                  layout: _layout,
-                  ...rest
-                } = props;
-                return ReactMod.createElement(prop, { ...rest, ref });
-              }
-            )
-          );
-        }
-        return componentCache.get(prop);
-      },
-    }
-  );
-  return {
-    motion: motionProxy,
-    m: motionProxy,
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
-  };
-});
-
 // jsdom doesn't have ResizeObserver
 vi.stubGlobal(
   "ResizeObserver",

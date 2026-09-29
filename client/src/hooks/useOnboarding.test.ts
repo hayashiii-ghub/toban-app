@@ -1,25 +1,21 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-
-vi.mock("@/rotation/constants", () => ({
-  ONBOARDING_STORAGE_KEY: "test-onboarding-key",
-}));
-
-const mockSafeGetItem = vi.fn<(key: string) => string | null>();
-const mockSafeSetItem = vi.fn<(key: string, value: string) => void>();
-vi.mock("@/lib/storage", () => ({
-  safeGetItem: (...args: unknown[]) => mockSafeGetItem(...(args as [string])),
-  safeSetItem: (...args: unknown[]) =>
-    mockSafeSetItem(...(args as [string, string])),
-}));
-
+import { ONBOARDING_STORAGE_KEY } from "@/rotation/constants";
 import { useOnboarding } from "./useOnboarding";
+
+const ready = { hasSchedule: true, isModalOpen: false, isShareOpen: false };
+
+function renderOnboarding(deps = ready) {
+  const view = renderHook(() => useOnboarding(deps));
+  act(() => {
+    vi.advanceTimersByTime(800);
+  });
+  return view;
+}
 
 describe("useOnboarding", () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    mockSafeGetItem.mockReset();
-    mockSafeSetItem.mockReset();
   });
 
   afterEach(() => {
@@ -27,29 +23,13 @@ describe("useOnboarding", () => {
   });
 
   it("オンボーディング済みの場合は表示しない", () => {
-    mockSafeGetItem.mockReturnValue("true");
-    const { result } = renderHook(() =>
-      useOnboarding({
-        hasSchedule: true,
-        isModalOpen: false,
-        isShareOpen: false,
-      })
-    );
-    act(() => {
-      vi.advanceTimersByTime(800);
-    });
+    localStorage.setItem(ONBOARDING_STORAGE_KEY, "true");
+    const { result } = renderOnboarding();
     expect(result.current.showOnboarding).toBe(false);
   });
 
   it("条件が揃えば800ms後に表示する", () => {
-    mockSafeGetItem.mockReturnValue(null);
-    const { result } = renderHook(() =>
-      useOnboarding({
-        hasSchedule: true,
-        isModalOpen: false,
-        isShareOpen: false,
-      })
-    );
+    const { result } = renderHook(() => useOnboarding(ready));
     expect(result.current.showOnboarding).toBe(false);
     act(() => {
       vi.advanceTimersByTime(800);
@@ -58,38 +38,20 @@ describe("useOnboarding", () => {
   });
 
   it("モーダルが開いている場合は表示しない", () => {
-    mockSafeGetItem.mockReturnValue(null);
-    const { result } = renderHook(() =>
-      useOnboarding({
-        hasSchedule: true,
-        isModalOpen: true,
-        isShareOpen: false,
-      })
-    );
-    act(() => {
-      vi.advanceTimersByTime(800);
-    });
+    const { result } = renderOnboarding({ ...ready, isModalOpen: true });
     expect(result.current.showOnboarding).toBe(false);
   });
 
-  it("handleOnboardingCompleteでlocalStorageに保存して非表示にする", () => {
-    mockSafeGetItem.mockReturnValue(null);
-    const { result } = renderHook(() =>
-      useOnboarding({
-        hasSchedule: true,
-        isModalOpen: false,
-        isShareOpen: false,
-      })
-    );
+  it("完了すると保存され、次に開いたときは表示しない", () => {
+    const first = renderOnboarding();
+    expect(first.result.current.showOnboarding).toBe(true);
     act(() => {
-      vi.advanceTimersByTime(800);
+      first.result.current.handleOnboardingComplete();
     });
-    expect(result.current.showOnboarding).toBe(true);
+    expect(first.result.current.showOnboarding).toBe(false);
+    first.unmount();
 
-    act(() => {
-      result.current.handleOnboardingComplete();
-    });
-    expect(result.current.showOnboarding).toBe(false);
-    expect(mockSafeSetItem).toHaveBeenCalledWith("test-onboarding-key", "true");
+    const second = renderOnboarding();
+    expect(second.result.current.showOnboarding).toBe(false);
   });
 });

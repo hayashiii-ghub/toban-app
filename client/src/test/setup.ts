@@ -1,5 +1,15 @@
 import "@testing-library/jest-dom/vitest";
+import { MotionGlobalConfig } from "framer-motion";
 import { beforeEach, vi } from "vitest";
+
+// 本物の framer-motion を描画し、アニメーションだけ即時に終わらせる。
+// アプリは LazyMotion で包んだ m を使うが、単体テストは包まずに描画するので、
+// 機能を同梱した motion を m として渡す。
+MotionGlobalConfig.skipAnimations = true;
+vi.mock("framer-motion", async importOriginal => {
+  const actual = await importOriginal<typeof import("framer-motion")>();
+  return { ...actual, m: actual.motion };
+});
 
 // framer-motion が matchMedia を参照するため stub
 Object.defineProperty(window, "matchMedia", {
