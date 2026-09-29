@@ -18,7 +18,6 @@ wrangler.deploy.jsonc
 # Environment variables
 .env
 .env.*
-!.env.example
 
 # Editors / tools
 .vscode/
