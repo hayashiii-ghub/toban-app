@@ -14,8 +14,8 @@ import { getSavedFontId } from "@/fonts";
 
 // The Japanese holiday calculator and equinox formulas cover 1980–2099.
 // Restrict new tool input to that range, which also bounds per-year work.
-export const ROTATION_DATE_MIN = "1980-01-01";
-export const ROTATION_DATE_MAX = "2099-12-31";
+const ROTATION_DATE_MIN = "1980-01-01";
+const ROTATION_DATE_MAX = "2099-12-31";
 
 const boundedText = (maximum: number) => z.string().trim().min(1).max(maximum);
 
@@ -72,7 +72,7 @@ export const rotationDefinitionSchema = rotationInputSchema
     }
   });
 
-export const appearanceDefinitionSchema = z.strictObject({
+const appearanceDefinitionSchema = z.strictObject({
   font: z
     .enum(FONT_IDS)
     .describe(
@@ -115,9 +115,7 @@ export const scheduleDefinitionSchema = z.strictObject({
   appearance: appearanceDefinitionSchema.optional(),
 });
 
-export type RotationInput = z.output<typeof rotationInputSchema>;
 export type RotationDefinition = z.output<typeof rotationDefinitionSchema>;
-export type ScheduleDefinitionInput = z.input<typeof scheduleDefinitionSchema>;
 export type ScheduleDefinition = z.output<typeof scheduleDefinitionSchema>;
 
 export function toRotationConfig(rotation: RotationDefinition): RotationConfig {

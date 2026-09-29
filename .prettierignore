@@ -1,15 +1,3 @@
-# ビルド成果物・依存
-dist
-build
-node_modules
-.git
-.wrangler
-coverage
-playwright-report
-e2e/test-results
-*.min.js
-*.min.css
-
 # 生成物。整形するとツールの出力と毎回衝突する
 pnpm-lock.yaml
 server/db/migrations/

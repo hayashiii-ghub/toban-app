@@ -7,8 +7,7 @@
 
 /* 見出し・短文: 行の長さを均等化し、孤立文字を防止 */
 .lp h1,
-.lp h2,
-.lp .lp-balance {
+.lp h2 {
   text-wrap: balance;
 }
 

@@ -6,17 +6,11 @@ export default tseslint.config(
   {
     ignores: [
       "dist/",
-      "node_modules/",
       ".wrangler/",
       "*.config.js",
       "*.config.ts",
       "scripts/",
-      "server/db/migrations/",
       "playwright-report/",
-      // design-sync (claude.ai/design) — staged scripts, build output, generated kit
-      ".ds-sync/",
-      "ds-bundle/",
-      ".design-sync/",
     ],
   },
   eslint.configs.recommended,

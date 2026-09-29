@@ -80,8 +80,7 @@ describe("カレンダーと円盤の凡例", () => {
       .join(" ");
 
   it("角丸以外の見た目を共有する", () => {
-    // 以前は各ビューが個別に凡例を持ち、枠線・背景・文字がずれていた。
-    // 片方だけ手で書き換えると同じ情報が別物に見えるため、ここで固定する。
+    // 片方だけ手で書き換えると同じ情報が別物に見えるため、見た目をここで固定する。
     const { container: cal } = render(
       <RotationCalendar groups={groups} members={members} rotation={0} />
     );

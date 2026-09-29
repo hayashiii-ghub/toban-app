@@ -13,8 +13,8 @@
     {
       "binding": "DB",
       "database_name": "toban-maker-db",
-      // CI では scripts/prepare-wrangler-config.mjs が環境変数から置き換えます。
-      // ローカルで直接 deploy する場合はこの値を自分の D1 Database ID に更新してください。
+      // ここは書き換えない。pnpm run deploy:cf が scripts/prepare-wrangler-config.mjs で
+      // CLOUDFLARE_D1_DATABASE_ID に置き換えた wrangler.deploy.jsonc を作ってデプロイする。
       "database_id": "__CLOUDFLARE_D1_DATABASE_ID__",
       "preview_database_id": "__CLOUDFLARE_D1_PREVIEW_DATABASE_ID__",
       "migrations_dir": "server/db/migrations",
