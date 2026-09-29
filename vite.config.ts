@@ -28,6 +28,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        // 静的ページへの遷移は index.html で返さない（返すと SPA の 404 になる）
+        navigateFallbackDenylist: [/^\/privacy$/],
         // /api/ は runtimeCaching に載せない。
         // Cache Storage は cache-control: no-store を尊重しないので、載せると
         // 通信できないときに古い応答が 200 として返る。useAutoSync の引き直しは

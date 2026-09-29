@@ -52,6 +52,8 @@ const KNOWN_APP_ROUTES: RegExp[] = [
   /^\/s\/[a-zA-Z0-9_-]+$/,
   /^\/transfer$/,
   /^\/junban$/,
+  // 静的ページ（client/public/privacy.html）。bot にも 404 を返さず静的ファイルに渡す
+  /^\/privacy$/,
   // /404 は意図的に含めない: 404 ページ自体は bot に実 404 status を返す
 ];
 
@@ -236,7 +238,7 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 <h2>よくある質問</h2>
 <dl>${faqHtml}</dl>
 </main>
-<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/templates">テンプレート一覧</a> | <a href="${origin}${JUNBAN_PAGE_SEO.path}">順番決め・ルーレット</a></footer>
+<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/templates">テンプレート一覧</a> | <a href="${origin}${JUNBAN_PAGE_SEO.path}">順番決め・ルーレット</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
 </body>
 </html>`;
 }
@@ -304,7 +306,7 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/templates`, or
 <p>${escapeHtml(desc)}</p>
 ${categoryHtml}
 </main>
-<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/about">toban について</a> | <a href="${origin}${JUNBAN_PAGE_SEO.path}">順番決め・ルーレット</a></footer>
+<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/about">toban について</a> | <a href="${origin}${JUNBAN_PAGE_SEO.path}">順番決め・ルーレット</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
 </body>
 </html>`;
 }
@@ -413,7 +415,7 @@ ${bodyHtml}
 ${faqHtml}
 ${relatedHtml}
 </main>
-<footer><a href="${origin}/templates">テンプレート一覧に戻る</a> | <a href="${origin}/about">toban について</a></footer>
+<footer><a href="${origin}/templates">テンプレート一覧に戻る</a> | <a href="${origin}/about">toban について</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
 </body>
 </html>`;
 }
@@ -463,7 +465,7 @@ ${buildSocialMetaTags({ title: seo.title, description: seo.description, url, ori
 <h2>よくある質問</h2>
 <dl>${faqHtml}</dl>
 </main>
-<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/templates">テンプレート一覧</a> | <a href="${origin}/about">toban について</a></footer>
+<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/templates">テンプレート一覧</a> | <a href="${origin}/about">toban について</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
 </body>
 </html>`;
 }

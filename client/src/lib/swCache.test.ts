@@ -28,3 +28,16 @@ describe("PWA の runtimeCaching", () => {
     expect(config).not.toMatch(/cacheName:\s*["'`]api-cache["'`]/);
   });
 });
+
+describe("PWA のナビゲーション", () => {
+  const config = readFileSync(
+    resolve(import.meta.dirname, "../../../vite.config.ts"),
+    "utf-8"
+  );
+
+  // SW は遷移を index.html で返すので、静的ページを外さないと
+  // アプリを一度開いた人には /privacy が SPA の 404 になる
+  it("静的ページ /privacy への遷移を index.html で横取りしない", () => {
+    expect(config).toMatch(/navigateFallbackDenylist:\s*\[[^\]]*privacy/);
+  });
+});

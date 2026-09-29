@@ -327,3 +327,11 @@
     }
   }
 }
+
+/* AdSense の自動広告は印刷物に入れない */
+@media print {
+  ins.adsbygoogle,
+  .google-auto-placed {
+    display: none !important;
+  }
+}

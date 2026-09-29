@@ -7,6 +7,7 @@ export const ja: Record<string, string> = {
   "lang.en": "English",
 
   "footer.about": "toban について",
+  "footer.privacy": "プライバシー",
 
   // 共通
   "common.share": "共有",
