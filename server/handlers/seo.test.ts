@@ -8,7 +8,6 @@ import {
   injectScheduleOgp,
   isBot,
   isKnownAppRoute,
-  renderJunbanHtml,
 } from "./seo";
 import { COMMON_FAQ, TEMPLATE_SEO_DATA } from "../../shared/seo-templates";
 import { TEMPLATE_CONTENT } from "../../shared/template-content";
@@ -372,12 +371,6 @@ describe("handleSitemap", () => {
     );
   });
 
-  it("順番決めページ /junban を含む", async () => {
-    const res = await handleSitemap("https://toban.app", envWithoutDb);
-    const xml = await res.text();
-    expect(xml).toContain("<loc>https://toban.app/junban</loc>");
-  });
-
   it("正規URLだけを掲載し、共有URLや疑似更新情報を含めない", async () => {
     const res = await handleSitemap("https://toban.app", envWithoutDb);
     const xml = await res.text();
@@ -390,55 +383,6 @@ describe("handleSitemap", () => {
   });
 });
 
-describe("renderJunbanHtml", () => {
-  const origin = "https://toban.app";
-
-  it("title/description/canonical と検索語彙（順番・ルーレット）を含む", () => {
-    const html = renderJunbanHtml(origin);
-    expect(html).toContain("<title>当番の順番をルーレット感覚で決める");
-    expect(html).toContain(
-      '<link rel="canonical" href="https://toban.app/junban">'
-    );
-    expect(html).toMatch(/順番/);
-    expect(html).toMatch(/ルーレット/);
-  });
-
-  it("OGP/Twitter Card と FAQ 構造化データを含む", () => {
-    const html = renderJunbanHtml(origin);
-    expect(html).toContain(
-      '<meta property="og:image" content="https://toban.app/og-image.png">'
-    );
-    expect(html).toContain(
-      '<meta name="twitter:card" content="summary_large_image">'
-    );
-    expect(html).toContain('"@type":"FAQPage"');
-  });
-
-  it("円盤ビューへ着地する CTA（/?view=disc）を含む", () => {
-    const html = renderJunbanHtml(origin);
-    expect(html).toContain(`${origin}/?view=disc`);
-  });
-
-  it("ランダム抽選を約束せず、抽選ではない旨を明記する（intent ミスマッチ回避）", () => {
-    const html = renderJunbanHtml(origin);
-    expect(html).toMatch(/抽選とは異な|ランダムに当たりを引く抽選とは/);
-  });
-
-  it("JSON-LD ブロックに生の < を出さない（</script> ブレイク防止・defense-in-depth）", () => {
-    const html = renderJunbanHtml(origin);
-    const ld = html.slice(
-      html.indexOf('application/ld+json">') + 21,
-      html.indexOf("</script>")
-    );
-    expect(ld).not.toContain("<");
-  });
-
-  it("パンくず position1 は React 側と同じ「toban について」（bot/UI の構造化データ整合）", () => {
-    const html = renderJunbanHtml(origin);
-    expect(html).toContain('"name":"toban について"');
-  });
-});
-
 describe("isKnownAppRoute", () => {
   it.each([
     "/",
@@ -447,7 +391,6 @@ describe("isKnownAppRoute", () => {
     "/templates/office-cleaning",
     "/s/abc_123-X",
     "/transfer",
-    "/junban",
   ])("既知ルート %s は true", path => {
     expect(isKnownAppRoute(path)).toBe(true);
   });
@@ -615,7 +558,6 @@ describe("bot 向けページの footer", () => {
       renderLandingPageHtml(origin),
       renderTemplateListHtml(origin),
       renderTemplateDetailHtml(origin, "office-cleaning")!,
-      renderJunbanHtml(origin),
     ];
     for (const html of pages) {
       const footer = html.slice(html.indexOf("<footer>"));

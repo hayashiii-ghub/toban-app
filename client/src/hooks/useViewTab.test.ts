@@ -9,7 +9,7 @@ describe("useViewTab", () => {
     window.history.replaceState({}, "", "/");
   });
 
-  it("URL の ?view= が有効なとき localStorage より優先して採用する（/junban からの着地）", () => {
+  it("URL の ?view= が有効なとき localStorage より優先して採用する", () => {
     localStorage.setItem(VIEW_TAB_KEY, "table");
     window.history.replaceState({}, "", "/?view=disc");
     const { result } = renderHook(() => useViewTab());

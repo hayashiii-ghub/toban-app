@@ -7,7 +7,6 @@ import {
   TEMPLATE_SEO_MAP,
   TEMPLATE_CATEGORIES,
   COMMON_FAQ,
-  JUNBAN_PAGE_SEO,
 } from "../../shared/seo-templates";
 import {
   faqPageSchema,
@@ -52,7 +51,6 @@ const KNOWN_APP_ROUTES: RegExp[] = [
   /^\/templates$/,
   /^\/s\/[a-zA-Z0-9_-]+$/,
   /^\/transfer$/,
-  /^\/junban$/,
   // 静的ページ（client/public/privacy.html）。bot にも 404 を返さず静的ファイルに渡す
   /^\/privacy$/,
   // /404 は意図的に含めない: 404 ページ自体は bot に実 404 status を返す
@@ -241,12 +239,10 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 <h2>すぐ使えるテンプレート</h2>
 <ul>${templateListHtml}</ul>
 <a href="${origin}/templates">テンプレート一覧を見る</a>
-<h2>当番の順番をルーレット感覚で決める</h2>
-<p>名前を入れて回すだけ、円盤ビューで当番・係の順番がひと目でわかります。<a href="${origin}${JUNBAN_PAGE_SEO.path}">順番決め・当番ルーレットのページはこちら</a></p>
 <h2>よくある質問</h2>
 <dl>${faqHtml}</dl>
 </main>
-<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/templates">テンプレート一覧</a> | <a href="${origin}${JUNBAN_PAGE_SEO.path}">順番決め・ルーレット</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
+<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/templates">テンプレート一覧</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
 </body>
 </html>`;
 }
@@ -314,7 +310,7 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/templates`, or
 <p>${escapeHtml(desc)}</p>
 ${categoryHtml}
 </main>
-<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/about">toban について</a> | <a href="${origin}${JUNBAN_PAGE_SEO.path}">順番決め・ルーレット</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
+<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/about">toban について</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
 </body>
 </html>`;
 }
@@ -428,56 +424,6 @@ ${relatedHtml}
 </html>`;
 }
 
-// ─── 順番決め/ルーレットページ (/junban) のプリレンダリング (bot用) ───
-
-export function renderJunbanHtml(origin: string): string {
-  const seo = JUNBAN_PAGE_SEO;
-  const url = `${origin}${seo.path}`;
-
-  const schema = serializeJsonLd([
-    faqPageSchema(seo.faq),
-    breadcrumbSchema([
-      { name: "toban について", item: `${origin}/about` },
-      { name: seo.heading },
-    ]),
-  ]);
-
-  const benefitsHtml = seo.benefits
-    .map(b => `<li>${escapeHtml(b)}</li>`)
-    .join("");
-  const faqHtml = seo.faq
-    .map(
-      f => `<dt>${escapeHtml(f.question)}</dt><dd>${escapeHtml(f.answer)}</dd>`
-    )
-    .join("");
-
-  return `<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>${escapeHtml(seo.title)}</title>
-<meta name="description" content="${escapeHtml(seo.description)}">
-<link rel="canonical" href="${url}">
-${buildSocialMetaTags({ title: seo.title, description: seo.description, url, origin, type: "article" })}
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<script type="application/ld+json">${schema}</script>
-</head>
-<body>
-<header><nav><a href="${origin}/about">toban について</a> / <span>${escapeHtml(seo.heading)}</span></nav></header>
-<main>
-<h1>${escapeHtml(seo.heading)}</h1>
-<p>${escapeHtml(seo.intro)}</p>
-<ul>${benefitsHtml}</ul>
-<a href="${origin}/?view=disc">円盤ビューで順番を決める</a>
-<h2>よくある質問</h2>
-<dl>${faqHtml}</dl>
-</main>
-<footer><a href="${origin}/">当番表を作る</a> | <a href="${origin}/templates">テンプレート一覧</a> | <a href="${origin}/about">toban について</a> | <a href="${origin}/privacy">プライバシーポリシー</a></footer>
-</body>
-</html>`;
-}
-
 // ─── 動的 sitemap.xml ───
 
 export async function handleSitemap(
@@ -487,7 +433,6 @@ export async function handleSitemap(
   const canonicalPaths = [
     "/",
     "/templates",
-    JUNBAN_PAGE_SEO.path,
     ...TEMPLATE_SEO_DATA.map(template => `/templates/${template.slug}`),
   ];
   const urls = canonicalPaths

@@ -719,16 +719,6 @@ export default function LandingPage() {
               );
             })}
           </div>
-          <div className="text-center mt-8">
-            <Link
-              href="/junban"
-              className="inline-flex items-center gap-1 text-sm underline underline-offset-4"
-              style={{ color: C.primary }}
-            >
-              {t("lp.viewJunban")}
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
         </div>
       </section>
 

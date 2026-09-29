@@ -9,7 +9,6 @@ import {
   renderLandingPageHtml,
   renderTemplateListHtml,
   renderTemplateDetailHtml,
-  renderJunbanHtml,
   handleSitemap,
   handleRobots,
 } from "./handlers/seo";
@@ -63,6 +62,11 @@ export default {
       return handleRobots(origin);
     }
 
+    // 旧・順番決めページ。検索で上位に出ず 2026-09 に撤去した。登録済みの URL を行き止まりにしない
+    if (pathname === "/junban") {
+      return Response.redirect(`${origin}/about`, 301);
+    }
+
     const ua = request.headers.get("user-agent") ?? "";
     const botRequest = isBot(ua);
 
@@ -87,18 +91,6 @@ export default {
       const securedResponse = withSecurityHeaders(response);
       securedResponse.headers.set("X-Robots-Tag", "noindex");
       return securedResponse;
-    }
-
-    // 順番決め/ルーレットページ — bot用プリレンダリング
-    if (pathname === "/junban" && botRequest) {
-      return withSecurityHeaders(
-        new Response(renderJunbanHtml(origin), {
-          headers: {
-            "Content-Type": "text/html; charset=utf-8",
-            "Cache-Control": "public, max-age=86400",
-          },
-        })
-      );
     }
 
     // テンプレート一覧ページ — bot用プリレンダリング

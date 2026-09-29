@@ -93,7 +93,6 @@ export const en: Record<MessageKey, string> = {
   "lp.templatesSubtitle":
     "Pick from {count} templates and just add your members.",
   "lp.viewAllTemplates": "See all templates",
-  "lp.viewJunban": "Decide order with the wheel",
   "lp.faqHeading": "FAQ",
   "lp.hero.badge": "No sign-up · Free",
   "lp.mock.title": "Cleaning duty",
