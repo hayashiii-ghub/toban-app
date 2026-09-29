@@ -8,6 +8,7 @@ import {
   COMMON_FAQ_EN,
 } from "./seo-templates";
 import { TEMPLATES } from "./templates";
+import { SITE_TITLE } from "./site";
 
 // 紹介ページを持たない唯一のテンプレート。空白から作り始めるためのもので、
 // 書く内容が無いため SEO ページを作らない（中身の無い LP を増やさない）。
@@ -111,5 +112,25 @@ describe("client/index.html に手書きしたテンプレート件数", () => {
 
     expect(counts.length, "件数の記述が見つからない").toBeGreaterThan(0);
     expect(counts).toEqual(counts.map(() => TEMPLATE_SEO_DATA.length));
+  });
+});
+
+describe("SITE_TITLE（トップと LP の検索タイトル）", () => {
+  it("client/index.html の title / og:title / twitter:title と一致する", () => {
+    const html = readFileSync(
+      join(import.meta.dirname, "..", "client", "index.html"),
+      "utf8"
+    );
+    expect(html).toContain(`<title>${SITE_TITLE}</title>`);
+    expect(html.split(`content="${SITE_TITLE}"`).length - 1).toBe(2);
+  });
+
+  // 半角は全角の半分の幅として数える（toban・LINE・空白）
+  it("SERP の表示幅（全角換算 30 字）に収まる", () => {
+    const width = [...SITE_TITLE].reduce(
+      (sum, c) => sum + (c.charCodeAt(0) < 0x80 ? 0.5 : 1),
+      0
+    );
+    expect(width).toBeLessThanOrEqual(30);
   });
 });

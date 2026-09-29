@@ -1,6 +1,8 @@
 // 日本語UI辞書。テンプレートの内容は別のデータ定義で管理する。
 // キーは namespace.key 形式。文字列抽出の各 step でここに追記していく。
 
+import { SITE_TITLE } from "@shared/site";
+
 export const ja: Record<string, string> = {
   "lang.switchLabel": "言語",
   "lang.ja": "日本語",
@@ -65,7 +67,7 @@ export const ja: Record<string, string> = {
     "共有した当番表は、1年間まったく編集がないと自動で削除されます。",
 
   // ランディングページ
-  "lp.docTitle": "当番表作成アプリ toban｜無料で簡単作成・印刷・共有",
+  "lp.docTitle": SITE_TITLE,
   "lp.shareText":
     "かんたん当番表、すぐ完成。掃除・給食・日直のローテーション表を無料で作成できます。",
   "lp.shareTitle": "toban｜かんたん当番表",
