@@ -1,4 +1,5 @@
 import type { RotationConfig } from "@/rotation/types";
+import { formatIsoDateLocal } from "@/rotation/dateUtils";
 import { useT } from "@/i18n";
 
 interface Props {
@@ -46,8 +47,7 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
               onUpdate(prev => ({
                 ...prev,
                 mode: "date",
-                startDate:
-                  prev.startDate || new Date().toISOString().split("T")[0],
+                startDate: prev.startDate || formatIsoDateLocal(new Date()),
                 cycleDays: prev.cycleDays || 7,
               }))
             }

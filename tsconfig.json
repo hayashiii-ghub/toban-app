@@ -1,6 +1,11 @@
 {
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
-  "exclude": ["node_modules", "build", "dist"],
+  "include": [
+    "client/src/**/*",
+    "shared/**/*",
+    "server/**/*",
+    "e2e/**/*",
+    "*.config.ts"
+  ],
   "compilerOptions": {
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",

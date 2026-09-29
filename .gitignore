@@ -1,22 +1,26 @@
 # Dependencies
-**/node_modules
+node_modules/
 .pnpm-store/
+
+# Build / test outputs
+dist/
+coverage/
+e2e/test-results/
+playwright-report/
+*.tsbuildinfo
+
+# Cloudflare
 .wrangler/
 wrangler.deploy.jsonc
-
-# Build outputs
-dist/
-build/
-*.dist
+# wrangler dev が読むローカル用の秘密（SLACK_WEBHOOK_URL など）
+.dev.vars*
 
 # Environment variables
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
-# IDE and editor files
+# Editors / tools
 .vscode/
 .idea/
 .cursor/
@@ -25,96 +29,13 @@ build/
 *.swo
 *~
 
-# OS generated files
+# OS
 .DS_Store
-.DS_Store?
 ._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# Manus dev logs (not needed for OSS)
-.manus-logs/
-
 # Logs
-logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-
-# Gatsby files
-.cache/
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-tmp/
-temp/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Playwright
-e2e/test-results/
-playwright-report/
 
 # OG image generation — Kiwi Maru font cache (downloaded on demand by og:generate)
 scripts/fonts/

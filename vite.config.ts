@@ -1,8 +1,8 @@
+/// <reference types="vitest/config" />
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig } from "vite";
-import type { UserConfig as VitestUserConfig } from "vitest/config";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -42,7 +42,6 @@ export default defineConfig({
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
       "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
   },
   envDir: path.resolve(import.meta.dirname),
@@ -74,7 +73,7 @@ export default defineConfig({
         "**/node_modules/**",
         "**/dist/**",
         "client/src/main.tsx",
-        "client/src/vite-env.d.ts",
+        "**/*.d.ts",
         "client/src/components/ui/**",
       ],
       thresholds: {
@@ -84,7 +83,7 @@ export default defineConfig({
         lines: 35,
       },
     },
-  } satisfies VitestUserConfig["test"],
+  },
   server: {
     port: 3000,
     strictPort: false,
