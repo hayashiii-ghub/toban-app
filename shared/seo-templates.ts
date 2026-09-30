@@ -336,7 +336,7 @@ export const TEMPLATE_SEO_DATA: TemplateSEO[] = [
       "部活動の当番表を無料で作成。グラウンド整備・用具準備・ドリンク・部室清掃を学年班でローテーション管理。",
     heading: "スポーツチーム・部活動当番表テンプレート",
     intro:
-      "グラウンド整備・ライン引き、用具準備・片付け、ドリンク準備・補充、部室清掃・出欠記録の4カテゴリを学年班でローテーション。練習前後の準備・片付けを公平に分担できます。",
+      "練習前のグラウンド整備・ライン引き、用具準備、ドリンク準備・補充、練習後の整備・片付け、部室清掃・出欠記録を学年班でローテーション。練習前と練習後を別の担当にして、準備・片付けを公平に分担できます。",
     categoryId: "other",
   },
   {
@@ -347,7 +347,7 @@ export const TEMPLATE_SEO_DATA: TemplateSEO[] = [
       "教会・寺院の奉仕当番表を無料で作成。清掃・受付・献花・法要準備を組ごとにローテーション管理。登録不要。",
     heading: "教会・寺院 奉仕当番表テンプレート",
     intro:
-      "本堂・礼拝堂の清掃、受付・参拝者案内、献花・供花の手入れ、法要・行事準備の4つの奉仕を梅組・松組・竹組・桜組でローテーション。檀家や信徒の奉仕活動を公平に管理できます。",
+      "本堂・礼拝堂の清掃、受付・参拝者案内、献花・供花の手入れ、法要・行事準備の4つの奉仕を松組・竹組・梅組・桜組でローテーション。檀家や信徒の奉仕活動を公平に管理できます。",
     categoryId: "other",
   },
   // ── チェックリスト・TODO ──
@@ -595,7 +595,7 @@ export const TEMPLATE_SEO_EN: Record<
   "household-chores": {
     heading: "Household Chore Rotation Template",
     intro:
-      "Rotate everyday chores like bath cleaning and taking out the trash fairly among family members. Tasks and members are freely editable, and you can print a clean roster to stick on the fridge.",
+      "Rotate everyday chores like bath cleaning, taking out the trash, and restocking detergent and trash bags fairly among family members. Tasks and members are freely editable, and you can print a clean roster to stick on the fridge.",
   },
   "sharehouse-management": {
     heading: "Share House Common-Area Roster Template",
@@ -605,12 +605,12 @@ export const TEMPLATE_SEO_EN: Record<
   "sports-club": {
     heading: "Sports Team & Club Duty Roster Template",
     intro:
-      "Rotate four categories among grade groups: ground prep/line marking, equipment setup/cleanup, drink prep/refill, and clubroom cleaning/attendance records. Share pre- and post-practice work fairly.",
+      "Rotate duties among grade groups: pre-practice ground prep/line marking, equipment setup, drink prep/refill, post-practice ground care/equipment cleanup, and clubroom cleaning/attendance records. Pre- and post-practice work are separate duties, so cleanup is shared fairly.",
   },
   "religious-service": {
     heading: "Church & Temple Service Roster Template",
     intro:
-      "Rotate four services among groups (Ume, Matsu, Take, Sakura): cleaning the main hall/chapel, reception/visitor guidance, flower offering/arranging, and memorial/event prep. Fairly manage the service activities of members.",
+      "Rotate four services among groups (Matsu, Take, Ume, Sakura): cleaning the main hall/chapel, reception/visitor guidance, flower offering/arranging, and memorial/event prep. Fairly manage the service activities of members.",
   },
   "event-checklist": {
     heading: "Event Prep Checklist Template",

@@ -9,6 +9,10 @@ const member = (
   color: (typeof MEMBER_PRESETS)[number]
 ): Member => ({ id, name, ...color });
 
+// 見た目は場面に合わせて質感と色を選ぶ。
+// さらさら（細い線）: 事務・安全確認・スタッフ向けなど、きちんと読ませたいもの
+// ざらざら（太い線）: 教室・屋外・部活・お店など、貼って遠くからも目立たせたいもの
+// もちもち（枠なし）: 保育・家庭・読み聞かせなど、やわらかく親しみやすくしたいもの
 export const TEMPLATES: ScheduleTemplate[] = [
   // ── 事務室・オフィス向け ──
   {
@@ -31,7 +35,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "電話・来客当番",
     emoji: "📞",
-    designThemeId: "sarasara/whiteboard",
+    designThemeId: "sarasara/ocean",
     groups: [
       { id: "g1", tasks: ["午前の電話・来客対応"], emoji: "📞" },
       { id: "g2", tasks: ["午後の電話・来客対応"], emoji: "🤝" },
@@ -47,7 +51,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "園内おそうじ当番",
     emoji: "🌷",
-    designThemeId: "sarasara/crayon",
+    designThemeId: "mochimochi/crayon",
     groups: [
       { id: "g1", tasks: ["保育室の掃除・消毒"], emoji: "🧹" },
       { id: "g2", tasks: ["トイレ掃除・補充"], emoji: "🚿" },
@@ -64,7 +68,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "バス添乗・お迎え当番",
     emoji: "🚌",
-    designThemeId: "sarasara/crayon",
+    designThemeId: "mochimochi/sunflower",
     groups: [
       { id: "g1", tasks: ["朝バス添乗", "乗車人数確認"], emoji: "🌅" },
       { id: "g2", tasks: ["帰りバス添乗", "降車確認"], emoji: "🌇" },
@@ -79,7 +83,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "預かり保育当番",
     emoji: "🕐",
-    designThemeId: "sarasara/crayon",
+    designThemeId: "mochimochi/sakura",
     groups: [
       { id: "g1", tasks: ["早朝保育（7:30〜）"], emoji: "🌅" },
       { id: "g2", tasks: ["延長保育（〜18:00）"], emoji: "🌇" },
@@ -94,7 +98,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "午睡チェック当番",
     emoji: "😴",
-    designThemeId: "sarasara/crayon",
+    designThemeId: "sarasara/nightsky",
     assignmentMode: "task",
     groups: [
       {
@@ -111,8 +115,14 @@ export const TEMPLATES: ScheduleTemplate[] = [
       },
       {
         id: "g3",
-        tasks: ["ブレスチェック（2歳児）", "室温・湿度記録"],
+        tasks: ["ブレスチェック（2歳児）", "体位確認"],
         emoji: "🐣",
+        memberIds: ["m1", "m2", "m3", "m4"],
+      },
+      {
+        id: "g4",
+        tasks: ["室温・湿度記録"],
+        emoji: "🌡️",
         memberIds: ["m1", "m2", "m3", "m4"],
       },
     ],
@@ -129,16 +139,41 @@ export const TEMPLATES: ScheduleTemplate[] = [
     designThemeId: "sarasara/crayon",
     assignmentMode: "task",
     groups: [
+      // 1 つの担当は 1 人が受け持つ。確認とダブルチェックを別の担当にして、必ず違う人が入るようにする
       {
         id: "g1",
-        tasks: ["除去食チェック", "配膳ダブルチェック", "喫食時見守り"],
+        tasks: ["除去食チェック（給食）"],
         emoji: "🍳",
         memberIds: ["m1", "m2", "m3", "m4"],
       },
       {
         id: "g2",
-        tasks: ["おやつ内容確認", "配膳チェック", "喫食時見守り"],
+        tasks: ["配膳ダブルチェック（給食）"],
+        emoji: "✅",
+        memberIds: ["m1", "m2", "m3", "m4"],
+      },
+      {
+        id: "g3",
+        tasks: ["喫食時見守り（給食）"],
+        emoji: "👀",
+        memberIds: ["m1", "m2", "m3", "m4"],
+      },
+      {
+        id: "g4",
+        tasks: ["おやつの内容確認"],
         emoji: "🍪",
+        memberIds: ["m1", "m2", "m3", "m4"],
+      },
+      {
+        id: "g5",
+        tasks: ["配膳チェック（おやつ）"],
+        emoji: "☑️",
+        memberIds: ["m1", "m2", "m3", "m4"],
+      },
+      {
+        id: "g6",
+        tasks: ["喫食時見守り（おやつ）"],
+        emoji: "👀",
         memberIds: ["m1", "m2", "m3", "m4"],
       },
     ],
@@ -153,7 +188,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "教室そうじ当番",
     emoji: "🏫",
-    designThemeId: "sarasara/chalkboard",
+    designThemeId: "zarazara/chalkboard",
     groups: [
       { id: "g1", tasks: ["教室（ほうき・ちりとり）"], emoji: "🧹" },
       { id: "g2", tasks: ["教室（ぞうきんがけ）"], emoji: "💧" },
@@ -172,7 +207,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "給食当番",
     emoji: "🍽️",
-    designThemeId: "sarasara/chalkboard",
+    designThemeId: "zarazara/crayon",
     groups: [
       { id: "g1", tasks: ["配膳（おかず）"], emoji: "🍚" },
       { id: "g2", tasks: ["配膳（汁物）", "配膳（ごはん）"], emoji: "🥢" },
@@ -204,7 +239,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "配布物・プリント係",
     emoji: "📄",
-    designThemeId: "sarasara/chalkboard",
+    designThemeId: "zarazara/lavender",
     groups: [
       { id: "g1", tasks: ["プリント配り"], emoji: "📄" },
       { id: "g2", tasks: ["提出物の回収・チェック"], emoji: "✅" },
@@ -221,7 +256,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "水やり・生き物係",
     emoji: "🌱",
-    designThemeId: "sarasara/nature",
+    designThemeId: "mochimochi/nature",
     assignmentMode: "task",
     groups: [
       {
@@ -259,7 +294,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "換気・教室環境当番",
     emoji: "🪟",
-    designThemeId: "sarasara/chalkboard",
+    designThemeId: "zarazara/ocean",
     groups: [
       { id: "g1", tasks: ["朝の窓開け・換気"], emoji: "🪟" },
       { id: "g2", tasks: ["休み時間の換気確認"], emoji: "🌬️" },
@@ -277,7 +312,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "校内巡回・施錠当番",
     emoji: "🔑",
-    designThemeId: "sarasara/chalkboard",
+    designThemeId: "sarasara/nightsky",
     groups: [
       { id: "g1", tasks: ["朝の校門立ち当番"], emoji: "🚸" },
       { id: "g2", tasks: ["昼休み巡回"], emoji: "👀" },
@@ -293,7 +328,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "旗振り（登下校見守り）当番",
     emoji: "🚩",
-    designThemeId: "sarasara/sakura",
+    designThemeId: "zarazara/sunflower",
     groups: [
       { id: "g1", tasks: ["東門の旗振り", "横断サポート"], emoji: "🏫" },
       { id: "g2", tasks: ["西門の旗振り", "横断サポート"], emoji: "🚸" },
@@ -327,7 +362,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "プール監視当番",
     emoji: "🏊",
-    designThemeId: "sarasara/ocean",
+    designThemeId: "mochimochi/ocean",
     groups: [
       {
         id: "g1",
@@ -350,7 +385,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "読み聞かせボランティア",
     emoji: "📖",
-    designThemeId: "sarasara/lavender",
+    designThemeId: "mochimochi/lavender",
     groups: [
       { id: "g1", tasks: ["1年生の教室"], emoji: "🌸" },
       { id: "g2", tasks: ["2年生の教室"], emoji: "🌸" },
@@ -375,21 +410,40 @@ export const TEMPLATES: ScheduleTemplate[] = [
     designThemeId: "sarasara/nature",
     assignmentMode: "task",
     groups: [
+      // リーダーとサブは別の人が入るよう、別の担当にする
       {
         id: "g1",
-        tasks: ["日勤リーダー", "日勤サブ"],
+        tasks: ["1階 日勤リーダー"],
         emoji: "1️⃣",
         memberIds: ["m1", "m2", "m3", "m4", "m5", "m6"],
       },
       {
         id: "g2",
-        tasks: ["日勤リーダー", "日勤サブ"],
-        emoji: "2️⃣",
+        tasks: ["1階 日勤サブ"],
+        emoji: "1️⃣",
         memberIds: ["m1", "m2", "m3", "m4", "m5", "m6"],
       },
       {
         id: "g3",
-        tasks: ["日勤リーダー", "日勤サブ"],
+        tasks: ["2階 日勤リーダー"],
+        emoji: "2️⃣",
+        memberIds: ["m1", "m2", "m3", "m4", "m5", "m6"],
+      },
+      {
+        id: "g4",
+        tasks: ["2階 日勤サブ"],
+        emoji: "2️⃣",
+        memberIds: ["m1", "m2", "m3", "m4", "m5", "m6"],
+      },
+      {
+        id: "g5",
+        tasks: ["3階 日勤リーダー"],
+        emoji: "3️⃣",
+        memberIds: ["m1", "m2", "m3", "m4", "m5", "m6"],
+      },
+      {
+        id: "g6",
+        tasks: ["3階 日勤サブ"],
         emoji: "3️⃣",
         memberIds: ["m1", "m2", "m3", "m4", "m5", "m6"],
       },
@@ -406,19 +460,45 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "入浴介助当番",
     emoji: "🛁",
-    designThemeId: "sarasara/ocean",
+    designThemeId: "mochimochi/ocean",
     assignmentMode: "task",
     groups: [
+      // 役割ごとに別の人が入るよう、午前・午後それぞれ 3 つの担当に分ける。
+      // この並びなら、5 人のとき午前と午後の浴室内介助は別の人になる
       {
         id: "g1",
-        tasks: ["浴室内介助（午前）", "脱衣・着衣介助", "誘導・見守り"],
-        emoji: "🌅",
+        tasks: ["浴室内介助（午前）"],
+        emoji: "🛁",
         memberIds: ["m1", "m2", "m3", "m4", "m5"],
       },
       {
         id: "g2",
-        tasks: ["浴室内介助（午後）", "脱衣・着衣介助", "誘導・見守り"],
-        emoji: "🌇",
+        tasks: ["脱衣・着衣介助（午前）"],
+        emoji: "👕",
+        memberIds: ["m1", "m2", "m3", "m4", "m5"],
+      },
+      {
+        id: "g3",
+        tasks: ["誘導・見守り（午前）"],
+        emoji: "🚶",
+        memberIds: ["m1", "m2", "m3", "m4", "m5"],
+      },
+      {
+        id: "g4",
+        tasks: ["浴室内介助（午後）"],
+        emoji: "🛁",
+        memberIds: ["m1", "m2", "m3", "m4", "m5"],
+      },
+      {
+        id: "g5",
+        tasks: ["脱衣・着衣介助（午後）"],
+        emoji: "👕",
+        memberIds: ["m1", "m2", "m3", "m4", "m5"],
+      },
+      {
+        id: "g6",
+        tasks: ["誘導・見守り（午後）"],
+        emoji: "🚶",
         memberIds: ["m1", "m2", "m3", "m4", "m5"],
       },
     ],
@@ -461,7 +541,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "町内会 清掃・管理当番",
     emoji: "🏘️",
-    designThemeId: "sarasara/nature",
+    designThemeId: "zarazara/nature",
     groups: [
       { id: "g1", tasks: ["ゴミ集積所清掃", "不法投棄チェック"], emoji: "🗑️" },
       { id: "g2", tasks: ["公園清掃", "遊具点検"], emoji: "🌳" },
@@ -478,7 +558,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "マンション共用部管理",
     emoji: "🏬",
-    designThemeId: "sarasara/lavender",
+    designThemeId: "sarasara/whiteboard",
     groups: [
       {
         id: "g1",
@@ -501,7 +581,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "飲食店 開店・閉店作業",
     emoji: "🍴",
-    designThemeId: "sarasara/sunflower",
+    designThemeId: "zarazara/chalkboard",
     assignmentMode: "task",
     groups: [
       {
@@ -536,7 +616,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "家事ローテーション",
     emoji: "🏠",
-    designThemeId: "sarasara/sunflower",
+    designThemeId: "mochimochi/sunflower",
     assignmentMode: "task",
     groups: [
       {
@@ -551,6 +631,12 @@ export const TEMPLATES: ScheduleTemplate[] = [
         emoji: "🗑️",
         memberIds: ["m1", "m2", "m3"],
       },
+      {
+        id: "g3",
+        tasks: ["洗剤・ゴミ袋の補充"],
+        emoji: "🧴",
+        memberIds: ["m1", "m2", "m3"],
+      },
     ],
     members: [
       member("m1", "パパ", BLUE),
@@ -561,7 +647,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "シェアハウス 共用部管理",
     emoji: "🏡",
-    designThemeId: "sarasara/ocean",
+    designThemeId: "mochimochi/nature",
     groups: [
       { id: "g1", tasks: ["キッチン清掃", "シンク・排水口掃除"], emoji: "🍳" },
       {
@@ -588,22 +674,19 @@ export const TEMPLATES: ScheduleTemplate[] = [
   {
     name: "スポーツチーム・部活動",
     emoji: "⚽",
-    designThemeId: "sarasara/ocean",
+    designThemeId: "zarazara/ocean",
     assignmentMode: "task",
     groups: [
+      // 練習後の片付けを練習前とは別の担当にして、最後まで残る人を最初から決めておく
       {
         id: "g1",
-        tasks: [
-          "グラウンド整備（練習前）",
-          "ライン引き",
-          "グラウンド整備（練習後）",
-        ],
+        tasks: ["グラウンド整備（練習前）", "ライン引き"],
         emoji: "⚽",
         memberIds: ["m1", "m2", "m3", "m4", "m5"],
       },
       {
         id: "g2",
-        tasks: ["用具準備・搬出", "用具片付け・点検"],
+        tasks: ["用具準備・搬出"],
         emoji: "🏟️",
         memberIds: ["m1", "m2", "m3", "m4", "m5"],
       },
@@ -615,6 +698,12 @@ export const TEMPLATES: ScheduleTemplate[] = [
       },
       {
         id: "g4",
+        tasks: ["グラウンド整備（練習後）", "用具片付け・点検"],
+        emoji: "🧹",
+        memberIds: ["m1", "m2", "m3", "m4", "m5"],
+      },
+      {
+        id: "g5",
         tasks: ["部室清掃", "出欠記録"],
         emoji: "📋",
         memberIds: ["m1", "m2", "m3", "m4", "m5"],
@@ -647,9 +736,9 @@ export const TEMPLATES: ScheduleTemplate[] = [
       },
     ],
     members: [
-      member("m1", "梅組", RED),
-      member("m2", "松組", GREEN),
-      member("m3", "竹組", BLUE),
+      member("m1", "松組", GREEN),
+      member("m2", "竹組", BLUE),
+      member("m3", "梅組", RED),
       member("m4", "桜組", PINK),
     ],
   },
@@ -658,7 +747,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
     name: "イベント準備チェックリスト",
     emoji: "📝",
     assignmentMode: "task",
-    designThemeId: "sarasara/whiteboard",
+    designThemeId: "sarasara/crayon",
     groups: [
       { id: "g1", tasks: ["会場の予約・下見"], emoji: "🏢" },
       {
@@ -686,7 +775,7 @@ export const TEMPLATES: ScheduleTemplate[] = [
     name: "新学期やることリスト",
     emoji: "🌸",
     assignmentMode: "task",
-    designThemeId: "sarasara/sakura",
+    designThemeId: "mochimochi/sakura",
     groups: [
       { id: "g1", tasks: ["名簿・座席表の作成"], emoji: "📋" },
       { id: "g2", tasks: ["教室の掲示・レイアウト準備"], emoji: "🏫" },
