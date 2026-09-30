@@ -121,8 +121,12 @@ class ErrorBoundary extends Component<Props, State> {
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="theme-border theme-shadow-sm inline-flex items-center gap-2 px-5 py-2.5 font-bold text-sm text-white transition-all duration-150 theme-hover-lift"
-                style={{ borderRadius: "10px", backgroundColor: "#1a1a1a" }}
+                className="theme-border theme-shadow-sm inline-flex items-center gap-2 px-5 py-2.5 font-bold text-sm transition-all duration-150 theme-hover-lift"
+                style={{
+                  borderRadius: "10px",
+                  backgroundColor: "var(--dt-control-bar-bg)",
+                  color: "var(--dt-control-bar-text)",
+                }}
               >
                 <RotateCcw className="size-4" aria-hidden="true" />
                 {tStandalone("error.reload")}

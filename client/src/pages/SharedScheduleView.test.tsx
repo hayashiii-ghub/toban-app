@@ -147,13 +147,21 @@ describe("SharedScheduleView", () => {
   });
 
   it.each([
-    [404, "スケジュールが見つかりませんでした"],
+    [404, "当番表が見つかりませんでした"],
     [500, "サーバーエラーが発生しました。しばらくしてからお試しください"],
     [400, "データの取得に失敗しました"],
   ])("API が %i を返したら理由を伝える", async (status, message) => {
     stubFetch(async () => Response.json({ error: "x" }, { status }));
     renderAt("/s/AbCdEfGhIj");
     expect(await screen.findByRole("heading", { name: message })).toBeVisible();
+    // 見つからないときは読み込み直しても変わらないので、再読み込みは出さない
+    expect(!!screen.queryByRole("button", { name: "再読み込み" })).toBe(
+      status !== 404
+    );
+    if (status === 404)
+      expect(
+        screen.getByText(/1年間更新がなく消えた可能性があります/)
+      ).toBeVisible();
   });
 
   it("通信できないときはネットワークエラーを伝える", async () => {

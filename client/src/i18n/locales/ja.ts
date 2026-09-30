@@ -17,6 +17,7 @@ export const ja = {
   "common.share": "共有",
   "common.edit": "編集",
   "common.close": "閉じる",
+  "common.loading": "読み込み中…",
 
   // 回転ラベル（共有/Home 共用）
   "rotation.initial": "初期",
@@ -34,7 +35,11 @@ export const ja = {
   // 共有閲覧ページ
   "shared.printUnsupported":
     "このブラウザでは印刷できません。SafariまたはChromeで開いてください",
-  "shared.error.notFound": "スケジュールが見つかりませんでした",
+  "shared.error.notFound": "当番表が見つかりませんでした",
+  "shared.error.notFoundHint":
+    "共有が止められたか、1年間更新がなく消えた可能性があります。送ってくれた人に確かめてください。",
+  "shared.error.retryHint":
+    "通信の状態を確かめて、もう一度読み込んでください。",
   "shared.error.server":
     "サーバーエラーが発生しました。しばらくしてからお試しください",
   "shared.error.fetch": "データの取得に失敗しました",
@@ -204,6 +209,7 @@ export const ja = {
   // 設定モーダル
   "settings.title": "編集",
   "settings.unsaved": "未保存",
+  "settings.saved": "保存しました",
   "settings.newTask": "新しいタスク",
   "settings.confirmClose": "変更が保存されていません。閉じますか？",
   "settings.errorNeedTask": "タスクが1つ以上必要です。",

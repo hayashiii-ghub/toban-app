@@ -18,7 +18,8 @@ import { useShareFlow } from "@/hooks/useShareFlow";
 import { useTabDragDrop } from "@/hooks/useTabDragDrop";
 import { useViewTab } from "@/hooks/useViewTab";
 import { getTemplates } from "@shared/template-localization";
-import { useLocale } from "@/i18n";
+import { toast } from "sonner";
+import { useLocale, useT } from "@/i18n";
 import { computeAssignments, getEffectiveRotation } from "@/rotation/utils";
 import type { AppState, Schedule } from "@/rotation/types";
 import {
@@ -29,6 +30,7 @@ import {
 
 export function useHomeState() {
   const { locale } = useLocale();
+  const t = useT();
   const toolEditingRef = useRef(false);
   const shareVisibleRef = useRef(false);
   const {
@@ -296,8 +298,9 @@ export function useHomeState() {
     (...args: Parameters<typeof handleSaveSettings>) => {
       handleSaveSettings(...args);
       closeModal();
+      toast.success(t("settings.saved"));
     },
-    [handleSaveSettings, closeModal]
+    [handleSaveSettings, closeModal, t]
   );
 
   const onTogglePin = useCallback(

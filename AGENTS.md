@@ -24,7 +24,7 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 
 ## データ
 
-- 正本は localStorage。編集した当番表は、共有していなくても D1 に非公開で自動バックアップする（`useAutoSync`）。共有すると公開になる。1 年間更新の無い行は cron で消す（`CLEANUP_RETENTION_DAYS`。i18n の `share.retention` と `client/public/privacy.html` の記述と揃える）
+- 正本は localStorage。編集した当番表は、共有していなくても D1 に非公開で自動バックアップする（`useAutoSync`）。共有すると公開になる。1 年間更新の無い行は cron で消す（`CLEANUP_RETENTION_DAYS`。i18n の `share.retention`・`shared.error.notFoundHint` と `client/public/privacy.html` の記述と揃える）
 - 同期まわり（`hooks/useAutoSync.ts` / `lib/syncManager.ts` / `lib/api.ts`）の変更はデータ消失につながる。`*.recovery.test.*` を含む既存テストを必ず通す
 - migration は `server/db/migrations/` に連番の SQL を手で書く（drizzle-kit は使わない。wrangler は `.sql` だけを読む）。既存のファイルは変えない。列を足したら `server/db/schema.ts` と `server/db/ensureSchema.ts` の `REQUIRED_SCHEDULE_COLUMNS` も揃える
 - 外部に送る情報を増やす（解析ツール、新しい外部サービスなど）ときは `client/public/privacy.html` も直す

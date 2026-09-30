@@ -17,6 +17,7 @@ export const en: Record<MessageKey, string> = {
   "common.share": "Share",
   "common.edit": "Edit",
   "common.close": "Close",
+  "common.loading": "Loading…",
 
   // Rotation label (shared + Home)
   "rotation.initial": "Start",
@@ -35,6 +36,9 @@ export const en: Record<MessageKey, string> = {
   "shared.printUnsupported":
     "This browser can't print. Please open the page in Safari or Chrome.",
   "shared.error.notFound": "Schedule not found",
+  "shared.error.notFoundHint":
+    "Sharing may have been turned off, or the roster was removed after a year without updates. Please check with the person who sent it.",
+  "shared.error.retryHint": "Check your connection and try loading it again.",
   "shared.error.server":
     "A server error occurred. Please try again in a moment.",
   "shared.error.fetch": "Failed to load the data",
@@ -203,6 +207,7 @@ export const en: Record<MessageKey, string> = {
   // Settings modal
   "settings.title": "Edit schedule",
   "settings.unsaved": "Unsaved",
+  "settings.saved": "Saved",
   "settings.newTask": "New task",
   "settings.confirmClose": "Your changes haven't been saved. Close anyway?",
   "settings.errorNeedTask": "At least one task is required.",
