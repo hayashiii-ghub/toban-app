@@ -19,7 +19,6 @@ interface Props {
   gIdx: number;
   groupCount: number;
   ownerMember: Member | undefined;
-  isGroupDragging: boolean;
   isGroupDropTarget: boolean;
 }
 
@@ -28,7 +27,6 @@ export function GroupCard({
   gIdx,
   groupCount,
   ownerMember,
-  isGroupDragging,
   isGroupDropTarget,
 }: Props) {
   const ctx = useGroupCardContext();
@@ -38,17 +36,15 @@ export function GroupCard({
   return (
     <div
       className={`theme-border transition-all duration-150 ${
-        isGroupDragging ? "opacity-30 scale-[0.98]" : ""
-      } ${isGroupDropTarget ? "ring-2 ring-amber-400" : ""}`}
+        isGroupDropTarget ? "ring-2 ring-amber-400" : ""
+      }`}
       style={{
         borderRadius: "var(--dt-border-radius)",
         backgroundColor:
           "color-mix(in srgb, var(--dt-text) 3%, var(--dt-card-bg))",
       }}
-      onDragOver={e => ctx.onGroupReorderDragOver(e, gIdx)}
-      onDrop={e => {
-        if (ctx.dragGroupIdx !== null) ctx.onGroupReorderDrop(e, gIdx);
-      }}
+      data-drag-item
+      data-drop-group={gIdx}
     >
       {/* グループヘッダー */}
       <div
@@ -59,9 +55,6 @@ export function GroupCard({
             : "transparent",
           borderBottom: "1px solid var(--dt-table-border-light)",
         }}
-        draggable
-        onDragStart={e => ctx.onGroupDragStart(e, gIdx)}
-        onDragEnd={ctx.onGroupDragEnd}
       >
         <div className="flex flex-col shrink-0 sm:hidden">
           <button
@@ -85,11 +78,7 @@ export function GroupCard({
             <ArrowDown className="size-3.5" />
           </button>
         </div>
-        <GripVertical
-          className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block"
-          style={{ color: "var(--dt-text-muted)" }}
-          aria-hidden="true"
-        />
+        <DragGrip {...ctx.dragHandle({ kind: "group", gIdx })} />
         {/* 絵文字（と担当者の色）を押すと、その下に変える欄が開く */}
         <button
           type="button"
@@ -233,8 +222,8 @@ export function GroupCard({
       {/* タスク一覧 / メンバー一覧 */}
       <div
         className="flex flex-col gap-2 px-3 sm:px-4 pb-3 sm:pb-4 pt-2"
-        onDragOver={ctx.onGroupDragOver}
-        onDrop={e => ctx.onGroupDropZone(e, gIdx)}
+        // 仕事の行を、ほかの仕事の余白に落とすと、その仕事の最後に入る
+        data-drop-zone={ctx.isTaskMode ? undefined : gIdx}
       >
         {ctx.isTaskMode ? (
           <TaskModeMembers group={group} gIdx={gIdx} />
@@ -283,28 +272,20 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
       )}
       {!isImplicitAll &&
         groupMembers.map((member, mIdx) => {
-          const isMemberDragging =
-            ctx.dragMember?.gIdx === gIdx && ctx.dragMember?.mIdx === mIdx;
-          const isMemberDropTarget =
+          const drop =
             ctx.dropMemberTarget?.gIdx === gIdx &&
-            ctx.dropMemberTarget?.mIdx === mIdx;
+            ctx.dropMemberTarget.idx === mIdx
+              ? ctx.dropMemberTarget
+              : null;
           const colorKey = `task-${gIdx}-${member.id}`;
           return (
             <div key={member.id}>
               <div
-                className={`relative flex items-center gap-2 transition-all duration-150 ${isMemberDragging ? "opacity-30 scale-95" : ""}`}
-                draggable
-                onDragStart={e => ctx.onMemberDragStart(e, gIdx, mIdx)}
-                onDragOver={e => ctx.onMemberDragOver(e, gIdx, mIdx)}
-                onDrop={e => ctx.onMemberDrop(e, gIdx, mIdx)}
-                onDragEnd={ctx.onMemberDragEnd}
+                className="relative flex items-center gap-2 transition-all duration-150"
+                data-drag-item
+                data-drop-member={`${gIdx}:${mIdx}`}
               >
-                {isMemberDropTarget && (
-                  <div
-                    className="absolute left-0 right-0 h-0.5 -top-1.5 rounded-full"
-                    style={{ backgroundColor: "var(--dt-current-highlight)" }}
-                  />
-                )}
+                {drop && <DropLine after={drop.after} />}
                 <div className="flex flex-col shrink-0 sm:hidden">
                   <button
                     type="button"
@@ -327,11 +308,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                     <ChevronDown className="size-3.5" />
                   </button>
                 </div>
-                <GripVertical
-                  className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block"
-                  style={{ color: "var(--dt-text-muted)" }}
-                  aria-hidden="true"
-                />
+                <DragGrip {...ctx.dragHandle({ kind: "member", gIdx, mIdx })} />
                 <button
                   type="button"
                   onClick={() => ctx.onToggleColor(colorKey)}
@@ -432,29 +409,18 @@ function AssigneeModeTaskList({
   return (
     <>
       {group.tasks.map((task, tIdx) => {
-        const isDragging =
-          ctx.dragTask?.gIdx === gIdx && ctx.dragTask?.tIdx === tIdx;
-        const isTaskDropTarget =
-          ctx.dropTarget?.gIdx === gIdx && ctx.dropTarget?.tIdx === tIdx;
+        const drop =
+          ctx.dropTarget?.gIdx === gIdx && ctx.dropTarget.idx === tIdx
+            ? ctx.dropTarget
+            : null;
         return (
           <div
             key={`${group.id}-t${tIdx}`}
-            className={`flex items-center gap-2 transition-all duration-150 ${isDragging ? "opacity-30 scale-95" : ""} ${isTaskDropTarget ? "translate-y-1" : ""}`}
-            draggable
-            onDragStart={e => ctx.onTaskDragStart(e, gIdx, tIdx)}
-            onDragOver={e => ctx.onTaskDragOver(e, gIdx, tIdx)}
-            onDrop={e => {
-              e.stopPropagation();
-              ctx.onTaskDrop(e, gIdx, tIdx);
-            }}
-            onDragEnd={ctx.onTaskDragEnd}
+            className="relative flex items-center gap-2 transition-all duration-150"
+            data-drag-item
+            data-drop-task={`${gIdx}:${tIdx}`}
           >
-            {isTaskDropTarget && (
-              <div
-                className="absolute left-0 right-0 h-0.5 -top-1.5 rounded-full"
-                style={{ backgroundColor: "var(--dt-current-highlight)" }}
-              />
-            )}
+            {drop && <DropLine after={drop.after} />}
             <div className="flex flex-col shrink-0 sm:hidden">
               <button
                 type="button"
@@ -477,11 +443,7 @@ function AssigneeModeTaskList({
                 <ChevronDown className="size-3.5" />
               </button>
             </div>
-            <GripVertical
-              className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block"
-              style={{ color: "var(--dt-text-muted)" }}
-              aria-hidden="true"
-            />
+            <DragGrip {...ctx.dragHandle({ kind: "task", gIdx, tIdx })} />
             <input
               type="text"
               value={task}
@@ -518,5 +480,33 @@ function AssigneeModeTaskList({
         <Plus className="size-3.5" aria-hidden="true" /> {t("group.addTask")}
       </button>
     </>
+  );
+}
+
+// つまむ印。ここを押したまま動かすと並べ替えられる（マウスでも指でも）。指で押したときに
+// 画面がスクロールしないよう touch-action を止め、押しやすいよう周りを広めに取る
+function DragGrip(props: {
+  onPointerDown: (e: React.PointerEvent<HTMLElement>) => void;
+}) {
+  return (
+    <span
+      {...props}
+      data-drag-grip
+      className="shrink-0 -m-1.5 p-1.5 cursor-grab active:cursor-grabbing touch-none select-none"
+      style={{ color: "var(--dt-text-muted)" }}
+      aria-hidden="true"
+    >
+      <GripVertical className="size-4" />
+    </span>
+  );
+}
+
+// 並べ替えで落とす位置の線。after なら行の下、そうでなければ上に出す
+function DropLine({ after }: { after: boolean }) {
+  return (
+    <div
+      className={`absolute left-0 right-0 h-0.5 rounded-full ${after ? "-bottom-1.5" : "-top-1.5"}`}
+      style={{ backgroundColor: "var(--dt-focus-ring)" }}
+    />
   );
 }

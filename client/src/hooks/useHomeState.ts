@@ -15,7 +15,6 @@ import { usePrintMode } from "@/hooks/usePrintMode";
 import { useRotationAnimation } from "@/hooks/useRotationAnimation";
 import { useScheduleManager } from "@/hooks/useScheduleManager";
 import { useShareFlow } from "@/hooks/useShareFlow";
-import { useTabDragDrop } from "@/hooks/useTabDragDrop";
 import { useViewTab } from "@/hooks/useViewTab";
 import { getTemplates } from "@shared/template-localization";
 import { toast } from "sonner";
@@ -206,14 +205,6 @@ export function useHomeState() {
   );
   const { isAnimating, direction, handleRotate } =
     useRotationAnimation(setState);
-  const {
-    draggedTabId,
-    dragOverTabId,
-    onDragStart,
-    onDragOver,
-    onDrop,
-    onDragEnd,
-  } = useTabDragDrop(handleTabDrop);
   const { handlePrint } = usePrintMode();
   const {
     viewTab,
@@ -366,13 +357,8 @@ export function useHomeState() {
     isAnimating,
     direction,
     handleRotate,
-    // Tab drag
-    draggedTabId,
-    dragOverTabId,
-    onDragStart,
-    onDragOver,
-    onDrop,
-    onDragEnd,
+    // Tab drag（ScheduleTabs が指でもマウスでも動かし、落としたらここで並べ替える）
+    onMoveTab: handleTabDrop,
     // Print
     handlePrint,
     // View

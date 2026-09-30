@@ -9,6 +9,8 @@ import {
 } from "@shared/template-categories";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useSheetSwipe } from "@/hooks/useSheetSwipe";
+import { SheetHandle } from "./SheetHandle";
 import { useT, useLocale } from "@/i18n";
 import { TemplateSetupStep } from "./TemplateSetupStep";
 
@@ -74,6 +76,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
   const handleEscape = useCallback(() => onClose(), [onClose]);
   useEscapeKey(handleEscape);
   useFocusTrap(modalRef, true);
+  const handleSheetSwipe = useSheetSwipe(modalRef, onClose);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
@@ -113,13 +116,15 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 20 }}
       >
-        {/* ヘッダー */}
+        {/* ヘッダー。スマホでは下になでると閉じる */}
         <div
-          className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4"
+          className="relative flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 max-sm:touch-none"
           style={{
             borderBottom: "var(--dt-border-width) solid var(--dt-border-color)",
           }}
+          onPointerDown={handleSheetSwipe}
         >
+          <SheetHandle />
           <h2
             id="new-schedule-title"
             className="text-lg font-extrabold"

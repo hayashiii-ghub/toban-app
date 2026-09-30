@@ -3,6 +3,8 @@ import { m } from "framer-motion";
 import { Loader2, Share2 } from "lucide-react";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useSheetSwipe } from "@/hooks/useSheetSwipe";
+import { SheetHandle } from "./SheetHandle";
 import { useT } from "@/i18n";
 
 interface Props {
@@ -25,6 +27,10 @@ export function ShareConfirmationDialog({
   }, [isSharing, onCancel]);
   useEscapeKey(handleCancel);
   useFocusTrap(modalRef, true);
+  const handleSheetSwipe = useSheetSwipe(modalRef, () => {
+    if (isSharing) return false;
+    onCancel();
+  });
 
   return (
     <m.div
@@ -50,11 +56,13 @@ export function ShareConfirmationDialog({
         onClick={event => event.stopPropagation()}
       >
         <div
-          className="flex items-center gap-2.5 px-4 sm:px-5 py-3 sm:py-4"
+          className="relative flex items-center gap-2.5 px-4 sm:px-5 py-3 sm:py-4 max-sm:touch-none"
           style={{
             borderBottom: "var(--dt-border-width) solid var(--dt-border-color)",
           }}
+          onPointerDown={handleSheetSwipe}
         >
+          <SheetHandle />
           <Share2 className="size-5" aria-hidden="true" />
           <h2
             id="share-confirm-title"

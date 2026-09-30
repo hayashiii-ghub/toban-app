@@ -81,6 +81,27 @@ test.describe("メインフロー", () => {
     await expect(tabs).toHaveCount(before + 1);
   });
 
+  test("PC では、つまむ印をマウスで動かして仕事の順番を並べ替えられる", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: "当番表を編集する" }).click();
+    const dialog = page.getByRole("dialog");
+    const first = dialog.getByLabel("タスク1の名前");
+    const second = dialog.getByLabel("タスク2の名前");
+    const [a, b] = [await first.inputValue(), await second.inputValue()];
+
+    const grip = page.locator('[data-drop-group="1"] [data-drag-grip]').first();
+    const from = (await grip.boundingBox())!;
+    const to = (await page.locator('[data-drop-group="0"]').boundingBox())!;
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + from.width / 2, to.y + 20, { steps: 8 });
+    await page.mouse.up();
+
+    await expect(first).toHaveValue(b);
+    await expect(second).toHaveValue(a);
+  });
+
   // 全体の CSS で flex の箱を縦に縮めてよいとしていたため、低い画面ではスクロールせずに
   // 中身が縮み、「この内容で作る」が潰れて押しにくくなっていた
   test("低い画面でも、名前を入れる画面を最後までスクロールして作れる", async ({

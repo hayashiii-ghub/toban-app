@@ -6,11 +6,14 @@ import { generateId, deepClone } from "@/rotation/utils";
 import { GroupCard } from "./GroupCard";
 import {
   GroupCardProvider,
+  type DropMark,
+  type EditorDragItem,
   type GroupCardContextValue,
 } from "./GroupCardContext";
 import { BulkMemberAdd } from "./BulkMemberAdd";
 import { ColorPalette } from "./ColorPalette";
 import { useT } from "@/i18n";
+import { usePointerDrag } from "@/hooks/usePointerDrag";
 import { toast } from "sonner";
 import { LIMITS } from "@shared/limits";
 
@@ -23,16 +26,6 @@ function moveItem<T>(list: readonly T[], from: number, to: number): T[] {
 }
 
 /** つかんだ要素そのものを、ドラッグ中の見た目にする */
-function startMoveDrag(e: React.DragEvent) {
-  e.dataTransfer.effectAllowed = "move";
-  if (e.currentTarget instanceof HTMLElement) {
-    e.dataTransfer.setDragImage(
-      e.currentTarget,
-      e.currentTarget.offsetWidth / 2,
-      20
-    );
-  }
-}
 
 interface Props {
   groups: TaskGroup[];
@@ -100,167 +93,81 @@ export function TaskGroupEditor({
     onMembersChange(members.map(m => (m.id === memberId ? { ...m, name } : m)));
   };
 
-  // --- タスクドラッグ&ドロップ ---
-  const [dragTask, setDragTask] = useState<{
-    gIdx: number;
-    tIdx: number;
-  } | null>(null);
-  const [dropTarget, setDropTarget] = useState<{
-    gIdx: number;
-    tIdx: number;
-  } | null>(null);
-
-  const handleTaskDragEnd = useCallback(() => {
-    setDragTask(null);
-    setDropTarget(null);
-  }, []);
-
-  const handleTaskDragStart = (
-    e: React.DragEvent,
-    gIdx: number,
-    tIdx: number
-  ) => {
-    setDragTask({ gIdx, tIdx });
-    startMoveDrag(e);
-  };
-
-  const handleTaskDragOver = (
-    e: React.DragEvent,
-    gIdx: number,
-    tIdx: number
-  ) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    if (!dragTask) return;
-    if (dragTask.gIdx !== gIdx || dragTask.tIdx !== tIdx) {
-      setDropTarget({ gIdx, tIdx });
-    } else {
-      setDropTarget(null);
-    }
-  };
-
-  const handleTaskDrop = (
-    e: React.DragEvent,
-    targetGIdx: number,
-    targetTIdx: number
-  ) => {
-    e.preventDefault();
-    if (!dragTask) return;
-    const { gIdx: srcGIdx, tIdx: srcTIdx } = dragTask;
-    if (srcGIdx !== targetGIdx || srcTIdx !== targetTIdx) {
-      const next = deepClone(groups);
-      const [movedTask] = next[srcGIdx].tasks.splice(srcTIdx, 1);
-      next[targetGIdx].tasks.splice(targetTIdx, 0, movedTask);
-      onGroupsChange(next);
-    }
-    handleTaskDragEnd();
-  };
-
-  const handleGroupDropZone = (e: React.DragEvent, gIdx: number) => {
-    e.preventDefault();
-    if (!dragTask) return;
-    const { gIdx: srcGIdx, tIdx: srcTIdx } = dragTask;
-    const next = deepClone(groups);
-    const [movedTask] = next[srcGIdx].tasks.splice(srcTIdx, 1);
-    next[gIdx].tasks.push(movedTask);
-    onGroupsChange(next);
-    handleTaskDragEnd();
-  };
-
-  const handleGroupDragOver = (e: React.DragEvent) => {
-    if (!dragTask) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-  };
-
-  // --- グループ並べ替えドラッグ&ドロップ ---
-  const [dragGroupIdx, setDragGroupIdx] = useState<number | null>(null);
+  // --- 並べ替え（つまむ印を、マウスでも指でも動かせる） ---
+  // 印の行に data-drag-item、落とせる所に data-drop-* を付けてある（GroupCard）
   const [dropGroupIdx, setDropGroupIdx] = useState<number | null>(null);
+  const [dropTarget, setDropTarget] = useState<DropMark | null>(null);
+  const [dropMemberTarget, setDropMemberTarget] = useState<DropMark | null>(
+    null
+  );
 
-  const handleGroupReorderDragEnd = useCallback(() => {
-    setDragGroupIdx(null);
+  const pair = (value: string | undefined) => {
+    const [a, b] = (value ?? "").split(":").map(Number);
+    return { gIdx: a, idx: b };
+  };
+
+  const clearDropMarks = useCallback(() => {
     setDropGroupIdx(null);
-  }, []);
-
-  const handleGroupDragStart = (e: React.DragEvent, gIdx: number) => {
-    e.stopPropagation();
-    setDragGroupIdx(gIdx);
-    startMoveDrag(e);
-  };
-
-  const handleGroupReorderDragOver = (e: React.DragEvent, gIdx: number) => {
-    if (dragGroupIdx === null) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    setDropGroupIdx(dragGroupIdx !== gIdx ? gIdx : null);
-  };
-
-  const handleGroupReorderDrop = (e: React.DragEvent, targetIdx: number) => {
-    e.preventDefault();
-    if (dragGroupIdx !== null && dragGroupIdx !== targetIdx) {
-      moveGroupTo(dragGroupIdx, targetIdx);
-    }
-    handleGroupReorderDragEnd();
-  };
-
-  // --- メンバー行ドラッグ&ドロップ（タスクモード用） ---
-  const [dragMember, setDragMember] = useState<{
-    gIdx: number;
-    mIdx: number;
-  } | null>(null);
-  const [dropMemberTarget, setDropMemberTarget] = useState<{
-    gIdx: number;
-    mIdx: number;
-  } | null>(null);
-
-  const handleMemberDragEnd = useCallback(() => {
-    setDragMember(null);
+    setDropTarget(null);
     setDropMemberTarget(null);
   }, []);
 
-  const handleMemberDragStart = (
-    e: React.DragEvent,
-    gIdx: number,
-    mIdx: number
-  ) => {
-    e.stopPropagation();
-    setDragMember({ gIdx, mIdx });
-    startMoveDrag(e);
-  };
-
-  const handleMemberDragOver = (
-    e: React.DragEvent,
-    gIdx: number,
-    mIdx: number
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.dataTransfer.dropEffect = "move";
-    if (!dragMember || dragMember.gIdx !== gIdx) return;
-    if (dragMember.mIdx !== mIdx) {
-      setDropMemberTarget({ gIdx, mIdx });
-    } else {
-      setDropMemberTarget(null);
-    }
-  };
-
-  const handleMemberDrop = (
-    e: React.DragEvent,
-    targetGIdx: number,
-    targetMIdx: number
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // 別のグループの担当者の上には落とせない（グループをまたぐ移動は「追加」で行う）
-    if (
-      dragMember &&
-      dragMember.gIdx === targetGIdx &&
-      dragMember.mIdx !== targetMIdx
-    ) {
-      moveMemberTo(targetGIdx, dragMember.mIdx, targetMIdx);
-    }
-    handleMemberDragEnd();
-  };
+  const drag = usePointerDrag<EditorDragItem>({
+    target: item =>
+      item.kind === "group"
+        ? "[data-drop-group]"
+        : item.kind === "task"
+          ? "[data-drop-task], [data-drop-zone]"
+          : "[data-drop-member]",
+    onOver: (item, el) => {
+      const data = (el as HTMLElement | null)?.dataset;
+      if (item.kind === "group") {
+        setDropGroupIdx(data ? Number(data.dropGroup) : null);
+      } else if (item.kind === "task") {
+        if (data?.dropTask) {
+          const { gIdx, idx } = pair(data.dropTask);
+          // 同じ仕事の中で下へ動かすときは、落とした行の後ろに入る
+          const after = gIdx === item.gIdx && idx > item.tIdx;
+          setDropTarget({ gIdx, idx, after });
+        } else if (data?.dropZone) {
+          const gIdx = Number(data.dropZone);
+          const last = groups[gIdx].tasks.length - 1;
+          setDropTarget(last >= 0 ? { gIdx, idx: last, after: true } : null);
+        } else setDropTarget(null);
+      } else {
+        const target = pair(data?.dropMember);
+        // 担当者は同じ仕事の中でだけ並べ替える（仕事をまたぐのは「追加」で行う）
+        setDropMemberTarget(
+          data && target.gIdx === item.gIdx
+            ? { ...target, after: target.idx > item.mIdx }
+            : null
+        );
+      }
+    },
+    onDrop: (item, el) => {
+      const data = (el as HTMLElement).dataset;
+      if (item.kind === "group") {
+        const to = Number(data.dropGroup);
+        if (to !== item.gIdx) moveGroupTo(item.gIdx, to);
+      } else if (item.kind === "task") {
+        const next = deepClone(groups);
+        const [moved] = next[item.gIdx].tasks.splice(item.tIdx, 1);
+        if (data.dropTask) {
+          const { gIdx, idx } = pair(data.dropTask);
+          if (gIdx === item.gIdx && idx === item.tIdx) return;
+          next[gIdx].tasks.splice(idx, 0, moved);
+        } else {
+          next[Number(data.dropZone)].tasks.push(moved);
+        }
+        onGroupsChange(next);
+      } else {
+        const { gIdx, idx } = pair(data.dropMember);
+        if (gIdx === item.gIdx && idx !== item.mIdx)
+          moveMemberTo(gIdx, item.mIdx, idx);
+      }
+    },
+    onEnd: clearDropMarks,
+  });
 
   // --- メンバーグループ操作（タスクモード） ---
   const removeMemberFromGroup = (gIdx: number, memberId: string) => {
@@ -443,25 +350,10 @@ export function TaskGroupEditor({
       onSetExplicitMembers: setExplicitMembers,
       onResetToAllMembers: resetToAllMembers,
       onReorderMember: reorderMember,
-      dragGroupIdx,
-      onGroupDragStart: handleGroupDragStart,
-      onGroupDragEnd: handleGroupReorderDragEnd,
-      onGroupReorderDragOver: handleGroupReorderDragOver,
-      onGroupReorderDrop: handleGroupReorderDrop,
-      dragTask,
+      dragHandle: drag.bind,
+      dragging: drag.dragging,
       dropTarget,
-      onTaskDragStart: handleTaskDragStart,
-      onTaskDragOver: handleTaskDragOver,
-      onTaskDrop: handleTaskDrop,
-      onTaskDragEnd: handleTaskDragEnd,
-      onGroupDragOver: handleGroupDragOver,
-      onGroupDropZone: handleGroupDropZone,
-      dragMember,
       dropMemberTarget,
-      onMemberDragStart: handleMemberDragStart,
-      onMemberDragOver: handleMemberDragOver,
-      onMemberDrop: handleMemberDrop,
-      onMemberDragEnd: handleMemberDragEnd,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- handlers are recreated when groups/members change; useMemo prevents re-renders on unrelated state (bulkMode)
     [
@@ -471,10 +363,9 @@ export function TaskGroupEditor({
       membersById,
       openDetailsKey,
       openColorKey,
-      dragGroupIdx,
-      dragTask,
+      drag.bind,
+      drag.dragging,
       dropTarget,
-      dragMember,
       dropMemberTarget,
       groups,
       members,
@@ -482,9 +373,6 @@ export function TaskGroupEditor({
       onMembersChange,
       handleToggleDetails,
       handleToggleColor,
-      handleTaskDragEnd,
-      handleGroupReorderDragEnd,
-      handleMemberDragEnd,
     ]
   );
 
@@ -501,7 +389,6 @@ export function TaskGroupEditor({
               gIdx={gIdx}
               groupCount={groups.length}
               ownerMember={!isTaskMode ? members[gIdx] : undefined}
-              isGroupDragging={dragGroupIdx === gIdx}
               isGroupDropTarget={dropGroupIdx === gIdx}
             />
           ))}

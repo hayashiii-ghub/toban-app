@@ -132,14 +132,9 @@ export default function Home() {
           <ScheduleTabs
             schedules={s.state.schedules}
             activeScheduleId={s.state.activeScheduleId}
-            draggedTabId={s.draggedTabId}
-            dragOverTabId={s.dragOverTabId}
             onSelectSchedule={s.selectSchedule}
             onAddSchedule={s.openNewSchedule}
-            onDragStart={s.onDragStart}
-            onDragOver={s.onDragOver}
-            onDrop={s.onDrop}
-            onDragEnd={s.onDragEnd}
+            onMoveTab={s.onMoveTab}
             onReorderTab={s.onReorderTab}
             onTogglePin={s.onTogglePin}
             onDuplicate={s.onDuplicateSchedule}

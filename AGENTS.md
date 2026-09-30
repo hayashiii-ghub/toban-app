@@ -42,6 +42,8 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 - 画面の機能コンポーネントは `client/src/features/<機能名>/`。`components/` は横断的に使うものだけ
 - ホームの操作の帯（表示の切り替えを含む）と当番表のタブは、スマホでは画面の下にまとめて固定し（`Home.tsx` の `.home-bottom-panel`）、PC ではタイトルの下に置く。画面の下に何かを固定するときは `--home-toolbar-space`（`client/src/pages/home.css`）の分だけ持ち上げる（通知・アプリ追加の案内はそうしてある）。スマホのホームでは、ページの一番下の案内の代わりにタイトル右上の「⋯」（`MoreMenu`）を出す。案内の項目は `components/siteLinks.tsx` の 1 か所で持つ
 - テーマの字の色は、どの背景との組み合わせもコントラスト比 4.5（WCAG AA）以上にする（`designThemes.test.ts` が見張る）。読みにくい字を白い面や半透明でごまかさない。帯はどの色も深くして白い字にそろえ、帯の上の字は面を敷かずに直接置いている
+- 並べ替えは HTML の drag and drop を使わない（スマホの指では動かない）。`hooks/usePointerDrag.ts` で、つまむ印（`touch-action: none`）から動かし、落とせる所に `data-drop-*` を付ける。指で動かす確認は `e2e/touch-gestures.spec.ts`（CDP で指の動きを送る）
+- スマホで下から出る画面は、見出しを下になでて閉じられる（`hooks/useSheetSwipe.ts` と `SheetHandle`）。新しく作るシートにも付ける
 - `client/src/rotation/` は React / DOM に依存させない（iOS 版で流用する予定）。型の import は可
 
 ## テストの書き方
