@@ -367,7 +367,7 @@ for (const locale of ["ja", "en"] as const) {
       .click();
     const editor = page.getByRole("dialog");
     await editor
-      .getByRole("button", { name: /交代のしかた|How turns change/ })
+      .getByRole("tab", { name: /交代のしかた|How turns change/ })
       .click();
     await expect(
       editor.getByLabel(locale === "ja" ? "開始日" : "Start date")

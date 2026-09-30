@@ -218,7 +218,6 @@ export const ja = {
   "settings.maxGroupsReached": "グループは最大{n}個までです。",
   "settings.maxTasksReached": "タスクは1グループ最大{n}個までです。",
   "settings.rotationManual": "手動で切り替え",
-  "settings.rotationDate": "日付で自動",
   "settings.summaryTaskMode": "{tasks}タスク・{members}人",
   "settings.summaryMemberMode": "{members}人・{groups}グループ",
   "settings.scheduleName": "当番表の名前",
@@ -234,6 +233,7 @@ export const ja = {
     "人（班）ごとに仕事を割り当てます。人が主役の表に向いています",
   "settings.summarySeparator": "・",
   "settings.sectionAdvanced": "くわしい設定",
+  "settings.thisRoster": "この当番表",
   "settings.sectionAppearance": "見た目",
   "settings.sectionRotation": "交代のしかた",
 

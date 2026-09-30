@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, within } from "@testing-library/react";
 import { SettingsModal } from "./SettingsModal";
 import type { TaskGroup, Member } from "@shared/types";
 
@@ -72,6 +72,38 @@ describe("SettingsModal", () => {
   it("最初に開く「名前と仕事」に、当番表の名前が入っている", () => {
     const { getByLabelText } = render(<SettingsModal {...createProps()} />);
     expect(getByLabelText("当番表の名前")).toHaveValue("掃除当番");
+  });
+
+  it("4 つの項目をタブで並べ、閉じなくても移れる。移っても書きかけは残る", () => {
+    // このファイルは描画を後始末しないので、今回描いた分の中だけを探す
+    const { container } = render(<SettingsModal {...createProps()} />);
+    const { getByRole, getByLabelText } = within(container);
+    const tabs = ["名前と仕事", "交代のしかた", "見た目", "くわしい設定"].map(
+      name => getByRole("tab", { name })
+    );
+    expect(tabs[0]).toHaveAttribute("aria-selected", "true");
+
+    fireEvent.change(getByLabelText("当番表の名前"), {
+      target: { value: "書きかけ" },
+    });
+    fireEvent.click(tabs[2]);
+    expect(tabs[2]).toHaveAttribute("aria-selected", "true");
+    // 選んだ項目だけを出し、ほかは隠す
+    expect(getByRole("tabpanel", { name: "見た目" })).not.toHaveAttribute(
+      "hidden"
+    );
+    expect(
+      getByLabelText("当番表の名前").closest("[role=tabpanel]")
+    ).toHaveAttribute("hidden");
+
+    // 矢印キーで隣の項目へ
+    fireEvent.keyDown(tabs[2], { key: "ArrowRight" });
+    expect(tabs[3]).toHaveAttribute("aria-selected", "true");
+    expect(tabs[3]).toHaveFocus();
+    fireEvent.keyDown(tabs[3], { key: "ArrowRight" });
+    expect(tabs[0]).toHaveAttribute("aria-selected", "true");
+
+    expect(getByLabelText("当番表の名前")).toHaveValue("書きかけ");
   });
 
   it("閉じるボタンでonCloseが呼ばれる", () => {
