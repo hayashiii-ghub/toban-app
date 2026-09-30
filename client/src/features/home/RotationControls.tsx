@@ -111,7 +111,7 @@ export function RotationControls({
                     </button>
                   )}
                   <div
-                    className="h-9 sm:h-10 min-w-[2.25rem] sm:min-w-[2.5rem] flex items-center justify-center px-1 text-base sm:text-lg"
+                    className="h-9 sm:h-10 min-w-[3rem] sm:min-w-[4.5rem] flex items-center justify-center px-1.5 sm:px-3 text-sm sm:text-base whitespace-nowrap"
                     style={{
                       fontWeight: "var(--dt-font-weight-extra)",
                       borderLeft:
@@ -121,7 +121,7 @@ export function RotationControls({
                     }}
                     aria-label={t("rotation.currentAria", { n: rotation })}
                   >
-                    {rotation}
+                    {rotationLabel}
                   </div>
                   {onRotateForward && (
                     <button
@@ -134,21 +134,6 @@ export function RotationControls({
                       <ChevronRight className="size-4" />
                     </button>
                   )}
-                </div>
-                {/* 幅 360px 未満（iPhone SE 初代など）は下の帯に収まらないので出さない */}
-                <div className="hidden min-[360px]:block leading-tight">
-                  <div
-                    className="text-[11px] sm:text-sm font-bold"
-                    style={{ color: "var(--dt-control-bar-text)" }}
-                  >
-                    {t("rotation.current")}
-                  </div>
-                  <div
-                    className="text-xs sm:text-sm font-medium mt-0.5"
-                    style={{ color: "var(--dt-control-bar-subtext)" }}
-                  >
-                    {rotationLabel}
-                  </div>
                 </div>
               </>
             )}

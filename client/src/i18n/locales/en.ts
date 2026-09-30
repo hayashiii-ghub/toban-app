@@ -245,7 +245,6 @@ export const en: Record<MessageKey, string> = {
   "rotation.prevAria": "Go to previous turn",
   "rotation.nextAria": "Advance to next turn",
   "rotation.currentAria": "Current turn: {n}",
-  "rotation.current": "Current turn",
   "rotation.autoByDate": "Rotates automatically",
   "rotation.shareAria": "Share",
   "rotation.syncError": "Backup failed",

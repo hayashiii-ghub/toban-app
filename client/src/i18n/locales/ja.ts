@@ -246,7 +246,6 @@ export const ja = {
   "rotation.prevAria": "前の当番に戻す",
   "rotation.nextAria": "次の当番に進める",
   "rotation.currentAria": "現在の順番: {n}",
-  "rotation.current": "現在の順番",
   "rotation.autoByDate": "日付で自動切り替え",
   "rotation.shareAria": "共有する",
   "rotation.syncError": "バックアップに失敗しました",
