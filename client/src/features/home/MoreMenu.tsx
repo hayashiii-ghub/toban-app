@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
-import { CircleHelp, Languages, MoreHorizontal, Shield } from "lucide-react";
+import { Languages, MoreHorizontal } from "lucide-react";
 import { PopoverMenu, PopoverMenuItem } from "@/components/PopoverMenu";
+import { SITE_LINKS } from "@/components/siteLinks";
 import { useLocale, useT } from "@/i18n";
 
 /**
@@ -53,35 +54,17 @@ export function MoreMenu() {
           >
             {t(next === "ja" ? "lang.ja" : "lang.en")}
           </PopoverMenuItem>
-          <PopoverMenuItem
-            icon={<CircleHelp className="size-4" aria-hidden="true" />}
-            href="/about"
-            newTab
-            onSelect={close}
-          >
-            {t("footer.about")}
-          </PopoverMenuItem>
-          <PopoverMenuItem
-            icon={<Shield className="size-4" aria-hidden="true" />}
-            href="/privacy"
-            onSelect={close}
-          >
-            {t("footer.privacy")}
-          </PopoverMenuItem>
-          <PopoverMenuItem
-            icon={
-              <img
-                src="/hayashigoto-seal.svg"
-                alt=""
-                className="size-4 opacity-80"
-              />
-            }
-            href="https://shigoto.dev/works/toban"
-            newTab
-            onSelect={close}
-          >
-            {t("footer.maker")}
-          </PopoverMenuItem>
+          {SITE_LINKS.map(link => (
+            <PopoverMenuItem
+              key={link.href}
+              icon={link.icon}
+              href={link.href}
+              newTab={link.newTab}
+              onSelect={close}
+            >
+              {t(link.labelKey)}
+            </PopoverMenuItem>
+          ))}
         </PopoverMenu>
       )}
     </>
