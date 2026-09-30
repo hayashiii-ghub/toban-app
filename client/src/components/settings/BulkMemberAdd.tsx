@@ -104,8 +104,13 @@ export function BulkMemberAdd({
         type="button"
         onClick={handleBulkAdd}
         disabled={bulkNames.length === 0}
-        className="theme-border theme-shadow-sm flex items-center justify-center gap-2 px-4 py-2.5 font-bold text-sm text-white transition-all duration-150 hover:translate-x-[-2px] hover:translate-y-[-2px] disabled:opacity-40 disabled:hover:translate-x-0 disabled:hover:translate-y-0"
-        style={{ backgroundColor: "#1a1a1a", borderRadius: "10px" }}
+        className="theme-border theme-shadow-sm flex items-center justify-center gap-2 px-4 py-2.5 font-bold text-sm transition-all duration-150 theme-hover-lift disabled:opacity-40"
+        // 編集画面の「保存する」と同じ色
+        style={{
+          backgroundColor: "var(--dt-control-bar-bg)",
+          color: "var(--dt-control-bar-text)",
+          borderRadius: "10px",
+        }}
       >
         {t("bulk.add")}
       </button>
