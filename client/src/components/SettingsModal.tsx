@@ -315,7 +315,6 @@ export function SettingsModal({
     editAssignmentMode === "task"
       ? t("settings.whatByWhom")
       : t("settings.whoDoesWhat");
-  const basicSummary = `${editName || scheduleName} / ${assignmentModeLabel} / ${rotationModeLabel}`;
   const countLabel = (kind: "task" | "group" | "member", count: number) =>
     t(`templateSummary.${kind}.${count === 1 ? "one" : "other"}`, { count });
   const taskSummary =
@@ -378,7 +377,7 @@ export function SettingsModal({
           <button
             type="button"
             onClick={handleCloseWithCheck}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-black/5 rounded-lg transition-colors"
             aria-label={t("common.close")}
           >
             <X className="size-5" aria-hidden="true" />
@@ -396,16 +395,15 @@ export function SettingsModal({
           </div>
         )}
 
-        {/* アコーディオンコンテンツ */}
+        {/* アコーディオンコンテンツ。よく使う順に「名前と仕事」「交代のしかた」「見た目」「くわしい設定」 */}
         <div className="flex-1 min-h-0 overflow-y-auto">
-          {/* 基本設定 */}
+          {/* 名前と仕事 */}
           <AccordionSection
-            title={t("settings.sectionBasic")}
-            summary={basicSummary}
-            defaultOpen={false}
+            title={t("settings.sectionContent")}
+            summary={taskSummary}
+            defaultOpen={true}
           >
             <div className="flex flex-col gap-3">
-              {/* 名前（ピン留めはタブのメニューで行う） */}
               <div>
                 <label
                   htmlFor="schedule-name-input"
@@ -414,116 +412,135 @@ export function SettingsModal({
                 >
                   {t("settings.scheduleName")}
                 </label>
-                <div className="flex items-stretch gap-2">
-                  <input
-                    id="schedule-name-input"
-                    type="text"
-                    value={editName}
-                    onChange={e => applyEditorPatch({ name: e.target.value })}
-                    maxLength={LIMITS.scheduleName}
-                    className="flex-1 min-w-0 theme-border px-3 py-2 text-sm font-bold"
-                    style={{
-                      borderRadius: "var(--dt-border-radius-sm)",
-                      backgroundColor: "#FAFAFA",
-                    }}
-                    placeholder={t("settings.scheduleNamePlaceholder")}
-                    aria-label={t("settings.scheduleName")}
-                  />
-                </div>
+                <input
+                  id="schedule-name-input"
+                  type="text"
+                  value={editName}
+                  onChange={e => applyEditorPatch({ name: e.target.value })}
+                  maxLength={LIMITS.scheduleName}
+                  className="w-full dt-field px-3 py-2 text-sm font-bold"
+                  placeholder={t("settings.scheduleNamePlaceholder")}
+                />
               </div>
-
-              {/* 割り当て方式 */}
-              <fieldset className="border-0 p-0 m-0">
-                <legend
-                  className="text-xs font-bold mb-1 block"
-                  style={{ color: "var(--dt-text-muted)" }}
-                >
-                  {t("settings.chooseView")}
-                </legend>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    className="settings-option-control flex-1 theme-border transition-colors"
-                    style={{
-                      borderRadius: "var(--dt-border-radius-sm)",
-                      backgroundColor:
-                        editAssignmentMode === "member"
-                          ? "var(--dt-current-highlight)"
-                          : "#FAFAFA",
-                    }}
-                    onClick={() => handleAssignmentModeChange("member")}
-                  >
-                    {t("settings.whoDoesWhat")}
-                  </button>
-                  <button
-                    type="button"
-                    className="settings-option-control flex-1 theme-border transition-colors"
-                    style={{
-                      borderRadius: "var(--dt-border-radius-sm)",
-                      backgroundColor:
-                        editAssignmentMode === "task"
-                          ? "var(--dt-current-highlight)"
-                          : "#FAFAFA",
-                    }}
-                    onClick={() => handleAssignmentModeChange("task")}
-                  >
-                    {t("settings.whatByWhom")}
-                  </button>
-                </div>
-              </fieldset>
-
-              {/* ローテーション方式 */}
-              <RotationConfigEditor
-                config={editRotationConfig}
-                onUpdate={updateRotationConfig}
+              <TaskGroupEditor
+                groups={editGroups}
+                members={editMembers}
+                onGroupsChange={nextGroups =>
+                  applyEditorPatch({ groups: nextGroups })
+                }
+                onMembersChange={nextMembers =>
+                  applyEditorPatch({ members: nextMembers })
+                }
+                assignmentMode={editAssignmentMode}
               />
             </div>
           </AccordionSection>
 
-          {/* テーマ */}
+          {/* 交代のしかた */}
           <AccordionSection
-            title={t("settings.sectionDesign")}
-            summary={getThemeLabel(editDesignThemeId, t)}
+            title={t("settings.sectionRotation")}
+            summary={rotationModeLabel}
             defaultOpen={false}
           >
-            <DesignThemePicker
-              selectedThemeId={editDesignThemeId}
-              onSelect={handleThemePreview}
+            <RotationConfigEditor
+              config={editRotationConfig}
+              onUpdate={updateRotationConfig}
             />
           </AccordionSection>
 
-          {/* 文字（この当番表） */}
+          {/* 見た目（テーマと文字） */}
           <AccordionSection
-            title={t("settings.sectionFont")}
-            summary={t(getFontById(fontId).labelKey)}
+            title={t("settings.sectionAppearance")}
+            summary={`${getThemeLabel(editDesignThemeId, t)}${t("settings.summarySeparator")}${t(getFontById(fontId).labelKey)}`}
             defaultOpen={false}
           >
-            <p
-              className="text-xs mb-2"
-              style={{ color: "var(--dt-text-muted)" }}
-            >
-              {t("font.appliesToRoster")}
-            </p>
-            <FontPicker selectedFontId={fontId} onSelect={handleFontPreview} />
+            <div className="flex flex-col gap-4">
+              <div>
+                <h3
+                  className="text-xs font-bold mb-2"
+                  style={{ color: "var(--dt-text-muted)" }}
+                >
+                  {t("settings.sectionDesign")}
+                </h3>
+                <DesignThemePicker
+                  selectedThemeId={editDesignThemeId}
+                  onSelect={handleThemePreview}
+                />
+              </div>
+              <div>
+                <h3
+                  className="text-xs font-bold mb-1"
+                  style={{ color: "var(--dt-text-muted)" }}
+                >
+                  {t("settings.sectionFont")}
+                </h3>
+                <p
+                  className="text-xs mb-2"
+                  style={{ color: "var(--dt-text-muted)" }}
+                >
+                  {t("font.appliesToRoster")}
+                </p>
+                <FontPicker
+                  selectedFontId={fontId}
+                  onSelect={handleFontPreview}
+                />
+              </div>
+            </div>
           </AccordionSection>
 
-          {/* タスク */}
+          {/* くわしい設定（割り当て方式） */}
           <AccordionSection
-            title={t("settings.sectionContent")}
-            summary={taskSummary}
-            defaultOpen={true}
+            title={t("settings.sectionAdvanced")}
+            summary={assignmentModeLabel}
+            defaultOpen={false}
           >
-            <TaskGroupEditor
-              groups={editGroups}
-              members={editMembers}
-              onGroupsChange={nextGroups =>
-                applyEditorPatch({ groups: nextGroups })
-              }
-              onMembersChange={nextMembers =>
-                applyEditorPatch({ members: nextMembers })
-              }
-              assignmentMode={editAssignmentMode}
-            />
+            <fieldset className="border-0 p-0 m-0">
+              <legend
+                className="text-xs font-bold mb-1 block"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("settings.chooseView")}
+              </legend>
+              <div className="flex flex-col gap-2">
+                {(
+                  [
+                    [
+                      "member",
+                      "settings.whoDoesWhat",
+                      "settings.whoDoesWhatDesc",
+                    ],
+                    ["task", "settings.whatByWhom", "settings.whatByWhomDesc"],
+                  ] as const
+                ).map(([mode, label, desc]) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    aria-pressed={editAssignmentMode === mode}
+                    className={`${editAssignmentMode === mode ? "theme-border" : "dt-field"} w-full text-left px-3 py-2.5 transition-colors`}
+                    style={{
+                      borderRadius: "var(--dt-border-radius-sm)",
+                      ...(editAssignmentMode === mode
+                        ? { backgroundColor: "var(--dt-current-highlight)" }
+                        : {}),
+                    }}
+                    onClick={() => handleAssignmentModeChange(mode)}
+                  >
+                    <span
+                      className="block text-sm font-bold"
+                      style={{ color: "var(--dt-text)" }}
+                    >
+                      {t(label)}
+                    </span>
+                    <span
+                      className="block text-xs mt-0.5"
+                      style={{ color: "var(--dt-text-secondary)" }}
+                    >
+                      {t(desc)}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </fieldset>
           </AccordionSection>
         </div>
 

@@ -124,12 +124,7 @@ export function MyDuty({
           id={`${id}-me`}
           value={meId ?? ""}
           onChange={e => onChange(e.target.value || null)}
-          className="theme-border w-full sm:w-auto sm:min-w-[14rem] px-3 py-2 text-sm font-bold"
-          style={{
-            borderRadius: "var(--dt-border-radius-sm)",
-            backgroundColor: "var(--dt-button-bg)",
-            color: "var(--dt-text)",
-          }}
+          className="dt-field w-full sm:w-auto sm:min-w-[14rem] px-3 py-2 text-sm font-bold"
         >
           <option value="">{t("shared.me.placeholder")}</option>
           {activeMembers.map(member => (

@@ -25,7 +25,7 @@ export function AccordionSection({
     >
       <button
         type="button"
-        className="w-full flex items-center justify-between px-4 sm:px-5 py-3 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 sm:px-5 py-3 hover:bg-black/5 transition-colors"
         onClick={() => setIsOpen(v => !v)}
         aria-expanded={isOpen}
       >
@@ -37,7 +37,10 @@ export function AccordionSection({
             {title}
           </span>
           {!isOpen && (
-            <span className="text-xs font-bold" style={{ color: "#999" }}>
+            <span
+              className="text-xs font-bold"
+              style={{ color: "var(--dt-text-muted)" }}
+            >
               {summary}
             </span>
           )}
@@ -46,7 +49,10 @@ export function AccordionSection({
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronDown className="size-4" style={{ color: "#999" }} />
+          <ChevronDown
+            className="size-4"
+            style={{ color: "var(--dt-text-muted)" }}
+          />
         </m.span>
       </button>
       <AnimatePresence initial={false}>

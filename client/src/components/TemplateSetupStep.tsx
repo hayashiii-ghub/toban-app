@@ -126,12 +126,7 @@ export function TemplateSetupStep({ template, onBack, onCreate }: Props) {
           value={name}
           onChange={e => setName(e.target.value)}
           maxLength={LIMITS.scheduleName}
-          className="w-full theme-border px-3 py-2 text-sm font-bold"
-          style={{
-            borderRadius: "var(--dt-border-radius-sm)",
-            backgroundColor: "var(--dt-card-bg)",
-            color: "var(--dt-text)",
-          }}
+          className="w-full dt-field px-3 py-2 text-sm font-bold"
         />
       </div>
 
@@ -152,12 +147,7 @@ export function TemplateSetupStep({ template, onBack, onCreate }: Props) {
           rows={Math.min(Math.max(sampleNames.length, 4), 7)}
           aria-describedby={`${id}-members-hint`}
           aria-invalid={tooMany || undefined}
-          className="w-full theme-border px-3 py-2 text-sm font-medium resize-y"
-          style={{
-            borderRadius: "var(--dt-border-radius-sm)",
-            backgroundColor: "var(--dt-card-bg)",
-            color: "var(--dt-text)",
-          }}
+          className="w-full dt-field px-3 py-2 text-sm font-medium resize-y"
         />
         <p
           id={`${id}-members-hint`}
@@ -185,12 +175,13 @@ export function TemplateSetupStep({ template, onBack, onCreate }: Props) {
                 aria-checked={selected}
                 key={option.id}
                 onClick={() => setPreset(option.id)}
-                className="theme-border w-full text-left px-3 py-2.5 flex items-center gap-3 transition-colors"
+                // 選んでいないものも欄だと分かるよう dt-field（枠のないテーマ向け）
+                className={`${selected ? "theme-border" : "dt-field"} w-full text-left px-3 py-2.5 flex items-center gap-3 transition-colors`}
                 style={{
                   borderRadius: "var(--dt-border-radius-sm)",
-                  backgroundColor: selected
-                    ? "var(--dt-current-highlight)"
-                    : "var(--dt-card-bg)",
+                  ...(selected
+                    ? { backgroundColor: "var(--dt-current-highlight)" }
+                    : {}),
                 }}
               >
                 <span

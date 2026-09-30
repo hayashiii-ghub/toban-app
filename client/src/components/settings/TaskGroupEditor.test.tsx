@@ -53,6 +53,30 @@ function renderEditor(
 }
 
 describe("TaskGroupEditor（担当者から見る）", () => {
+  it("仕事より人が多いとき、余った人も「ほかのメンバー」に出て、名前を直したり外したりできる", () => {
+    const state = renderEditor({
+      members: [...members, member("m3", "ひなた"), member("m4", "りく")],
+    });
+    const extra = screen.getByRole("region", { name: "ほかのメンバー" });
+    expect(extra).toHaveTextContent(
+      "仕事より人が2人多いので、毎回2人がお休みになります"
+    );
+    const names = extra.querySelectorAll("input");
+    expect([...names].map(input => input.value)).toEqual(["ひなた", "りく"]);
+
+    fireEvent.change(names[0], { target: { value: "ひなた2" } });
+    expect(state.members[2].name).toBe("ひなた2");
+
+    fireEvent.click(screen.getByRole("button", { name: "りくを外す" }));
+    expect(state.members.map(m => m.name)).toEqual([
+      "あおい",
+      "そら",
+      "ひなた2",
+    ]);
+    // 外しても仕事の数は変わらない
+    expect(state.groups).toHaveLength(2);
+  });
+
   it("担当者を追加すると、担当者とグループが対で増える", () => {
     const state = renderEditor();
     fireEvent.click(screen.getByRole("button", { name: "担当者を追加" }));

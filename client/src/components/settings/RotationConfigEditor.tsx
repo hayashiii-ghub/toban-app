@@ -21,13 +21,12 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
         <div className="flex gap-2 mb-3">
           <button
             type="button"
-            className="settings-option-control flex-1 theme-border transition-colors"
+            className={`settings-option-control flex-1 ${config.mode === "manual" ? "theme-border" : "dt-field"} transition-colors`}
             style={{
               borderRadius: "var(--dt-border-radius-sm)",
-              backgroundColor:
-                config.mode === "manual"
-                  ? "var(--dt-current-highlight)"
-                  : "#FAFAFA",
+              ...(config.mode === "manual"
+                ? { backgroundColor: "var(--dt-current-highlight)" }
+                : {}),
             }}
             onClick={() => onUpdate(prev => ({ ...prev, mode: "manual" }))}
           >
@@ -35,13 +34,12 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
           </button>
           <button
             type="button"
-            className="settings-option-control flex-1 theme-border transition-colors"
+            className={`settings-option-control flex-1 ${config.mode === "date" ? "theme-border" : "dt-field"} transition-colors`}
             style={{
               borderRadius: "var(--dt-border-radius-sm)",
-              backgroundColor:
-                config.mode === "date"
-                  ? "var(--dt-current-highlight)"
-                  : "#FAFAFA",
+              ...(config.mode === "date"
+                ? { backgroundColor: "var(--dt-current-highlight)" }
+                : {}),
             }}
             onClick={() =>
               onUpdate(prev => ({
@@ -68,13 +66,7 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
               >
                 {t("rotationConfig.startDate")}
               </label>
-              <div
-                className="settings-input-control settings-input-shell theme-border"
-                style={{
-                  borderRadius: "var(--dt-border-radius-sm)",
-                  backgroundColor: "#FAFAFA",
-                }}
-              >
+              <div className="settings-input-control settings-input-shell dt-field">
                 <input
                   id="rotation-start-date"
                   type="date"
@@ -95,13 +87,7 @@ export function RotationConfigEditor({ config, onUpdate }: Props) {
               >
                 {t("rotationConfig.cycleDays")}
               </label>
-              <div
-                className="settings-input-control settings-input-shell theme-border justify-center"
-                style={{
-                  borderRadius: "var(--dt-border-radius-sm)",
-                  backgroundColor: "#FAFAFA",
-                }}
-              >
+              <div className="settings-input-control settings-input-shell dt-field justify-center">
                 <input
                   id="rotation-cycle-days"
                   type="text"

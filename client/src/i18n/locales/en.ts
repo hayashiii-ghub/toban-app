@@ -214,7 +214,6 @@ export const en: Record<MessageKey, string> = {
   "settings.rotationDate": "Automatic",
   "settings.summaryTaskMode": "{tasks} tasks · {members} people",
   "settings.summaryMemberMode": "{members} people · {groups} groups",
-  "settings.sectionBasic": "Basic settings",
   "settings.scheduleName": "Schedule name",
   "settings.scheduleNamePlaceholder":
     "e.g. Office cleaning, Lunch duty, Household chores",
@@ -223,6 +222,14 @@ export const en: Record<MessageKey, string> = {
   "settings.whatByWhom": "By task",
   "settings.sectionDesign": "Theme",
   "settings.sectionContent": "Members and tasks",
+  "settings.whatByWhomDesc":
+    "Give people to each duty. You can limit who does each duty",
+  "settings.whoDoesWhatDesc":
+    "Give duties to each person or group. Best when people are the focus",
+  "settings.summarySeparator": " · ",
+  "settings.sectionAdvanced": "Advanced",
+  "settings.sectionAppearance": "Appearance",
+  "settings.sectionRotation": "How turns change",
 
   // Group / member / task editing
   "group.moveGroupUp": "Move group up",
@@ -251,6 +258,11 @@ export const en: Record<MessageKey, string> = {
   "group.deleteTask": 'Delete task "{task}"',
   "group.emptyTask": "empty",
   "group.addTask": "Add task",
+  "group.extraMembers": "Other members",
+  "group.extraMembersHint":
+    "There are {n} more people than duties, so {n} will be off each turn (it rotates).",
+  "group.removeMember": "Remove {name}",
+  "group.noOwner": "Taken in turns",
 
   // Onboarding
   "onboarding.guide": "Guide: {title}",
