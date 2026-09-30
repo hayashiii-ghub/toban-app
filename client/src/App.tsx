@@ -58,7 +58,8 @@ function AppFooter() {
 
   return (
     <footer
-      className="px-3 pt-6 pb-[calc(1rem+var(--home-toolbar-space,0px))] print:hidden"
+      // ホームのスマホ表示では、同じ案内をタイトル右上の「⋯」（MoreMenu）に出す
+      className={`px-3 pt-6 pb-[calc(1rem+var(--home-toolbar-space,0px))] print:hidden ${location === "/" ? "max-sm:hidden" : ""}`}
       style={{
         backgroundColor: "var(--dt-page-bg)",
         backgroundImage: "var(--dt-page-texture, none)",

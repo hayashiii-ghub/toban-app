@@ -371,6 +371,7 @@ export function ScheduleTabs({
       </div>
       {menu && (
         <TabMenu
+          key={menu.scheduleId}
           target={menu}
           onTogglePin={() => {
             onTogglePin(menu.scheduleId);

@@ -10,6 +10,8 @@ export const ja = {
 
   "footer.about": "toban について",
   "footer.privacy": "プライバシー",
+  "more.aria": "その他のメニュー",
+  "footer.maker": "はやしごと",
 
   // 共通
   "common.share": "共有",

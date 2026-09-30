@@ -10,6 +10,8 @@ export const en: Record<MessageKey, string> = {
 
   "footer.about": "About toban",
   "footer.privacy": "Privacy",
+  "more.aria": "More",
+  "footer.maker": "shigoto.dev",
 
   // Common
   "common.share": "Share",
