@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import { ChevronDown, FileText, Plus, X } from "lucide-react";
+import { ChevronDown, FileText, Plus, Search, X } from "lucide-react";
 import type { ScheduleTemplate } from "@/rotation/types";
 import { getTemplates } from "@shared/template-localization";
 import {
@@ -25,6 +25,20 @@ const TEMPLATE_SECTIONS = [
   { id: "checklist", from: 28, to: 31, defaultOpen: false },
 ];
 
+// 最初から見せる代表例。学校に偏らないよう、場面ごとに 1 件（各カテゴリの先頭）
+const FEATURED_SECTION_IDS = [
+  "office",
+  "school",
+  "kindergarten",
+  "care",
+  "community",
+  "home",
+];
+
+function normalizeForSearch(value: string): string {
+  return value.normalize("NFKC").toLowerCase();
+}
+
 interface Props {
   onSelect: (template: ScheduleTemplate) => void;
   onClose: () => void;
@@ -39,6 +53,31 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
   const [openSections, setOpenSections] = useState<Set<string>>(
     () => new Set(TEMPLATE_SECTIONS.flatMap(s => (s.defaultOpen ? [s.id] : [])))
   );
+  const [query, setQuery] = useState("");
+  const sectionLabel = (id: string) =>
+    locale === "en"
+      ? TEMPLATE_CATEGORIES_EN[id].label
+      : TEMPLATE_CATEGORIES.find(cat => cat.id === id)!.label;
+  const featured = FEATURED_SECTION_IDS.map(
+    id => localizedTemplates[TEMPLATE_SECTIONS.find(s => s.id === id)!.from]
+  );
+  // 名前・仕事・カテゴリ名のどれかに含まれていれば出す（全角と半角、大文字と小文字は区別しない）
+  const needle = normalizeForSearch(query.trim());
+  const results = needle
+    ? TEMPLATE_SECTIONS.flatMap(section =>
+        localizedTemplates
+          .slice(section.from, section.to)
+          .filter(template =>
+            normalizeForSearch(
+              [
+                template.name,
+                sectionLabel(section.id),
+                ...template.groups.flatMap(g => g.tasks),
+              ].join(" ")
+            ).includes(needle)
+          )
+      )
+    : [];
 
   const handleEscape = useCallback(() => onClose(), [onClose]);
   useEscapeKey(handleEscape);
@@ -152,113 +191,217 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
             </div>
           </button>
 
-          {/* テンプレートセクション */}
-          {TEMPLATE_SECTIONS.map(section => {
-            const isOpen = openSections.has(section.id);
-            const templates = localizedTemplates.slice(
-              section.from,
-              section.to
-            );
-            const category = TEMPLATE_CATEGORIES.find(
-              cat => cat.id === section.id
-            )!;
-            const label =
-              locale === "en"
-                ? TEMPLATE_CATEGORIES_EN[section.id].label
-                : category.label;
-            return (
-              <div key={section.id}>
-                <button
-                  type="button"
-                  onClick={() => toggleSection(section.id)}
-                  className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <span
-                    className="text-sm font-extrabold tracking-wider"
-                    style={{ color: "var(--dt-text-secondary)" }}
-                  >
-                    {category.emoji} {label}
-                  </span>
-                  <ChevronDown
-                    className="size-4 transition-transform duration-200"
-                    style={{
-                      color: "var(--dt-text-muted)",
-                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                    }}
-                    aria-hidden="true"
+          {/* 探す */}
+          <label className="relative block mb-1">
+            <Search
+              className="size-4 absolute left-3 top-1/2 -translate-y-1/2"
+              style={{ color: "var(--dt-text-muted)" }}
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder={t("newSchedule.searchPlaceholder")}
+              aria-label={t("newSchedule.searchAria")}
+              className="w-full theme-border pl-9 pr-3 py-2.5 text-sm"
+              style={{
+                borderRadius: "var(--dt-border-radius-sm)",
+                backgroundColor: "var(--dt-card-bg)",
+                color: "var(--dt-text)",
+              }}
+            />
+          </label>
+
+          {needle ? (
+            results.length > 0 ? (
+              <div className="flex flex-col gap-2 p-1">
+                {results.map(template => (
+                  <TemplateButton
+                    key={template.name}
+                    template={template}
+                    onSelect={onSelect}
                   />
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <m.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="flex flex-col gap-2 p-1">
-                        {templates.map((template, idx) => (
-                          <button
-                            type="button"
-                            key={section.from + idx}
-                            onClick={() => onSelect(template)}
-                            className="theme-border theme-shadow-sm p-3 sm:p-4 w-full text-left transition-all duration-150 theme-hover-lift"
-                            style={{
-                              borderRadius: "var(--dt-border-radius)",
-                              backgroundColor: "#FAFAFA",
-                            }}
-                          >
-                            <div className="flex items-center gap-3">
-                              <span className="text-2xl" aria-hidden="true">
-                                {template.emoji}
-                              </span>
-                              <div className="min-w-0">
-                                <div
-                                  className="text-sm font-extrabold"
-                                  style={{ color: "var(--dt-text)" }}
-                                >
-                                  {template.name}
-                                </div>
-                                <div
-                                  className="text-xs font-medium mt-0.5 truncate"
-                                  style={{ color: "var(--dt-text-muted)" }}
-                                >
-                                  {t(
-                                    `templateSummary.${template.assignmentMode === "task" ? "task" : "group"}.${template.groups.length === 1 ? "one" : "other"}`,
-                                    { count: template.groups.length }
-                                  )}
-                                  {locale === "en" ? " · " : " ・ "}
-                                  {t(
-                                    `templateSummary.member.${template.members.length === 1 ? "one" : "other"}`,
-                                    { count: template.members.length }
-                                  )}
-                                  {template.groups.length > 0 && (
-                                    <span>
-                                      {locale === "en" ? " · " : " ・ "}
-                                      {template.groups
-                                        .map(g =>
-                                          g.tasks.join(
-                                            locale === "en" ? ", " : "、"
-                                          )
-                                        )
-                                        .join(" / ")}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </m.div>
-                  )}
-                </AnimatePresence>
+                ))}
               </div>
-            );
-          })}
+            ) : (
+              <p
+                className="text-sm py-6 text-center"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("newSchedule.noResults", { query: query.trim() })}
+              </p>
+            )
+          ) : (
+            <>
+              <h3
+                className="text-xs font-extrabold tracking-wider mt-2 mb-1 px-1"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("newSchedule.featured")}
+              </h3>
+              <div className="grid grid-cols-2 gap-2 p-1">
+                {featured.map(template => (
+                  <button
+                    type="button"
+                    key={template.name}
+                    onClick={() => onSelect(template)}
+                    className="theme-border theme-shadow-sm p-2 sm:p-2.5 text-left transition-all duration-150 theme-hover-lift flex items-center gap-1.5 sm:gap-2 min-w-0"
+                    style={{
+                      borderRadius: "var(--dt-border-radius-sm)",
+                      backgroundColor: "#FAFAFA",
+                    }}
+                  >
+                    <span
+                      className="text-lg sm:text-xl shrink-0"
+                      aria-hidden="true"
+                    >
+                      {template.emoji}
+                    </span>
+                    {/* このモーダルは .rotation-page の外に出るので、文節で折り返す指定をここにも付ける */}
+                    <span
+                      className="text-[13px] sm:text-sm font-bold leading-snug line-clamp-2 [word-break:auto-phrase]"
+                      style={{ color: "var(--dt-text)" }}
+                    >
+                      {template.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <h3
+                className="text-xs font-extrabold tracking-wider mt-3 mb-1 px-1"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("newSchedule.allTemplates")}
+              </h3>
+
+              {/* テンプレートセクション */}
+              {TEMPLATE_SECTIONS.map(section => {
+                const isOpen = openSections.has(section.id);
+                const templates = localizedTemplates.slice(
+                  section.from,
+                  section.to
+                );
+                const category = TEMPLATE_CATEGORIES.find(
+                  cat => cat.id === section.id
+                )!;
+                const label =
+                  locale === "en"
+                    ? TEMPLATE_CATEGORIES_EN[section.id].label
+                    : category.label;
+                return (
+                  <div key={section.id}>
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(section.id)}
+                      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <span
+                        className="text-sm font-extrabold tracking-wider"
+                        style={{ color: "var(--dt-text-secondary)" }}
+                      >
+                        {category.emoji} {label}
+                      </span>
+                      <ChevronDown
+                        className="size-4 transition-transform duration-200"
+                        style={{
+                          color: "var(--dt-text-muted)",
+                          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        }}
+                        aria-hidden="true"
+                      />
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <m.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div
+                            className="flex flex-col gap-2 p-1"
+                            role="group"
+                            aria-label={label}
+                          >
+                            {templates.map((template, idx) => (
+                              <TemplateButton
+                                key={section.from + idx}
+                                template={template}
+                                onSelect={onSelect}
+                              />
+                            ))}
+                          </div>
+                        </m.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </>
+          )}
         </div>
       </m.div>
     </m.div>
+  );
+}
+
+function TemplateButton({
+  template,
+  onSelect,
+}: {
+  template: ScheduleTemplate;
+  onSelect: (template: ScheduleTemplate) => void;
+}) {
+  const t = useT();
+  const { locale } = useLocale();
+  const separator = locale === "en" ? " · " : " ・ ";
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(template)}
+      className="theme-border theme-shadow-sm p-3 sm:p-4 w-full text-left transition-all duration-150 theme-hover-lift"
+      style={{
+        borderRadius: "var(--dt-border-radius)",
+        backgroundColor: "#FAFAFA",
+      }}
+    >
+      <div className="flex items-center gap-3">
+        <span className="text-2xl" aria-hidden="true">
+          {template.emoji}
+        </span>
+        <div className="min-w-0">
+          <div
+            className="text-sm font-extrabold"
+            style={{ color: "var(--dt-text)" }}
+          >
+            {template.name}
+          </div>
+          <div
+            className="text-xs font-medium mt-0.5 truncate"
+            style={{ color: "var(--dt-text-muted)" }}
+          >
+            {t(
+              `templateSummary.${template.assignmentMode === "task" ? "task" : "group"}.${template.groups.length === 1 ? "one" : "other"}`,
+              { count: template.groups.length }
+            )}
+            {separator}
+            {t(
+              `templateSummary.member.${template.members.length === 1 ? "one" : "other"}`,
+              { count: template.members.length }
+            )}
+            {template.groups.length > 0 && (
+              <span>
+                {separator}
+                {template.groups
+                  .map(g => g.tasks.join(locale === "en" ? ", " : "、"))
+                  .join(" / ")}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </button>
   );
 }

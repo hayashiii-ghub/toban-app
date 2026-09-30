@@ -7,7 +7,6 @@ import {
   ArrowUp,
   ArrowDown,
   X,
-  Settings2,
 } from "lucide-react";
 import type { Member, TaskGroup } from "@/rotation/types";
 import { ColorPalette } from "./ColorPalette";
@@ -34,6 +33,7 @@ export function GroupCard({
 }: Props) {
   const ctx = useGroupCardContext();
   const t = useT();
+  const detailsOpen = ctx.openDetailsKey === `details-${gIdx}`;
 
   return (
     <div
@@ -89,12 +89,37 @@ export function GroupCard({
           style={{ color: "#bbb" }}
           aria-hidden="true"
         />
-        <span
-          className="text-lg shrink-0 select-none"
-          aria-label={t("group.emojiOf", { n: gIdx + 1 })}
+        {/* 絵文字（と担当者の色）を押すと、その下に変える欄が開く */}
+        <button
+          type="button"
+          onClick={() => ctx.onToggleDetails(`details-${gIdx}`)}
+          aria-expanded={detailsOpen}
+          aria-label={
+            ctx.isTaskMode
+              ? t("group.emojiOf", { n: gIdx + 1 })
+              : t("group.emojiAndColorOf", { n: gIdx + 1 })
+          }
+          className="relative shrink-0 flex items-center gap-0.5 rounded-lg pl-1 pr-0.5 py-0.5 transition-colors hover:bg-black/5"
         >
-          {group.emoji}
-        </span>
+          <span className="text-lg leading-none select-none" aria-hidden="true">
+            {group.emoji}
+          </span>
+          {!ctx.isTaskMode && ownerMember && (
+            <span
+              aria-hidden="true"
+              className="absolute left-4 bottom-0 size-2.5 rounded-full border border-white"
+              style={{ backgroundColor: ownerMember.color }}
+            />
+          )}
+          <ChevronDown
+            className="size-3 transition-transform"
+            style={{
+              color: "#999",
+              transform: detailsOpen ? "rotate(180deg)" : undefined,
+            }}
+            aria-hidden="true"
+          />
+        </button>
 
         {ctx.isTaskMode ? (
           <div className="flex-1 min-w-0">
@@ -116,10 +141,6 @@ export function GroupCard({
           <div className="flex-1 min-w-0 flex items-center gap-2">
             {ownerMember && (
               <>
-                <div
-                  className="size-5 sm:size-6 rounded-full shrink-0"
-                  style={{ backgroundColor: ownerMember.color }}
-                />
                 <input
                   type="text"
                   value={ownerMember.name}
@@ -142,20 +163,6 @@ export function GroupCard({
 
         <button
           type="button"
-          onClick={() => ctx.onToggleDetails(`details-${gIdx}`)}
-          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors shrink-0"
-          style={{
-            color:
-              ctx.openDetailsKey === `details-${gIdx}`
-                ? "var(--dt-text)"
-                : "#999",
-          }}
-          aria-label={t("group.details")}
-        >
-          <Settings2 className="size-4" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
           onClick={() => ctx.onRemoveGroup(gIdx)}
           className="p-1.5 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 shrink-0"
           style={{ color: "#EF4444" }}
@@ -167,7 +174,7 @@ export function GroupCard({
       </div>
 
       {/* 詳細設定（絵文字・色変更） */}
-      {ctx.openDetailsKey === `details-${gIdx}` && (
+      {detailsOpen && (
         <div
           className="px-3 sm:px-4 py-2 flex flex-col gap-2"
           style={{

@@ -166,6 +166,12 @@ export const en: Record<MessageKey, string> = {
     "Choose a template. You can edit everything later.",
   "newSchedule.createBlank": "Start from scratch",
   "newSchedule.createBlankDesc": "Build a schedule from a blank slate",
+  "newSchedule.searchPlaceholder":
+    "Search templates (e.g. lunch, cleaning, chores)",
+  "newSchedule.searchAria": "Search templates",
+  "newSchedule.featured": "Suggested",
+  "newSchedule.allTemplates": "All templates",
+  "newSchedule.noResults": 'No templates match "{query}"',
 
   // Settings modal
   "settings.title": "Edit schedule",
@@ -197,12 +203,12 @@ export const en: Record<MessageKey, string> = {
   "group.moveUp": "Move up",
   "group.moveDown": "Move down",
   "group.emojiOf": "Group {n} emoji",
+  "group.emojiAndColorOf": "Emoji and color of group {n}",
   "group.taskNamePlaceholder": "Enter a task name",
   "group.taskNameOf": "Task {n} name",
   "group.namePlaceholder": "Enter a name",
   "group.memberNameOf": "Member {n} name",
   "group.memberName": "Member name",
-  "group.details": "Details",
   "group.deleteGroup": "Delete group {n}",
   "group.emoji": "Emoji",
   "group.changeEmoji": "Change group {n} emoji",

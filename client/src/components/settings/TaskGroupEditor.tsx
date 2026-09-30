@@ -511,8 +511,14 @@ export function TaskGroupEditor({
         <button
           type="button"
           onClick={addGroup}
-          className="theme-border theme-shadow-sm flex-1 flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-all duration-150 theme-hover-lift"
-          style={{ backgroundColor: "#E8E8E8", borderRadius: "10px" }}
+          // 行を足すボタンだと分かるよう点線の枠にする
+          className="theme-border flex-1 flex items-center justify-center gap-2 px-4 py-3 font-bold text-sm transition-colors hover:bg-black/5"
+          style={{
+            borderStyle: "dashed",
+            backgroundColor: "transparent",
+            color: "var(--dt-text-secondary)",
+            borderRadius: "10px",
+          }}
         >
           <Plus className="size-4" aria-hidden="true" />{" "}
           {isTaskMode ? t("group.addTask") : t("group.addAssignee")}
@@ -524,7 +530,8 @@ export function TaskGroupEditor({
           style={{
             backgroundColor: bulkMode
               ? "var(--dt-current-highlight)"
-              : "#E8E8E8",
+              : "var(--dt-button-bg)",
+            color: "var(--dt-text)",
             borderRadius: "10px",
           }}
         >
