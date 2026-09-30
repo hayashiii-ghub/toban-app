@@ -316,6 +316,7 @@ export const en: Record<MessageKey, string> = {
   "view.table": "Table",
   "view.calendar": "Calendar",
   "view.disc": "Wheel",
+  "view.switchAria": "Change view",
   "disc.offDuty": "Off duty",
   "disc.sheetOuter": "Outer ring (tasks): cut along the outer edge.",
   "disc.sheetInner":
