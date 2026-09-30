@@ -132,7 +132,7 @@ describe("buildSocialMetaTags", () => {
       origin: "https://toban.app",
     });
     expect(html).toContain(
-      '<meta property="og:image" content="https://toban.app/og-image.png"'
+      '<meta property="og:image" content="https://toban.app/og-image.png?v=2"'
     );
     expect(html).toContain('<meta property="og:image:width" content="1200"');
     expect(html).toContain('<meta property="og:image:height" content="630"');
@@ -153,7 +153,7 @@ describe("buildSocialMetaTags", () => {
       '<meta name="twitter:description" content="せつめい"'
     );
     expect(html).toContain(
-      '<meta name="twitter:image" content="https://toban.app/og-image.png"'
+      '<meta name="twitter:image" content="https://toban.app/og-image.png?v=2"'
     );
   });
 
@@ -210,7 +210,7 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
   it("renderLandingPageHtml uses /og-image.png and twitter card", () => {
     const html = renderLandingPageHtml(origin);
     expect(html).toContain(
-      '<meta property="og:image" content="https://toban.app/og-image.png">'
+      '<meta property="og:image" content="https://toban.app/og-image.png?v=2">'
     );
     expect(html).toContain('<meta property="og:image:width" content="1200">');
     expect(html).toContain('<meta property="og:image:height" content="630">');
@@ -218,7 +218,7 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
       '<meta name="twitter:card" content="summary_large_image">'
     );
     expect(html).toContain(
-      '<meta name="twitter:image" content="https://toban.app/og-image.png">'
+      '<meta name="twitter:image" content="https://toban.app/og-image.png?v=2">'
     );
     expect(html).not.toMatch(/property="og:image"[^>]*pwa-512/);
     expect(html).not.toMatch(/name="twitter:image"[^>]*pwa-512/);
@@ -227,14 +227,14 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
   it("renderTemplateListHtml uses /og-image.png and twitter card", () => {
     const html = renderTemplateListHtml(origin);
     expect(html).toContain(
-      '<meta property="og:image" content="https://toban.app/og-image.png">'
+      '<meta property="og:image" content="https://toban.app/og-image.png?v=2">'
     );
     expect(html).toContain('<meta property="og:image:width" content="1200">');
     expect(html).toContain(
       '<meta name="twitter:card" content="summary_large_image">'
     );
     expect(html).toContain(
-      '<meta name="twitter:image" content="https://toban.app/og-image.png">'
+      '<meta name="twitter:image" content="https://toban.app/og-image.png?v=2">'
     );
   });
 
@@ -248,14 +248,14 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
     const html = renderTemplateDetailHtml(origin, "office-cleaning");
     expect(html).not.toBeNull();
     expect(html).toContain(
-      '<meta property="og:image" content="https://toban.app/og-image.png">'
+      '<meta property="og:image" content="https://toban.app/og-image.png?v=2">'
     );
     expect(html).toContain('<meta property="og:image:width" content="1200">');
     expect(html).toContain(
       '<meta name="twitter:card" content="summary_large_image">'
     );
     expect(html).toContain(
-      '<meta name="twitter:image" content="https://toban.app/og-image.png">'
+      '<meta name="twitter:image" content="https://toban.app/og-image.png?v=2">'
     );
   });
 });
