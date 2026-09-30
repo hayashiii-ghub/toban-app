@@ -24,6 +24,12 @@
     --home-toolbar-space: 10.25rem;
   }
 
+  /* 表の最後を、下に固定した部分の上までスクロールで出せるようにする。
+     ページの一番下の案内はスマホのホームでは出さない（「⋯」に移した）ので、ここで空ける */
+  body:has([data-home-toolbar]) .rotation-page {
+    padding-bottom: calc(var(--home-toolbar-space) + 1rem);
+  }
+
   .home-bottom-panel {
     position: fixed;
     inset-inline: 0;
