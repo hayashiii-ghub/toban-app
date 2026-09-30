@@ -237,6 +237,9 @@ export function createScheduleFromTemplate(
     schedule.designThemeId = template.designThemeId;
   }
   schedule.fontId = template.fontId ?? getSavedFontId();
+  if (template.rotationConfig) {
+    schedule.rotationConfig = deepClone(template.rotationConfig);
+  }
   return schedule;
 }
 

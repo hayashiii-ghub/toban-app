@@ -40,9 +40,11 @@ export function useTurnLabel(
         : t("rotation.nth", { n: rotation });
     return { label, period: label, fileLabel: label, isDateMode: false };
   }
+  const weekdaysOnly =
+    !!rotationConfig.skipSaturday && !!rotationConfig.skipSunday;
   const detail =
     rotationConfig.cycleDays === 1
-      ? t("turn.everyDay")
+      ? t(weekdaysOnly ? "turn.everyWeekday" : "turn.everyDay")
       : t("turn.everyNDays", { n: rotationConfig.cycleDays ?? 0 });
   if (!turn) {
     const label = t("rotation.autoByDate");

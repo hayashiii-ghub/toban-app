@@ -272,6 +272,11 @@ test("English template, date settings, calendar, print and shared view", async (
     .getByRole("group", { name: "Office" })
     .getByRole("button", { name: /Office cleaning/ })
     .click();
+  // 選ぶと名前と交代のしかたを入れる画面に進む。ここでは見本のまま作る
+  await expect(picker).not.toContainText(
+    /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u
+  );
+  await picker.getByRole("button", { name: "Create roster" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Office cleaning"
   );

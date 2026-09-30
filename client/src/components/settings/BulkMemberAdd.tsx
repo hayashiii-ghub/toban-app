@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import type { Member, TaskGroup } from "@/rotation/types";
 import { MEMBER_PRESETS } from "@/rotation/constants";
 import { generateId, deepClone } from "@/rotation/utils";
+import { parseNames } from "@/rotation/templateSetup";
 import { useT } from "@/i18n";
 import { toast } from "sonner";
 import { LIMITS } from "@shared/limits";
@@ -27,14 +28,7 @@ export function BulkMemberAdd({
 }: Props) {
   const t = useT();
   const [bulkText, setBulkText] = useState("");
-  const bulkNames = useMemo(
-    () =>
-      bulkText.split(/[\n,、\t]+/).flatMap(s => {
-        const trimmed = s.trim();
-        return trimmed ? [trimmed] : [];
-      }),
-    [bulkText]
-  );
+  const bulkNames = useMemo(() => parseNames(bulkText), [bulkText]);
 
   const handleBulkAdd = () => {
     if (bulkNames.length === 0) return;

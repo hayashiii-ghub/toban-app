@@ -10,6 +10,7 @@ import {
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useT, useLocale } from "@/i18n";
+import { TemplateSetupStep } from "./TemplateSetupStep";
 
 const TEMPLATE_SECTIONS = [
   { id: "office", from: 0, to: 2, defaultOpen: false },
@@ -44,6 +45,10 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
     () => new Set(TEMPLATE_SECTIONS.flatMap(s => (s.defaultOpen ? [s.id] : [])))
   );
   const [query, setQuery] = useState("");
+  // テンプレートを選んだら、名前と交代のしかたを入れる画面に進む
+  const [setupTemplate, setSetupTemplate] = useState<ScheduleTemplate | null>(
+    null
+  );
   const sectionLabel = (id: string) =>
     locale === "en"
       ? TEMPLATE_CATEGORIES_EN[id].label
@@ -138,153 +143,165 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
 
         {/* テンプレート一覧 */}
         <div className="p-4 sm:p-5 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] sm:pb-5 overflow-y-auto flex flex-col gap-1">
-          <p
-            className="text-sm font-bold mb-2"
-            style={{ color: "var(--dt-text-muted)" }}
-          >
-            {t("newSchedule.instruction")}
-          </p>
-
-          {/* 新しくつくる（カスタム） */}
-          <button
-            type="button"
-            onClick={() => onSelect(customTemplate)}
-            className="theme-border theme-shadow-sm p-3 sm:p-4 w-full text-left transition-all duration-150 theme-hover-lift mb-2"
-            style={{
-              borderRadius: "var(--dt-border-radius)",
-              backgroundColor: "var(--dt-current-highlight)",
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <Plus
-                className="size-6"
-                style={{ color: "var(--dt-text)" }}
-                aria-hidden="true"
-              />
-              <div className="min-w-0">
-                <div
-                  className="text-sm font-extrabold"
-                  style={{ color: "var(--dt-text)" }}
-                >
-                  {t("newSchedule.createBlank")}
-                </div>
-                <div
-                  className="text-xs font-medium mt-0.5"
-                  style={{ color: "var(--dt-text-secondary)" }}
-                >
-                  {t("newSchedule.createBlankDesc")}
-                </div>
-              </div>
-            </div>
-          </button>
-
-          {/* 探す */}
-          <label className="relative block mb-1">
-            <Search
-              className="size-4 absolute left-3 top-1/2 -translate-y-1/2"
-              style={{ color: "var(--dt-text-muted)" }}
-              aria-hidden="true"
+          {setupTemplate ? (
+            <TemplateSetupStep
+              template={setupTemplate}
+              onBack={() => setSetupTemplate(null)}
+              onCreate={onSelect}
             />
-            <input
-              type="search"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder={t("newSchedule.searchPlaceholder")}
-              aria-label={t("newSchedule.searchAria")}
-              className="w-full theme-border pl-9 pr-3 py-2.5 text-sm"
-              style={{
-                borderRadius: "var(--dt-border-radius-sm)",
-                backgroundColor: "var(--dt-card-bg)",
-                color: "var(--dt-text)",
-              }}
-            />
-          </label>
-
-          {needle ? (
-            results.length > 0 ? (
-              <div className="flex flex-col gap-2 p-1">
-                {results.map(template => (
-                  <TemplateButton
-                    key={template.name}
-                    template={template}
-                    onSelect={onSelect}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p
-                className="text-sm py-6 text-center"
-                style={{ color: "var(--dt-text-muted)" }}
-              >
-                {t("newSchedule.noResults", { query: query.trim() })}
-              </p>
-            )
           ) : (
             <>
-              {/* テンプレートセクション */}
-              {TEMPLATE_SECTIONS.map(section => {
-                const isOpen = openSections.has(section.id);
-                const templates = localizedTemplates.slice(
-                  section.from,
-                  section.to
-                );
-                const category = TEMPLATE_CATEGORIES.find(
-                  cat => cat.id === section.id
-                )!;
-                const label =
-                  locale === "en"
-                    ? TEMPLATE_CATEGORIES_EN[section.id].label
-                    : category.label;
-                return (
-                  <div key={section.id}>
-                    <button
-                      type="button"
-                      onClick={() => toggleSection(section.id)}
-                      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors"
+              <p
+                className="text-sm font-bold mb-2"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("newSchedule.instruction")}
+              </p>
+
+              {/* 新しくつくる（カスタム） */}
+              <button
+                type="button"
+                onClick={() => onSelect(customTemplate)}
+                className="theme-border theme-shadow-sm p-3 sm:p-4 w-full text-left transition-all duration-150 theme-hover-lift mb-2"
+                style={{
+                  borderRadius: "var(--dt-border-radius)",
+                  backgroundColor: "var(--dt-current-highlight)",
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <Plus
+                    className="size-6"
+                    style={{ color: "var(--dt-text)" }}
+                    aria-hidden="true"
+                  />
+                  <div className="min-w-0">
+                    <div
+                      className="text-sm font-extrabold"
+                      style={{ color: "var(--dt-text)" }}
                     >
-                      <span
-                        className="text-sm font-extrabold tracking-wider"
-                        style={{ color: "var(--dt-text-secondary)" }}
-                      >
-                        {category.emoji} {label}
-                      </span>
-                      <ChevronDown
-                        className="size-4 transition-transform duration-200"
-                        style={{
-                          color: "var(--dt-text-muted)",
-                          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                        }}
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <m.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="overflow-hidden"
-                        >
-                          <div
-                            className="flex flex-col gap-2 p-1"
-                            role="group"
-                            aria-label={label}
-                          >
-                            {templates.map((template, idx) => (
-                              <TemplateButton
-                                key={section.from + idx}
-                                template={template}
-                                onSelect={onSelect}
-                              />
-                            ))}
-                          </div>
-                        </m.div>
-                      )}
-                    </AnimatePresence>
+                      {t("newSchedule.createBlank")}
+                    </div>
+                    <div
+                      className="text-xs font-medium mt-0.5"
+                      style={{ color: "var(--dt-text-secondary)" }}
+                    >
+                      {t("newSchedule.createBlankDesc")}
+                    </div>
                   </div>
-                );
-              })}
+                </div>
+              </button>
+
+              {/* 探す */}
+              <label className="relative block mb-1">
+                <Search
+                  className="size-4 absolute left-3 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--dt-text-muted)" }}
+                  aria-hidden="true"
+                />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  placeholder={t("newSchedule.searchPlaceholder")}
+                  aria-label={t("newSchedule.searchAria")}
+                  className="w-full theme-border pl-9 pr-3 py-2.5 text-sm"
+                  style={{
+                    borderRadius: "var(--dt-border-radius-sm)",
+                    backgroundColor: "var(--dt-card-bg)",
+                    color: "var(--dt-text)",
+                  }}
+                />
+              </label>
+
+              {needle ? (
+                results.length > 0 ? (
+                  <div className="flex flex-col gap-2 p-1">
+                    {results.map(template => (
+                      <TemplateButton
+                        key={template.name}
+                        template={template}
+                        onSelect={setSetupTemplate}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p
+                    className="text-sm py-6 text-center"
+                    style={{ color: "var(--dt-text-muted)" }}
+                  >
+                    {t("newSchedule.noResults", { query: query.trim() })}
+                  </p>
+                )
+              ) : (
+                <>
+                  {/* テンプレートセクション */}
+                  {TEMPLATE_SECTIONS.map(section => {
+                    const isOpen = openSections.has(section.id);
+                    const templates = localizedTemplates.slice(
+                      section.from,
+                      section.to
+                    );
+                    const category = TEMPLATE_CATEGORIES.find(
+                      cat => cat.id === section.id
+                    )!;
+                    const label =
+                      locale === "en"
+                        ? TEMPLATE_CATEGORIES_EN[section.id].label
+                        : category.label;
+                    return (
+                      <div key={section.id}>
+                        <button
+                          type="button"
+                          onClick={() => toggleSection(section.id)}
+                          className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          <span
+                            className="text-sm font-extrabold tracking-wider"
+                            style={{ color: "var(--dt-text-secondary)" }}
+                          >
+                            {category.emoji} {label}
+                          </span>
+                          <ChevronDown
+                            className="size-4 transition-transform duration-200"
+                            style={{
+                              color: "var(--dt-text-muted)",
+                              transform: isOpen
+                                ? "rotate(180deg)"
+                                : "rotate(0deg)",
+                            }}
+                            aria-hidden="true"
+                          />
+                        </button>
+                        <AnimatePresence initial={false}>
+                          {isOpen && (
+                            <m.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              <div
+                                className="flex flex-col gap-2 p-1"
+                                role="group"
+                                aria-label={label}
+                              >
+                                {templates.map((template, idx) => (
+                                  <TemplateButton
+                                    key={section.from + idx}
+                                    template={template}
+                                    onSelect={setSetupTemplate}
+                                  />
+                                ))}
+                              </div>
+                            </m.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
             </>
           )}
         </div>
