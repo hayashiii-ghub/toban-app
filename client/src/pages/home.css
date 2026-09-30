@@ -183,3 +183,34 @@
     font-size: max(11px, inherit) !important;
   }
 }
+
+/* ホームの操作の帯（RotationControls）。帯の色の上に平らに置く操作 */
+.control-bar-flat {
+  color: var(--dt-control-bar-text);
+  border-radius: var(--dt-border-radius-sm);
+  transition: background-color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .control-bar-flat:hover:not(:disabled) {
+    background-color: color-mix(
+      in srgb,
+      var(--dt-control-bar-text) 12%,
+      transparent
+    );
+  }
+}
+
+.control-bar-flat:active:not(:disabled) {
+  background-color: color-mix(
+    in srgb,
+    var(--dt-control-bar-text) 20%,
+    transparent
+  );
+}
+
+/* 既定の輪郭の色（--dt-focus-ring）は帯と同じ色のテーマが多く、帯の上では見えない */
+.control-bar-flat:focus-visible,
+.control-bar-views button:focus-visible {
+  outline-color: var(--dt-control-bar-text);
+}

@@ -238,10 +238,17 @@
     }
   }
 
-  /* タブで中身が切り替わるシート（編集）は、切り替えるたびに高さが変わらないよう高さを決めておく */
+  /* タブで中身が切り替わるシート（編集）は、切り替えるたびに高さが変わらないよう高さを決めておく。
+     PC は画面の真ん中に出すので、大きな画面でも縦に伸ばしすぎない */
   .sheet-fixed-h {
     height: 90vh;
     height: 90dvh;
+  }
+  @media (min-width: 640px) {
+    .sheet-fixed-h {
+      height: min(85vh, 46rem);
+      height: min(85dvh, 46rem);
+    }
   }
 
   .settings-option-control {
