@@ -36,14 +36,9 @@ const schedules: Schedule[] = [
 const defaultProps = () => ({
   schedules,
   activeScheduleId: "s1",
-  draggedTabId: null,
-  dragOverTabId: null,
   onSelectSchedule: vi.fn(),
   onAddSchedule: vi.fn(),
-  onDragStart: vi.fn(),
-  onDragOver: vi.fn(),
-  onDrop: vi.fn(),
-  onDragEnd: vi.fn(),
+  onMoveTab: vi.fn(),
   onReorderTab: vi.fn(),
   onTogglePin: vi.fn(),
   onDuplicate: vi.fn(),
@@ -118,6 +113,71 @@ describe("ScheduleTabs", () => {
     fireEvent.keyDown(tab, { key: "ArrowLeft", altKey: true });
     expect(props.onReorderTab).toHaveBeenCalledWith("s2", "left");
     unmount();
+  });
+
+  describe("タブの並べ替え", () => {
+    // jsdom には elementFromPoint が無いので、指の下にあるタブを差し替えて動かす
+    const dragTab = (
+      from: HTMLElement,
+      to: HTMLElement,
+      pointerType: "mouse" | "touch",
+      beforeMove?: () => void
+    ) => {
+      const original = document.elementFromPoint;
+      document.elementFromPoint = () => to;
+      const at = (x: number) => ({
+        pointerId: 1,
+        pointerType,
+        clientX: x,
+        clientY: 10,
+      });
+      fireEvent.pointerDown(from, { ...at(200), button: 0 });
+      beforeMove?.();
+      fireEvent.pointerMove(from, at(20));
+      fireEvent.pointerUp(from, at(20));
+      document.elementFromPoint = original;
+    };
+
+    it("マウスでタブを動かし、別のタブの上で離すと、その位置へ移す", () => {
+      const props = defaultProps();
+      render(<ScheduleTabs {...props} />);
+      dragTab(tab("日直"), tab("掃除当番"), "mouse");
+      expect(props.onMoveTab).toHaveBeenCalledWith("s3", "s1");
+    });
+
+    it("指では長押しでメニューが開き、そのまま動かすとメニューを閉じて動かせる", () => {
+      vi.useFakeTimers();
+      const props = defaultProps();
+      render(<ScheduleTabs {...props} />);
+      dragTab(tab("日直"), tab("掃除当番"), "touch", () => {
+        act(() => vi.advanceTimersByTime(600));
+        expect(screen.getByRole("menu")).toBeInTheDocument();
+      });
+      expect(screen.queryByRole("menu")).toBeNull();
+      expect(props.onMoveTab).toHaveBeenCalledWith("s3", "s1");
+    });
+
+    it("指で長押しせずに動かすのはスクロールなので、並べ替えない", () => {
+      const props = defaultProps();
+      render(<ScheduleTabs {...props} />);
+      dragTab(tab("日直"), tab("掃除当番"), "touch");
+      expect(props.onMoveTab).not.toHaveBeenCalled();
+    });
+
+    it("ピン留めしたタブは動かせない", () => {
+      const props = defaultProps();
+      render(
+        <ScheduleTabs
+          {...props}
+          schedules={[
+            makeSchedule("p1", "固定", true),
+            makeSchedule("s1", "掃除当番"),
+          ]}
+        />
+      );
+      dragTab(tab("固定"), tab("掃除当番"), "mouse");
+      expect(props.onMoveTab).not.toHaveBeenCalled();
+    });
   });
 
   describe("タブのメニュー", () => {

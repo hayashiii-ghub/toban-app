@@ -10,6 +10,7 @@ import type {
 import { deepClone, generateId } from "@/rotation/utils";
 import { MEMBER_PRESETS } from "@/rotation/constants";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useSheetSwipe } from "@/hooks/useSheetSwipe";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { ScheduleSettings } from "@/hooks/useScheduleManager";
 import { LIMITS } from "@shared/limits";
@@ -21,6 +22,7 @@ import { getThemeById, getThemeLabel } from "@/rotation/designThemes";
 import { applyFont, getFontById, getSavedFontId } from "@/fonts";
 import type { FontId } from "@shared/appearance";
 import { applyThemeToRoot } from "@/contexts/DesignThemeContext";
+import { SheetHandle } from "./SheetHandle";
 import { useLocale, useT, type MessageKey } from "@/i18n";
 
 interface Props {
@@ -234,22 +236,19 @@ export function SettingsModal({
     applyFont(getFontById(savedFontId ?? getSavedFontId()));
   }, [editDesignThemeId, designThemeId, handleThemePreview, savedFontId]);
 
+  // 閉じたら true。保存していない変更があって確認で取り消したら false（下になでたシートを戻すのに使う）
   const handleCloseWithCheck = useCallback(() => {
-    if (isDirty) {
-      if (window.confirm(t("settings.confirmClose"))) {
-        revertThemePreview();
-        onClose();
-      }
-    } else {
-      revertThemePreview();
-      onClose();
-    }
+    if (isDirty && !window.confirm(t("settings.confirmClose"))) return false;
+    revertThemePreview();
+    onClose();
+    return true;
   }, [isDirty, onClose, revertThemePreview, t]);
 
   useEscapeKey(
     useCallback(() => handleCloseWithCheck(), [handleCloseWithCheck])
   );
   useFocusTrap(modalRef, true);
+  const handleSheetSwipe = useSheetSwipe(modalRef, handleCloseWithCheck);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
@@ -381,13 +380,15 @@ export function SettingsModal({
         exit={isWide ? { scale: 0.95, y: 12 } : { y: 24 }}
         transition={{ duration: 0.22, ease: "easeOut" }}
       >
-        {/* ヘッダー */}
+        {/* ヘッダー。スマホでは下になでると閉じる */}
         <div
-          className="shrink-0 flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4"
+          className="relative shrink-0 flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 max-sm:touch-none"
           style={{
             borderBottom: "var(--dt-border-width) solid var(--dt-border-color)",
           }}
+          onPointerDown={handleSheetSwipe}
         >
+          <SheetHandle />
           <h2
             id="settings-title"
             className="text-lg font-extrabold flex items-center gap-2"

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { LIMITS } from "@shared/limits";
 import type { AssignmentMode, Member, TaskGroup } from "@/rotation/types";
@@ -155,20 +155,20 @@ describe("TaskGroupEditor（タスクから見る）", () => {
   });
 });
 
-// jsdom には DataTransfer が無いので、ハンドラが触る分だけの偽物を渡す
+// 並べ替えは、つまむ印を pointer で動かす（usePointerDrag）。jsdom には elementFromPoint が無いので、
+// 指の下にあるものを to に差し替えてから、印を押して動かして離す
 function drag(from: Element, to: Element) {
-  const dataTransfer = {
-    effectAllowed: "",
-    dropEffect: "",
-    setDragImage: vi.fn(),
-  };
-  fireEvent.dragStart(from, { dataTransfer });
-  fireEvent.dragOver(to, { dataTransfer });
-  fireEvent.drop(to, { dataTransfer });
-  fireEvent.dragEnd(from, { dataTransfer });
+  const grip = from
+    .closest("[data-drag-item]")!
+    .querySelector("[data-drag-grip]")!;
+  const original = document.elementFromPoint;
+  document.elementFromPoint = () => to;
+  const at = (y: number) => ({ pointerId: 1, clientX: 10, clientY: y });
+  fireEvent.pointerDown(grip, { ...at(0), pointerType: "mouse", button: 0 });
+  fireEvent.pointerMove(grip, at(40));
+  fireEvent.pointerUp(grip, at(40));
+  document.elementFromPoint = original;
 }
-
-const draggableOf = (el: Element) => el.closest('[draggable="true"]')!;
 
 describe("TaskGroupEditor のドラッグ", () => {
   it("仕事を別のグループの行に落とすと、その位置へ移る", () => {
@@ -179,8 +179,8 @@ describe("TaskGroupEditor のドラッグ", () => {
       ],
     });
     drag(
-      draggableOf(screen.getByRole("textbox", { name: "グループ1のタスク1" })),
-      draggableOf(screen.getByRole("textbox", { name: "グループ2のタスク1" }))
+      screen.getByRole("textbox", { name: "グループ1のタスク1" }),
+      screen.getByRole("textbox", { name: "グループ2のタスク1" })
     );
     expect(state.groups.map(g => g.tasks)).toEqual([
       ["窓"],
@@ -191,9 +191,9 @@ describe("TaskGroupEditor のドラッグ", () => {
   it("グループを並べ替えると、担当者の順番も一緒に動く", () => {
     const state = renderEditor();
     const header = (n: number) =>
-      draggableOf(screen.getByRole("textbox", { name: `担当者${n}の名前` }));
-    // グループ全体（見出しの親）の上に落とす
-    drag(header(1), header(2).parentElement!);
+      screen.getByRole("textbox", { name: `担当者${n}の名前` });
+    // 見出しの印でグループ全体を動かし、2 つ目のグループの上に落とす
+    drag(header(1).closest("[data-drop-group]")!, header(2));
     expect(state.groups.map(g => g.id)).toEqual(["g2", "g1"]);
     expect(state.members.map(m => m.name)).toEqual(["そら", "あおい"]);
   });
@@ -206,9 +206,9 @@ describe("TaskGroupEditor のドラッグ", () => {
         { id: "g2", tasks: ["床はき"], emoji: "🧹" },
       ],
     });
-    const [aoi, sora] = screen
-      .getAllByRole("textbox", { name: "メンバーの名前" })
-      .map(draggableOf);
+    const [aoi, sora] = screen.getAllByRole("textbox", {
+      name: "メンバーの名前",
+    });
     drag(aoi, sora);
     expect(state.groups[0].memberIds).toEqual(["m2", "m1"]);
   });

@@ -1,6 +1,19 @@
 import { createContext, use } from "react";
 import type { Member } from "@/rotation/types";
 
+/** 並べ替えで動かしているもの。仕事の順・仕事の中の行・仕事の担当者の順 */
+export type EditorDragItem =
+  | { kind: "group"; gIdx: number }
+  | { kind: "task"; gIdx: number; tIdx: number }
+  | { kind: "member"; gIdx: number; mIdx: number };
+
+/** 落とす所の印。after なら、その行の後ろに入る */
+export interface DropMark {
+  gIdx: number;
+  idx: number;
+  after: boolean;
+}
+
 export interface GroupCardContextValue {
   // モード・メンバーデータ
   isTaskMode: boolean;
@@ -33,28 +46,13 @@ export interface GroupCardContextValue {
   onSetExplicitMembers: (gIdx: number) => void;
   onResetToAllMembers: (gIdx: number) => void;
   onReorderMember: (gIdx: number, mIdx: number, direction: -1 | 1) => void;
-  // グループDnD
-  dragGroupIdx: number | null;
-  onGroupDragStart: (e: React.DragEvent, gIdx: number) => void;
-  onGroupDragEnd: () => void;
-  onGroupReorderDragOver: (e: React.DragEvent, gIdx: number) => void;
-  onGroupReorderDrop: (e: React.DragEvent, gIdx: number) => void;
-  // タスクDnD
-  dragTask: { gIdx: number; tIdx: number } | null;
-  dropTarget: { gIdx: number; tIdx: number } | null;
-  onTaskDragStart: (e: React.DragEvent, gIdx: number, tIdx: number) => void;
-  onTaskDragOver: (e: React.DragEvent, gIdx: number, tIdx: number) => void;
-  onTaskDrop: (e: React.DragEvent, gIdx: number, tIdx: number) => void;
-  onTaskDragEnd: () => void;
-  onGroupDragOver: (e: React.DragEvent) => void;
-  onGroupDropZone: (e: React.DragEvent, gIdx: number) => void;
-  // メンバーDnD（タスクモード）
-  dragMember: { gIdx: number; mIdx: number } | null;
-  dropMemberTarget: { gIdx: number; mIdx: number } | null;
-  onMemberDragStart: (e: React.DragEvent, gIdx: number, mIdx: number) => void;
-  onMemberDragOver: (e: React.DragEvent, gIdx: number, mIdx: number) => void;
-  onMemberDrop: (e: React.DragEvent, gIdx: number, mIdx: number) => void;
-  onMemberDragEnd: () => void;
+  // 並べ替え（つまむ印の onPointerDown。usePointerDrag）
+  dragHandle: (item: EditorDragItem) => {
+    onPointerDown: (e: React.PointerEvent<HTMLElement>) => void;
+  };
+  dragging: EditorDragItem | null;
+  dropTarget: DropMark | null;
+  dropMemberTarget: DropMark | null;
 }
 
 const GroupCardContext = createContext<GroupCardContextValue | null>(null);

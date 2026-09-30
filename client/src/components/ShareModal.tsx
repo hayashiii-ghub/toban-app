@@ -13,6 +13,8 @@ import {
 import { QRCode } from "react-qr-code";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useSheetSwipe } from "@/hooks/useSheetSwipe";
+import { SheetHandle } from "./SheetHandle";
 import { encodeShareTransferData } from "@/lib/shareTransfer";
 import { useLocale, useT } from "@/i18n";
 import { toast } from "sonner";
@@ -92,6 +94,7 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
 
   useEscapeKey(onClose);
   useFocusTrap(modalRef, true);
+  const handleSheetSwipe = useSheetSwipe(modalRef, onClose);
 
   const tabs: { value: ShareTab; label: string }[] = [
     { value: "view", label: t("share.tabView") },
@@ -160,11 +163,13 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
         exit={{ scale: 0.9, y: 20 }}
       >
         <div
-          className="shrink-0 flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4"
+          className="relative shrink-0 flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 max-sm:touch-none"
           style={{
             borderBottom: "var(--dt-border-width) solid var(--dt-border-color)",
           }}
+          onPointerDown={handleSheetSwipe}
         >
+          <SheetHandle />
           <h2
             id="share-modal-title"
             className="text-lg font-extrabold"

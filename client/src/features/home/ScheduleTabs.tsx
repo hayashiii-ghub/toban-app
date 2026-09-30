@@ -6,9 +6,9 @@ import {
   Pin,
 } from "lucide-react";
 import { useRef, useState, useEffect, useMemo, useCallback } from "react";
-import type { DragEvent } from "react";
 import type { Schedule } from "@/rotation/types";
 import { useT } from "@/i18n";
+import { usePointerDrag } from "@/hooks/usePointerDrag";
 import { TabMenu, type TabMenuTarget } from "./TabMenu";
 
 // 長押しとみなす時間と、指がこれ以上動いたら長押しをやめる距離（px）
@@ -18,17 +18,10 @@ const LONG_PRESS_SLOP = 10;
 interface ScheduleTabsProps {
   schedules: Schedule[];
   activeScheduleId: string;
-  draggedTabId: string | null;
-  dragOverTabId: string | null;
   onSelectSchedule: (scheduleId: string) => void;
   onAddSchedule: () => void;
-  onDragStart: (
-    event: DragEvent<HTMLButtonElement>,
-    scheduleId: string
-  ) => void;
-  onDragOver: (event: DragEvent<HTMLButtonElement>, scheduleId: string) => void;
-  onDrop: (event: DragEvent<HTMLButtonElement>, scheduleId: string) => void;
-  onDragEnd: () => void;
+  /** タブを動かして、別のタブの上で離したとき（その位置へ移す） */
+  onMoveTab: (draggedId: string, targetId: string) => void;
   onReorderTab: (scheduleId: string, direction: "left" | "right") => void;
   onTogglePin: (scheduleId: string) => void;
   /** 選んでいる当番表を複製する（メニューを開くときにそのタブを選ぶ） */
@@ -39,14 +32,9 @@ interface ScheduleTabsProps {
 export function ScheduleTabs({
   schedules,
   activeScheduleId,
-  draggedTabId,
-  dragOverTabId,
   onSelectSchedule,
   onAddSchedule,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onDragEnd,
+  onMoveTab,
   onReorderTab,
   onTogglePin,
   onDuplicate,
@@ -64,12 +52,22 @@ export function ScheduleTabs({
   const longPress = useRef<{ timer: number; x: number; y: number } | null>(
     null
   );
-  // タッチ主体の端末ではドラッグで並べ替えられない（長押しがドラッグと取り合う）ので、
-  // マウスなどの細かい指し示しがある端末だけドラッグを有効にする。スマホはメニューの左右へ移動で並べ替える
-  const canDrag = useMemo(
-    () => window.matchMedia?.("(pointer: fine)").matches ?? true,
-    []
-  );
+  // 並べ替え。マウスはそのまま動かす。指は長押しでメニューが開き、そのまま動かすとメニューを閉じて動かせる
+  // （長押しを待つのは、横にスクロールする並びなので、スクロールと取り違えないため）
+  const [dropTabId, setDropTabId] = useState<string | null>(null);
+  const drag = usePointerDrag<string>({
+    axis: "x",
+    holdDelay: LONG_PRESS_MS,
+    target: () => "[data-drop-tab]",
+    onStart: () => setMenu(null),
+    onOver: (_, el) =>
+      setDropTabId((el as HTMLElement | null)?.dataset.dropTab ?? null),
+    onDrop: (id, el) => {
+      const targetId = (el as HTMLElement).dataset.dropTab;
+      if (targetId && targetId !== id) onMoveTab(id, targetId);
+    },
+    onEnd: () => setDropTabId(null),
+  });
 
   const cancelLongPress = useCallback(() => {
     if (!longPress.current) return;
@@ -133,6 +131,19 @@ export function ScheduleTabs({
   };
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  // 長押しのあとに指を動かしても、タブの並びが横にスクロールしないようにする。
+  // 指が触れる前から付けておかないと、ブラウザがスクロールを始めてしまう
+  const { holdsPointer } = drag;
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onTouchMove = (e: TouchEvent) => {
+      if (holdsPointer()) e.preventDefault();
+    };
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => el.removeEventListener("touchmove", onTouchMove);
+  }, [holdsPointer]);
+
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
@@ -269,11 +280,8 @@ export function ScheduleTabs({
                     if (el) tabRefs.current.set(schedule.id, el);
                     else tabRefs.current.delete(schedule.id);
                   }}
-                  draggable={canDrag && !schedule.pinned}
-                  onDragStart={event => onDragStart(event, schedule.id)}
-                  onDragOver={event => onDragOver(event, schedule.id)}
-                  onDrop={event => onDrop(event, schedule.id)}
-                  onDragEnd={onDragEnd}
+                  data-drag-item
+                  data-drop-tab={schedule.id}
                   onKeyDown={e => handleTabKeyDown(e, schedule.id, index)}
                   onClick={() => onSelectSchedule(schedule.id)}
                   onDoubleClick={() => openMenu(index)}
@@ -282,19 +290,19 @@ export function ScheduleTabs({
                     cancelLongPress();
                     openMenu(index);
                   }}
-                  onPointerDown={e => handlePointerDown(e, index)}
+                  onPointerDown={e => {
+                    handlePointerDown(e, index);
+                    // ピン留めしたタブは動かさない（左端にまとめて置く）
+                    if (!schedule.pinned)
+                      drag.bind(schedule.id).onPointerDown(e);
+                  }}
                   onPointerMove={handlePointerMove}
                   onPointerUp={cancelLongPress}
                   onPointerCancel={cancelLongPress}
                   onPointerLeave={cancelLongPress}
                   className={`theme-border shrink-0 px-3 sm:px-4 py-2 text-sm font-bold transition-all duration-150 flex items-center gap-1 sm:gap-1.5 select-none [-webkit-touch-callout:none] ${
                     schedule.id === activeScheduleId ? "theme-shadow-sm" : ""
-                  } ${
-                    dragOverTabId === schedule.id &&
-                    draggedTabId !== schedule.id
-                      ? "ring-2 ring-offset-1"
-                      : ""
-                  } ${draggedTabId === schedule.id ? "opacity-50" : ""}`}
+                  } ${dropTabId === schedule.id ? "ring-2 ring-offset-1" : ""}`}
                   style={{
                     backgroundColor:
                       schedule.id === activeScheduleId
@@ -305,11 +313,10 @@ export function ScheduleTabs({
                         ? "var(--dt-tab-active-text)"
                         : "var(--dt-tab-inactive-text)",
                     borderRadius: "var(--dt-border-radius-sm)",
-                    cursor: canDrag && !schedule.pinned ? "grab" : "pointer",
-                    ...(dragOverTabId === schedule.id &&
-                    draggedTabId !== schedule.id
+                    cursor: schedule.pinned ? "pointer" : "grab",
+                    ...(dropTabId === schedule.id
                       ? ({
-                          "--tw-ring-color": "var(--dt-current-highlight)",
+                          "--tw-ring-color": "var(--dt-focus-ring)",
                         } as React.CSSProperties)
                       : {}),
                   }}

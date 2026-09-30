@@ -3,6 +3,8 @@ import { m } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useSheetSwipe } from "@/hooks/useSheetSwipe";
+import { SheetHandle } from "./SheetHandle";
 import { useT } from "@/i18n";
 
 interface Props {
@@ -21,6 +23,7 @@ export function ConfirmDeleteDialog({
   const handleEscape = useCallback(() => onCancel(), [onCancel]);
   useEscapeKey(handleEscape);
   useFocusTrap(modalRef, true);
+  const handleSheetSwipe = useSheetSwipe(modalRef, onCancel);
 
   return (
     <m.div
@@ -44,11 +47,13 @@ export function ConfirmDeleteDialog({
         onClick={e => e.stopPropagation()}
       >
         <div
-          className="flex items-center gap-2.5 px-4 sm:px-5 py-3 sm:py-4"
+          className="relative flex items-center gap-2.5 px-4 sm:px-5 py-3 sm:py-4 max-sm:touch-none"
           style={{
             borderBottom: "var(--dt-border-width) solid var(--dt-border-color)",
           }}
+          onPointerDown={handleSheetSwipe}
         >
+          <SheetHandle />
           <Trash2
             className="size-5"
             style={{ color: "#DC2626" }}
