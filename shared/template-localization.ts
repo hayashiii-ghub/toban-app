@@ -66,23 +66,20 @@ const TEMPLATE_TEXT_EN: Record<string, TemplateText> = {
     tasks: [
       ["Breathing checks (infants)", "Check sleeping position"],
       ["Breathing checks (1-year-olds)", "Check sleeping position"],
-      ["Breathing checks (2-year-olds)", "Record room temperature & humidity"],
+      ["Breathing checks (2-year-olds)", "Check sleeping position"],
+      ["Record room temperature & humidity"],
     ],
     members: ["Alex", "Sam", "Riley", "Jordan"],
   },
   アレルギー対応確認: {
     name: "Food allergy checks",
     tasks: [
-      [
-        "Check special dietary meals",
-        "Double-check meal service",
-        "Supervise mealtimes",
-      ],
-      [
-        "Check snack ingredients",
-        "Check snack service",
-        "Supervise snack time",
-      ],
+      ["Check special dietary meals (lunch)"],
+      ["Double-check meal service (lunch)"],
+      ["Supervise mealtimes (lunch)"],
+      ["Check snack ingredients"],
+      ["Check snack service"],
+      ["Supervise snack time"],
     ],
     members: ["Alex", "Sam", "Riley", "Jordan"],
   },
@@ -201,25 +198,24 @@ const TEMPLATE_TEXT_EN: Record<string, TemplateText> = {
   フロア担当: {
     name: "Care home floor duty",
     tasks: [
-      ["Day shift lead", "Day shift support"],
-      ["Day shift lead", "Day shift support"],
-      ["Day shift lead", "Day shift support"],
+      ["Floor 1 day shift lead"],
+      ["Floor 1 day shift support"],
+      ["Floor 2 day shift lead"],
+      ["Floor 2 day shift support"],
+      ["Floor 3 day shift lead"],
+      ["Floor 3 day shift support"],
     ],
     members: ["Alex", "Sam", "Riley", "Jordan", "Casey", "Morgan"],
   },
   入浴介助当番: {
     name: "Bathing assistance",
     tasks: [
-      [
-        "Morning bathing assistance",
-        "Help with dressing",
-        "Escort & supervise residents",
-      ],
-      [
-        "Afternoon bathing assistance",
-        "Help with dressing",
-        "Escort & supervise residents",
-      ],
+      ["Bathing assistance (morning)"],
+      ["Help with dressing (morning)"],
+      ["Escort & supervise residents (morning)"],
+      ["Bathing assistance (afternoon)"],
+      ["Help with dressing (afternoon)"],
+      ["Escort & supervise residents (afternoon)"],
     ],
     members: ["Alex", "Sam", "Riley", "Jordan", "Casey"],
   },
@@ -291,7 +287,11 @@ const TEMPLATE_TEXT_EN: Record<string, TemplateText> = {
   },
   家事ローテーション: {
     name: "Household chores",
-    tasks: [["Clean the bathroom"], ["Take out the trash"]],
+    tasks: [
+      ["Clean the bathroom"],
+      ["Take out the trash"],
+      ["Refill detergent & trash bags"],
+    ],
     members: ["Alex", "Sam", "Riley"],
   },
   "シェアハウス 共用部管理": {
@@ -311,13 +311,10 @@ const TEMPLATE_TEXT_EN: Record<string, TemplateText> = {
   "スポーツチーム・部活動": {
     name: "Sports team duties",
     tasks: [
-      [
-        "Prepare the field before practice",
-        "Mark field lines",
-        "Tidy the field after practice",
-      ],
-      ["Set out equipment", "Put away & check equipment"],
+      ["Prepare the field before practice", "Mark field lines"],
+      ["Set out equipment"],
       ["Prepare drinks", "Refill ice & water", "Wash water jugs"],
+      ["Tidy the field after practice", "Put away & check equipment"],
       ["Clean the club room", "Record attendance"],
     ],
     members: [
@@ -336,7 +333,7 @@ const TEMPLATE_TEXT_EN: Record<string, TemplateText> = {
       ["Tend floral arrangements", "Change vase water"],
       ["Prepare services & events", "Set out chairs & cushions", "Clean up"],
     ],
-    members: ["Plum team", "Pine team", "Bamboo team", "Cherry team"],
+    members: ["Pine team", "Bamboo team", "Plum team", "Cherry team"],
   },
   イベント準備チェックリスト: {
     name: "Event planning checklist",
