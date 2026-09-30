@@ -57,8 +57,14 @@ function AppFooter() {
   if (!showFooter) return null;
 
   return (
-    <footer className="py-2 pr-3 text-right print:hidden md:fixed md:bottom-0 md:right-0 md:z-50">
-      <div className="flex items-center justify-end gap-1 md:inline-flex">
+    <footer
+      className="px-3 pt-6 pb-[calc(1rem+var(--home-toolbar-space,0px))] print:hidden"
+      style={{
+        backgroundColor: "var(--dt-page-bg)",
+        backgroundImage: "var(--dt-page-texture, none)",
+      }}
+    >
+      <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-end gap-1">
         <LanguageSwitcher />
         <a
           href="/about"
@@ -71,7 +77,7 @@ function AppFooter() {
         </a>
         <a
           href="/privacy"
-          className="px-1 text-sm text-muted-foreground/60 hover:text-muted-foreground/80 transition-colors"
+          className="px-1 text-sm whitespace-nowrap text-muted-foreground/60 hover:text-muted-foreground/80 transition-colors"
         >
           {t("footer.privacy")}
         </a>

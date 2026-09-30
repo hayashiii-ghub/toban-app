@@ -77,7 +77,7 @@ describe("built-in guide language", () => {
       result.current.home.state
     );
     act(() => result.current.language.setLocale("ja"));
-    expect(result.current.home.activeSchedule?.name).toBe("はじめてガイド");
+    expect(result.current.home.activeSchedule?.name).toBe("掃除当番（見本）");
     act(() => result.current.language.setLocale("en"));
     expect(result.current.home.activeSchedule?.groups[3].tasks).toEqual(
       DEFAULT_APP_STATE_EN.schedules[0].groups[3].tasks
@@ -117,10 +117,10 @@ describe("built-in guide language", () => {
         ...state,
         schedules: state.schedules.map(s => ({ ...s, rotation: 1 })),
       }));
-      expect(outcome.state.schedules[0].name).toBe("Getting started");
+      expect(outcome.state.schedules[0].name).toBe("Cleaning duty (sample)");
     });
     expect(savedState().schedules[0]).toMatchObject({
-      name: "はじめてガイド",
+      name: "掃除当番（見本）",
       rotation: 1,
     });
 
@@ -140,7 +140,7 @@ describe("built-in guide language", () => {
     });
     act(() => result.current.language.setLocale("ja"));
     expect(result.current.home.activeSchedule?.name).toBe("My instructions");
-    expect(result.current.home.activeSchedule?.members[0].name).toBe("Step 1");
+    expect(result.current.home.activeSchedule?.members[0].name).toBe("Alex");
   });
 
   it("syncs the stored language when a tool rotates the guide in another tab", async () => {
@@ -164,13 +164,13 @@ describe("built-in guide language", () => {
     expect(updateSchedule).toHaveBeenCalledWith(
       "existing-guide",
       "synthetic-token",
-      expect.objectContaining({ name: "はじめてガイド", rotation: 1 }),
+      expect.objectContaining({ name: "掃除当番（見本）", rotation: 1 }),
       undefined
     );
     expect(result.current.home.getToolState().schedules[0].name).toBe(
-      "Getting started"
+      "Cleaning duty (sample)"
     );
-    expect(savedState().schedules[0].name).toBe("はじめてガイド");
+    expect(savedState().schedules[0].name).toBe("掃除当番（見本）");
   });
 
   it("duplicates the displayed English guide without changing the saved original", () => {
@@ -179,14 +179,14 @@ describe("built-in guide language", () => {
     act(() => result.current.home.onDuplicateSchedule());
 
     expect(result.current.home.activeSchedule).toMatchObject({
-      name: "Getting started (copy)",
+      name: "Cleaning duty (sample) (copy)",
       groups: DEFAULT_APP_STATE_EN.schedules[0].groups,
       members: DEFAULT_APP_STATE_EN.schedules[0].members,
     });
     expect(savedState().schedules[0]).toEqual(DEFAULT_APP_STATE.schedules[0]);
     act(() => result.current.language.setLocale("ja"));
     expect(result.current.home.activeSchedule?.name).toBe(
-      "Getting started (copy)"
+      "Cleaning duty (sample) (copy)"
     );
   });
 
@@ -202,7 +202,7 @@ describe("built-in guide language", () => {
       "existing-guide",
       "synthetic-token",
       expect.objectContaining({
-        name: "Getting started",
+        name: "Cleaning duty (sample)",
         groups: DEFAULT_APP_STATE_EN.schedules[0].groups,
         members: DEFAULT_APP_STATE_EN.schedules[0].members,
       })
@@ -211,14 +211,14 @@ describe("built-in guide language", () => {
       "existing-guide",
       "synthetic-token"
     );
-    expect(savedState().schedules[0].name).toBe("Getting started");
+    expect(savedState().schedules[0].name).toBe("Cleaning duty (sample)");
     act(() => result.current.home.setShowShare(false));
     act(() => result.current.language.setLocale("ja"));
     await act(async () => {
       await vi.advanceTimersByTimeAsync(10000);
     });
-    expect(result.current.home.activeSchedule?.name).toBe("はじめてガイド");
-    expect(savedState().schedules[0].name).toBe("Getting started");
+    expect(result.current.home.activeSchedule?.name).toBe("掃除当番（見本）");
+    expect(savedState().schedules[0].name).toBe("Cleaning duty (sample)");
     expect(updateSchedule).toHaveBeenCalledTimes(1);
   });
 });

@@ -11,10 +11,10 @@ import { ScheduleViews } from "@/features/home/ScheduleViews";
 import { ViewTabs } from "@/features/home/ViewTabs";
 import { ScheduleHeader } from "@/features/home/ScheduleHeader";
 import { ScheduleTabs } from "@/features/home/ScheduleTabs";
-import { TodayBanner } from "@/features/home/TodayBanner";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { useHomeState } from "@/hooks/useHomeState";
 import { useTobanTools } from "@/hooks/useTobanTools";
+import { useTurnLabel } from "@/hooks/useTurnLabel";
 import { useT } from "@/i18n";
 import { SITE_TITLE } from "@shared/site";
 import "./home.css";
@@ -29,6 +29,12 @@ export default function Home() {
     document.title = SITE_TITLE;
   }, []);
   useTobanTools(s); // WebMCP tools を登録（非対応ブラウザでは no-op）
+
+  const turn = useTurnLabel(
+    s.activeSchedule?.rotationConfig,
+    s.members,
+    s.effectiveRotation
+  );
 
   if (!s.activeSchedule) {
     return (
@@ -84,10 +90,7 @@ export default function Home() {
   }
 
   const scheduleName = s.activeSchedule.name;
-  const rotationLabel =
-    s.effectiveRotation === 0
-      ? t("rotation.initial")
-      : t("rotation.nth", { n: s.effectiveRotation });
+  const rotationLabel = turn.label;
 
   return (
     <DesignThemeProvider
@@ -102,6 +105,7 @@ export default function Home() {
           scheduleName={s.activeSchedule.name}
           localSaveStatus={s.localSaveStatus}
           rotationLabel={rotationLabel}
+          isDateMode={turn.isDateMode}
         />
 
         <RotationControls
@@ -109,24 +113,14 @@ export default function Home() {
           rotationLabel={rotationLabel}
           isSharing={s.isSharing}
           isDateMode={s.isDateMode}
+          dateDetail={turn.detail}
           isAnimating={s.isAnimating}
-          onPrint={() => s.handlePrint(s.viewTab, scheduleName, rotationLabel)}
+          onPrint={() => s.handlePrint(s.viewTab, scheduleName, turn.fileLabel)}
           onOpenSettings={s.openSettings}
           onShare={s.handleShare}
           onRotateForward={() => s.handleRotate("forward")}
           onRotateBackward={() => s.handleRotate("backward")}
           syncStatus={s.syncStatus}
-          hasSlug={!!s.activeSchedule.slug}
-        />
-
-        <TodayBanner
-          startDate={s.activeSchedule.rotationConfig?.startDate}
-          groups={s.groups}
-          members={s.members}
-          rotation={s.effectiveRotation}
-          isDateMode={s.isDateMode}
-          rotationLabel={rotationLabel}
-          assignmentMode={s.activeSchedule.assignmentMode}
         />
 
         <ScheduleTabs

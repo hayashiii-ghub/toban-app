@@ -314,6 +314,63 @@ export function computeDateRotationForDate(
   return ((cycles % memberCount) + memberCount) % memberCount;
 }
 
+export interface DateTurn {
+  /** その期間の順番。computeDateRotationForDate と同じ値 */
+  rotation: number;
+  /** 期間の初日 */
+  start: Date;
+  /** 期間の最終日（休みの日は含めない） */
+  end: Date;
+}
+
+// 開始日が遠い過去でも止まるための上限（約 30 年）
+const MAX_TURN_SCAN_DAYS = 11000;
+
+/**
+ * 日付モードで、今日を含む期間から先の期間を count 個（既定は人数分）返す。先頭が今の期間。
+ * 今日が休みの日なら、その直前の期間を今の期間とする（computeDateRotationForDate と同じ）。
+ * 開始日より前なら、開始日からの期間を返す。
+ */
+export function listDateTurns(
+  config: RotationConfig,
+  memberCount: number,
+  today: Date,
+  count = memberCount
+): DateTurn[] {
+  const cycleDays = config.cycleDays;
+  if (!config.startDate || !cycleDays || cycleDays <= 0 || memberCount <= 0) {
+    return [];
+  }
+  const start = parseIsoDateLocal(config.startDate);
+  if (!start) return [];
+  const target = startOfLocalDay(today);
+
+  const turns: DateTurn[] = [];
+  let period: DateTurn | null = null;
+  // 開始日から数えた、休みでない日の数（その日を含まない）
+  let effectiveDays = 0;
+  for (
+    let day = start, scanned = 0;
+    turns.length < count && scanned < MAX_TURN_SCAN_DAYS;
+    day = addDays(day, 1), scanned++
+  ) {
+    if (isSkippedDate(day, config)) continue;
+    if (effectiveDays % cycleDays === 0) {
+      // 次の期間が今日より後に始まるなら、閉じる期間が今の期間
+      if (period && (turns.length > 0 || day > target)) turns.push(period);
+      period = {
+        rotation: Math.floor(effectiveDays / cycleDays) % memberCount,
+        start: day,
+        end: day,
+      };
+    } else if (period) {
+      period.end = day;
+    }
+    effectiveDays++;
+  }
+  return turns;
+}
+
 export function addMemberToSchedule(
   schedule: Schedule,
   member: Member,

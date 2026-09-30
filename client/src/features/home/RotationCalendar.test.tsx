@@ -131,6 +131,24 @@ describe("RotationCalendar", () => {
     expect(container.textContent).not.toContain("手動切り替え：当番は固定です");
   });
 
+  it("開始日より前の日には当番を出さない", () => {
+    const config: RotationConfig = {
+      mode: "date",
+      startDate: "2026-03-10",
+      cycleDays: 1,
+    };
+    const { container } = render(
+      <RotationCalendar
+        groups={groups}
+        members={members}
+        rotation={0}
+        rotationConfig={config}
+      />
+    );
+    // 押せる（当番の出る）日は 3/10〜3/31 の 22 日だけ
+    expect(container.querySelectorAll("[aria-pressed]")).toHaveLength(22);
+  });
+
   it("renders legend with group emojis and task names", () => {
     const { container } = render(
       <RotationCalendar groups={groups} members={members} rotation={0} />

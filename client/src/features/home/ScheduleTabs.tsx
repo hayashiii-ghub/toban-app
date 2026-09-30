@@ -214,7 +214,7 @@ export function ScheduleTabs({
                       aria-hidden="true"
                     />
                   )}
-                  <span className="max-w-[80px] sm:max-w-[150px] md:max-w-[200px] truncate">
+                  <span className="max-w-[9rem] sm:max-w-[12rem] truncate">
                     {schedule.name}
                   </span>
                 </button>
@@ -222,7 +222,7 @@ export function ScheduleTabs({
               <button
                 type="button"
                 onClick={onAddSchedule}
-                className="theme-border shrink-0 self-stretch px-2.5 text-sm font-bold transition-all duration-150 hover:bg-gray-100 flex items-center"
+                className="theme-border shrink-0 self-stretch px-2.5 sm:px-3 gap-1 text-sm font-bold transition-all duration-150 theme-hover-lift flex items-center"
                 style={{
                   borderRadius: "var(--dt-border-radius-sm)",
                   backgroundColor: "var(--dt-button-bg)",
@@ -231,6 +231,9 @@ export function ScheduleTabs({
                 data-onboarding="add-button"
               >
                 <Plus className="size-3.5" aria-hidden="true" />
+                <span className="hidden sm:inline" aria-hidden="true">
+                  {t("tabs.add")}
+                </span>
               </button>
             </div>
             {canScrollRight && (

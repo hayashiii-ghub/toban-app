@@ -19,6 +19,13 @@ export const en: Record<MessageKey, string> = {
   // Rotation label (shared + Home)
   "rotation.initial": "Start",
   "rotation.nth": "Turn {n}",
+  "turn.single": "Duty for {date}",
+  "turn.range": "Duty for {start} – {end}",
+  "turn.startsOn": "Starts {date}",
+  "turn.everyDay": "Changes every day",
+  "turn.everyNDays": "Changes every {n} days",
+  "turn.columnFrom": "From {date}",
+  "shared.printHeaderDate": "{label} · Printed: {date}",
 
   // Shared schedule view
   "shared.printUnsupported":
@@ -48,7 +55,8 @@ export const en: Record<MessageKey, string> = {
   "share.title": "Share schedule",
   "share.tabView": "👀 View only",
   "share.tabEdit": "✏️ Can edit",
-  "share.descView": 'Anyone with this link can view "{name}".',
+  "share.descView":
+    'Anyone with this link can view "{name}". It won\'t show up in search results.',
   "share.descEdit": 'Anyone with this link can edit "{name}".',
   "share.lineShare": "Share on LINE",
   "share.showQr": "Show QR code",
@@ -169,8 +177,6 @@ export const en: Record<MessageKey, string> = {
   "settings.maxTasksReached": "Up to {n} tasks per group allowed.",
   "settings.rotationManual": "Manual",
   "settings.rotationDate": "Automatic",
-  "settings.viewByTask": "By task",
-  "settings.viewByMember": "By member",
   "settings.summaryTaskMode": "{tasks} tasks · {members} people",
   "settings.summaryMemberMode": "{members} people · {groups} groups",
   "settings.sectionBasic": "Basic settings",
@@ -221,21 +227,19 @@ export const en: Record<MessageKey, string> = {
   "onboarding.back": "Back",
   "onboarding.start": "Get started",
   "onboarding.next": "Next",
-  "onboarding.tabs.title": "Switch between schedules",
-  "onboarding.tabs.desc": "Use the tabs to switch schedules",
-  "onboarding.edit.title": "Start by editing",
-  "onboarding.edit.desc": "Add or remove members and tasks here",
+  "onboarding.edit.title": "Change the contents",
+  "onboarding.edit.desc":
+    "Edit names and duties here. You can also edit this sample and keep using it",
   "onboarding.rotation.title": "Advance the rotation",
   "onboarding.rotation.desc": "Use the arrows to move to the next turn",
-  "onboarding.view.title": "Change the view",
-  "onboarding.view.desc": "Choose cards, a table, a calendar, or a wheel",
   "onboarding.print.title": "Print or save as PDF",
   "onboarding.print.desc": "Print this view or save it as a PDF.",
   "onboarding.share.title": "Share with everyone",
-  "onboarding.share.desc": "Share easily via QR code or LINE",
-  "onboarding.add.title": "Add a schedule",
+  "onboarding.share.desc":
+    "Send it on LINE or with a QR code. Only people with the link can see it",
+  "onboarding.add.title": "Make your own roster",
   "onboarding.add.desc":
-    "Create as many as you like—cleaning, lunch, daily duty, and more",
+    "Pick a template or start from scratch. Add as many as you like",
 
   // Rotation bar
   "rotation.prevAria": "Go to previous turn",
@@ -244,8 +248,7 @@ export const en: Record<MessageKey, string> = {
   "rotation.current": "Current turn",
   "rotation.autoByDate": "Rotates automatically",
   "rotation.shareAria": "Share",
-  "rotation.cloudSaved": "Saved to cloud",
-  "rotation.cloudUnsaved": "Not saved to cloud",
+  "rotation.syncError": "Backup failed",
   "rotation.editAria": "Edit schedule",
 
   // Rotation settings
@@ -291,6 +294,7 @@ export const en: Record<MessageKey, string> = {
   "tabs.tabAria": "{name} tab",
   "tabs.pinnedSuffix": " (pinned)",
   "tabs.reorderSuffix": " (Alt+Arrow keys to reorder)",
+  "tabs.add": "New",
   "tabs.addAria": "Add a new schedule",
 
   // Quick-view table
@@ -425,8 +429,6 @@ export const en: Record<MessageKey, string> = {
     "Failed to save. Please check your network connection.",
 
   // Today banner
-  "today.label": "Today's assignments ({date})",
-  "current.label": "Current assignments ({turn})",
 
   // Calendar
   "cal.manualNote": "Manual mode: assignments are fixed",
@@ -472,5 +474,4 @@ export const en: Record<MessageKey, string> = {
   // Roster notices
   "summary.saveFailed":
     "Could not save on this device. Keep this page open and check storage space and settings to avoid losing your changes.",
-  "summary.beforeStart": "Starting assignments · Starts {date}",
 };

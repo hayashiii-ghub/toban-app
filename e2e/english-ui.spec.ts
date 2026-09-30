@@ -72,7 +72,7 @@ test("English first visit, blank creation and language switch preserve roster co
   );
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Getting started"
+    "Cleaning duty (sample)"
   );
   await expect(page).toHaveTitle(SITE_TITLE);
   await expect(page.locator("main")).not.toContainText(
@@ -312,7 +312,7 @@ test("English template, date settings, calendar, print and shared view", async (
   await editor.getByRole("button", { name: "Save", exact: true }).click();
   await expect(editor).not.toBeVisible();
   await expect(
-    page.getByText("Starting assignments · Starts Sep 1, 2026", { exact: true })
+    page.getByText("Starts Tue, 9/1", { exact: true })
   ).toBeVisible();
   await expect(
     page.getByText("Restock supplies", { exact: true })
@@ -355,7 +355,7 @@ test("English template, date settings, calendar, print and shared view", async (
     () => (window as unknown as { printedTitles: string[] }).printedTitles
   );
   expect(titles).toHaveLength(1);
-  expect(titles[0]).toContain("Office cleaning_Start_");
+  expect(titles[0]).toContain("Office cleaning_2026-09-01_");
   expect(titles[0]).not.toMatch(
     /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u
   );
@@ -409,7 +409,7 @@ test("English template, date settings, calendar, print and shared view", async (
   });
 });
 
-test("saved Japanese guide follows the UI language until its text is edited", async ({
+test("saved Japanese sample follows the UI language until its text is edited", async ({
   page,
 }, testInfo) => {
   await page.route("**/api/schedules**", route =>
@@ -422,22 +422,22 @@ test("saved Japanese guide follows the UI language until its text is edited", as
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "はじめてガイド"
+    "掃除当番（見本）"
   );
   const savedBefore = await page.evaluate(() =>
     localStorage.getItem("rotation-schedule-app-state")
   );
   await page.getByRole("button", { name: /^(Language|言語)$/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Getting started"
+    "Cleaning duty (sample)"
   );
   await expect(
-    page.getByText("Select + to choose a template or start from scratch", {
+    page.getByText("Floors", {
       exact: true,
     })
   ).toBeVisible();
   await expect(
-    page.getByText("Print your schedule, save a PDF, or share a link", {
+    page.getByText("Windows", {
       exact: true,
     })
   ).toBeVisible();
@@ -445,7 +445,7 @@ test("saved Japanese guide follows the UI language until its text is edited", as
     /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u
   );
   await page.screenshot({
-    path: testInfo.outputPath("english-guide-desktop.png"),
+    path: testInfo.outputPath("english-sample-desktop.png"),
     fullPage: true,
     animations: "disabled",
   });
@@ -455,25 +455,23 @@ test("saved Japanese guide follows the UI language until its text is edited", as
     .click();
   const editor = page.getByRole("dialog");
   await expect(editor.getByLabel("Task 1 name", { exact: true })).toHaveValue(
-    "Pick a template"
+    "Floors"
   );
   await expect(editor.getByLabel("Task 4 name", { exact: true })).toHaveValue(
-    "Print or share"
+    "Windows"
   );
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await expect(editor).not.toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(
-    page.getByText("Edit members & tasks", { exact: true })
-  ).toBeVisible();
+  await expect(page.getByText("Trash", { exact: true })).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth
     )
   ).toBe(true);
   await page.screenshot({
-    path: testInfo.outputPath("english-guide-mobile.png"),
+    path: testInfo.outputPath("english-sample-mobile.png"),
     fullPage: true,
     animations: "disabled",
   });
@@ -487,11 +485,11 @@ test("saved Japanese guide follows the UI language until its text is edited", as
           ) ?? ""
       )
     )
-    .toContain("Getting started_Start_");
+    .toContain("Cleaning duty (sample)_Start_");
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.emulateMedia({ media: "print" });
   await page.screenshot({
-    path: testInfo.outputPath("english-guide-print.png"),
+    path: testInfo.outputPath("english-sample-print.png"),
     fullPage: true,
     animations: "disabled",
   });
@@ -499,7 +497,7 @@ test("saved Japanese guide follows the UI language until its text is edited", as
 
   await page.getByRole("button", { name: /^(Language|言語)$/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "はじめてガイド"
+    "掃除当番（見本）"
   );
   expect(
     await page.evaluate(() =>
@@ -518,11 +516,11 @@ test("saved Japanese guide follows the UI language until its text is edited", as
   await expect(editor).not.toBeVisible();
   await page.getByRole("button", { name: /^(Language|言語)$/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Getting started"
+    "Cleaning duty (sample)"
   );
   await expect(page.getByText("Our onboarding", { exact: true })).toBeVisible();
   await expect(
-    page.getByText("Print your schedule, save a PDF, or share a link", {
+    page.getByText("Windows", {
       exact: true,
     })
   ).toBeVisible();

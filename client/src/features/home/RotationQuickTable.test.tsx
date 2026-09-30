@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 import { RotationQuickTable } from "./RotationQuickTable";
-import type { Member, TaskGroup } from "@shared/types";
+import type { Member, RotationConfig, TaskGroup } from "@shared/types";
 
 // jsdom doesn't have ResizeObserver
 vi.stubGlobal(
@@ -39,6 +39,32 @@ describe("RotationQuickTable", () => {
     makeGroup("g1", "🧹", ["掃除"]),
     makeGroup("g2", "🍽", ["給食"]),
   ];
+
+  it("日付で交代するときは、今の順番から日付の順に並べる", () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 2, 15)); // 3/15(日)
+    const config: RotationConfig = {
+      mode: "date",
+      startDate: "2026-03-02",
+      cycleDays: 7,
+    };
+    const { container } = render(
+      <RotationQuickTable
+        groups={groups}
+        members={members}
+        rotation={1}
+        rotationConfig={config}
+      />
+    );
+    const headers = [...container.querySelectorAll("thead th")]
+      .slice(1)
+      .map(th => th.textContent?.replace("◀", "").trim());
+    expect(headers).toEqual(["3/9〜", "3/16〜", "3/23〜"]);
+    expect(container.querySelector("th[aria-current]")?.textContent).toContain(
+      "3/9〜"
+    );
+    vi.useRealTimers();
+  });
 
   it("renders correct number of group rows", () => {
     const { container } = render(

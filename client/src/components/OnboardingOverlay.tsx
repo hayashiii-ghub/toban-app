@@ -7,14 +7,13 @@ interface OnboardingOverlayProps {
 }
 
 // title / description は辞書から引く（key 単位）。selector は data 属性なので非翻訳。
+// 画面の上から順に、最初に使うものだけを案内する（切り替えのタブや表示形式は見れば分かる）
 const STEPS = [
-  { selector: '[data-onboarding="schedule-tabs"]', key: "tabs" },
+  { selector: '[data-onboarding="add-button"]', key: "add" },
   { selector: '[data-onboarding="edit-button"]', key: "edit" },
   { selector: '[data-onboarding="rotation-controls"]', key: "rotation" },
-  { selector: '[data-onboarding="view-tabs"]', key: "view" },
   { selector: '[data-onboarding="print-button"]', key: "print" },
   { selector: '[data-onboarding="share-button"]', key: "share" },
-  { selector: '[data-onboarding="add-button"]', key: "add" },
 ] as const;
 
 export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
@@ -55,8 +54,9 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
   }, [step.selector, updateTargetRect]);
 
   const tooltipStyle = useMemo(() => {
-    if (!targetRect)
-      return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
+    // 位置のずらしは transform ではなく x / y で渡す。framer-motion が scale のアニメーションで
+    // transform を上書きするため、transform に書くと上に出すはずの吹き出しが対象に重なる
+    if (!targetRect) return { top: "50%", left: "50%", x: "-50%", y: "-50%" };
 
     const padding = 12;
     const tooltipWidth = Math.min(280, window.innerWidth - 24);
@@ -78,7 +78,7 @@ export function OnboardingOverlay({ onComplete }: OnboardingOverlayProps) {
       top: `${top}px`,
       left: `${left}px`,
       width: `${tooltipWidth}px`,
-      transform: placeBelow ? undefined : "translateY(-100%)",
+      y: placeBelow ? 0 : "-100%",
     };
   }, [targetRect]);
 

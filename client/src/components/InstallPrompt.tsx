@@ -49,7 +49,7 @@ function Banner({
   const t = useT();
   return (
     <div
-      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 theme-border theme-shadow p-3 flex items-center gap-3"
+      className="fixed bottom-[calc(1rem+var(--home-toolbar-space,0px)+env(safe-area-inset-bottom,0px))] left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 theme-border theme-shadow p-3 flex items-center gap-3"
       style={{
         backgroundColor: "var(--dt-current-highlight)",
         borderRadius: "var(--dt-border-radius)",

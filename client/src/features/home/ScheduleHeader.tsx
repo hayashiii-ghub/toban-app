@@ -5,18 +5,21 @@ import { useT } from "@/i18n";
 interface ScheduleHeaderProps {
   scheduleName: string;
   rotationLabel: string;
+  /** 日付モードなら rotationLabel は「9/29(火)の当番」の形なので「順番:」を付けない */
+  isDateMode?: boolean;
   localSaveStatus?: "saved" | "failed" | "pending";
 }
 
 export function ScheduleHeader({
   scheduleName,
   rotationLabel,
+  isDateMode,
   localSaveStatus,
 }: ScheduleHeaderProps) {
   const t = useT();
   const printDate = usePrintDateString();
   return (
-    <header className="rotation-print-header pt-6 sm:pt-8 pb-6 sm:pb-8 px-3 sm:px-4">
+    <header className="rotation-print-header pt-6 sm:pt-8 pb-3 sm:pb-6 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto text-center">
         <m.div
           initial={{ y: -20, opacity: 0 }}
@@ -61,7 +64,7 @@ export function ScheduleHeader({
             }}
           >
             <span className="inline-block pb-2">
-              {t("shared.printHeader", {
+              {t(isDateMode ? "shared.printHeaderDate" : "shared.printHeader", {
                 label: rotationLabel,
                 date: printDate,
               })}

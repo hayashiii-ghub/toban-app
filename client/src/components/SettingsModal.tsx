@@ -321,8 +321,8 @@ export function SettingsModal({
       : t("settings.rotationManual");
   const assignmentModeLabel =
     editAssignmentMode === "task"
-      ? t("settings.viewByTask")
-      : t("settings.viewByMember");
+      ? t("settings.whatByWhom")
+      : t("settings.whoDoesWhat");
   const basicSummary = `${editName || scheduleName} / ${assignmentModeLabel} / ${rotationModeLabel}`;
   const countLabel = (kind: "task" | "group" | "member", count: number) =>
     t(`templateSummary.${kind}.${count === 1 ? "one" : "other"}`, { count });
@@ -602,10 +602,9 @@ export function SettingsModal({
                 onClick={() => {
                   onDelete();
                 }}
-                className="theme-border flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold transition-all duration-150 theme-hover-lift"
+                className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold transition-colors hover:bg-red-50"
                 style={{
                   color: "#DC2626",
-                  backgroundColor: "var(--dt-card-bg)",
                   borderRadius: "10px",
                 }}
               >

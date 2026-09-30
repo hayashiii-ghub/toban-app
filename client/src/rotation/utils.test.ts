@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { Member, Schedule } from "./types";
 import { getHolidaysForYear } from "./holidays";
+import { addDays, parseIsoDateLocal } from "./dateUtils";
 import {
   addMemberToSchedule,
   computeAssignments,
   computeDateRotationForDate,
+  listDateTurns,
   normalizeRotation,
   removeMemberFromSchedule,
   sanitizeAppState,
@@ -711,5 +713,74 @@ describe("removeMemberFromSchedule", () => {
     const result = removeMemberFromSchedule(schedule, "nonexistent");
 
     expect(result).toBe(schedule);
+  });
+});
+
+describe("listDateTurns", () => {
+  const configs = [1, 2, 5, 7].flatMap(cycleDays =>
+    [
+      {},
+      { skipSaturday: true, skipSunday: true },
+      { skipSunday: true, skipHolidays: true },
+    ].map(skips => ({
+      mode: "date" as const,
+      startDate: "2026-01-05",
+      cycleDays,
+      ...skips,
+    }))
+  );
+
+  it("今の期間と先の期間が、日付ごとの順番の計算と一致する", () => {
+    for (const config of configs) {
+      for (const memberCount of [1, 3, 4]) {
+        for (
+          let target = parseIsoDateLocal("2025-12-28")!;
+          target <= parseIsoDateLocal("2026-06-30")!;
+          target = addDays(target, 5)
+        ) {
+          const turns = listDateTurns(config, memberCount, target);
+          const label = `${JSON.stringify(config)} n=${memberCount} ${target.toDateString()}`;
+          expect(turns, label).toHaveLength(memberCount);
+          expect(turns[0].rotation, label).toBe(
+            computeDateRotationForDate(config, memberCount, target)
+          );
+          turns.forEach((turn, i) => {
+            expect(turn.rotation, label).toBe(
+              (turns[0].rotation + i) % memberCount
+            );
+            expect(
+              computeDateRotationForDate(config, memberCount, turn.start),
+              label
+            ).toBe(turn.rotation);
+            expect(
+              computeDateRotationForDate(config, memberCount, turn.end),
+              label
+            ).toBe(turn.rotation);
+            if (i > 0) expect(turn.start > target, label).toBe(true);
+          });
+        }
+      }
+    }
+  });
+
+  it("開始日より前なら、開始日からの期間を返す", () => {
+    const turns = listDateTurns(
+      { mode: "date", startDate: "2026-10-01", cycleDays: 7 },
+      3,
+      parseIsoDateLocal("2026-09-29")!
+    );
+    expect(turns.map(t => t.start.getDate())).toEqual([1, 8, 15]);
+    expect(turns[0].end.getDate()).toBe(7);
+  });
+
+  it("設定が足りなければ空", () => {
+    expect(listDateTurns({ mode: "date" }, 3, new Date())).toEqual([]);
+    expect(
+      listDateTurns(
+        { mode: "date", startDate: "2026-01-05", cycleDays: 7 },
+        0,
+        new Date()
+      )
+    ).toEqual([]);
   });
 });

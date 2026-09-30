@@ -15,13 +15,13 @@ export function ViewTabs({ viewTab, onChangeTab }: ViewTabsProps) {
       className="px-3 sm:px-4 pt-2 pb-1 rotation-no-print"
       data-onboarding="view-tabs"
     >
-      <div className="max-w-4xl mx-auto flex gap-2">
+      <div className="max-w-4xl mx-auto grid grid-cols-4 gap-1.5 sm:flex sm:gap-2">
         {VIEW_TABS.map(({ value, labelKey }) => (
           <button
             type="button"
             key={value}
             onClick={() => onChangeTab(value)}
-            className={`theme-border px-3 sm:px-4 py-1.5 sm:py-2 font-bold text-sm transition-all duration-150 ${
+            className={`theme-border px-1 sm:px-4 py-1.5 sm:py-2 font-bold text-xs min-[360px]:text-sm whitespace-nowrap transition-all duration-150 ${
               viewTab === value ? "theme-shadow-sm" : "theme-hover-lift"
             }`}
             style={{

@@ -18,6 +18,7 @@ import {
   deepClone,
   generateId,
   getEffectiveRotation,
+  listDateTurns,
   normalizeRotation,
   removeMemberFromSchedule,
 } from "@/rotation/utils";
@@ -41,7 +42,11 @@ import {
 import { VIEW_VALUES } from "@/features/home/viewTabsConfig";
 import { ApiError, getSchedule, toScheduleData } from "@/lib/api";
 import { hasPendingSync, scheduleSyncDebounced } from "@/lib/syncManager";
-import { parseIsoDateLocal, startOfLocalDay } from "@/rotation/dateUtils";
+import {
+  formatIsoDateLocal,
+  parseIsoDateLocal,
+  startOfLocalDay,
+} from "@/rotation/dateUtils";
 import { isSkippedDate } from "@/rotation/holidays";
 
 type HomeState = ReturnType<typeof useHomeState>;
@@ -1192,12 +1197,24 @@ export function buildTobanTools(
           );
         const h = get();
         const rotation = getEffectiveRotation(s);
+        // ファイル名の順番は画面の印刷ボタンと揃える（日付モードは期間の初日）
+        const dateTurn =
+          s.rotationConfig?.mode === "date"
+            ? listDateTurns(
+                s.rotationConfig,
+                s.members.filter(m => !m.skipped).length,
+                new Date(),
+                1
+              )[0]
+            : undefined;
         h.handlePrint(
           h.viewTab,
           s.name,
-          rotation === 0
-            ? say("初期", "Start")
-            : say(`${rotation}回目`, `Turn ${rotation}`)
+          dateTurn
+            ? formatIsoDateLocal(dateTurn.start)
+            : rotation === 0
+              ? say("初期", "Start")
+              : say(`${rotation}回目`, `Turn ${rotation}`)
         );
         return {
           ok: true,

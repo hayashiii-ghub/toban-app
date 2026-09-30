@@ -19,7 +19,7 @@ interface ScheduleViewsProps {
   members: Member[];
   /** = effectiveRotation。 */
   rotation: number;
-  /** calendar 用。 */
+  /** calendar と早見表（日付モードの列見出し）用。 */
   rotationConfig?: RotationConfig;
   assignmentMode?: AssignmentMode;
   scheduleId: string;
@@ -67,6 +67,7 @@ export function ScheduleViews({
           members={members}
           rotation={rotation}
           assignmentMode={assignmentMode}
+          rotationConfig={rotationConfig}
         />
       )}
       {viewTab === "calendar" && (

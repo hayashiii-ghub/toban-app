@@ -3,22 +3,43 @@ import type { AppState, Schedule } from "./types";
 import { DEFAULT_APP_STATE, DEFAULT_APP_STATE_EN } from "./defaultState";
 import {
   applyLocalizedGuideUpdate,
+  GUIDE_V1,
   isOriginalGuide,
   localizeGuide,
   localizeGuideState,
 } from "./guide-localization";
 
-const guideJa = DEFAULT_APP_STATE.schedules[0];
-const guideEn = DEFAULT_APP_STATE_EN.schedules[0];
+// 以下の多くは、2026-09 まで入れていた「はじめてガイド」を手元に残している人の表示を見張る
+const guideJa = GUIDE_V1.ja;
+const guideEn = GUIDE_V1.en;
+const sampleJa = DEFAULT_APP_STATE.schedules[0];
+const sampleEn = DEFAULT_APP_STATE_EN.schedules[0];
+
+describe("current sample localization", () => {
+  it("projects the sample roster between Japanese and English", () => {
+    expect(isOriginalGuide(sampleJa)).toBe(true);
+    expect(localizeGuide(sampleJa, "en")).toEqual(sampleEn);
+    expect(localizeGuide(sampleEn, "ja")).toEqual(sampleJa);
+  });
+
+  it("never turns the old guide into the new sample, or the other way round", () => {
+    expect(localizeGuide(guideJa, "en").name).toBe("Getting started");
+    expect(localizeGuide(GUIDE_V1.historicalEn, "ja").name).toBe(
+      "はじめてガイド"
+    );
+    expect(localizeGuide(sampleJa, "en").name).toBe("Cleaning duty (sample)");
+  });
+
+  it("leaves an edited sample untouched", () => {
+    const edited = structuredClone(sampleJa);
+    edited.members[0].name = "山田";
+    expect(isOriginalGuide(edited)).toBe(false);
+    expect(localizeGuide(edited, "en")).toBe(edited);
+  });
+});
 
 function oldEnglishGuide(): Schedule {
-  const guide = structuredClone(guideEn);
-  guide.name = "Getting Started";
-  guide.groups[0].tasks[1] = "Choose any roster from the Template button";
-  guide.groups[1].tasks[1] = "Tap a name or task to change it freely";
-  guide.groups[3].tasks[1] =
-    "When you're done, print, save as PDF, or share by URL";
-  return guide;
+  return structuredClone(GUIDE_V1.historicalEn);
 }
 
 function withoutText(schedule: Schedule) {

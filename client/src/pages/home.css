@@ -7,6 +7,22 @@
    印刷では下の @media print がページ背景を白へ落とすため、粒は画面にだけ出る。 */
 .rotation-page {
   background-image: var(--dt-page-texture, none);
+  /* 日本語を文節で折り返す（Chrome 119+ / Edge）。「選／ぶ」のような 1 文字だけの行を防ぐ */
+  word-break: auto-phrase;
+}
+
+.rotation-page h1,
+.rotation-page h2 {
+  text-wrap: balance;
+}
+
+/* スマホでは操作の帯（RotationControls）を画面の下に固定する。
+   下に置くほかのもの（フッター・通知・アプリ追加の案内）は、この高さの分だけ持ち上げる。
+   iPhone の画面下の余白（safe-area）は含めない（使う側で足す）。帯の高さを変えたら合わせること */
+@media (width < 40rem) {
+  body:has([data-home-toolbar]) {
+    --home-toolbar-space: 3.875rem;
+  }
 }
 
 /* Share content rows across neighboring task cards without fixed title heights.
