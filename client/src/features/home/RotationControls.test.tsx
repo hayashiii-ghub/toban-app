@@ -25,6 +25,8 @@ const baseProps = () => ({
   onShare: vi.fn(),
   onRotateForward: vi.fn(),
   onRotateBackward: vi.fn(),
+  viewTab: "cards" as const,
+  onChangeView: vi.fn(),
 });
 
 describe("RotationControls", () => {
@@ -69,6 +71,16 @@ describe("RotationControls", () => {
     expect(
       scope.getByLabelText("バックアップに失敗しました")
     ).toBeInTheDocument();
+  });
+
+  it("帯の中に表示の切り替えを並べ、今の表示を押された状態にする", () => {
+    const props = baseProps();
+    const { scope } = renderControls(props);
+    const views = scope.getByRole("group", { name: "表示の切り替え" });
+    const cards = within(views).getByRole("button", { name: "カード" });
+    expect(cards).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(within(views).getByRole("button", { name: "カレンダー" }));
+    expect(props.onChangeView).toHaveBeenCalledWith("calendar");
   });
 
   it("dateモード時にローテーションボタンが非表示", () => {

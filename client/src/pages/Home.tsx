@@ -8,7 +8,6 @@ import { OnboardingOverlay } from "@/components/OnboardingOverlay";
 import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
 import { RotationControls } from "@/features/home/RotationControls";
 import { ScheduleViews } from "@/features/home/ScheduleViews";
-import { ViewTabs } from "@/features/home/ViewTabs";
 import { ScheduleHeader } from "@/features/home/ScheduleHeader";
 import { ScheduleTabs } from "@/features/home/ScheduleTabs";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -108,7 +107,7 @@ export default function Home() {
           isDateMode={turn.isDateMode}
         />
 
-        {/* スマホでは下にまとめて固定し、上から「表示の切り替え・当番表のタブ・操作の帯」の順に並べる
+        {/* スマホでは下にまとめて固定し、上から「当番表のタブ・操作の帯（表示の切り替えを含む）」の順に並べる
             （並びは home.css の .home-bottom-panel）。PC はこの囲みが無いものとして上から順に置く */}
         <div className="home-bottom-panel rotation-no-print" data-home-toolbar>
           <RotationControls
@@ -126,6 +125,8 @@ export default function Home() {
             onRotateForward={() => s.handleRotate("forward")}
             onRotateBackward={() => s.handleRotate("backward")}
             syncStatus={s.syncStatus}
+            viewTab={s.viewTab}
+            onChangeView={s.changeTab}
           />
 
           <ScheduleTabs
@@ -144,8 +145,6 @@ export default function Home() {
             onDuplicate={s.onDuplicateSchedule}
             onRequestDelete={s.openConfirmDelete}
           />
-
-          <ViewTabs viewTab={s.viewTab} onChangeTab={s.changeTab} />
         </div>
 
         <ScheduleViews

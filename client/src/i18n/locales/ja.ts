@@ -317,6 +317,7 @@ export const ja = {
   "view.table": "早見表",
   "view.calendar": "カレンダー",
   "view.disc": "円盤",
+  "view.switchAria": "表示の切り替え",
   "disc.offDuty": "おやすみ",
   "disc.sheetOuter": "外円（固定・役割）— 外周の線で切り取ってください",
   "disc.sheetInner":

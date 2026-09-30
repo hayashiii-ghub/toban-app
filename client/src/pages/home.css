@@ -16,12 +16,12 @@
   text-wrap: balance;
 }
 
-/* スマホでは、表示の切り替え・当番表のタブ・操作の帯（Home の .home-bottom-panel）を画面の下に固定する。
+/* スマホでは、当番表のタブと操作の帯（表示の切り替えを含む。Home の .home-bottom-panel）を画面の下に固定する。
    下に置くほかのもの（フッター・通知・アプリ追加の案内）は、この高さの分だけ持ち上げる。
    iPhone の画面下の余白（safe-area）は含めない（使う側で足す）。中身の高さを変えたら合わせること */
 @media (width < 40rem) {
   body:has([data-home-toolbar]) {
-    --home-toolbar-space: 10.25rem;
+    --home-toolbar-space: 10rem;
   }
 
   /* 表の最後を、下に固定した部分の上までスクロールで出せるようにする。

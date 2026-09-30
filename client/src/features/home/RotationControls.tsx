@@ -11,10 +11,11 @@ import {
 import type { SyncStatus } from "@/lib/syncManager";
 import { PrintMenu } from "@/components/PrintMenu";
 import { useT } from "@/i18n";
+import { VIEW_TABS, type ViewTabValue } from "./viewTabsConfig";
 
 // 印刷・共有・編集のボタン。スマホの下の帯ではアイコンの下に文字を置いて幅を詰める
 const ACTION_CLASS =
-  "theme-border theme-shadow-sm flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 min-w-[3.25rem] px-2 sm:px-4 py-1.5 sm:py-2 font-bold text-[11px] sm:text-sm leading-tight transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px]";
+  "theme-border theme-shadow-sm flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 min-w-[2.75rem] min-[360px]:min-w-[3.25rem] px-1.5 min-[360px]:px-2 sm:px-4 py-1.5 sm:py-2 font-bold text-[11px] sm:text-sm leading-tight transition-all duration-150 theme-hover-lift active:translate-x-[1px] active:translate-y-[1px]";
 
 interface RotationControlsProps {
   rotation: number;
@@ -30,6 +31,9 @@ interface RotationControlsProps {
   onShare: () => void;
   onRotateForward?: () => void;
   onRotateBackward?: () => void;
+  /** 表示の切り替え（カード・早見表・カレンダー・円盤）。帯の中に並べる */
+  viewTab: ViewTabValue;
+  onChangeView: (view: ViewTabValue) => void;
 }
 
 export function RotationControls({
@@ -45,6 +49,8 @@ export function RotationControls({
   onShare,
   onRotateForward,
   onRotateBackward,
+  viewTab,
+  onChangeView,
 }: RotationControlsProps) {
   const t = useT();
   return (
@@ -59,27 +65,29 @@ export function RotationControls({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
+          {/* 並び: スマホは表示の切り替えを上の段、その下に順番と操作。PC（lg 以上）は 1 行で
+              順番・表示の切り替え・操作。そのあいだの幅では、表示の切り替えを 2 段目に回す */}
           <div
-            className="flex items-center gap-2.5 min-w-0"
+            className="order-2 sm:order-1 flex items-center gap-2.5 min-w-0"
             data-onboarding="rotation-controls"
           >
             {isDateMode ? (
               // 手で送るときの「初期」と同じ白い箱に入れる。帯の色の上に直接書くと、テーマによって読みにくい
               <div
-                className="theme-border flex items-center gap-2 min-h-9 sm:min-h-10 px-2.5 py-1 min-w-0"
+                className="theme-border flex items-center gap-2 min-h-9 sm:min-h-10 px-2 min-[360px]:px-2.5 py-1 min-w-0"
                 style={{
                   backgroundColor: "var(--dt-button-bg)",
                   borderRadius: "var(--dt-border-radius-sm)",
                 }}
               >
                 <CalendarDays
-                  className="size-4 shrink-0"
+                  className="size-4 shrink-0 hidden min-[360px]:block"
                   style={{ color: "var(--dt-text-secondary)" }}
                   aria-hidden="true"
                 />
                 <div className="min-w-0 leading-tight">
                   <div
-                    className="text-[13px] sm:text-base font-bold whitespace-nowrap"
+                    className="text-xs min-[360px]:text-[13px] sm:text-base font-bold whitespace-nowrap"
                     style={{ color: "var(--dt-text)" }}
                   >
                     {rotationLabel}
@@ -143,7 +151,45 @@ export function RotationControls({
             )}
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2 ml-auto">
+          <div
+            role="group"
+            aria-label={t("view.switchAria")}
+            className="order-1 sm:order-3 lg:order-2 w-full lg:w-auto lg:mx-auto grid grid-cols-4 gap-0.5 p-0.5"
+            style={{
+              backgroundColor:
+                "color-mix(in srgb, var(--dt-control-bar-text) 14%, transparent)",
+              borderRadius: "var(--dt-border-radius-sm)",
+            }}
+          >
+            {VIEW_TABS.map(({ value, labelKey }) => {
+              const selected = viewTab === value;
+              return (
+                <button
+                  type="button"
+                  key={value}
+                  onClick={() => onChangeView(value)}
+                  aria-pressed={selected}
+                  className="px-1.5 lg:px-3 py-1.5 text-xs sm:text-sm font-bold whitespace-nowrap transition-colors"
+                  style={{
+                    borderRadius: "calc(var(--dt-border-radius-sm) - 2px)",
+                    backgroundColor: selected
+                      ? "var(--dt-button-bg)"
+                      : "transparent",
+                    color: selected
+                      ? "var(--dt-text)"
+                      : "var(--dt-control-bar-text)",
+                    boxShadow: selected
+                      ? "var(--dt-shadow-card-sm)"
+                      : undefined,
+                  }}
+                >
+                  {t(labelKey)}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="order-3 sm:order-2 lg:order-3 flex items-center gap-1 sm:gap-2 ml-auto">
             <PrintMenu onPrint={onPrint} className={ACTION_CLASS} />
             <button
               type="button"
