@@ -1,5 +1,12 @@
-import { describe, it, expect, vi, beforeAll } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeAll, afterEach } from "vitest";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { ScheduleTabs } from "./ScheduleTabs";
 import type { Schedule } from "@/rotation/types";
 
@@ -38,7 +45,18 @@ const defaultProps = () => ({
   onDrop: vi.fn(),
   onDragEnd: vi.fn(),
   onReorderTab: vi.fn(),
+  onTogglePin: vi.fn(),
+  onDuplicate: vi.fn(),
+  onRequestDelete: vi.fn(),
 });
+
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
+
+const tab = (name: string) =>
+  screen.getByRole("tab", { name: new RegExp(`^${name}タブ`) });
 
 describe("ScheduleTabs", () => {
   it("スケジュール数分のタブが表示される", () => {
@@ -100,5 +118,131 @@ describe("ScheduleTabs", () => {
     fireEvent.keyDown(tab, { key: "ArrowLeft", altKey: true });
     expect(props.onReorderTab).toHaveBeenCalledWith("s2", "left");
     unmount();
+  });
+
+  describe("タブのメニュー", () => {
+    it("右クリックでそのタブを選び、ピン留め・左右へ移動・複製・削除を出す", () => {
+      const props = defaultProps();
+      render(<ScheduleTabs {...props} />);
+      fireEvent.contextMenu(tab("給食当番"));
+      expect(props.onSelectSchedule).toHaveBeenCalledWith("s2");
+      const menu = screen.getByRole("menu", { name: "「給食当番」の操作" });
+      expect(
+        within(menu)
+          .getAllByRole("menuitem")
+          .map(item => item.textContent)
+      ).toEqual(["ピン留めする", "左へ移動", "右へ移動", "複製", "削除"]);
+      expect(within(menu).getAllByRole("menuitem")[0]).toHaveFocus();
+    });
+
+    it("選んだ操作を、開いたタブに対して行う", () => {
+      const props = defaultProps();
+      render(<ScheduleTabs {...props} />);
+      fireEvent.contextMenu(tab("給食当番"));
+      fireEvent.click(screen.getByRole("menuitem", { name: "ピン留めする" }));
+      expect(props.onTogglePin).toHaveBeenCalledWith("s2");
+      expect(screen.queryByRole("menu")).toBeNull();
+
+      fireEvent.contextMenu(tab("給食当番"));
+      fireEvent.click(screen.getByRole("menuitem", { name: "右へ移動" }));
+      expect(props.onReorderTab).toHaveBeenCalledWith("s2", "right");
+
+      fireEvent.contextMenu(tab("給食当番"));
+      fireEvent.click(screen.getByRole("menuitem", { name: "複製" }));
+      expect(props.onDuplicate).toHaveBeenCalledTimes(1);
+
+      fireEvent.contextMenu(tab("給食当番"));
+      fireEvent.click(screen.getByRole("menuitem", { name: "削除" }));
+      expect(props.onRequestDelete).toHaveBeenCalledWith("s2");
+    });
+
+    it("端のタブは外側へ動かせず、ピン留めしたタブは並べ替えの項目を出さない", () => {
+      const props = defaultProps();
+      render(
+        <ScheduleTabs
+          {...props}
+          schedules={[
+            makeSchedule("p1", "固定", true),
+            makeSchedule("s1", "掃除当番"),
+            makeSchedule("s2", "給食当番"),
+          ]}
+        />
+      );
+      fireEvent.contextMenu(tab("掃除当番"));
+      // 左隣はピン留めしたタブなので、左へは動かせない
+      expect(screen.getByRole("menuitem", { name: "左へ移動" })).toBeDisabled();
+      expect(screen.getByRole("menuitem", { name: "右へ移動" })).toBeEnabled();
+      fireEvent.keyDown(screen.getByRole("menu"), { key: "Escape" });
+
+      fireEvent.contextMenu(tab("固定"));
+      expect(
+        screen.getByRole("menuitem", { name: "ピン留めを外す" })
+      ).toBeInTheDocument();
+      expect(screen.queryByRole("menuitem", { name: "左へ移動" })).toBeNull();
+    });
+
+    it("当番表が 1 つしかないときは削除を出さない", () => {
+      render(
+        <ScheduleTabs
+          {...defaultProps()}
+          schedules={[makeSchedule("s1", "掃除当番")]}
+        />
+      );
+      fireEvent.contextMenu(tab("掃除当番"));
+      expect(screen.queryByRole("menuitem", { name: "削除" })).toBeNull();
+    });
+
+    it("長押しで開き、途中で指が動いたら開かない", () => {
+      vi.useFakeTimers();
+      const props = defaultProps();
+      render(<ScheduleTabs {...props} />);
+      const target = tab("日直");
+
+      fireEvent.pointerDown(target, {
+        pointerType: "touch",
+        clientX: 10,
+        clientY: 10,
+      });
+      fireEvent.pointerMove(target, {
+        pointerType: "touch",
+        clientX: 40,
+        clientY: 10,
+      });
+      act(() => vi.advanceTimersByTime(600));
+      expect(screen.queryByRole("menu")).toBeNull();
+
+      fireEvent.pointerDown(target, {
+        pointerType: "touch",
+        clientX: 10,
+        clientY: 10,
+      });
+      act(() => vi.advanceTimersByTime(600));
+      expect(
+        screen.getByRole("menu", { name: "「日直」の操作" })
+      ).toBeInTheDocument();
+    });
+
+    it("ダブルクリックと Shift+F10 でも開き、Esc で閉じるとタブに戻る", () => {
+      render(<ScheduleTabs {...defaultProps()} />);
+      fireEvent.doubleClick(tab("掃除当番"));
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+      fireEvent.keyDown(screen.getByRole("menu"), { key: "Escape" });
+      expect(screen.queryByRole("menu")).toBeNull();
+      expect(tab("掃除当番")).toHaveFocus();
+
+      fireEvent.keyDown(tab("掃除当番"), { key: "F10", shiftKey: true });
+      expect(screen.getByRole("menu")).toBeInTheDocument();
+      fireEvent.keyDown(screen.getByRole("menu"), { key: "ArrowDown" });
+      expect(screen.getByRole("menuitem", { name: "左へ移動" })).toBeDisabled();
+      // 動かせない項目は飛ばす
+      expect(screen.getByRole("menuitem", { name: "右へ移動" })).toHaveFocus();
+    });
+
+    it("メニューの外を押すと閉じる", () => {
+      render(<ScheduleTabs {...defaultProps()} />);
+      fireEvent.contextMenu(tab("掃除当番"));
+      fireEvent.pointerDown(document.body);
+      expect(screen.queryByRole("menu")).toBeNull();
+    });
   });
 });

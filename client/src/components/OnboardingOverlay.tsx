@@ -9,7 +9,7 @@ interface OnboardingOverlayProps {
 // title / description は辞書から引く（key 単位）。selector は data 属性なので非翻訳。
 // 画面の上から順に、最初に使うものだけを案内する（切り替えのタブや表示形式は見れば分かる）
 const STEPS = [
-  { selector: '[data-onboarding="add-button"]', key: "add" },
+  { selector: '[data-onboarding="schedule-tabs"]', key: "add" },
   { selector: '[data-onboarding="edit-button"]', key: "edit" },
   { selector: '[data-onboarding="rotation-controls"]', key: "rotation" },
   { selector: '[data-onboarding="print-button"]', key: "print" },

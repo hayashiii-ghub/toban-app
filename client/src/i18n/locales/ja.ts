@@ -184,9 +184,6 @@ export const ja = {
   "settings.sectionBasic": "基本設定",
   "settings.scheduleName": "当番表の名前",
   "settings.scheduleNamePlaceholder": "例: 掃除当番、給食当番、日直...",
-  "settings.pin": "先頭に固定",
-  "settings.unpin": "固定を解除",
-  "settings.pinTab": "タブを先頭に固定",
   "settings.chooseView": "見方をえらぶ",
   "settings.whoDoesWhat": "だれが何をするか",
   "settings.whatByWhom": "何をだれがやるか",
@@ -238,9 +235,9 @@ export const ja = {
   "onboarding.share.title": "みんなに共有",
   "onboarding.share.desc":
     "LINEやQRコードで送れます。見られるのはリンクを知っている人だけです",
-  "onboarding.add.title": "自分の当番表を作る",
+  "onboarding.add.title": "当番表を増やす・整理する",
   "onboarding.add.desc":
-    "テンプレートを選ぶか、白紙から作れます。いくつでも増やせます",
+    "＋で新しく作れます。タブを長押し（パソコンは右クリック）すると、ピン留め・並べ替え・削除ができます",
 
   // ローテーションバー
   "rotation.prevAria": "前の当番に戻す",
@@ -289,11 +286,17 @@ export const ja = {
   "tabs.navAria": "当番表の切り替え",
   "tabs.scrollLeft": "左にスクロール",
   "tabs.scrollRight": "右にスクロール",
-  "tabs.tablistAria": "当番表タブ一覧（Alt+矢印キーで並び替え）",
+  "tabs.tablistAria":
+    "当番表タブ一覧（Alt+矢印キーで並び替え、Shift+F10でメニュー）",
   "tabs.tabAria": "{name}タブ",
   "tabs.pinnedSuffix": "（ピン留め）",
   "tabs.reorderSuffix": "（Alt+矢印キーで並び替え）",
   "tabs.add": "新しく作る",
+  "tabs.menuAria": "「{name}」の操作",
+  "tabs.menu.pin": "ピン留めする",
+  "tabs.menu.unpin": "ピン留めを外す",
+  "tabs.menu.moveLeft": "左へ移動",
+  "tabs.menu.moveRight": "右へ移動",
   "tabs.addAria": "新しい当番表を追加",
 
   // 早見表

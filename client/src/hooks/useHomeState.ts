@@ -300,6 +300,15 @@ export function useHomeState() {
     [handleSaveSettings, closeModal]
   );
 
+  const onTogglePin = useCallback(
+    (scheduleId: string) =>
+      updateScheduleById(scheduleId, schedule => ({
+        ...schedule,
+        pinned: !schedule.pinned,
+      })),
+    [updateScheduleById]
+  );
+
   const onReorderTab = useCallback(
     (scheduleId: string, dir: "left" | "right") => {
       const { schedules } = state;
@@ -384,5 +393,6 @@ export function useHomeState() {
     onDuplicateSchedule,
     onSaveSettings,
     onReorderTab,
+    onTogglePin,
   };
 }

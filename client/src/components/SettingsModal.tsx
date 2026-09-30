@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { m } from "framer-motion";
-import { X, Save, Pin, PinOff, Copy, Trash2 } from "lucide-react";
+import { X, Save, Copy, Trash2 } from "lucide-react";
 import type {
   AssignmentMode,
   TaskGroup,
@@ -45,7 +45,6 @@ type EditorPatch = {
   groups?: TaskGroup[];
   members?: Member[];
   rotationConfig?: RotationConfig;
-  pinned?: boolean;
   assignmentMode?: AssignmentMode;
   designThemeId?: string | undefined;
   fontId?: FontId;
@@ -78,7 +77,6 @@ export function SettingsModal({
   const [editRotationConfig, setEditRotationConfig] = useState<RotationConfig>(
     rotationConfig ?? { mode: "manual" }
   );
-  const [editPinned, setEditPinned] = useState(pinned ?? false);
   const [editAssignmentMode, setEditAssignmentMode] = useState<AssignmentMode>(
     assignmentMode ?? "member"
   );
@@ -109,8 +107,6 @@ export function SettingsModal({
         "rotationConfig" in patch
           ? (patch.rotationConfig ?? editRotationConfig)
           : editRotationConfig;
-      const nextPinned =
-        "pinned" in patch ? (patch.pinned ?? false) : editPinned;
       const nextAssignmentMode =
         "assignmentMode" in patch
           ? (patch.assignmentMode ?? "member")
@@ -120,7 +116,6 @@ export function SettingsModal({
       const nextFontId = "fontId" in patch ? (patch.fontId ?? fontId) : fontId;
 
       if (nextName !== scheduleName) return true;
-      if (nextPinned !== (pinned ?? false)) return true;
       if (nextAssignmentMode !== (assignmentMode ?? "member")) return true;
       if (nextDesignThemeId !== designThemeId) return true;
       if (nextFontId !== (savedFontId ?? getSavedFontId())) return true;
@@ -142,9 +137,7 @@ export function SettingsModal({
       fontId,
       editMembers,
       editName,
-      editPinned,
       editRotationConfig,
-      pinned,
       scheduleName,
       savedFontId,
     ]
@@ -157,7 +150,6 @@ export function SettingsModal({
       if ("members" in patch) setEditMembers(patch.members ?? []);
       if ("rotationConfig" in patch && patch.rotationConfig)
         setEditRotationConfig(patch.rotationConfig);
-      if ("pinned" in patch) setEditPinned(patch.pinned ?? false);
       if ("assignmentMode" in patch && patch.assignmentMode)
         setEditAssignmentMode(patch.assignmentMode);
       if ("designThemeId" in patch) setEditDesignThemeId(patch.designThemeId);
@@ -308,7 +300,7 @@ export function SettingsModal({
       groups: cleanedGroups,
       members: cleanedMembers,
       rotationConfig: editRotationConfig,
-      pinned: editPinned,
+      pinned,
       assignmentMode: editAssignmentMode,
       designThemeId: editDesignThemeId,
       fontId,
@@ -413,7 +405,7 @@ export function SettingsModal({
             defaultOpen={false}
           >
             <div className="flex flex-col gap-3">
-              {/* 名前 + ピン */}
+              {/* 名前（ピン留めはタブのメニューで行う） */}
               <div>
                 <label
                   htmlFor="schedule-name-input"
@@ -437,32 +429,6 @@ export function SettingsModal({
                     placeholder={t("settings.scheduleNamePlaceholder")}
                     aria-label={t("settings.scheduleName")}
                   />
-                  <button
-                    type="button"
-                    onClick={() => applyEditorPatch({ pinned: !editPinned })}
-                    className="theme-border w-9 flex items-center justify-center shrink-0 transition-colors"
-                    style={{
-                      borderRadius: "var(--dt-border-radius-sm)",
-                      backgroundColor: editPinned
-                        ? "var(--dt-current-highlight)"
-                        : "#FAFAFA",
-                    }}
-                    aria-label={
-                      editPinned ? t("settings.unpin") : t("settings.pin")
-                    }
-                    title={
-                      editPinned ? t("settings.unpin") : t("settings.pinTab")
-                    }
-                  >
-                    {editPinned ? (
-                      <Pin
-                        className="size-4"
-                        style={{ color: "var(--dt-text)" }}
-                      />
-                    ) : (
-                      <PinOff className="size-4" style={{ color: "#999" }} />
-                    )}
-                  </button>
                 </div>
               </div>
 

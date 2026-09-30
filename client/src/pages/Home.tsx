@@ -135,6 +135,9 @@ export default function Home() {
           onDrop={s.onDrop}
           onDragEnd={s.onDragEnd}
           onReorderTab={s.onReorderTab}
+          onTogglePin={s.onTogglePin}
+          onDuplicate={s.onDuplicateSchedule}
+          onRequestDelete={s.openConfirmDelete}
         />
 
         <ViewTabs viewTab={s.viewTab} onChangeTab={s.changeTab} />
