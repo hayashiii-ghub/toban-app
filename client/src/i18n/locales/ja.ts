@@ -215,14 +215,21 @@ export const ja = {
   "settings.rotationDate": "日付で自動",
   "settings.summaryTaskMode": "{tasks}タスク・{members}人",
   "settings.summaryMemberMode": "{members}人・{groups}グループ",
-  "settings.sectionBasic": "基本設定",
   "settings.scheduleName": "当番表の名前",
   "settings.scheduleNamePlaceholder": "例: 掃除当番、給食当番、日直...",
   "settings.chooseView": "見方をえらぶ",
   "settings.whoDoesWhat": "だれが何をするか",
   "settings.whatByWhom": "何をだれがやるか",
   "settings.sectionDesign": "テーマ",
-  "settings.sectionContent": "内容を編集",
+  "settings.sectionContent": "名前と仕事",
+  "settings.whatByWhomDesc":
+    "仕事ごとに担当する人を割り当てます。仕事ごとに担当者を絞れます",
+  "settings.whoDoesWhatDesc":
+    "人（班）ごとに仕事を割り当てます。人が主役の表に向いています",
+  "settings.summarySeparator": "・",
+  "settings.sectionAdvanced": "くわしい設定",
+  "settings.sectionAppearance": "見た目",
+  "settings.sectionRotation": "交代のしかた",
 
   // グループ/メンバー/タスク編集
   "group.moveGroupUp": "グループを上に移動",
@@ -251,6 +258,11 @@ export const ja = {
   "group.deleteTask": "タスク「{task}」を削除",
   "group.emptyTask": "空",
   "group.addTask": "タスクを追加",
+  "group.extraMembers": "ほかのメンバー",
+  "group.extraMembersHint":
+    "仕事より人が{n}人多いので、毎回{n}人がお休みになります（順番に入れ替わります）。",
+  "group.removeMember": "{name}を外す",
+  "group.noOwner": "担当は順番に回ります",
 
   // オンボーディング
   "onboarding.guide": "ガイド: {title}",

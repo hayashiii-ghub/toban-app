@@ -204,12 +204,7 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
                   onChange={e => setQuery(e.target.value)}
                   placeholder={t("newSchedule.searchPlaceholder")}
                   aria-label={t("newSchedule.searchAria")}
-                  className="w-full theme-border pl-9 pr-3 py-2.5 text-sm"
-                  style={{
-                    borderRadius: "var(--dt-border-radius-sm)",
-                    backgroundColor: "var(--dt-card-bg)",
-                    color: "var(--dt-text)",
-                  }}
+                  className="w-full dt-field pl-9 pr-3 py-2.5 text-sm"
                 />
               </label>
 

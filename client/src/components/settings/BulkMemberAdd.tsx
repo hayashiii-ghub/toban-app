@@ -82,7 +82,7 @@ export function BulkMemberAdd({
         className="theme-border px-3 py-2 text-sm font-medium resize-none"
         style={{
           borderRadius: "var(--dt-border-radius-sm)",
-          backgroundColor: "#fff",
+          backgroundColor: "var(--dt-button-bg)",
         }}
         aria-label={isTaskMode ? t("bulk.ariaTask") : t("bulk.ariaMember")}
       />

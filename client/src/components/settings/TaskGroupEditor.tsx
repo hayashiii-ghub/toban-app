@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import type { AssignmentMode, TaskGroup, Member } from "@/rotation/types";
 import { MEMBER_PRESETS, colorPresetFromHex } from "@/rotation/constants";
 import { generateId, deepClone } from "@/rotation/utils";
@@ -9,6 +9,7 @@ import {
   type GroupCardContextValue,
 } from "./GroupCardContext";
 import { BulkMemberAdd } from "./BulkMemberAdd";
+import { ColorPalette } from "./ColorPalette";
 import { useT } from "@/i18n";
 import { toast } from "sonner";
 import { LIMITS } from "@shared/limits";
@@ -505,6 +506,18 @@ export function TaskGroupEditor({
             />
           ))}
         </div>
+        {/* 担当者モードで仕事より人が多いとき、余った人は仕事の行に出ない。毎回この人数が休む */}
+        {!isTaskMode && members.length > groups.length && (
+          <ExtraMembers
+            members={members.slice(groups.length)}
+            onNameChange={updateMemberName}
+            onColorPreset={updateMemberColor}
+            onColorCustom={updateMemberColorCustom}
+            onRemove={memberId =>
+              onMembersChange(members.filter(m => m.id !== memberId))
+            }
+          />
+        )}
       </GroupCardProvider>
 
       <div className="flex items-center gap-2">
@@ -551,5 +564,93 @@ export function TaskGroupEditor({
         />
       )}
     </div>
+  );
+}
+
+function ExtraMembers({
+  members,
+  onNameChange,
+  onColorPreset,
+  onColorCustom,
+  onRemove,
+}: {
+  members: Member[];
+  onNameChange: (memberId: string, name: string) => void;
+  onColorPreset: (memberId: string, presetIdx: number) => void;
+  onColorCustom: (memberId: string, hex: string) => void;
+  onRemove: (memberId: string) => void;
+}) {
+  const t = useT();
+  const [openColorId, setOpenColorId] = useState<string | null>(null);
+  return (
+    <section
+      className="theme-border px-3 sm:px-4 py-3 flex flex-col gap-2"
+      style={{
+        borderRadius: "var(--dt-border-radius)",
+        backgroundColor:
+          "color-mix(in srgb, var(--dt-text) 3%, var(--dt-card-bg))",
+      }}
+      aria-label={t("group.extraMembers")}
+    >
+      <div>
+        <h3 className="text-sm font-bold" style={{ color: "var(--dt-text)" }}>
+          {t("group.extraMembers")}
+        </h3>
+        <p
+          className="text-xs mt-0.5"
+          style={{ color: "var(--dt-text-secondary)" }}
+        >
+          {t("group.extraMembersHint", { n: members.length })}
+        </p>
+      </div>
+      {members.map(member => (
+        <div key={member.id} className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                setOpenColorId(prev => (prev === member.id ? null : member.id))
+              }
+              className="size-6 sm:size-7 rounded-full shrink-0 theme-border transition-transform hover:scale-110"
+              style={{ backgroundColor: member.color, borderWidth: "2px" }}
+              aria-label={t("group.changeColor")}
+              aria-expanded={openColorId === member.id}
+            />
+            <input
+              type="text"
+              value={member.name}
+              onChange={e => onNameChange(member.id, e.target.value)}
+              maxLength={LIMITS.memberName}
+              placeholder={t("group.namePlaceholder")}
+              className="flex-1 min-w-0 theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
+              style={{
+                borderRadius: "var(--dt-border-radius-sm)",
+                backgroundColor: "var(--dt-button-bg)",
+                color: "var(--dt-text)",
+              }}
+              aria-label={t("group.memberName")}
+            />
+            <button
+              type="button"
+              onClick={() => onRemove(member.id)}
+              className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+              style={{ color: "#DC2626" }}
+              aria-label={t("group.removeMember", { name: member.name })}
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+            </button>
+          </div>
+          {openColorId === member.id && (
+            <div className="pl-8 sm:pl-9">
+              <ColorPalette
+                member={member}
+                onPresetSelect={onColorPreset}
+                onCustomColor={onColorCustom}
+              />
+            </div>
+          )}
+        </div>
+      ))}
+    </section>
   );
 }

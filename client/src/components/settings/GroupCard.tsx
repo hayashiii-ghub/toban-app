@@ -42,7 +42,8 @@ export function GroupCard({
       } ${isGroupDropTarget ? "ring-2 ring-amber-400" : ""}`}
       style={{
         borderRadius: "var(--dt-border-radius)",
-        backgroundColor: "#FAFAFA",
+        backgroundColor:
+          "color-mix(in srgb, var(--dt-text) 3%, var(--dt-card-bg))",
       }}
       onDragOver={e => ctx.onGroupReorderDragOver(e, gIdx)}
       onDrop={e => {
@@ -56,7 +57,7 @@ export function GroupCard({
           backgroundColor: ownerMember
             ? `${ownerMember.color}15`
             : "transparent",
-          borderBottom: "1px solid #e5e5e5",
+          borderBottom: "1px solid var(--dt-table-border-light)",
         }}
         draggable
         onDragStart={e => ctx.onGroupDragStart(e, gIdx)}
@@ -68,7 +69,7 @@ export function GroupCard({
             onClick={() => ctx.onMoveGroup(gIdx, -1)}
             disabled={gIdx === 0}
             className="p-0.5 disabled:opacity-20"
-            style={{ color: "#999" }}
+            style={{ color: "var(--dt-text-muted)" }}
             aria-label={t("group.moveGroupUp")}
           >
             <ArrowUp className="size-3.5" />
@@ -78,7 +79,7 @@ export function GroupCard({
             onClick={() => ctx.onMoveGroup(gIdx, 1)}
             disabled={gIdx === groupCount - 1}
             className="p-0.5 disabled:opacity-20"
-            style={{ color: "#999" }}
+            style={{ color: "var(--dt-text-muted)" }}
             aria-label={t("group.moveGroupDown")}
           >
             <ArrowDown className="size-3.5" />
@@ -86,7 +87,7 @@ export function GroupCard({
         </div>
         <GripVertical
           className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block"
-          style={{ color: "#bbb" }}
+          style={{ color: "var(--dt-text-muted)" }}
           aria-hidden="true"
         />
         {/* 絵文字（と担当者の色）を押すと、その下に変える欄が開く */}
@@ -114,7 +115,7 @@ export function GroupCard({
           <ChevronDown
             className="size-3 transition-transform"
             style={{
-              color: "#999",
+              color: "var(--dt-text-muted)",
               transform: detailsOpen ? "rotate(180deg)" : undefined,
             }}
             aria-hidden="true"
@@ -132,13 +133,21 @@ export function GroupCard({
               className="w-full theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
               style={{
                 borderRadius: "var(--dt-border-radius-sm)",
-                backgroundColor: "#fff",
+                backgroundColor: "var(--dt-button-bg)",
               }}
               aria-label={t("group.taskNameOf", { n: gIdx + 1 })}
             />
           </div>
         ) : (
           <div className="flex-1 min-w-0 flex items-center gap-2">
+            {!ownerMember && (
+              <span
+                className="text-xs font-bold"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("group.noOwner")}
+              </span>
+            )}
             {ownerMember && (
               <>
                 <input
@@ -152,7 +161,7 @@ export function GroupCard({
                   className="flex-1 min-w-0 theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
                   style={{
                     borderRadius: "var(--dt-border-radius-sm)",
-                    backgroundColor: "#fff",
+                    backgroundColor: "var(--dt-button-bg)",
                   }}
                   aria-label={t("group.memberNameOf", { n: gIdx + 1 })}
                 />
@@ -165,7 +174,7 @@ export function GroupCard({
           type="button"
           onClick={() => ctx.onRemoveGroup(gIdx)}
           className="p-1.5 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 shrink-0"
-          style={{ color: "#EF4444" }}
+          style={{ color: "#DC2626" }}
           disabled={groupCount <= 1}
           aria-label={t("group.deleteGroup", { n: gIdx + 1 })}
         >
@@ -178,8 +187,9 @@ export function GroupCard({
         <div
           className="px-3 sm:px-4 py-2 flex flex-col gap-2"
           style={{
-            backgroundColor: "#f5f5f5",
-            borderBottom: "1px solid #e5e5e5",
+            backgroundColor:
+              "color-mix(in srgb, var(--dt-text) 5%, var(--dt-card-bg))",
+            borderBottom: "1px solid var(--dt-table-border-light)",
           }}
         >
           <div className="flex items-center gap-2">
@@ -195,7 +205,10 @@ export function GroupCard({
               onChange={e => ctx.onUpdateEmoji(gIdx, e.target.value)}
               maxLength={LIMITS.emoji}
               className="w-12 text-center text-lg theme-border px-1 py-0.5"
-              style={{ borderRadius: "6px", backgroundColor: "#fff" }}
+              style={{
+                borderRadius: "6px",
+                backgroundColor: "var(--dt-button-bg)",
+              }}
               aria-label={t("group.changeEmoji", { n: gIdx + 1 })}
             />
           </div>
@@ -298,7 +311,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                     onClick={() => ctx.onReorderMember(gIdx, mIdx, -1)}
                     disabled={mIdx === 0}
                     className="p-0.5 disabled:opacity-20"
-                    style={{ color: "#999" }}
+                    style={{ color: "var(--dt-text-muted)" }}
                     aria-label={t("group.moveUp")}
                   >
                     <ChevronUp className="size-3.5" />
@@ -308,7 +321,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                     onClick={() => ctx.onReorderMember(gIdx, mIdx, 1)}
                     disabled={mIdx === groupMembers.length - 1}
                     className="p-0.5 disabled:opacity-20"
-                    style={{ color: "#999" }}
+                    style={{ color: "var(--dt-text-muted)" }}
                     aria-label={t("group.moveDown")}
                   >
                     <ChevronDown className="size-3.5" />
@@ -316,7 +329,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                 </div>
                 <GripVertical
                   className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block"
-                  style={{ color: "#bbb" }}
+                  style={{ color: "var(--dt-text-muted)" }}
                   aria-hidden="true"
                 />
                 <button
@@ -337,7 +350,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                   className="flex-1 min-w-0 theme-border px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium"
                   style={{
                     borderRadius: "var(--dt-border-radius-sm)",
-                    backgroundColor: "#fff",
+                    backgroundColor: "var(--dt-button-bg)",
                   }}
                   aria-label={t("group.memberName")}
                 />
@@ -345,7 +358,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
                   type="button"
                   onClick={() => ctx.onRemoveMemberFromGroup(gIdx, member.id)}
                   className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0 disabled:opacity-30"
-                  style={{ color: "#EF4444" }}
+                  style={{ color: "#DC2626" }}
                   disabled={groupMembers.length <= 1}
                   aria-label={t("group.excludeMember", { name: member.name })}
                 >
@@ -382,7 +395,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
               onClick={() =>
                 ctx.onAddMemberToGroup(gIdx, unassignedMembers[0].id)
               }
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold hover:bg-black/5 rounded-lg transition-colors"
               style={{ color: "var(--dt-text-secondary)" }}
             >
               <Plus className="size-3.5" aria-hidden="true" />{" "}
@@ -392,7 +405,7 @@ function TaskModeMembers({ group, gIdx }: { group: TaskGroup; gIdx: number }) {
           <button
             type="button"
             onClick={() => ctx.onAddNewMemberToGroup(gIdx)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold hover:bg-gray-100 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold hover:bg-black/5 rounded-lg transition-colors"
             style={{ color: "var(--dt-text-secondary)" }}
           >
             <Plus className="size-3.5" aria-hidden="true" />{" "}
@@ -448,7 +461,7 @@ function AssigneeModeTaskList({
                 onClick={() => ctx.onMoveTask(gIdx, tIdx, -1)}
                 disabled={tIdx === 0}
                 className="p-0.5 disabled:opacity-20"
-                style={{ color: "#999" }}
+                style={{ color: "var(--dt-text-muted)" }}
                 aria-label={t("group.moveUp")}
               >
                 <ChevronUp className="size-3.5" />
@@ -458,7 +471,7 @@ function AssigneeModeTaskList({
                 onClick={() => ctx.onMoveTask(gIdx, tIdx, 1)}
                 disabled={tIdx === group.tasks.length - 1}
                 className="p-0.5 disabled:opacity-20"
-                style={{ color: "#999" }}
+                style={{ color: "var(--dt-text-muted)" }}
                 aria-label={t("group.moveDown")}
               >
                 <ChevronDown className="size-3.5" />
@@ -466,7 +479,7 @@ function AssigneeModeTaskList({
             </div>
             <GripVertical
               className="size-4 shrink-0 cursor-grab active:cursor-grabbing hidden sm:block"
-              style={{ color: "#bbb" }}
+              style={{ color: "var(--dt-text-muted)" }}
               aria-hidden="true"
             />
             <input
@@ -478,7 +491,7 @@ function AssigneeModeTaskList({
               className="flex-1 min-w-0 theme-border px-3 py-2 text-sm font-medium"
               style={{
                 borderRadius: "var(--dt-border-radius-sm)",
-                backgroundColor: "#fff",
+                backgroundColor: "var(--dt-button-bg)",
               }}
               aria-label={t("group.taskAt", { g: gIdx + 1, t: tIdx + 1 })}
             />
@@ -486,7 +499,7 @@ function AssigneeModeTaskList({
               type="button"
               onClick={() => ctx.onRemoveTask(gIdx, tIdx)}
               className="p-1.5 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-              style={{ color: "#EF4444" }}
+              style={{ color: "#DC2626" }}
               aria-label={t("group.deleteTask", {
                 task: task || t("group.emptyTask"),
               })}
@@ -499,7 +512,7 @@ function AssigneeModeTaskList({
       <button
         type="button"
         onClick={() => ctx.onAddTask(gIdx)}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold self-start hover:bg-gray-100 rounded-lg transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold self-start hover:bg-black/5 rounded-lg transition-colors"
         style={{ color: "var(--dt-text-secondary)" }}
       >
         <Plus className="size-3.5" aria-hidden="true" /> {t("group.addTask")}

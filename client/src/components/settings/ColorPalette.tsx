@@ -39,12 +39,12 @@ export function ColorPalette({ member, onPresetSelect, onCustomColor }: Props) {
       ))}
       <label
         className="size-6 rounded-full border-2 border-dashed flex items-center justify-center cursor-pointer hover:scale-110 transition-transform relative overflow-hidden"
-        style={{ borderColor: "#bbb" }}
+        style={{ borderColor: "var(--dt-text-muted)" }}
       >
         <span className="sr-only">{t("color.custom")}</span>
         <Palette
           className="size-3"
-          style={{ color: "#999" }}
+          style={{ color: "var(--dt-text-muted)" }}
           aria-hidden="true"
         />
         <input

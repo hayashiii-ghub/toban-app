@@ -289,7 +289,7 @@ test("English template, date settings, calendar, print and shared view", async (
     .click();
   const editor = page.getByRole("dialog");
   await editor.getByLabel("Group 4 task 1").fill("Restock supplies");
-  await editor.getByRole("button", { name: /Basic settings/ }).click();
+  await editor.getByRole("button", { name: /How turns change/ }).click();
   await editor.getByRole("button", { name: "Automatic", exact: true }).click();
   await editor.getByLabel("Start date", { exact: true }).fill("2026-09-01");
   await editor.getByLabel("How many days between rotations").fill("1");
@@ -306,7 +306,7 @@ test("English template, date settings, calendar, print and shared view", async (
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await editor
-    .getByRole("button", { name: /Basic settings/ })
+    .getByRole("button", { name: /How turns change/ })
     .scrollIntoViewIfNeeded();
   await page.screenshot({
     path: testInfo.outputPath("english-settings-mobile.png"),

@@ -69,9 +69,9 @@ function queryDialog(container: HTMLElement) {
 }
 
 describe("SettingsModal", () => {
-  it("初期値が表示される（スケジュール名がサマリーに含まれる）", () => {
-    const { container } = render(<SettingsModal {...createProps()} />);
-    expect(container.textContent).toContain("掃除当番");
+  it("最初に開く「名前と仕事」に、当番表の名前が入っている", () => {
+    const { getByLabelText } = render(<SettingsModal {...createProps()} />);
+    expect(getByLabelText("当番表の名前")).toHaveValue("掃除当番");
   });
 
   it("閉じるボタンでonCloseが呼ばれる", () => {

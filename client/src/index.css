@@ -143,6 +143,15 @@
 }
 
 @layer components {
+  /* 入力欄。枠を描かないテーマ（もちもち）でも欄だと分かるよう、地を少し沈めて細い枠を必ず付ける */
+  .dt-field {
+    background-color: color-mix(in srgb, var(--dt-text) 4%, var(--dt-card-bg));
+    color: var(--dt-text);
+    border: max(1px, var(--dt-border-width)) solid
+      color-mix(in srgb, var(--dt-border-color) 55%, transparent);
+    border-radius: var(--dt-border-radius-sm);
+  }
+
   .container {
     width: 100%;
     margin-left: auto;

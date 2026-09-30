@@ -25,15 +25,17 @@ test.describe("メインフロー", () => {
     const modal = page.locator("[role=dialog]");
     await expect(modal).toBeVisible();
 
-    const nameInput = modal.locator("input").first();
+    // 当番表の名前は、最初に開いている「名前と仕事」の先頭にある
+    const nameInput = modal.getByLabel("当番表の名前");
     await nameInput.clear();
     await nameInput.fill("テスト当番表");
 
     await modal.getByRole("button", { name: "保存する" }).click();
     await expect(modal).not.toBeVisible();
 
-    // exact match で1要素だけにマッチさせる
-    await expect(page.getByText("テスト当番表", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "テスト当番表"
+    );
   });
 
   test("表示切り替え: カード → 早見表 → カレンダー → カード", async ({
