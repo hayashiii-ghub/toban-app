@@ -23,6 +23,7 @@ export const ja = {
   "rotation.nth": "{n}回目",
   "turn.single": "{date}の当番",
   "turn.range": "{start}〜{end}の当番",
+  "turn.period": "{start}〜{end}",
   "turn.startsOn": "{date}から開始",
   "turn.everyDay": "毎日交代",
   "turn.everyNDays": "{n}日ごとに交代",
