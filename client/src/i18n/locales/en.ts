@@ -216,7 +216,6 @@ export const en: Record<MessageKey, string> = {
   "settings.maxGroupsReached": "Up to {n} groups allowed.",
   "settings.maxTasksReached": "Up to {n} tasks per group allowed.",
   "settings.rotationManual": "Manual",
-  "settings.rotationDate": "Automatic",
   "settings.summaryTaskMode": "{tasks} tasks · {members} people",
   "settings.summaryMemberMode": "{members} people · {groups} groups",
   "settings.scheduleName": "Schedule name",
@@ -233,6 +232,7 @@ export const en: Record<MessageKey, string> = {
     "Give duties to each person or group. Best when people are the focus",
   "settings.summarySeparator": " · ",
   "settings.sectionAdvanced": "Advanced",
+  "settings.thisRoster": "This roster",
   "settings.sectionAppearance": "Appearance",
   "settings.sectionRotation": "How turns change",
 

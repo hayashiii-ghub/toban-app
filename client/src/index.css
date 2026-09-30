@@ -238,6 +238,12 @@
     }
   }
 
+  /* タブで中身が切り替わるシート（編集）は、切り替えるたびに高さが変わらないよう高さを決めておく */
+  .sheet-fixed-h {
+    height: 90vh;
+    height: 90dvh;
+  }
+
   .settings-option-control {
     display: flex;
     height: 2.5rem;

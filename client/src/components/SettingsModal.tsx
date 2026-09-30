@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useId } from "react";
 import { m } from "framer-motion";
 import { X, Save, Copy, Trash2 } from "lucide-react";
 import type {
@@ -14,7 +14,6 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { ScheduleSettings } from "@/hooks/useScheduleManager";
 import { LIMITS } from "@shared/limits";
 import { TaskGroupEditor } from "./settings/TaskGroupEditor";
-import { AccordionSection } from "./settings/AccordionSection";
 import { DesignThemePicker } from "./settings/DesignThemePicker";
 import { FontPicker } from "./settings/FontPicker";
 import { RotationConfigEditor } from "./settings/RotationConfigEditor";
@@ -22,7 +21,7 @@ import { getThemeById, getThemeLabel } from "@/rotation/designThemes";
 import { applyFont, getFontById, getSavedFontId } from "@/fonts";
 import type { FontId } from "@shared/appearance";
 import { applyThemeToRoot } from "@/contexts/DesignThemeContext";
-import { useLocale, useT } from "@/i18n";
+import { useLocale, useT, type MessageKey } from "@/i18n";
 
 interface Props {
   scheduleName: string;
@@ -39,6 +38,16 @@ interface Props {
   onDelete: () => void;
   onClose: () => void;
 }
+
+type EditorTab = "content" | "rotation" | "appearance" | "advanced";
+
+// 上に並べて、どの項目にもすぐ移れるようにする（開いた項目を閉じないと下が見えない、をなくす）
+const EDITOR_TABS: { id: EditorTab; label: MessageKey }[] = [
+  { id: "content", label: "settings.sectionContent" },
+  { id: "rotation", label: "settings.sectionRotation" },
+  { id: "appearance", label: "settings.sectionAppearance" },
+  { id: "advanced", label: "settings.sectionAdvanced" },
+];
 
 type EditorPatch = {
   name?: string;
@@ -307,14 +316,6 @@ export function SettingsModal({
     });
   };
 
-  const rotationModeLabel =
-    editRotationConfig.mode === "date"
-      ? t("settings.rotationDate")
-      : t("settings.rotationManual");
-  const assignmentModeLabel =
-    editAssignmentMode === "task"
-      ? t("settings.whatByWhom")
-      : t("settings.whoDoesWhat");
   const countLabel = (kind: "task" | "group" | "member", count: number) =>
     t(`templateSummary.${kind}.${count === 1 ? "one" : "other"}`, { count });
   const taskSummary =
@@ -332,10 +333,37 @@ export function SettingsModal({
             groups: editGroups.length,
           });
 
+  const tabsId = useId();
+  const [tab, setTab] = useState<EditorTab>("content");
+  const panelScrollRef = useRef<HTMLDivElement>(null);
+  const selectTab = (next: EditorTab) => {
+    setTab(next);
+    if (panelScrollRef.current) panelScrollRef.current.scrollTop = 0;
+  };
+  const [isWide] = useState(
+    () => window.matchMedia?.("(min-width: 640px)").matches ?? false
+  );
+
+  const handleTabKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const index = EDITOR_TABS.findIndex(item => item.id === tab);
+    const moveTo = (next: number) => {
+      const target =
+        EDITOR_TABS[(next + EDITOR_TABS.length) % EDITOR_TABS.length];
+      selectTab(target.id);
+      document.getElementById(`${tabsId}-${target.id}-tab`)?.focus();
+    };
+    if (e.key === "ArrowRight") moveTo(index + 1);
+    else if (e.key === "ArrowLeft") moveTo(index - 1);
+    else if (e.key === "Home") moveTo(0);
+    else if (e.key === "End") moveTo(EDITOR_TABS.length - 1);
+    else return;
+    e.preventDefault();
+  };
+
   return (
+    // スマホは下からのシート、PC は右からのパネル。PC では当番表が左に見えたまま、見た目の変更も確かめられる
     <m.div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 rotation-no-print"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      className="fixed inset-0 z-50 flex items-end justify-center sm:items-stretch sm:justify-end p-0 rotation-no-print bg-black/50 sm:bg-black/25"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -346,11 +374,12 @@ export function SettingsModal({
     >
       <m.div
         ref={modalRef}
-        className="theme-border theme-shadow w-full max-w-lg modal-max-h overflow-hidden flex flex-col sm:rounded-2xl rounded-t-2xl rounded-b-none sm:rounded-b-2xl"
+        className="theme-border theme-shadow w-full sm:max-w-[30rem] sheet-fixed-h sm:h-full overflow-hidden flex flex-col rounded-t-2xl sm:rounded-none"
         style={{ backgroundColor: "var(--dt-card-bg)" }}
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
+        initial={isWide ? { x: 40 } : { y: 24 }}
+        animate={{ x: 0, y: 0 }}
+        exit={isWide ? { x: 40 } : { y: 24 }}
+        transition={{ duration: 0.22, ease: "easeOut" }}
       >
         {/* ヘッダー */}
         <div
@@ -395,25 +424,61 @@ export function SettingsModal({
           </div>
         )}
 
-        {/* アコーディオンコンテンツ。よく使う順に「名前と仕事」「交代のしかた」「見た目」「くわしい設定」 */}
-        <div className="flex-1 min-h-0 overflow-y-auto">
+        {/* 項目のタブ。よく使う順に「名前と仕事」「交代のしかた」「見た目」「くわしい設定」 */}
+        <div
+          role="tablist"
+          aria-label={t("settings.title")}
+          onKeyDown={handleTabKeyDown}
+          // スマホは 4 つを等分して全部見せる。PC は左から詰めて並べる
+          className="shrink-0 grid grid-cols-4 sm:flex sm:gap-1 px-2 sm:px-3"
+          style={{
+            borderBottom: "var(--dt-border-width) solid var(--dt-border-color)",
+          }}
+        >
+          {EDITOR_TABS.map(item => {
+            const selected = tab === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                id={`${tabsId}-${item.id}-tab`}
+                aria-selected={selected}
+                aria-controls={`${tabsId}-${item.id}-panel`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => selectTab(item.id)}
+                className="px-0.5 sm:px-3 py-3 text-[11px] min-[360px]:text-xs sm:text-sm font-bold whitespace-nowrap transition-colors -mb-px"
+                style={{
+                  color: selected ? "var(--dt-text)" : "var(--dt-text-muted)",
+                  borderBottom: `3px solid ${selected ? "var(--dt-control-bar-bg)" : "transparent"}`,
+                }}
+              >
+                {t(item.label)}
+              </button>
+            );
+          })}
+        </div>
+
+        <div ref={panelScrollRef} className="flex-1 min-h-0 overflow-y-auto">
           {/* 名前と仕事 */}
-          <AccordionSection
-            title={t("settings.sectionContent")}
-            summary={taskSummary}
-            defaultOpen={true}
+          <div
+            role="tabpanel"
+            id={`${tabsId}-content-panel`}
+            aria-labelledby={`${tabsId}-content-tab`}
+            hidden={tab !== "content"}
+            className="px-4 sm:px-5 py-4"
           >
             <div className="flex flex-col gap-3">
               <div>
                 <label
-                  htmlFor="schedule-name-input"
+                  htmlFor={`${tabsId}-name`}
                   className="text-xs font-bold mb-1 block"
                   style={{ color: "var(--dt-text-muted)" }}
                 >
                   {t("settings.scheduleName")}
                 </label>
                 <input
-                  id="schedule-name-input"
+                  id={`${tabsId}-name`}
                   type="text"
                   value={editName}
                   onChange={e => applyEditorPatch({ name: e.target.value })}
@@ -422,6 +487,9 @@ export function SettingsModal({
                   placeholder={t("settings.scheduleNamePlaceholder")}
                 />
               </div>
+              <p className="text-xs" style={{ color: "var(--dt-text-muted)" }}>
+                {taskSummary}
+              </p>
               <TaskGroupEditor
                 groups={editGroups}
                 members={editMembers}
@@ -434,33 +502,41 @@ export function SettingsModal({
                 assignmentMode={editAssignmentMode}
               />
             </div>
-          </AccordionSection>
+          </div>
 
           {/* 交代のしかた */}
-          <AccordionSection
-            title={t("settings.sectionRotation")}
-            summary={rotationModeLabel}
-            defaultOpen={false}
+          <div
+            role="tabpanel"
+            id={`${tabsId}-rotation-panel`}
+            aria-labelledby={`${tabsId}-rotation-tab`}
+            hidden={tab !== "rotation"}
+            className="px-4 sm:px-5 py-4"
           >
             <RotationConfigEditor
               config={editRotationConfig}
               onUpdate={updateRotationConfig}
             />
-          </AccordionSection>
+          </div>
 
-          {/* 見た目（テーマと文字） */}
-          <AccordionSection
-            title={t("settings.sectionAppearance")}
-            summary={`${getThemeLabel(editDesignThemeId, t)}${t("settings.summarySeparator")}${t(getFontById(fontId).labelKey)}`}
-            defaultOpen={false}
+          {/* 見た目（テーマと文字）。選ぶと後ろの当番表にもすぐ映る */}
+          <div
+            role="tabpanel"
+            id={`${tabsId}-appearance-panel`}
+            aria-labelledby={`${tabsId}-appearance-tab`}
+            hidden={tab !== "appearance"}
+            className="px-4 sm:px-5 py-4"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               <div>
                 <h3
                   className="text-xs font-bold mb-2"
                   style={{ color: "var(--dt-text-muted)" }}
                 >
                   {t("settings.sectionDesign")}
+                  <span className="font-medium">
+                    {t("settings.summarySeparator")}
+                    {getThemeLabel(editDesignThemeId, t)}
+                  </span>
                 </h3>
                 <DesignThemePicker
                   selectedThemeId={editDesignThemeId}
@@ -473,6 +549,10 @@ export function SettingsModal({
                   style={{ color: "var(--dt-text-muted)" }}
                 >
                   {t("settings.sectionFont")}
+                  <span className="font-medium">
+                    {t("settings.summarySeparator")}
+                    {t(getFontById(fontId).labelKey)}
+                  </span>
                 </h3>
                 <p
                   className="text-xs mb-2"
@@ -486,13 +566,15 @@ export function SettingsModal({
                 />
               </div>
             </div>
-          </AccordionSection>
+          </div>
 
-          {/* くわしい設定（割り当て方式） */}
-          <AccordionSection
-            title={t("settings.sectionAdvanced")}
-            summary={assignmentModeLabel}
-            defaultOpen={false}
+          {/* くわしい設定（割り当ての見方と、この当番表の複製・削除） */}
+          <div
+            role="tabpanel"
+            id={`${tabsId}-advanced-panel`}
+            aria-labelledby={`${tabsId}-advanced-tab`}
+            hidden={tab !== "advanced"}
+            className="px-4 sm:px-5 py-4 flex flex-col gap-6"
           >
             <fieldset className="border-0 p-0 m-0">
               <legend
@@ -541,12 +623,47 @@ export function SettingsModal({
                 ))}
               </div>
             </fieldset>
-          </AccordionSection>
+
+            <section>
+              <h3
+                className="text-xs font-bold mb-2"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("settings.thisRoster")}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => onDuplicate()}
+                  className="theme-border inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-bold transition-all duration-150 theme-hover-lift"
+                  style={{
+                    color: "var(--dt-text)",
+                    backgroundColor: "var(--dt-button-bg)",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Copy className="size-4" aria-hidden="true" />
+                  {t("common.duplicate")}
+                </button>
+                {canDelete && (
+                  <button
+                    type="button"
+                    onClick={() => onDelete()}
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-bold transition-colors hover:bg-red-50"
+                    style={{ color: "#DC2626", borderRadius: "10px" }}
+                  >
+                    <Trash2 className="size-4" aria-hidden="true" />
+                    {t("common.delete")}
+                  </button>
+                )}
+              </div>
+            </section>
+          </div>
         </div>
 
-        {/* フッター */}
+        {/* フッター（保存だけ。複製と削除は「くわしい設定」とタブのメニューにある） */}
         <div
-          className="shrink-0 px-4 sm:px-5 py-3 sm:py-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] sm:pb-4 flex flex-col gap-2"
+          className="shrink-0 px-4 sm:px-5 py-3 sm:py-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] sm:pb-4"
           style={{
             borderTop: "var(--dt-border-width) solid var(--dt-border-color)",
           }}
@@ -563,39 +680,6 @@ export function SettingsModal({
           >
             <Save className="size-4" aria-hidden="true" /> {t("common.save")}
           </button>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                onDuplicate();
-              }}
-              className="theme-border flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold transition-all duration-150 theme-hover-lift"
-              style={{
-                color: "var(--dt-text)",
-                backgroundColor: "var(--dt-card-bg)",
-                borderRadius: "10px",
-              }}
-            >
-              <Copy className="size-4" aria-hidden="true" />
-              {t("common.duplicate")}
-            </button>
-            {canDelete && (
-              <button
-                type="button"
-                onClick={() => {
-                  onDelete();
-                }}
-                className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-sm font-bold transition-colors hover:bg-red-50"
-                style={{
-                  color: "#DC2626",
-                  borderRadius: "10px",
-                }}
-              >
-                <Trash2 className="size-4" aria-hidden="true" />
-                {t("common.delete")}
-              </button>
-            )}
-          </div>
         </div>
       </m.div>
     </m.div>
