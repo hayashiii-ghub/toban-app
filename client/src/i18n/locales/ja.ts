@@ -43,6 +43,12 @@ export const ja = {
   "shared.copied": "当番表をコピーしました",
   "shared.createYourOwn": "自分で当番表を作る",
   "shared.copyToMine": "この当番表を自分用にコピー",
+  "shared.me.choose": "自分の名前を選ぶと、自分の当番が分かります",
+  "shared.me.placeholder": "名前を選ぶ",
+  "shared.me.title": "{name}の当番",
+  "shared.me.rest": "今回はお休みです",
+  "shared.me.off": "お休み",
+  "shared.me.next": "次の順番",
   "shared.printHeader": "順番: {label} ／ 印刷日: {date}",
 
   // 共有モーダル

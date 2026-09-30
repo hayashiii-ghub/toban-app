@@ -12,6 +12,8 @@ interface AssignmentsGridProps {
   scheduleId: string;
   stagger?: boolean;
   assignmentMode?: AssignmentMode;
+  /** この人のカードを縁取って目立たせる（共有ページで選んだ自分） */
+  highlightMemberId?: string | null;
 }
 
 export function AssignmentsGrid({
@@ -21,6 +23,7 @@ export function AssignmentsGrid({
   scheduleId,
   stagger = true,
   assignmentMode,
+  highlightMemberId,
 }: AssignmentsGridProps) {
   const t = useT();
   const { locale } = useLocale();
@@ -50,10 +53,14 @@ export function AssignmentsGrid({
                     ? `${formatTaskNames(group.tasks, locale)}: ${member.name}`
                     : `${member.name}: ${formatTaskNames(group.tasks, locale)}`
                 }
-                className={`theme-border theme-shadow theme-surface rotation-print-card overflow-hidden min-w-0 flex flex-col [overflow-wrap:anywhere] ${isTaskMode ? "rotation-task-card" : ""}`}
+                className={`theme-border theme-shadow theme-surface rotation-print-card overflow-hidden min-w-0 flex flex-col [overflow-wrap:anywhere] print:outline-none ${isTaskMode ? "rotation-task-card" : ""}`}
                 style={{
                   borderRadius: "var(--dt-border-radius)",
+                  ...(member.id === highlightMemberId
+                    ? { outline: `3px solid ${member.color}`, outlineOffset: 3 }
+                    : {}),
                 }}
+                data-mine={member.id === highlightMemberId || undefined}
                 initial={
                   stagger
                     ? {

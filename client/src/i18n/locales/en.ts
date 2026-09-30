@@ -43,6 +43,12 @@ export const en: Record<MessageKey, string> = {
   "shared.copied": "Schedule copied",
   "shared.createYourOwn": "Create your own schedule",
   "shared.copyToMine": "Make a copy",
+  "shared.me.choose": "Pick your name to see your duty",
+  "shared.me.placeholder": "Choose your name",
+  "shared.me.title": "{name}'s duty",
+  "shared.me.rest": "You're off this turn",
+  "shared.me.off": "Off",
+  "shared.me.next": "Next turn",
   "shared.printHeader": "{label} · Printed: {date}",
 
   // Share modal

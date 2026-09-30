@@ -17,6 +17,7 @@ import { PrintMenu } from "@/components/PrintMenu";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
 import { usePrintMode } from "@/hooks/usePrintMode";
 import { useTurnLabel } from "@/hooks/useTurnLabel";
+import { MyDuty, loadSharedMe, saveSharedMe } from "@/features/shared/MyDuty";
 import { useT, type MessageKey } from "@/i18n";
 import { getSavedFontId } from "@/fonts";
 import "./home.css";
@@ -36,6 +37,18 @@ export default function SharedScheduleView() {
   const schedule = current?.schedule ?? null;
   const errorKey = current?.errorKey ?? null;
   const [viewTab, setViewTab] = useState<ViewTabValue>("cards");
+  // 受け取った人が選んだ自分の名前（当番表ごとにこの端末に覚えておく）
+  const [meBySlug, setMeBySlug] = useState<Record<string, string | null>>({});
+  const meId = slug
+    ? slug in meBySlug
+      ? meBySlug[slug]
+      : loadSharedMe(slug)
+    : null;
+  const chooseMe = (memberId: string | null) => {
+    if (!slug) return;
+    saveSharedMe(slug, memberId);
+    setMeBySlug(prev => ({ ...prev, [slug]: memberId }));
+  };
   const printDate = usePrintDateString();
 
   // 印刷は Home と同じ usePrintMode に集約（printMode 設定・@page 向き注入・afterprint cleanup を一括）。
@@ -231,9 +244,20 @@ export default function SharedScheduleView() {
           </div>
         </header>
 
+        <MyDuty
+          meId={meId}
+          groups={schedule.groups}
+          members={schedule.members}
+          rotation={effectiveRotation}
+          rotationConfig={schedule.rotationConfig}
+          assignmentMode={schedule.assignmentMode}
+          onChange={chooseMe}
+        />
+
         <ViewTabs viewTab={viewTab} onChangeTab={setViewTab} />
 
         <ScheduleViews
+          highlightMemberId={meId}
           viewTab={viewTab}
           assignments={assignments}
           groups={schedule.groups}
