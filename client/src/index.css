@@ -160,8 +160,9 @@
     padding-right: 1rem;
   }
 
+  /* 横に並べた中身を truncate で省略できるようにする。縦（min-height）は 0 にしない。
+     スクロールする箱の中で、中身がスクロールせずに縮んで重なる（新しい当番表の、名前を入れる画面） */
   .flex {
-    min-height: 0;
     min-width: 0;
   }
 
