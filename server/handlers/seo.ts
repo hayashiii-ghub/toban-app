@@ -15,7 +15,7 @@ import {
   serializeJsonLd,
 } from "../../shared/jsonLd";
 import { TEMPLATES } from "../../shared/templates";
-import { AI_AGENTS, SITE_TITLE } from "../../shared/site";
+import { AI_AGENTS, OG_IMAGE_PATH, SITE_TITLE } from "../../shared/site";
 import { TEMPLATE_CONTENT } from "../../shared/template-content";
 
 interface Env {
@@ -85,7 +85,7 @@ export function buildSocialMetaTags(args: {
   const safeTitle = escapeHtml(args.title);
   const safeDesc = escapeHtml(args.description);
   const safeUrl = escapeHtml(args.url);
-  const imageUrl = `${args.origin}/og-image.png`;
+  const imageUrl = `${args.origin}${OG_IMAGE_PATH}`;
   return [
     `<meta property="og:title" content="${safeTitle}">`,
     `<meta property="og:description" content="${safeDesc}">`,
