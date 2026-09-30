@@ -76,12 +76,12 @@ describe("RotationControls", () => {
     const { scope } = renderControls({
       ...props,
       isDateMode: true,
-      rotationLabel: "9/28(月)〜10/4(日)の当番",
+      rotationLabel: "9/28(月)〜10/4(日)",
       dateDetail: "7日ごとに交代",
     });
     expect(scope.queryByLabelText("次の当番に進める")).toBeNull();
     expect(scope.queryByLabelText("前の当番に戻す")).toBeNull();
-    expect(scope.getByText("9/28(月)〜10/4(日)の当番")).toBeInTheDocument();
+    expect(scope.getByText("9/28(月)〜10/4(日)")).toBeInTheDocument();
     expect(scope.getByText("7日ごとに交代")).toBeInTheDocument();
   });
 });

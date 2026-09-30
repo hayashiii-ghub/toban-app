@@ -23,6 +23,7 @@ export const en: Record<MessageKey, string> = {
   "rotation.nth": "Turn {n}",
   "turn.single": "Duty for {date}",
   "turn.range": "Duty for {start} – {end}",
+  "turn.period": "{start} – {end}",
   "turn.startsOn": "Starts {date}",
   "turn.everyDay": "Changes every day",
   "turn.everyNDays": "Changes every {n} days",

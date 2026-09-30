@@ -113,7 +113,7 @@ export default function Home() {
         <div className="home-bottom-panel rotation-no-print" data-home-toolbar>
           <RotationControls
             rotation={s.effectiveRotation}
-            rotationLabel={rotationLabel}
+            rotationLabel={turn.period}
             isSharing={s.isSharing}
             isDateMode={s.isDateMode}
             dateDetail={turn.detail}

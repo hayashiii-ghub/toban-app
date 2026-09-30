@@ -64,29 +64,36 @@ export function RotationControls({
             data-onboarding="rotation-controls"
           >
             {isDateMode ? (
-              <>
+              // 手で送るときの「初期」と同じ白い箱に入れる。帯の色の上に直接書くと、テーマによって読みにくい
+              <div
+                className="theme-border flex items-center gap-2 min-h-9 sm:min-h-10 px-2.5 py-1 min-w-0"
+                style={{
+                  backgroundColor: "var(--dt-button-bg)",
+                  borderRadius: "var(--dt-border-radius-sm)",
+                }}
+              >
                 <CalendarDays
-                  className="size-5 shrink-0 hidden sm:block"
-                  style={{ color: "var(--dt-control-bar-text)" }}
+                  className="size-4 shrink-0"
+                  style={{ color: "var(--dt-text-secondary)" }}
                   aria-hidden="true"
                 />
-                <div className="min-w-0">
+                <div className="min-w-0 leading-tight">
                   <div
-                    className="text-xs sm:text-base font-bold leading-tight"
-                    style={{ color: "var(--dt-control-bar-text)" }}
+                    className="text-[13px] sm:text-base font-bold whitespace-nowrap"
+                    style={{ color: "var(--dt-text)" }}
                   >
                     {rotationLabel}
                   </div>
                   {dateDetail && (
                     <div
                       className="text-[11px] sm:text-xs mt-0.5"
-                      style={{ color: "var(--dt-control-bar-subtext)" }}
+                      style={{ color: "var(--dt-text-secondary)" }}
                     >
                       {dateDetail}
                     </div>
                   )}
                 </div>
-              </>
+              </div>
             ) : (
               <>
                 <div
