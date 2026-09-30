@@ -29,6 +29,8 @@ interface ScheduleViewsProps {
   direction: "forward" | "backward";
   /** cards の stagger（Home はアニメ中のみ、共有閲覧は false）。 */
   stagger: boolean;
+  /** 共有ページで受け取った人が選んだ自分。cards でその人の分を目立たせる */
+  highlightMemberId?: string | null;
 }
 
 /**
@@ -48,6 +50,7 @@ export function ScheduleViews({
   onCalendarMonthChange,
   direction,
   stagger,
+  highlightMemberId,
 }: ScheduleViewsProps) {
   return (
     <>
@@ -59,6 +62,7 @@ export function ScheduleViews({
           scheduleId={scheduleId}
           stagger={stagger}
           assignmentMode={assignmentMode}
+          highlightMemberId={highlightMemberId}
         />
       )}
       {viewTab === "table" && (

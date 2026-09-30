@@ -61,6 +61,7 @@ function renderAt(path: string) {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  localStorage.clear();
 });
 
 describe("SharedScheduleView", () => {
@@ -93,6 +94,55 @@ describe("SharedScheduleView", () => {
     );
     renderAt("/s/AbCdEfGhIj");
     expect(await screen.findByText("9/28(月)〜10/4(日)の当番")).toBeVisible();
+    vi.useRealTimers();
+  });
+
+  it("自分の名前を選ぶと、今と次の当番が分かり、次に開いたときも覚えている", async () => {
+    stubFetch(async () => Response.json(shared));
+    renderAt("/s/AbCdEfGhIj");
+    const select = await screen.findByLabelText(
+      "自分の名前を選ぶと、自分の当番が分かります"
+    );
+    fireEvent.change(select, { target: { value: "m1" } });
+    expect(screen.getByRole("heading", { name: "あおいの当番" })).toBeVisible();
+    // rotation 1 では、黒板はそら（全員で回す）、床はきはそら専用なので、あおいはお休み
+    expect(screen.getByText("今回はお休みです")).toBeVisible();
+    expect(screen.getByText("次の順番").nextElementSibling).toHaveTextContent(
+      "🧽 黒板"
+    );
+    expect(localStorage.getItem("toban-shared-me:AbCdEfGhIj")).toBe("m1");
+
+    cleanup();
+    stubFetch(async () => Response.json(shared));
+    renderAt("/s/AbCdEfGhIj");
+    expect(
+      await screen.findByRole("heading", { name: "あおいの当番" })
+    ).toBeVisible();
+  });
+
+  it("日付で交代する表は、このあとの当番も日付で出す", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 8, 30, 9));
+    stubFetch(async () =>
+      Response.json({
+        ...shared,
+        rotationConfig: { mode: "date", startDate: "2026-09-28", cycleDays: 7 },
+      })
+    );
+    renderAt("/s/AbCdEfGhIj");
+    fireEvent.change(
+      await screen.findByLabelText(
+        "自分の名前を選ぶと、自分の当番が分かります"
+      ),
+      { target: { value: "m2" } }
+    );
+    // 今週（rotation 0）: 黒板はあおい、床はきはそら
+    expect(
+      screen.getByRole("heading", { name: "そらの当番" }).nextElementSibling
+    ).toHaveTextContent("🧹 床はき");
+    expect(
+      screen.getByText("10/5(月)〜10/11(日)").nextElementSibling
+    ).toHaveTextContent("🧽 黒板 🧹 床はき");
     vi.useRealTimers();
   });
 
