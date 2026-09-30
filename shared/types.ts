@@ -62,6 +62,8 @@ export interface ScheduleTemplate {
   assignmentMode?: AssignmentMode;
   designThemeId?: string;
   fontId?: FontId;
+  /** 作るときに選んだ交代のしかた（テンプレート自体は持たない） */
+  rotationConfig?: RotationConfig;
 }
 
 /** サーバーAPIが返すスケジュール表現。Scheduleとは別で、slugやタイムスタンプを持つ。 */
