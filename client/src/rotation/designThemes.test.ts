@@ -42,6 +42,50 @@ describe("旧テーマの凍結", () => {
   });
 });
 
+// WCAG の相対輝度から出すコントラスト比（色は #rgb か #rrggbb）
+function contrast(a: string, b: string) {
+  const luminance = (hex: string) => {
+    const h = hex.replace("#", "");
+    const full = h.length === 3 ? [...h].map(c => c + c).join("") : h;
+    const [r, g, bl] = [0, 2, 4].map(i => {
+      const c = parseInt(full.slice(i, i + 2), 16) / 255;
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (light + 0.05) / (dark + 0.05);
+}
+
+describe("字の読みやすさ", () => {
+  // 帯の上の字は白い面などに載せず、帯の色の上に直接置いている。どの色でも読めるよう、
+  // 字と背景の組み合わせはすべてコントラスト比 4.5（WCAG AA の普通の大きさの字）以上にする
+  const palettes = [
+    ...DESIGN_THEMES.map(
+      theme => [`旧テーマ ${theme.id}`, theme.colors] as const
+    ),
+    ...THEME_COLORS.map(color => [`色 ${color.id}`, color.colors] as const),
+  ];
+  it.each(palettes)("%s", (_, c) => {
+    const pairs: [string, string, string][] = [
+      ["帯の字", c.controlBarText, c.controlBarBg],
+      ["選んでいるタブ", c.tabActiveText, c.tabActiveBg],
+      ["選んでいないタブ", c.tabInactiveText, c.tabInactiveBg],
+      ["本文（ページ）", c.text, c.pageBg],
+      ["本文（カード）", c.text, c.cardBg],
+      ["補足（カード）", c.textSecondary, c.cardBg],
+      ["薄い字（カード）", c.textMuted, c.cardBg],
+      ["薄い字（ページ）", c.textMuted, c.pageBg],
+    ];
+    for (const [label, fg, bg] of pairs) {
+      expect(
+        { label, ratio: Number(contrast(fg, bg).toFixed(2)) },
+        `${label}: ${fg} / ${bg}`
+      ).toEqual({ label, ratio: expect.toSatisfy(r => r >= 4.5) });
+    }
+  });
+});
+
 describe("getThemeById のフォールバック", () => {
   it("未指定・未知のIDは whiteboard", () => {
     expect(getThemeById(undefined).id).toBe("whiteboard");

@@ -67,17 +67,16 @@
   /* Design Theme tokens (defaults: whiteboard) */
   --dt-page-bg: #ffffff;
   --dt-card-bg: #ffffff;
-  --dt-control-bar-bg: #f0f0f0;
-  --dt-control-bar-text: #333333;
-  --dt-control-bar-subtext: #555555;
+  --dt-control-bar-bg: #333333;
+  --dt-control-bar-text: #ffffff;
   --dt-button-bg: #ffffff;
   --dt-tab-active-bg: #333333;
   --dt-tab-active-text: #ffffff;
   --dt-tab-inactive-bg: #f5f5f5;
-  --dt-tab-inactive-text: #777777;
+  --dt-tab-inactive-text: #6f6f6f;
   --dt-text: #1a1a1a;
   --dt-text-secondary: #666666;
-  --dt-text-muted: #888888;
+  --dt-text-muted: #6f6f6f;
   --dt-border-color: #a8a8a8;
   --dt-border-width: 1px;
   --dt-border-radius: 8px;
@@ -160,8 +159,9 @@
     padding-right: 1rem;
   }
 
+  /* 横に並べた中身を truncate で省略できるようにする。縦（min-height）は 0 にしない。
+     スクロールする箱の中で、中身がスクロールせずに縮んで重なる（新しい当番表の、名前を入れる画面） */
   .flex {
-    min-height: 0;
     min-width: 0;
   }
 
@@ -238,10 +238,17 @@
     }
   }
 
-  /* タブで中身が切り替わるシート（編集）は、切り替えるたびに高さが変わらないよう高さを決めておく */
+  /* タブで中身が切り替わるシート（編集）は、切り替えるたびに高さが変わらないよう高さを決めておく。
+     PC は画面の真ん中に出すので、大きな画面でも縦に伸ばしすぎない */
   .sheet-fixed-h {
     height: 90vh;
     height: 90dvh;
+  }
+  @media (min-width: 640px) {
+    .sheet-fixed-h {
+      height: min(85vh, 46rem);
+      height: min(85dvh, 46rem);
+    }
   }
 
   .settings-option-control {

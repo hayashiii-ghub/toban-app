@@ -361,9 +361,9 @@ export function SettingsModal({
   };
 
   return (
-    // スマホは下からのシート、PC は右からのパネル。PC では当番表が左に見えたまま、見た目の変更も確かめられる
+    // スマホは下からのシート、PC は画面の真ん中のポップアップ
     <m.div
-      className="fixed inset-0 z-50 flex items-end justify-center sm:items-stretch sm:justify-end p-0 rotation-no-print bg-black/50 sm:bg-black/25"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 rotation-no-print bg-black/50"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -374,11 +374,11 @@ export function SettingsModal({
     >
       <m.div
         ref={modalRef}
-        className="theme-border theme-shadow w-full sm:max-w-[30rem] sheet-fixed-h sm:h-full overflow-hidden flex flex-col rounded-t-2xl sm:rounded-none"
+        className="theme-border theme-shadow w-full max-w-lg sheet-fixed-h overflow-hidden flex flex-col rounded-t-2xl sm:rounded-2xl"
         style={{ backgroundColor: "var(--dt-card-bg)" }}
-        initial={isWide ? { x: 40 } : { y: 24 }}
-        animate={{ x: 0, y: 0 }}
-        exit={isWide ? { x: 40 } : { y: 24 }}
+        initial={isWide ? { scale: 0.95, y: 12 } : { y: 24 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={isWide ? { scale: 0.95, y: 12 } : { y: 24 }}
         transition={{ duration: 0.22, ease: "easeOut" }}
       >
         {/* ヘッダー */}

@@ -25,7 +25,6 @@ export function applyThemeToRoot(theme: DesignTheme) {
   root.style.setProperty("--dt-card-bg", colors.cardBg);
   root.style.setProperty("--dt-control-bar-bg", colors.controlBarBg);
   root.style.setProperty("--dt-control-bar-text", colors.controlBarText);
-  root.style.setProperty("--dt-control-bar-subtext", colors.controlBarSubtext);
   root.style.setProperty("--dt-button-bg", colors.buttonBg);
   root.style.setProperty("--dt-tab-active-bg", colors.tabActiveBg);
   root.style.setProperty("--dt-tab-active-text", colors.tabActiveText);

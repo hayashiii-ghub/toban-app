@@ -81,6 +81,24 @@ test.describe("メインフロー", () => {
     await expect(tabs).toHaveCount(before + 1);
   });
 
+  // 全体の CSS で flex の箱を縦に縮めてよいとしていたため、低い画面ではスクロールせずに
+  // 中身が縮み、「この内容で作る」が潰れて押しにくくなっていた
+  test("低い画面でも、名前を入れる画面を最後までスクロールして作れる", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 640 });
+    await page.getByRole("button", { name: "新しい当番表を追加" }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByLabel("テンプレートを探す").fill("教室");
+    await dialog.getByRole("button", { name: /教室/ }).first().click();
+
+    const create = dialog.getByRole("button", { name: "この内容で作る" });
+    await create.scrollIntoViewIfNeeded();
+    expect((await create.boundingBox())!.height).toBeGreaterThanOrEqual(40);
+    await create.click();
+    await expect(dialog).toBeHidden();
+  });
+
   // QRCode の import が壊れると、共有モーダルごと React error #130 で落ちる。
   // ユニットテストに加えて、実ブラウザでも本物のモジュールで描画を確かめる。
   test("共有モーダルが開く（API をスタブ）", async ({ page }) => {

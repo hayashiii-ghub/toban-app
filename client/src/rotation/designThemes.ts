@@ -5,7 +5,6 @@ interface DesignThemeColors {
   cardBg: string;
   controlBarBg: string;
   controlBarText: string;
-  controlBarSubtext: string;
   buttonBg: string;
   tabActiveBg: string;
   tabActiveText: string;
@@ -98,28 +97,27 @@ const sunflower: DesignTheme = {
   name: "ひまわり",
   description: "明るく温かいひまわり色",
   preview: {
-    primaryColor: "#F0A830",
+    primaryColor: "#9F6A02",
     secondaryColor: "#FFF4D8",
     bgColor: "#FFFCF0",
   },
   colors: {
     pageBg: "#FFFCF0",
     cardBg: "#ffffff",
-    controlBarBg: "#F0A830",
-    controlBarText: "#3D2800",
-    controlBarSubtext: "#6B4E10",
+    controlBarBg: "#9F6A02",
+    controlBarText: "#FFFFFF",
     buttonBg: "#ffffff",
-    tabActiveBg: "#F0A830",
-    tabActiveText: "#3D2800",
+    tabActiveBg: "#9F6A02",
+    tabActiveText: "#FFFFFF",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#908060",
+    tabInactiveText: "#7C6E53",
     text: "#2C2410",
     textSecondary: "#6B5E40",
-    textMuted: "#908060",
+    textMuted: "#7C6E53",
     borderColor: "#C6A24E",
     tableBorderStrong: "#B08E3A",
     tableBorderLight: "#ECE0C0",
-    focusRing: "#F0A830",
+    focusRing: "#9F6A02",
     currentHighlight: "#F2C64E",
   },
   borders: {
@@ -149,28 +147,27 @@ const crayon: DesignTheme = {
   name: "クレヨン",
   description: "クレヨンで描いたようなデザイン",
   preview: {
-    primaryColor: "#E86830",
+    primaryColor: "#CA4C05",
     secondaryColor: "#FFE4CC",
     bgColor: "#FFF6EC",
   },
   colors: {
     pageBg: "#FFF6EC",
     cardBg: "#FFFEFA",
-    controlBarBg: "#E86830",
-    controlBarText: "#ffffff",
-    controlBarSubtext: "#FFE4D0",
+    controlBarBg: "#CA4C05",
+    controlBarText: "#FFFFFF",
     buttonBg: "#FFFEFA",
-    tabActiveBg: "#E86830",
-    tabActiveText: "#ffffff",
+    tabActiveBg: "#CA4C05",
+    tabActiveText: "#FFFFFF",
     tabInactiveBg: "#FFFEFA",
-    tabInactiveText: "#907868",
+    tabInactiveText: "#806A5C",
     text: "#3A2518",
     textSecondary: "#6B5040",
-    textMuted: "#907868",
+    textMuted: "#806A5C",
     borderColor: "#5C3A1E",
     tableBorderStrong: "#5C3A1E",
     tableBorderLight: "#F0D8C4",
-    focusRing: "#E86830",
+    focusRing: "#CA4C05",
     currentHighlight: "#FFB870",
   },
   borders: {
@@ -200,28 +197,27 @@ const lavender: DesignTheme = {
   name: "ラベンダー",
   description: "上品なラベンダーカラー",
   preview: {
-    primaryColor: "#9B85CC",
+    primaryColor: "#7F69AE",
     secondaryColor: "#EDE6F8",
     bgColor: "#F8F5FC",
   },
   colors: {
     pageBg: "#F8F5FC",
     cardBg: "#ffffff",
-    controlBarBg: "#9B85CC",
-    controlBarText: "#2A1E48",
-    controlBarSubtext: "#4A3870",
+    controlBarBg: "#7F69AE",
+    controlBarText: "#FFFFFF",
     buttonBg: "#ffffff",
-    tabActiveBg: "#9B85CC",
-    tabActiveText: "#2A1E48",
+    tabActiveBg: "#7F69AE",
+    tabActiveText: "#FFFFFF",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#887898",
+    tabInactiveText: "#796889",
     text: "#2A2035",
     textSecondary: "#5A4E6B",
-    textMuted: "#887898",
+    textMuted: "#796889",
     borderColor: "#AB93D2",
     tableBorderStrong: "#8A72BC",
     tableBorderLight: "#E0D8EE",
-    focusRing: "#9B85CC",
+    focusRing: "#7F69AE",
     currentHighlight: "#B7A0EA",
   },
   borders: {
@@ -251,24 +247,23 @@ const whiteboard: DesignTheme = {
   name: "ホワイトボード",
   description: "ホワイトボード風のすっきりデザイン",
   preview: {
-    primaryColor: "#666666",
+    primaryColor: "#333333",
     secondaryColor: "#f5f5f5",
     bgColor: "#ffffff",
   },
   colors: {
     pageBg: "#ffffff",
     cardBg: "#ffffff",
-    controlBarBg: "#f0f0f0",
-    controlBarText: "#333333",
-    controlBarSubtext: "#555555",
+    controlBarBg: "#333333",
+    controlBarText: "#FFFFFF",
     buttonBg: "#ffffff",
     tabActiveBg: "#333333",
     tabActiveText: "#ffffff",
     tabInactiveBg: "#f5f5f5",
-    tabInactiveText: "#777777",
+    tabInactiveText: "#6F6F6F",
     text: "#1a1a1a",
     textSecondary: "#666666",
-    textMuted: "#888888",
+    textMuted: "#6F6F6F",
     borderColor: "#a8a8a8",
     tableBorderStrong: "#7e7e7e",
     tableBorderLight: "#d8d8d8",
@@ -302,28 +297,27 @@ const nature: DesignTheme = {
   name: "わかば",
   description: "フレッシュな若葉のデザイン",
   preview: {
-    primaryColor: "#6B9E6B",
+    primaryColor: "#4E804F",
     secondaryColor: "#E8F0E4",
     bgColor: "#F5F7F2",
   },
   colors: {
     pageBg: "#F5F7F2",
     cardBg: "#ffffff",
-    controlBarBg: "#6B9E6B",
-    controlBarText: "#ffffff",
-    controlBarSubtext: "#E4F2E4",
+    controlBarBg: "#4E804F",
+    controlBarText: "#FFFFFF",
     buttonBg: "#ffffff",
-    tabActiveBg: "#6B9E6B",
-    tabActiveText: "#ffffff",
+    tabActiveBg: "#4E804F",
+    tabActiveText: "#FFFFFF",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#778877",
+    tabInactiveText: "#6A796A",
     text: "#2D3B2D",
     textSecondary: "#5A6B5A",
-    textMuted: "#7A8E7A",
+    textMuted: "#627362",
     borderColor: "#9BBE88",
     tableBorderStrong: "#79A468",
     tableBorderLight: "#D8E6D0",
-    focusRing: "#6B9E6B",
+    focusRing: "#4E804F",
     currentHighlight: "#8FCB8C",
   },
   borders: {
@@ -353,28 +347,27 @@ const sakura: DesignTheme = {
   name: "さくら",
   description: "やさしい桜色のデザイン",
   preview: {
-    primaryColor: "#F9A8B8",
+    primaryColor: "#C73A6A",
     secondaryColor: "#FFF0F3",
     bgColor: "#FFF5F7",
   },
   colors: {
     pageBg: "#FFF5F7",
     cardBg: "#ffffff",
-    controlBarBg: "#F9A8B8",
-    controlBarText: "#5C1A2A",
-    controlBarSubtext: "#8E3852",
+    controlBarBg: "#C73A6A",
+    controlBarText: "#FFFFFF",
     buttonBg: "#ffffff",
-    tabActiveBg: "#F9A8B8",
-    tabActiveText: "#5C1A2A",
+    tabActiveBg: "#C73A6A",
+    tabActiveText: "#FFFFFF",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#887080",
+    tabInactiveText: "#856E7D",
     text: "#3B2C30",
     textSecondary: "#7A5A62",
-    textMuted: "#9A808A",
+    textMuted: "#846973",
     borderColor: "#E497AC",
     tableBorderStrong: "#DB89A0",
     tableBorderLight: "#F5E0E5",
-    focusRing: "#F9A8B8",
+    focusRing: "#C73A6A",
     currentHighlight: "#F7B0CE",
   },
   borders: {
@@ -413,15 +406,14 @@ const nightsky: DesignTheme = {
     cardBg: "#F7F9FD",
     controlBarBg: "#1D2E4E",
     controlBarText: "#EAF0FB",
-    controlBarSubtext: "#A9BBD6",
     buttonBg: "#F7F9FD",
     tabActiveBg: "#1D2E4E",
     tabActiveText: "#EAF0FB",
     tabInactiveBg: "#F7F9FD",
-    tabInactiveText: "#6E7E9C",
+    tabInactiveText: "#5C6B87",
     text: "#17233D",
     textSecondary: "#45577C",
-    textMuted: "#6E7E9C",
+    textMuted: "#5C6B87",
     borderColor: "#3E568A",
     tableBorderStrong: "#4A6198",
     tableBorderLight: "#C8D2E4",
@@ -464,15 +456,14 @@ const chalkboard: DesignTheme = {
     cardBg: "#FBFAF4",
     controlBarBg: "#294A3A",
     controlBarText: "#F3EEDF",
-    controlBarSubtext: "#BFD2C4",
     buttonBg: "#FBFAF4",
     tabActiveBg: "#294A3A",
     tabActiveText: "#F3EEDF",
     tabInactiveBg: "#FBFAF4",
-    tabInactiveText: "#8A7B68",
+    tabInactiveText: "#7D6F5E",
     text: "#2A3A30",
     textSecondary: "#4A6050",
-    textMuted: "#708878",
+    textMuted: "#586B5E",
     borderColor: "#6B4A2E",
     tableBorderStrong: "#7A5638",
     tableBorderLight: "#DCD2C2",
@@ -506,28 +497,27 @@ const ocean: DesignTheme = {
   name: "うみ",
   description: "さわやかな海のデザイン",
   preview: {
-    primaryColor: "#50B0E0",
+    primaryColor: "#067DAB",
     secondaryColor: "#E0F2FC",
     bgColor: "#F0F8FE",
   },
   colors: {
     pageBg: "#F0F8FE",
     cardBg: "#ffffff",
-    controlBarBg: "#50B0E0",
-    controlBarText: "#0A3048",
-    controlBarSubtext: "#1E5070",
+    controlBarBg: "#067DAB",
+    controlBarText: "#FFFFFF",
     buttonBg: "#ffffff",
-    tabActiveBg: "#50B0E0",
-    tabActiveText: "#0A3048",
+    tabActiveBg: "#067DAB",
+    tabActiveText: "#FFFFFF",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#6890A8",
+    tabInactiveText: "#4F7389",
     text: "#1A3050",
     textSecondary: "#3A6888",
-    textMuted: "#6890A8",
+    textMuted: "#4F7389",
     borderColor: "#72B8E0",
     tableBorderStrong: "#4E9CCE",
     tableBorderLight: "#D0E8F6",
-    focusRing: "#50B0E0",
+    focusRing: "#067DAB",
     currentHighlight: "#7CC7EF",
   },
   borders: {
@@ -555,6 +545,8 @@ const ocean: DesignTheme = {
 /**
  * 旧テーマ。`designThemeId` に単体IDで保存済みのスケジュールがあるので、定義を凍結して残す。
  * ピッカーには出さないが、getThemeById は今までどおり解決する（既存の見た目を変えないため）。
+ * ただし帯と字の色だけは、背景とのコントラスト比 4.5（WCAG AA）に届くよう直した（designThemes.test.ts が見張る）。
+ * 帯はどの色も、白い字で読める深さにしている。
  */
 export const DESIGN_THEMES: DesignTheme[] = [
   whiteboard,
@@ -735,8 +727,7 @@ const zarazara: DesignTexture = {
 export const THEME_TEXTURES: DesignTexture[] = [sarasara, zarazara, mochimochi];
 
 /**
- * 色軸は旧テーマのパレットをそのまま流用する。18フィールドがコントラストを見て
- * 手で調整されている（controlBarText がひまわり=濃茶 / わかば=白 と反転しているのがその例）ため、
+ * 色軸は旧テーマのパレットをそのまま流用する。各フィールドがコントラストを見て手で調整されているため、
  * 作り直さず再利用する。素材を指す名前だけ色の名前へ読み替える。
  */
 /**
@@ -760,9 +751,9 @@ const COLOR_LABELS: Record<string, { name: string; labelKey: MessageKey }> = {
  * ひまわりは琥珀から黄へ、だいだいは赤橙から橙へ、そらは海の青から空の青へ。
  * いんさつ・こくばん・さくら・よぞらは名前と色がすでに一致しているので触らない。
  *
- * 明度は動かさずに色相だけ寄せている。18フィールドはコントラストを見て手で決められており、
- * 明度を動かすと controlBarText（白／濃色がパレットごとに反転している）が破綻するため。
- * いちばん弱かった2つは実測で だいだい 3.25→3.37、わかば 3.12→3.37 と改善している。
+ * 帯（controlBarBg。選んでいるタブ・主なボタン・キーボード操作の輪郭も同じ色）は、どの色も白い字で
+ * コントラスト比 4.5 に届く深さにしている。OKLCH で色相を保ったまま暗くした。
+ * 淡い色が持ち味のさくら・ひまわりは、暗くすると赤・茶に寄るので、濃い桃色・からし色を選んだ。
  */
 const COLOR_OVERRIDES: Record<
   string,
@@ -773,27 +764,26 @@ const COLOR_OVERRIDES: Record<
 > = {
   crayon: {
     preview: {
-      primaryColor: "#DF6A24",
+      primaryColor: "#C25403",
       secondaryColor: "#FFE2C4",
       bgColor: "#FFF5E9",
     },
     colors: {
       pageBg: "#FFF5E9",
-      controlBarBg: "#DF6A24",
-      controlBarSubtext: "#FFE0C6",
-      tabActiveBg: "#DF6A24",
-      focusRing: "#DF6A24",
+      controlBarBg: "#C25403",
+      tabActiveBg: "#C25403",
+      focusRing: "#C25403",
       currentHighlight: "#FFB765",
       tableBorderLight: "#F0D6BE",
       // borderColor（#5C3A1E）は据え置き。9色で最も濃い枠なので、印刷の輪郭がいちばん鮮明
     },
   },
   sunflower: {
-    preview: { primaryColor: "#F2B52A", secondaryColor: "#FFF2CE" },
+    preview: { primaryColor: "#976E07", secondaryColor: "#FFF2CE" },
     colors: {
-      controlBarBg: "#F2B52A",
-      tabActiveBg: "#F2B52A",
-      focusRing: "#F2B52A",
+      controlBarBg: "#976E07",
+      tabActiveBg: "#976E07",
+      focusRing: "#976E07",
       currentHighlight: "#F4CE4A",
       borderColor: "#C9AC46",
       tableBorderStrong: "#B49A32",
@@ -801,56 +791,54 @@ const COLOR_OVERRIDES: Record<
   },
   lavender: {
     preview: {
-      primaryColor: "#8189CE",
+      primaryColor: "#686FB2",
       secondaryColor: "#E6E9F8",
       bgColor: "#F5F6FC",
     },
     colors: {
       pageBg: "#F5F6FC",
-      controlBarBg: "#8189CE",
-      controlBarText: "#1E2148",
-      controlBarSubtext: "#363E70",
-      tabActiveBg: "#8189CE",
-      tabActiveText: "#1E2148",
-      tabInactiveText: "#7C82A0",
+      controlBarBg: "#686FB2",
+      controlBarText: "#FFFFFF",
+      tabActiveBg: "#686FB2",
+      tabActiveText: "#FFFFFF",
+      tabInactiveText: "#676E8E",
       text: "#232735",
       textSecondary: "#4E546B",
-      textMuted: "#7C82A0",
+      textMuted: "#676E8E",
       borderColor: "#939AD4",
       tableBorderStrong: "#7178BE",
       tableBorderLight: "#D8DBEE",
-      focusRing: "#8189CE",
+      focusRing: "#686FB2",
       currentHighlight: "#A0A8EA",
     },
   },
   nature: {
     preview: {
-      primaryColor: "#67994B",
+      primaryColor: "#508133",
       secondaryColor: "#EAF0DF",
       bgColor: "#F6F8F0",
     },
     colors: {
       pageBg: "#F6F8F0",
-      controlBarBg: "#67994B",
-      controlBarSubtext: "#E8F2DC",
-      tabActiveBg: "#67994B",
-      tabInactiveText: "#7F8E72",
+      controlBarBg: "#508133",
+      tabActiveBg: "#508133",
+      tabInactiveText: "#67735C",
       text: "#2F3B28",
       textSecondary: "#5D6B52",
-      textMuted: "#7F8E72",
+      textMuted: "#67735C",
       borderColor: "#A3BE7E",
       tableBorderStrong: "#85A45C",
       tableBorderLight: "#DCE6CC",
-      focusRing: "#67994B",
+      focusRing: "#508133",
       currentHighlight: "#A6CB78",
     },
   },
   ocean: {
-    preview: { primaryColor: "#54B2E6" },
+    preview: { primaryColor: "#0D7DAE" },
     colors: {
-      controlBarBg: "#54B2E6",
-      tabActiveBg: "#54B2E6",
-      focusRing: "#54B2E6",
+      controlBarBg: "#0D7DAE",
+      tabActiveBg: "#0D7DAE",
+      focusRing: "#0D7DAE",
       borderColor: "#76BAE6",
       currentHighlight: "#82CAF2",
     },
@@ -972,7 +960,7 @@ export function getThemeLabel(
 
 export function getThemeById(id: string | undefined): DesignTheme {
   if (!id) return whiteboard;
-  // 旧テーマは凍結した定義で描く。既存スケジュールの見た目を変えないため
+  // 旧テーマは凍結した定義で描く。既存スケジュールの見た目を変えないため（帯と字の色だけは読みやすさの基準に合わせて直した）
   const legacy = DESIGN_THEMES.find(theme => theme.id === id);
   if (legacy) return legacy;
   if (!id.includes(THEME_ID_SEPARATOR)) return whiteboard;
