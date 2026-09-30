@@ -121,8 +121,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
   <text x="206" y="125" text-anchor="middle" font-family="${FF}" font-weight="500" font-size="24" fill="${C.board}">登録不要・完全無料</text>
 
   <text x="80" y="254" font-family="${FF}" font-weight="500" font-size="72" fill="${C.chalk}">当番表、</text>
-  <text x="80" y="350" font-family="${FF}" font-weight="500" font-size="72" fill="${C.chalk}">すぐにできます。</text>
-  <path d="M84 372 C 230 358, 440 380, 628 364" fill="none" stroke="${C.highlight}" stroke-width="8" stroke-linecap="round"/>
+  <text x="80" y="350" font-family="${FF}" font-weight="500" font-size="72" fill="${C.chalk}">すぐに完成。</text>
+  <path d="M84 372 C 190 358, 350 380, 492 364" fill="none" stroke="${C.highlight}" stroke-width="8" stroke-linecap="round"/>
 
   <text x="80" y="446" font-family="${FF}" font-weight="500" font-size="32" fill="${C.chalkSub}">名前を入れるだけでも、</text>
   <text x="80" y="494" font-family="${FF}" font-weight="500" font-size="32" fill="${C.chalkSub}">AIに頼むだけでも。</text>

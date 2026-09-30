@@ -78,7 +78,7 @@ export const ja = {
   // ランディングページ
   "lp.docTitle": SITE_TITLE,
   "lp.shareText":
-    "当番表、すぐにできます。名前を入れるだけでも、AIに頼むだけでも。無料の当番表アプリです。",
+    "当番表、すぐに完成。名前を入れるだけでも、AIに頼むだけでも。無料の当番表アプリです。",
   "lp.shareTitle": "toban｜当番表アプリ",
   "lp.shareToban": "tobanを共有する",
   "lp.shareMenuClose": "共有メニューを閉じる",
@@ -87,7 +87,7 @@ export const ja = {
   "lp.copyFailed": "コピーに失敗しました",
   "lp.createSchedule": "当番表を作る",
   "lp.heroTitleA": "当番表、",
-  "lp.heroTitleB": "すぐにできます。",
+  "lp.heroTitleB": "すぐに完成。",
   "lp.heroSubA": "名前を入れるだけでも、AIに頼むだけでも。",
   "lp.heroSubB": "無料で作って、印刷やLINEで共有できます。",
   "lp.featuresHeading": "tobanの特徴",
