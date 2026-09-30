@@ -2,8 +2,8 @@ import { lazy, Suspense } from "react";
 import { LazyMotion, MotionConfig, domAnimation } from "framer-motion";
 import { Toaster } from "@/components/ui/sonner";
 import { Route, Switch, useLocation } from "wouter";
-import { Loader2 } from "lucide-react";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { LoadingScreen } from "./components/LoadingScreen";
 import { LanguageProvider, useT } from "./i18n";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { SITE_LINKS } from "./components/siteLinks";
@@ -16,25 +16,11 @@ const SharedScheduleView = lazy(() => import("./pages/SharedScheduleView"));
 const Transfer = lazy(() => import("./pages/Transfer"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-function LazyFallback() {
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center"
-      style={{ backgroundColor: "var(--dt-page-bg)" }}
-    >
-      <Loader2
-        className="size-8 animate-spin"
-        style={{ color: "var(--dt-current-highlight)" }}
-      />
-    </div>
-  );
-}
-
 function Router() {
   // Route を追加・変更したら server/handlers/seo.ts の KNOWN_APP_ROUTES も更新すること。
   // 同期が漏れると bot に 404 が返り、新ページが検索に index されない。
   return (
-    <Suspense fallback={<LazyFallback />}>
+    <Suspense fallback={<LoadingScreen />}>
       <Switch>
         <Route path={"/"} component={Home} />
         <Route path={"/about"} component={LandingPage} />

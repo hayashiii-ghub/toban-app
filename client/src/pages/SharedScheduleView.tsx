@@ -12,7 +12,9 @@ import { loadState, saveState } from "@/lib/appState";
 import { ScheduleViews } from "@/features/home/ScheduleViews";
 import { ViewTabs, type ViewTabValue } from "@/features/home/ViewTabs";
 import { DesignThemeProvider } from "@/contexts/DesignThemeContext";
-import { Copy, Loader2 } from "lucide-react";
+import { Copy } from "lucide-react";
+import { LoadingScreen } from "@/components/LoadingScreen";
+import { DEFAULT_THEME_ID } from "@/rotation/defaultState";
 import { PrintMenu } from "@/components/PrintMenu";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
 import { usePrintMode } from "@/hooks/usePrintMode";
@@ -149,41 +151,81 @@ export default function SharedScheduleView() {
     navigate("/");
   }, [schedule, navigate, t]);
 
-  if (loading) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: "var(--dt-page-bg)" }}
-      >
-        <Loader2
-          className="size-8 animate-spin"
-          style={{ color: "var(--dt-current-highlight)" }}
-        />
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   if (errorKey || !schedule) {
+    const key = errorKey ?? "shared.error.notFound";
+    const isNotFound = key === "shared.error.notFound";
     return (
-      <div
-        className="min-h-screen flex flex-col items-center justify-center gap-4"
-        style={{ backgroundColor: "var(--dt-page-bg)" }}
-      >
-        <div className="text-6xl">😢</div>
-        <h1 className="text-xl font-bold" style={{ color: "var(--dt-text)" }}>
-          {t(errorKey ?? "shared.error.notFound")}
-        </h1>
-        <a
-          href="/"
-          className="theme-border theme-shadow-sm px-4 py-2 font-bold text-sm transition-all duration-150 theme-hover-lift"
-          style={{
-            backgroundColor: "var(--dt-current-highlight)",
-            borderRadius: "var(--dt-border-radius-sm)",
-          }}
+      <DesignThemeProvider themeId={DEFAULT_THEME_ID}>
+        <div
+          className="rotation-page min-h-screen flex items-center justify-center p-4"
+          style={{ backgroundColor: "var(--dt-page-bg)" }}
         >
-          {t("shared.createYourOwn")}
-        </a>
-      </div>
+          <div
+            className="theme-border theme-shadow w-full max-w-md p-8 text-center"
+            style={{
+              borderRadius: "var(--dt-border-radius)",
+              backgroundColor: "var(--dt-card-bg)",
+            }}
+          >
+            {/* 受け取った人の過失ではないので、404 ページと同じく警告色を使わない */}
+            <div
+              className="theme-border size-16 mx-auto mb-5 flex items-center justify-center text-3xl"
+              style={{
+                borderRadius: "50%",
+                backgroundColor: "var(--dt-current-highlight)",
+              }}
+              aria-hidden="true"
+            >
+              {isNotFound ? "🔍" : "📡"}
+            </div>
+            <h1
+              className="text-lg font-bold mb-2"
+              style={{ color: "var(--dt-text)" }}
+            >
+              {t(key)}
+            </h1>
+            <p
+              className="text-sm mb-6 leading-relaxed"
+              style={{ color: "var(--dt-text-secondary)" }}
+            >
+              {t(
+                isNotFound
+                  ? "shared.error.notFoundHint"
+                  : "shared.error.retryHint"
+              )}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              {!isNotFound && (
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-5 py-2.5 font-bold text-sm transition-all duration-150 theme-hover-lift"
+                  style={{
+                    backgroundColor: "var(--dt-control-bar-bg)",
+                    color: "var(--dt-control-bar-text)",
+                    borderRadius: "10px",
+                  }}
+                >
+                  {t("error.reload")}
+                </button>
+              )}
+              <a
+                href="/"
+                className="theme-border theme-shadow-sm inline-flex items-center justify-center gap-2 px-5 py-2.5 font-bold text-sm transition-all duration-150 theme-hover-lift"
+                style={{
+                  backgroundColor: "var(--dt-button-bg)",
+                  color: "var(--dt-text)",
+                  borderRadius: "10px",
+                }}
+              >
+                {t("shared.createYourOwn")}
+              </a>
+            </div>
+          </div>
+        </div>
+      </DesignThemeProvider>
     );
   }
 

@@ -1,5 +1,8 @@
 import type { AppState } from "./types";
 
+/** 当番表を持たない画面（404・共有ページのエラー）と、初回の見本が使う見た目 */
+export const DEFAULT_THEME_ID = "sarasara/chalkboard";
+
 /**
  * ローカルストレージが空のときに使うデフォルト状態。そのまま書き換えて使える見本の当番表で、
  * 使い方の説明は初回ツアー（OnboardingOverlay）が受け持つ。LP の見本（HeroRosterMock）と同じ中身。
@@ -14,7 +17,7 @@ export const DEFAULT_APP_STATE: AppState = {
       name: "掃除当番（見本）",
       rotation: 0,
       assignmentMode: "task",
-      designThemeId: "sarasara/chalkboard",
+      designThemeId: DEFAULT_THEME_ID,
       fontId: "standard",
       groups: [
         { id: "g1", tasks: ["床そうじ"], emoji: "🧹" },
@@ -68,7 +71,7 @@ export const DEFAULT_APP_STATE_EN: AppState = {
       name: "Cleaning duty (sample)",
       rotation: 0,
       assignmentMode: "task",
-      designThemeId: "sarasara/chalkboard",
+      designThemeId: DEFAULT_THEME_ID,
       fontId: "standard",
       groups: [
         { id: "g1", tasks: ["Floors"], emoji: "🧹" },

@@ -20,7 +20,7 @@ interface Env {
 }
 
 // クラウド保存の保持期間。この日数だけ更新がない行は scheduled で削除する。
-// 変更したら利用者への告知（i18n の share.retention / client/public/privacy.html）も合わせること。
+// 変更したら利用者への告知（i18n の share.retention / shared.error.notFoundHint / client/public/privacy.html）も合わせること。
 const CLEANUP_RETENTION_DAYS = 365;
 
 // ブラウザのページ遷移には client/public/_headers が同じ値を付ける（Worker を通らないため）
