@@ -21,25 +21,6 @@ async function renderPicker() {
 }
 
 describe("NewScheduleModal", () => {
-  it("開いた時点で、場面の違うおすすめを 6 件見せる", async () => {
-    const { dialog, onSelect } = await renderPicker();
-    const featured = [
-      "事務室の掃除当番",
-      "教室そうじ当番",
-      "園内おそうじ当番",
-      "フロア担当",
-      "町内会 清掃・管理当番",
-      "家事ローテーション",
-    ];
-    for (const name of featured) {
-      expect(within(dialog).getByRole("button", { name })).toBeVisible();
-    }
-    fireEvent.click(within(dialog).getByRole("button", { name: "フロア担当" }));
-    expect(onSelect).toHaveBeenCalledWith(
-      expect.objectContaining({ name: "フロア担当" })
-    );
-  });
-
   it("名前・仕事・カテゴリ名で探せる（全角と半角を区別しない）", async () => {
     const { dialog, onSelect } = await renderPicker();
     const search = within(dialog).getByRole("searchbox", {
@@ -50,8 +31,10 @@ describe("NewScheduleModal", () => {
     expect(
       within(dialog).getByRole("button", { name: /^給食当番/ })
     ).toBeVisible();
-    // 探している間は、おすすめとカテゴリを出さない
-    expect(within(dialog).queryByText("おすすめ")).toBeNull();
+    // 探している間は、カテゴリの一覧を出さない
+    expect(
+      within(dialog).queryByRole("button", { name: /小中学校（クラス用）/ })
+    ).toBeNull();
 
     // 仕事の名前でも見つかる（家事ローテーションの「お風呂掃除」）
     fireEvent.change(search, { target: { value: "お風呂" } });

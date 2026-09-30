@@ -169,8 +169,6 @@ export const en: Record<MessageKey, string> = {
   "newSchedule.searchPlaceholder":
     "Search templates (e.g. lunch, cleaning, chores)",
   "newSchedule.searchAria": "Search templates",
-  "newSchedule.featured": "Suggested",
-  "newSchedule.allTemplates": "All templates",
   "newSchedule.noResults": 'No templates match "{query}"',
 
   // Settings modal

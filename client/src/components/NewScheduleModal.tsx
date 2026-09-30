@@ -25,16 +25,6 @@ const TEMPLATE_SECTIONS = [
   { id: "checklist", from: 28, to: 31, defaultOpen: false },
 ];
 
-// 最初から見せる代表例。学校に偏らないよう、場面ごとに 1 件（各カテゴリの先頭）
-const FEATURED_SECTION_IDS = [
-  "office",
-  "school",
-  "kindergarten",
-  "care",
-  "community",
-  "home",
-];
-
 function normalizeForSearch(value: string): string {
   return value.normalize("NFKC").toLowerCase();
 }
@@ -58,9 +48,6 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
     locale === "en"
       ? TEMPLATE_CATEGORIES_EN[id].label
       : TEMPLATE_CATEGORIES.find(cat => cat.id === id)!.label;
-  const featured = FEATURED_SECTION_IDS.map(
-    id => localizedTemplates[TEMPLATE_SECTIONS.find(s => s.id === id)!.from]
-  );
   // 名前・仕事・カテゴリ名のどれかに含まれていれば出す（全角と半角、大文字と小文字は区別しない）
   const needle = normalizeForSearch(query.trim());
   const results = needle
@@ -234,47 +221,6 @@ export function NewScheduleModal({ onSelect, onClose }: Props) {
             )
           ) : (
             <>
-              <h3
-                className="text-xs font-extrabold tracking-wider mt-2 mb-1 px-1"
-                style={{ color: "var(--dt-text-muted)" }}
-              >
-                {t("newSchedule.featured")}
-              </h3>
-              <div className="grid grid-cols-2 gap-2 p-1">
-                {featured.map(template => (
-                  <button
-                    type="button"
-                    key={template.name}
-                    onClick={() => onSelect(template)}
-                    className="theme-border theme-shadow-sm p-2 sm:p-2.5 text-left transition-all duration-150 theme-hover-lift flex items-center gap-1.5 sm:gap-2 min-w-0"
-                    style={{
-                      borderRadius: "var(--dt-border-radius-sm)",
-                      backgroundColor: "#FAFAFA",
-                    }}
-                  >
-                    <span
-                      className="text-lg sm:text-xl shrink-0"
-                      aria-hidden="true"
-                    >
-                      {template.emoji}
-                    </span>
-                    {/* このモーダルは .rotation-page の外に出るので、文節で折り返す指定をここにも付ける */}
-                    <span
-                      className="text-[13px] sm:text-sm font-bold leading-snug line-clamp-2 [word-break:auto-phrase]"
-                      style={{ color: "var(--dt-text)" }}
-                    >
-                      {template.name}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <h3
-                className="text-xs font-extrabold tracking-wider mt-3 mb-1 px-1"
-                style={{ color: "var(--dt-text-muted)" }}
-              >
-                {t("newSchedule.allTemplates")}
-              </h3>
-
               {/* テンプレートセクション */}
               {TEMPLATE_SECTIONS.map(section => {
                 const isOpen = openSections.has(section.id);

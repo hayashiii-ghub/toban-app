@@ -170,8 +170,6 @@ export const ja = {
   "newSchedule.createBlankDesc": "空白から自由に当番表を作成",
   "newSchedule.searchPlaceholder": "テンプレートを探す（例：給食、掃除、家事）",
   "newSchedule.searchAria": "テンプレートを探す",
-  "newSchedule.featured": "おすすめ",
-  "newSchedule.allTemplates": "すべてのテンプレート",
   "newSchedule.noResults": "「{query}」に合うテンプレートはありません",
 
   // 設定モーダル

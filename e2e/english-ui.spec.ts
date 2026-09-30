@@ -267,7 +267,7 @@ test("English template, date settings, calendar, print and shared view", async (
     .click();
   const picker = page.getByRole("dialog");
   await picker.getByRole("button", { name: /Office$/, exact: false }).click();
-  // 「Suggested」にも同じ名前があるので、開いたカテゴリの中から選ぶ
+  // 開いたカテゴリの中から選ぶ
   await picker
     .getByRole("group", { name: "Office" })
     .getByRole("button", { name: /Office cleaning/ })
