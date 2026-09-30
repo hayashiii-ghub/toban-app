@@ -16,12 +16,31 @@
   text-wrap: balance;
 }
 
-/* スマホでは操作の帯（RotationControls）を画面の下に固定する。
+/* スマホでは、表示の切り替え・当番表のタブ・操作の帯（Home の .home-bottom-panel）を画面の下に固定する。
    下に置くほかのもの（フッター・通知・アプリ追加の案内）は、この高さの分だけ持ち上げる。
-   iPhone の画面下の余白（safe-area）は含めない（使う側で足す）。帯の高さを変えたら合わせること */
+   iPhone の画面下の余白（safe-area）は含めない（使う側で足す）。中身の高さを変えたら合わせること */
 @media (width < 40rem) {
   body:has([data-home-toolbar]) {
-    --home-toolbar-space: 3.875rem;
+    --home-toolbar-space: 10.25rem;
+  }
+
+  .home-bottom-panel {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column-reverse;
+    background-color: var(--dt-page-bg);
+    background-image: var(--dt-page-texture, none);
+    border-top: var(--dt-border-width) solid var(--dt-border-color);
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.12);
+  }
+}
+
+@media (width >= 40rem) {
+  .home-bottom-panel {
+    display: contents;
   }
 }
 

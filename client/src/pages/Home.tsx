@@ -108,39 +108,45 @@ export default function Home() {
           isDateMode={turn.isDateMode}
         />
 
-        <RotationControls
-          rotation={s.effectiveRotation}
-          rotationLabel={rotationLabel}
-          isSharing={s.isSharing}
-          isDateMode={s.isDateMode}
-          dateDetail={turn.detail}
-          isAnimating={s.isAnimating}
-          onPrint={() => s.handlePrint(s.viewTab, scheduleName, turn.fileLabel)}
-          onOpenSettings={s.openSettings}
-          onShare={s.handleShare}
-          onRotateForward={() => s.handleRotate("forward")}
-          onRotateBackward={() => s.handleRotate("backward")}
-          syncStatus={s.syncStatus}
-        />
+        {/* スマホでは下にまとめて固定し、上から「表示の切り替え・当番表のタブ・操作の帯」の順に並べる
+            （並びは home.css の .home-bottom-panel）。PC はこの囲みが無いものとして上から順に置く */}
+        <div className="home-bottom-panel rotation-no-print" data-home-toolbar>
+          <RotationControls
+            rotation={s.effectiveRotation}
+            rotationLabel={rotationLabel}
+            isSharing={s.isSharing}
+            isDateMode={s.isDateMode}
+            dateDetail={turn.detail}
+            isAnimating={s.isAnimating}
+            onPrint={() =>
+              s.handlePrint(s.viewTab, scheduleName, turn.fileLabel)
+            }
+            onOpenSettings={s.openSettings}
+            onShare={s.handleShare}
+            onRotateForward={() => s.handleRotate("forward")}
+            onRotateBackward={() => s.handleRotate("backward")}
+            syncStatus={s.syncStatus}
+          />
 
-        <ScheduleTabs
-          schedules={s.state.schedules}
-          activeScheduleId={s.state.activeScheduleId}
-          draggedTabId={s.draggedTabId}
-          dragOverTabId={s.dragOverTabId}
-          onSelectSchedule={s.selectSchedule}
-          onAddSchedule={s.openNewSchedule}
-          onDragStart={s.onDragStart}
-          onDragOver={s.onDragOver}
-          onDrop={s.onDrop}
-          onDragEnd={s.onDragEnd}
-          onReorderTab={s.onReorderTab}
-          onTogglePin={s.onTogglePin}
-          onDuplicate={s.onDuplicateSchedule}
-          onRequestDelete={s.openConfirmDelete}
-        />
+          <ScheduleTabs
+            schedules={s.state.schedules}
+            activeScheduleId={s.state.activeScheduleId}
+            draggedTabId={s.draggedTabId}
+            dragOverTabId={s.dragOverTabId}
+            onSelectSchedule={s.selectSchedule}
+            onAddSchedule={s.openNewSchedule}
+            onDragStart={s.onDragStart}
+            onDragOver={s.onDragOver}
+            onDrop={s.onDrop}
+            onDragEnd={s.onDragEnd}
+            onReorderTab={s.onReorderTab}
+            onTogglePin={s.onTogglePin}
+            onDuplicate={s.onDuplicateSchedule}
+            onRequestDelete={s.openConfirmDelete}
+          />
 
-        <ViewTabs viewTab={s.viewTab} onChangeTab={s.changeTab} />
+          <ViewTabs viewTab={s.viewTab} onChangeTab={s.changeTab} />
+        </div>
 
         <ScheduleViews
           viewTab={s.viewTab}
