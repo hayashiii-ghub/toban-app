@@ -67,16 +67,16 @@
   /* Design Theme tokens (defaults: whiteboard) */
   --dt-page-bg: #ffffff;
   --dt-card-bg: #ffffff;
-  --dt-control-bar-bg: #f0f0f0;
-  --dt-control-bar-text: #333333;
+  --dt-control-bar-bg: #333333;
+  --dt-control-bar-text: #ffffff;
   --dt-button-bg: #ffffff;
   --dt-tab-active-bg: #333333;
   --dt-tab-active-text: #ffffff;
   --dt-tab-inactive-bg: #f5f5f5;
-  --dt-tab-inactive-text: #777777;
+  --dt-tab-inactive-text: #6f6f6f;
   --dt-text: #1a1a1a;
   --dt-text-secondary: #666666;
-  --dt-text-muted: #888888;
+  --dt-text-muted: #6f6f6f;
   --dt-border-color: #a8a8a8;
   --dt-border-width: 1px;
   --dt-border-radius: 8px;
