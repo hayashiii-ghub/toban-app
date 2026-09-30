@@ -1,0 +1,36 @@
+import type { ReactNode } from "react";
+import { CircleHelp, Shield } from "lucide-react";
+import type { MessageKey } from "@/i18n";
+
+export interface SiteLink {
+  href: string;
+  labelKey: MessageKey;
+  newTab?: boolean;
+  icon: ReactNode;
+}
+
+/**
+ * 画面の一番下の案内（App.tsx の AppFooter）と、スマホの「⋯」メニュー（MoreMenu）に並べるリンク。
+ * 見た目と中身を揃えるため、どちらもここから作る（言語の切り替えは別に先頭へ置く）
+ */
+export const SITE_LINKS: SiteLink[] = [
+  {
+    href: "/about",
+    labelKey: "footer.about",
+    newTab: true,
+    icon: <CircleHelp className="size-4" aria-hidden="true" />,
+  },
+  {
+    href: "/privacy",
+    labelKey: "footer.privacy",
+    icon: <Shield className="size-4" aria-hidden="true" />,
+  },
+  {
+    href: "https://shigoto.dev/works/toban",
+    labelKey: "footer.maker",
+    newTab: true,
+    icon: (
+      <img src="/hayashigoto-seal.svg" alt="" className="size-4 opacity-80" />
+    ),
+  },
+];

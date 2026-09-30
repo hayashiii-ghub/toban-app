@@ -1,6 +1,7 @@
 import { m } from "framer-motion";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
 import { useT } from "@/i18n";
+import { MoreMenu } from "./MoreMenu";
 
 interface ScheduleHeaderProps {
   scheduleName: string;
@@ -20,14 +21,18 @@ export function ScheduleHeader({
   const printDate = usePrintDateString();
   return (
     <header className="rotation-print-header pt-6 sm:pt-8 pb-3 sm:pb-6 px-3 sm:px-4">
-      <div className="max-w-4xl mx-auto text-center">
+      <div className="max-w-4xl mx-auto text-center relative">
+        {/* スマホはページの一番下の案内（言語・プライバシーなど）が下の帯に隠れるので、ここにまとめる */}
+        <div className="absolute -right-1 -top-0.5 sm:hidden rotation-no-print">
+          <MoreMenu />
+        </div>
         <m.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
           <h1
-            className="text-2xl sm:text-3xl md:text-4xl tracking-tight rotation-no-print [overflow-wrap:anywhere]"
+            className="text-2xl sm:text-3xl md:text-4xl tracking-tight rotation-no-print [overflow-wrap:anywhere] max-sm:px-9"
             style={{
               color: "var(--dt-text)",
               fontWeight: "var(--dt-font-weight-extra)",

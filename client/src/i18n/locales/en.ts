@@ -10,6 +10,8 @@ export const en: Record<MessageKey, string> = {
 
   "footer.about": "About toban",
   "footer.privacy": "Privacy",
+  "more.aria": "More",
+  "footer.maker": "shigoto.dev",
 
   // Common
   "common.share": "Share",
@@ -183,9 +185,6 @@ export const en: Record<MessageKey, string> = {
   "settings.scheduleName": "Schedule name",
   "settings.scheduleNamePlaceholder":
     "e.g. Office cleaning, Lunch duty, Household chores",
-  "settings.pin": "Pin schedule",
-  "settings.unpin": "Unpin",
-  "settings.pinTab": "Pin schedule",
   "settings.chooseView": "Organize by",
   "settings.whoDoesWhat": "By member",
   "settings.whatByWhom": "By task",
@@ -237,9 +236,9 @@ export const en: Record<MessageKey, string> = {
   "onboarding.share.title": "Share with everyone",
   "onboarding.share.desc":
     "Send it on LINE or with a QR code. Only people with the link can see it",
-  "onboarding.add.title": "Make your own roster",
+  "onboarding.add.title": "Add and organize rosters",
   "onboarding.add.desc":
-    "Pick a template or start from scratch. Add as many as you like",
+    "Select + to make a new one. Press and hold a tab (right-click on a computer) to pin, move, or delete it",
 
   // Rotation bar
   "rotation.prevAria": "Go to previous turn",
@@ -289,11 +288,17 @@ export const en: Record<MessageKey, string> = {
   "tabs.navAria": "Switch schedules",
   "tabs.scrollLeft": "Scroll left",
   "tabs.scrollRight": "Scroll right",
-  "tabs.tablistAria": "Schedule tabs (Alt+Arrow keys to reorder)",
+  "tabs.tablistAria":
+    "Schedule tabs (Alt+Arrow keys to reorder, Shift+F10 for the menu)",
   "tabs.tabAria": "{name} tab",
   "tabs.pinnedSuffix": " (pinned)",
   "tabs.reorderSuffix": " (Alt+Arrow keys to reorder)",
   "tabs.add": "New",
+  "tabs.menuAria": 'Actions for "{name}"',
+  "tabs.menu.pin": "Pin",
+  "tabs.menu.unpin": "Unpin",
+  "tabs.menu.moveLeft": "Move left",
+  "tabs.menu.moveRight": "Move right",
   "tabs.addAria": "Add a new schedule",
 
   // Quick-view table

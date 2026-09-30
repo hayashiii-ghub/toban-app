@@ -48,15 +48,12 @@ export function RotationControls({
 }: RotationControlsProps) {
   const t = useT();
   return (
-    // スマホは画面の下に固定（親指の届く位置）、PC はタイトルの下にヘッダーとして置く。
-    // 下に固定するほかの要素は home.css の --home-toolbar-space の分だけ持ち上げる
-    <div
-      data-home-toolbar
-      className="rotation-no-print fixed inset-x-0 bottom-0 z-40 sm:static sm:z-auto sm:px-4 sm:pb-3"
-    >
+    // スマホは Home の .home-bottom-panel で画面の下に固定される（親指の届く位置）。
+    // PC はタイトルの下にヘッダーとして置く
+    <div className="rotation-no-print sm:px-4 sm:pb-3">
       <div className="sm:max-w-4xl sm:mx-auto">
         <m.div
-          className="theme-border theme-shadow max-sm:border-x-0 max-sm:border-b-0 max-sm:shadow-[0_-6px_20px_rgba(0,0,0,0.12)] sm:rounded-[var(--dt-border-radius)] px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] sm:px-4 sm:py-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-2"
+          className="theme-border theme-shadow max-sm:border-x-0 max-sm:border-b-0 sm:rounded-[var(--dt-border-radius)] px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] sm:px-4 sm:py-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-2"
           style={{ backgroundColor: "var(--dt-control-bar-bg)" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -9,7 +9,7 @@ function renderControls(props: Parameters<typeof RotationControls>[0]) {
   // motion.div が二重レンダリングするため、data-onboarding を目印に実体を取得
   const root = result.container
     .querySelector("[data-onboarding='rotation-controls']")!
-    .closest("[data-home-toolbar]")!;
+    .closest(".rotation-no-print")!;
   return { ...result, scope: within(root as HTMLElement) };
 }
 

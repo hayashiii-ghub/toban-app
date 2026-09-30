@@ -5,10 +5,15 @@ import {
   ChevronRight,
   Pin,
 } from "lucide-react";
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import type { DragEvent } from "react";
 import type { Schedule } from "@/rotation/types";
 import { useT } from "@/i18n";
+import { TabMenu, type TabMenuTarget } from "./TabMenu";
+
+// 長押しとみなす時間と、指がこれ以上動いたら長押しをやめる距離（px）
+const LONG_PRESS_MS = 500;
+const LONG_PRESS_SLOP = 10;
 
 interface ScheduleTabsProps {
   schedules: Schedule[];
@@ -25,6 +30,10 @@ interface ScheduleTabsProps {
   onDrop: (event: DragEvent<HTMLButtonElement>, scheduleId: string) => void;
   onDragEnd: () => void;
   onReorderTab: (scheduleId: string, direction: "left" | "right") => void;
+  onTogglePin: (scheduleId: string) => void;
+  /** 選んでいる当番表を複製する（メニューを開くときにそのタブを選ぶ） */
+  onDuplicate: () => void;
+  onRequestDelete: (scheduleId: string) => void;
 }
 
 export function ScheduleTabs({
@@ -39,6 +48,9 @@ export function ScheduleTabs({
   onDrop,
   onDragEnd,
   onReorderTab,
+  onTogglePin,
+  onDuplicate,
+  onRequestDelete,
 }: ScheduleTabsProps) {
   const t = useT();
   const sortedSchedules = useMemo(() => {
@@ -46,6 +58,79 @@ export function ScheduleTabs({
     const unpinned = schedules.filter(s => !s.pinned);
     return [...pinned, ...unpinned];
   }, [schedules]);
+
+  const tabRefs = useRef(new Map<string, HTMLButtonElement>());
+  const [menu, setMenu] = useState<TabMenuTarget | null>(null);
+  const longPress = useRef<{ timer: number; x: number; y: number } | null>(
+    null
+  );
+  // タッチ主体の端末ではドラッグで並べ替えられない（長押しがドラッグと取り合う）ので、
+  // マウスなどの細かい指し示しがある端末だけドラッグを有効にする。スマホはメニューの左右へ移動で並べ替える
+  const canDrag = useMemo(
+    () => window.matchMedia?.("(pointer: fine)").matches ?? true,
+    []
+  );
+
+  const cancelLongPress = useCallback(() => {
+    if (!longPress.current) return;
+    window.clearTimeout(longPress.current.timer);
+    longPress.current = null;
+  }, []);
+  useEffect(() => cancelLongPress, [cancelLongPress]);
+
+  const openMenu = (index: number) => {
+    const schedule = sortedSchedules[index];
+    const el = schedule && tabRefs.current.get(schedule.id);
+    if (!schedule || !el) return;
+    onSelectSchedule(schedule.id);
+    const prev = sortedSchedules[index - 1];
+    const next = sortedSchedules[index + 1];
+    setMenu({
+      scheduleId: schedule.id,
+      name: schedule.name,
+      pinned: !!schedule.pinned,
+      anchor: el.getBoundingClientRect(),
+      canMoveLeft: !schedule.pinned && !!prev && !prev.pinned,
+      canMoveRight: !schedule.pinned && !!next,
+      canDelete: schedules.length > 1,
+    });
+  };
+
+  const closeMenu = (restoreFocus: boolean) => {
+    const id = menu?.scheduleId;
+    setMenu(null);
+    if (restoreFocus && id) tabRefs.current.get(id)?.focus();
+  };
+  const dismissMenu = useCallback(() => {
+    setMenu(current => {
+      if (current) tabRefs.current.get(current.scheduleId)?.focus();
+      return null;
+    });
+  }, []);
+
+  const handlePointerDown = (
+    e: React.PointerEvent<HTMLButtonElement>,
+    index: number
+  ) => {
+    if (e.pointerType === "mouse") return;
+    cancelLongPress();
+    longPress.current = {
+      x: e.clientX,
+      y: e.clientY,
+      timer: window.setTimeout(() => {
+        longPress.current = null;
+        openMenu(index);
+      }, LONG_PRESS_MS),
+    };
+  };
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const start = longPress.current;
+    if (
+      start &&
+      Math.hypot(e.clientX - start.x, e.clientY - start.y) > LONG_PRESS_SLOP
+    )
+      cancelLongPress();
+  };
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -109,6 +194,18 @@ export function ScheduleTabs({
         }
         break;
       }
+      case "ContextMenu": {
+        e.preventDefault();
+        openMenu(index);
+        break;
+      }
+      case "F10": {
+        if (e.shiftKey) {
+          e.preventDefault();
+          openMenu(index);
+        }
+        break;
+      }
       case "Home": {
         e.preventDefault();
         tabs[0]?.focus();
@@ -166,15 +263,31 @@ export function ScheduleTabs({
                       : t("tabs.reorderSuffix"))
                   }
                   aria-selected={schedule.id === activeScheduleId}
+                  aria-haspopup="menu"
                   tabIndex={schedule.id === activeScheduleId ? 0 : -1}
-                  draggable={!schedule.pinned}
+                  ref={el => {
+                    if (el) tabRefs.current.set(schedule.id, el);
+                    else tabRefs.current.delete(schedule.id);
+                  }}
+                  draggable={canDrag && !schedule.pinned}
                   onDragStart={event => onDragStart(event, schedule.id)}
                   onDragOver={event => onDragOver(event, schedule.id)}
                   onDrop={event => onDrop(event, schedule.id)}
                   onDragEnd={onDragEnd}
                   onKeyDown={e => handleTabKeyDown(e, schedule.id, index)}
                   onClick={() => onSelectSchedule(schedule.id)}
-                  className={`theme-border shrink-0 px-3 sm:px-4 py-2 text-sm font-bold transition-all duration-150 flex items-center gap-1 sm:gap-1.5 ${
+                  onDoubleClick={() => openMenu(index)}
+                  onContextMenu={e => {
+                    e.preventDefault();
+                    cancelLongPress();
+                    openMenu(index);
+                  }}
+                  onPointerDown={e => handlePointerDown(e, index)}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={cancelLongPress}
+                  onPointerCancel={cancelLongPress}
+                  onPointerLeave={cancelLongPress}
+                  className={`theme-border shrink-0 px-3 sm:px-4 py-2 text-sm font-bold transition-all duration-150 flex items-center gap-1 sm:gap-1.5 select-none [-webkit-touch-callout:none] ${
                     schedule.id === activeScheduleId
                       ? "theme-shadow-sm"
                       : "opacity-70 hover:opacity-100"
@@ -194,7 +307,7 @@ export function ScheduleTabs({
                         ? "var(--dt-tab-active-text)"
                         : "var(--dt-tab-inactive-text)",
                     borderRadius: "var(--dt-border-radius-sm)",
-                    cursor: schedule.pinned ? "pointer" : "grab",
+                    cursor: canDrag && !schedule.pinned ? "grab" : "pointer",
                     ...(dragOverTabId === schedule.id &&
                     draggedTabId !== schedule.id
                       ? ({
@@ -228,7 +341,6 @@ export function ScheduleTabs({
                   backgroundColor: "var(--dt-button-bg)",
                 }}
                 aria-label={t("tabs.addAria")}
-                data-onboarding="add-button"
               >
                 <Plus className="size-3.5" aria-hidden="true" />
                 <span className="hidden sm:inline" aria-hidden="true">
@@ -257,6 +369,29 @@ export function ScheduleTabs({
           </div>
         </nav>
       </div>
+      {menu && (
+        <TabMenu
+          key={menu.scheduleId}
+          target={menu}
+          onTogglePin={() => {
+            onTogglePin(menu.scheduleId);
+            closeMenu(false);
+          }}
+          onMove={dir => {
+            onReorderTab(menu.scheduleId, dir);
+            closeMenu(false);
+          }}
+          onDuplicate={() => {
+            onDuplicate();
+            closeMenu(false);
+          }}
+          onDelete={() => {
+            closeMenu(false);
+            onRequestDelete(menu.scheduleId);
+          }}
+          onDismiss={dismissMenu}
+        />
+      )}
     </div>
   );
 }

@@ -2,10 +2,11 @@ import { lazy, Suspense } from "react";
 import { LazyMotion, MotionConfig, domAnimation } from "framer-motion";
 import { Toaster } from "@/components/ui/sonner";
 import { Route, Switch, useLocation } from "wouter";
-import { CircleHelp, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { LanguageProvider, useT } from "./i18n";
 import LanguageSwitcher from "./components/LanguageSwitcher";
+import { SITE_LINKS } from "./components/siteLinks";
 import Home from "./pages/Home";
 
 const LandingPage = lazy(() => import("./pages/LandingPage"));
@@ -49,6 +50,10 @@ function Router() {
   );
 }
 
+// スマホの「⋯」メニュー（MoreMenu）と同じアイコンと言葉で並べる
+const FOOTER_ITEM_CLASS =
+  "flex items-center gap-1.5 px-2 h-8 rounded-full text-sm whitespace-nowrap text-muted-foreground/60 hover:text-muted-foreground/80 hover:bg-muted/40 transition-colors";
+
 function AppFooter() {
   const [location] = useLocation();
   const t = useT();
@@ -58,42 +63,28 @@ function AppFooter() {
 
   return (
     <footer
-      className="px-3 pt-6 pb-[calc(1rem+var(--home-toolbar-space,0px))] print:hidden"
+      // ホームのスマホ表示では、同じ案内をタイトル右上の「⋯」（MoreMenu）に出す
+      className={`px-3 pt-6 pb-[calc(1rem+var(--home-toolbar-space,0px))] print:hidden ${location === "/" ? "max-sm:hidden" : ""}`}
       style={{
         backgroundColor: "var(--dt-page-bg)",
         backgroundImage: "var(--dt-page-texture, none)",
       }}
     >
       <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-end gap-1">
-        <LanguageSwitcher />
-        <a
-          href="/about"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center size-8 rounded-full text-muted-foreground/60 hover:text-muted-foreground/80 hover:bg-muted/40 transition-colors"
-          title={t("footer.about")}
-        >
-          <CircleHelp className="size-5" />
-        </a>
-        <a
-          href="/privacy"
-          className="px-1 text-sm whitespace-nowrap text-muted-foreground/60 hover:text-muted-foreground/80 transition-colors"
-        >
-          {t("footer.privacy")}
-        </a>
-        <a
-          href="https://shigoto.dev/works/toban"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-1.5 px-2 text-sm text-muted-foreground/60 hover:text-muted-foreground/80 transition-colors"
-        >
-          <img
-            src="/hayashigoto-seal.svg"
-            alt="はやしごと"
-            className="size-5 opacity-70 group-hover:opacity-100 transition-opacity"
-          />
-          <span>hay@shigoto.dev</span>
-        </a>
+        <LanguageSwitcher className={FOOTER_ITEM_CLASS} />
+        {SITE_LINKS.map(link => (
+          <a
+            key={link.href}
+            href={link.href}
+            {...(link.newTab
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {})}
+            className={FOOTER_ITEM_CLASS}
+          >
+            {link.icon}
+            <span>{t(link.labelKey)}</span>
+          </a>
+        ))}
       </div>
     </footer>
   );
