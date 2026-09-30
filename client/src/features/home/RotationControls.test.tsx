@@ -28,10 +28,12 @@ const baseProps = () => ({
 });
 
 describe("RotationControls", () => {
-  it("ローテーションラベルが表示される", () => {
+  it("順番の箱に今の順番の呼び名を出し、「現在の順番」の文字は出さない", () => {
     const { scope } = renderControls(baseProps());
-    expect(scope.getByText("Aグループ")).toBeInTheDocument();
-    expect(scope.getByText("現在の順番")).toBeInTheDocument();
+    expect(scope.getByLabelText("現在の順番: 3")).toHaveTextContent(
+      "Aグループ"
+    );
+    expect(scope.queryByText("現在の順番")).toBeNull();
   });
 
   it("進むボタンでonRotateForwardが呼ばれる", () => {
