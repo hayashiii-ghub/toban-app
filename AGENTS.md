@@ -41,6 +41,7 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 
 - 画面の機能コンポーネントは `client/src/features/<機能名>/`。`components/` は横断的に使うものだけ
 - ホームの操作の帯（表示の切り替えを含む）と当番表のタブは、スマホでは画面の下にまとめて固定し（`Home.tsx` の `.home-bottom-panel`）、PC ではタイトルの下に置く。画面の下に何かを固定するときは `--home-toolbar-space`（`client/src/pages/home.css`）の分だけ持ち上げる（通知・アプリ追加の案内はそうしてある）。スマホのホームでは、ページの一番下の案内の代わりにタイトル右上の「⋯」（`MoreMenu`）を出す。案内の項目は `components/siteLinks.tsx` の 1 か所で持つ
+- テーマの字の色は、どの背景との組み合わせもコントラスト比 4.5（WCAG AA）以上にする（`designThemes.test.ts` が見張る）。読みにくい字を白い面や半透明でごまかさない。帯の上の字も、面を敷かずに帯の色の上へ直接置いている
 - `client/src/rotation/` は React / DOM に依存させない（iOS 版で流用する予定）。型の import は可
 
 ## テストの書き方

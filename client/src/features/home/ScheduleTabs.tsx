@@ -288,9 +288,7 @@ export function ScheduleTabs({
                   onPointerCancel={cancelLongPress}
                   onPointerLeave={cancelLongPress}
                   className={`theme-border shrink-0 px-3 sm:px-4 py-2 text-sm font-bold transition-all duration-150 flex items-center gap-1 sm:gap-1.5 select-none [-webkit-touch-callout:none] ${
-                    schedule.id === activeScheduleId
-                      ? "theme-shadow-sm"
-                      : "opacity-70 hover:opacity-100"
+                    schedule.id === activeScheduleId ? "theme-shadow-sm" : ""
                   } ${
                     dragOverTabId === schedule.id &&
                     draggedTabId !== schedule.id

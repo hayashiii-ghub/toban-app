@@ -210,7 +210,21 @@
 }
 
 /* 既定の輪郭の色（--dt-focus-ring）は帯と同じ色のテーマが多く、帯の上では見えない */
-.control-bar-flat:focus-visible,
-.control-bar-views button:focus-visible {
+.control-bar-flat:focus-visible {
   outline-color: var(--dt-control-bar-text);
+}
+
+/* 選んでいる表示は、面を敷かずに下線で示す（色だけに頼らず、形でも分かるように） */
+.control-bar-views button {
+  position: relative;
+}
+
+.control-bar-views button[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.75rem;
+  bottom: 0.125rem;
+  height: 3px;
+  border-radius: 9999px;
+  background-color: var(--dt-control-bar-text);
 }

@@ -5,7 +5,6 @@ interface DesignThemeColors {
   cardBg: string;
   controlBarBg: string;
   controlBarText: string;
-  controlBarSubtext: string;
   buttonBg: string;
   tabActiveBg: string;
   tabActiveText: string;
@@ -107,15 +106,14 @@ const sunflower: DesignTheme = {
     cardBg: "#ffffff",
     controlBarBg: "#F0A830",
     controlBarText: "#3D2800",
-    controlBarSubtext: "#6B4E10",
     buttonBg: "#ffffff",
     tabActiveBg: "#F0A830",
     tabActiveText: "#3D2800",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#908060",
+    tabInactiveText: "#7C6E53",
     text: "#2C2410",
     textSecondary: "#6B5E40",
-    textMuted: "#908060",
+    textMuted: "#7C6E53",
     borderColor: "#C6A24E",
     tableBorderStrong: "#B08E3A",
     tableBorderLight: "#ECE0C0",
@@ -157,16 +155,15 @@ const crayon: DesignTheme = {
     pageBg: "#FFF6EC",
     cardBg: "#FFFEFA",
     controlBarBg: "#E86830",
-    controlBarText: "#ffffff",
-    controlBarSubtext: "#FFE4D0",
+    controlBarText: "#2A1204",
     buttonBg: "#FFFEFA",
     tabActiveBg: "#E86830",
-    tabActiveText: "#ffffff",
+    tabActiveText: "#2A1204",
     tabInactiveBg: "#FFFEFA",
-    tabInactiveText: "#907868",
+    tabInactiveText: "#806A5C",
     text: "#3A2518",
     textSecondary: "#6B5040",
-    textMuted: "#907868",
+    textMuted: "#806A5C",
     borderColor: "#5C3A1E",
     tableBorderStrong: "#5C3A1E",
     tableBorderLight: "#F0D8C4",
@@ -209,15 +206,14 @@ const lavender: DesignTheme = {
     cardBg: "#ffffff",
     controlBarBg: "#9B85CC",
     controlBarText: "#2A1E48",
-    controlBarSubtext: "#4A3870",
     buttonBg: "#ffffff",
     tabActiveBg: "#9B85CC",
     tabActiveText: "#2A1E48",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#887898",
+    tabInactiveText: "#796889",
     text: "#2A2035",
     textSecondary: "#5A4E6B",
-    textMuted: "#887898",
+    textMuted: "#796889",
     borderColor: "#AB93D2",
     tableBorderStrong: "#8A72BC",
     tableBorderLight: "#E0D8EE",
@@ -260,15 +256,14 @@ const whiteboard: DesignTheme = {
     cardBg: "#ffffff",
     controlBarBg: "#f0f0f0",
     controlBarText: "#333333",
-    controlBarSubtext: "#555555",
     buttonBg: "#ffffff",
     tabActiveBg: "#333333",
     tabActiveText: "#ffffff",
     tabInactiveBg: "#f5f5f5",
-    tabInactiveText: "#777777",
+    tabInactiveText: "#6F6F6F",
     text: "#1a1a1a",
     textSecondary: "#666666",
-    textMuted: "#888888",
+    textMuted: "#6F6F6F",
     borderColor: "#a8a8a8",
     tableBorderStrong: "#7e7e7e",
     tableBorderLight: "#d8d8d8",
@@ -310,16 +305,15 @@ const nature: DesignTheme = {
     pageBg: "#F5F7F2",
     cardBg: "#ffffff",
     controlBarBg: "#6B9E6B",
-    controlBarText: "#ffffff",
-    controlBarSubtext: "#E4F2E4",
+    controlBarText: "#14200C",
     buttonBg: "#ffffff",
     tabActiveBg: "#6B9E6B",
-    tabActiveText: "#ffffff",
+    tabActiveText: "#14200C",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#778877",
+    tabInactiveText: "#6A796A",
     text: "#2D3B2D",
     textSecondary: "#5A6B5A",
-    textMuted: "#7A8E7A",
+    textMuted: "#627362",
     borderColor: "#9BBE88",
     tableBorderStrong: "#79A468",
     tableBorderLight: "#D8E6D0",
@@ -362,15 +356,14 @@ const sakura: DesignTheme = {
     cardBg: "#ffffff",
     controlBarBg: "#F9A8B8",
     controlBarText: "#5C1A2A",
-    controlBarSubtext: "#8E3852",
     buttonBg: "#ffffff",
     tabActiveBg: "#F9A8B8",
     tabActiveText: "#5C1A2A",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#887080",
+    tabInactiveText: "#856E7D",
     text: "#3B2C30",
     textSecondary: "#7A5A62",
-    textMuted: "#9A808A",
+    textMuted: "#846973",
     borderColor: "#E497AC",
     tableBorderStrong: "#DB89A0",
     tableBorderLight: "#F5E0E5",
@@ -413,15 +406,14 @@ const nightsky: DesignTheme = {
     cardBg: "#F7F9FD",
     controlBarBg: "#1D2E4E",
     controlBarText: "#EAF0FB",
-    controlBarSubtext: "#A9BBD6",
     buttonBg: "#F7F9FD",
     tabActiveBg: "#1D2E4E",
     tabActiveText: "#EAF0FB",
     tabInactiveBg: "#F7F9FD",
-    tabInactiveText: "#6E7E9C",
+    tabInactiveText: "#5C6B87",
     text: "#17233D",
     textSecondary: "#45577C",
-    textMuted: "#6E7E9C",
+    textMuted: "#5C6B87",
     borderColor: "#3E568A",
     tableBorderStrong: "#4A6198",
     tableBorderLight: "#C8D2E4",
@@ -464,15 +456,14 @@ const chalkboard: DesignTheme = {
     cardBg: "#FBFAF4",
     controlBarBg: "#294A3A",
     controlBarText: "#F3EEDF",
-    controlBarSubtext: "#BFD2C4",
     buttonBg: "#FBFAF4",
     tabActiveBg: "#294A3A",
     tabActiveText: "#F3EEDF",
     tabInactiveBg: "#FBFAF4",
-    tabInactiveText: "#8A7B68",
+    tabInactiveText: "#7D6F5E",
     text: "#2A3A30",
     textSecondary: "#4A6050",
-    textMuted: "#708878",
+    textMuted: "#586B5E",
     borderColor: "#6B4A2E",
     tableBorderStrong: "#7A5638",
     tableBorderLight: "#DCD2C2",
@@ -515,15 +506,14 @@ const ocean: DesignTheme = {
     cardBg: "#ffffff",
     controlBarBg: "#50B0E0",
     controlBarText: "#0A3048",
-    controlBarSubtext: "#1E5070",
     buttonBg: "#ffffff",
     tabActiveBg: "#50B0E0",
     tabActiveText: "#0A3048",
     tabInactiveBg: "#ffffff",
-    tabInactiveText: "#6890A8",
+    tabInactiveText: "#4F7389",
     text: "#1A3050",
     textSecondary: "#3A6888",
-    textMuted: "#6890A8",
+    textMuted: "#4F7389",
     borderColor: "#72B8E0",
     tableBorderStrong: "#4E9CCE",
     tableBorderLight: "#D0E8F6",
@@ -555,6 +545,7 @@ const ocean: DesignTheme = {
 /**
  * 旧テーマ。`designThemeId` に単体IDで保存済みのスケジュールがあるので、定義を凍結して残す。
  * ピッカーには出さないが、getThemeById は今までどおり解決する（既存の見た目を変えないため）。
+ * ただし字の色だけは、背景とのコントラスト比 4.5（WCAG AA）に届くよう直した（designThemes.test.ts が見張る）。
  */
 export const DESIGN_THEMES: DesignTheme[] = [
   whiteboard,
@@ -735,8 +726,8 @@ const zarazara: DesignTexture = {
 export const THEME_TEXTURES: DesignTexture[] = [sarasara, zarazara, mochimochi];
 
 /**
- * 色軸は旧テーマのパレットをそのまま流用する。18フィールドがコントラストを見て
- * 手で調整されている（controlBarText がひまわり=濃茶 / わかば=白 と反転しているのがその例）ため、
+ * 色軸は旧テーマのパレットをそのまま流用する。各フィールドがコントラストを見て
+ * 手で調整されている（controlBarText がこくばん=白 / ひまわり=濃茶 と帯の明るさで分かれているのがその例）ため、
  * 作り直さず再利用する。素材を指す名前だけ色の名前へ読み替える。
  */
 /**
@@ -760,9 +751,9 @@ const COLOR_LABELS: Record<string, { name: string; labelKey: MessageKey }> = {
  * ひまわりは琥珀から黄へ、だいだいは赤橙から橙へ、そらは海の青から空の青へ。
  * いんさつ・こくばん・さくら・よぞらは名前と色がすでに一致しているので触らない。
  *
- * 明度は動かさずに色相だけ寄せている。18フィールドはコントラストを見て手で決められており、
- * 明度を動かすと controlBarText（白／濃色がパレットごとに反転している）が破綻するため。
- * いちばん弱かった2つは実測で だいだい 3.25→3.37、わかば 3.12→3.37 と改善している。
+ * 明度は動かさずに色相だけ寄せている。各フィールドはコントラストを見て手で決められており、
+ * 明度を動かすと controlBarText（白／濃色がパレットごとに分かれている）が破綻するため。
+ * だいだい・わかばの帯は中くらいの明るさで、白い字では 3.4 までしか届かないので、帯の字は濃い色にしている。
  */
 const COLOR_OVERRIDES: Record<
   string,
@@ -780,7 +771,6 @@ const COLOR_OVERRIDES: Record<
     colors: {
       pageBg: "#FFF5E9",
       controlBarBg: "#DF6A24",
-      controlBarSubtext: "#FFE0C6",
       tabActiveBg: "#DF6A24",
       focusRing: "#DF6A24",
       currentHighlight: "#FFB765",
@@ -809,13 +799,12 @@ const COLOR_OVERRIDES: Record<
       pageBg: "#F5F6FC",
       controlBarBg: "#8189CE",
       controlBarText: "#1E2148",
-      controlBarSubtext: "#363E70",
       tabActiveBg: "#8189CE",
       tabActiveText: "#1E2148",
-      tabInactiveText: "#7C82A0",
+      tabInactiveText: "#676E8E",
       text: "#232735",
       textSecondary: "#4E546B",
-      textMuted: "#7C82A0",
+      textMuted: "#676E8E",
       borderColor: "#939AD4",
       tableBorderStrong: "#7178BE",
       tableBorderLight: "#D8DBEE",
@@ -832,12 +821,11 @@ const COLOR_OVERRIDES: Record<
     colors: {
       pageBg: "#F6F8F0",
       controlBarBg: "#67994B",
-      controlBarSubtext: "#E8F2DC",
       tabActiveBg: "#67994B",
-      tabInactiveText: "#7F8E72",
+      tabInactiveText: "#67735C",
       text: "#2F3B28",
       textSecondary: "#5D6B52",
-      textMuted: "#7F8E72",
+      textMuted: "#67735C",
       borderColor: "#A3BE7E",
       tableBorderStrong: "#85A45C",
       tableBorderLight: "#DCE6CC",
@@ -972,7 +960,7 @@ export function getThemeLabel(
 
 export function getThemeById(id: string | undefined): DesignTheme {
   if (!id) return whiteboard;
-  // 旧テーマは凍結した定義で描く。既存スケジュールの見た目を変えないため
+  // 旧テーマは凍結した定義で描く。既存スケジュールの見た目を変えないため（字の色だけは読みやすさの基準に合わせて直した）
   const legacy = DESIGN_THEMES.find(theme => theme.id === id);
   if (legacy) return legacy;
   if (!id.includes(THEME_ID_SEPARATOR)) return whiteboard;

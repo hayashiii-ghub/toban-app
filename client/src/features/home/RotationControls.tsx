@@ -13,22 +13,14 @@ import type { SyncStatus } from "@/lib/syncManager";
 import { useT } from "@/i18n";
 import { VIEW_TABS, type ViewTabValue } from "./viewTabsConfig";
 
-// 帯の上で白く浮かせるのは「いま」を表す 2 つ（今の順番と、選んでいる表示）だけ。
-// ほかは帯の色の上に平らに置く（home.css の .control-bar-flat）。箱を並べると、帯に部品を貼り付けたように見える。
-// 今の順番は小さい字もあり、帯の色の上に直接書くとテーマによって読みにくいので白い面に載せる
-const PILL_STYLE = {
-  backgroundColor: "var(--dt-button-bg)",
-  color: "var(--dt-text)",
-  borderRadius: "var(--dt-border-radius-sm)",
-  boxShadow: "var(--dt-shadow-card-sm)",
-} as const;
-
+// 帯の上のものは、白い面などに載せずに帯の色の上へ直接置く（home.css の .control-bar-flat）。
+// 読めるかどうかは帯の字の色で決める（どのテーマもコントラスト比 4.5 以上。designThemes.test.ts が見張る）
 // 印刷・共有・編集。スマホの下の帯ではアイコンの下に文字を置いて幅を詰める
 const ACTION_CLASS =
   "control-bar-flat flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 h-11 sm:h-10 min-w-[2.75rem] min-[360px]:min-w-[3.25rem] px-1 sm:px-3 text-[11px] sm:text-sm font-bold leading-tight disabled:opacity-50";
 
 const STEP_CLASS =
-  "h-10 sm:h-9 w-8 min-[360px]:w-9 flex items-center justify-center rounded-[calc(var(--dt-border-radius-sm)-2px)] transition-colors hover:bg-black/5 active:bg-black/10 disabled:opacity-50";
+  "control-bar-flat h-10 w-8 min-[360px]:w-9 flex items-center justify-center disabled:opacity-50";
 
 interface RotationControlsProps {
   rotation: number;
@@ -73,7 +65,10 @@ export function RotationControls({
       <div className="sm:max-w-4xl sm:mx-auto">
         <m.div
           className="theme-border theme-shadow max-sm:border-x-0 max-sm:border-b-0 sm:rounded-[var(--dt-border-radius)] px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] sm:p-2.5 flex flex-wrap lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between gap-x-2 gap-y-1.5 sm:gap-y-2.5"
-          style={{ backgroundColor: "var(--dt-control-bar-bg)" }}
+          style={{
+            backgroundColor: "var(--dt-control-bar-bg)",
+            color: "var(--dt-control-bar-text)",
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
@@ -85,34 +80,24 @@ export function RotationControls({
             data-onboarding="rotation-controls"
           >
             {isDateMode ? (
-              <div
-                className="flex items-center gap-2 h-11 sm:h-10 px-2 min-[360px]:px-2.5 sm:px-3 min-w-0"
-                style={PILL_STYLE}
-              >
+              <div className="flex items-center gap-2 h-11 sm:h-10 px-1 min-w-0">
                 <CalendarDays
                   className="size-4 shrink-0 hidden min-[360px]:block"
-                  style={{ color: "var(--dt-text-secondary)" }}
                   aria-hidden="true"
                 />
                 <div className="min-w-0 leading-tight">
-                  <div className="text-xs min-[360px]:text-[13px] sm:text-[15px] font-bold whitespace-nowrap">
+                  <div className="text-[13px] min-[360px]:text-sm sm:text-base font-bold whitespace-nowrap">
                     {rotationLabel}
                   </div>
                   {dateDetail && (
-                    <div
-                      className="text-[11px] mt-0.5 whitespace-nowrap"
-                      style={{ color: "var(--dt-text-secondary)" }}
-                    >
+                    <div className="text-[11px] sm:text-xs mt-0.5 whitespace-nowrap">
                       {dateDetail}
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <div
-                className="flex items-center h-11 sm:h-10 px-0.5"
-                style={PILL_STYLE}
-              >
+              <div className="flex items-center h-11 sm:h-10">
                 {onRotateBackward && (
                   <button
                     type="button"
@@ -159,8 +144,7 @@ export function RotationControls({
                   key={value}
                   onClick={() => onChangeView(value)}
                   aria-pressed={selected}
-                  className={`h-9 px-1.5 lg:px-3.5 text-xs sm:text-sm font-bold whitespace-nowrap ${selected ? "" : "control-bar-flat"}`}
-                  style={selected ? PILL_STYLE : undefined}
+                  className="control-bar-flat h-9 px-1.5 lg:px-3.5 text-xs sm:text-sm font-bold whitespace-nowrap"
                 >
                   {t(labelKey)}
                 </button>
