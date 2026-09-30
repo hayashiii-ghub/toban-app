@@ -2,7 +2,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence } from "framer-motion";
 import { ConfirmDeleteDialog } from "@/components/ConfirmDeleteDialog";
 import { NewScheduleModal } from "@/components/NewScheduleModal";
-import { SettingsModal } from "@/components/SettingsModal";
+import { SettingsModal } from "@/features/settings/SettingsModal";
 import { ShareModal } from "@/components/ShareModal";
 import type { ModalType } from "@/hooks/useModalManager";
 import type { ScheduleSettings } from "@/hooks/useScheduleManager";

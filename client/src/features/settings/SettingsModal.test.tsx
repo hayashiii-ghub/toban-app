@@ -1,18 +1,10 @@
 import React from "react";
-import { describe, it, expect, vi } from "vitest";
-import { render, fireEvent, within } from "@testing-library/react";
+import { afterEach, describe, it, expect, vi } from "vitest";
+import { cleanup, render, fireEvent, within } from "@testing-library/react";
 import { SettingsModal } from "./SettingsModal";
 import type { TaskGroup, Member } from "@shared/types";
 
-vi.mock("./settings/TaskGroupEditor", () => ({
-  TaskGroupEditor: () => <div data-testid="task-group-editor" />,
-}));
-vi.mock("./settings/DesignThemePicker", () => ({
-  DesignThemePicker: () => <div data-testid="design-theme-picker" />,
-}));
-vi.mock("./settings/RotationConfigEditor", () => ({
-  RotationConfigEditor: () => <div data-testid="rotation-config-editor" />,
-}));
+afterEach(cleanup);
 
 const testGroups: TaskGroup[] = [{ id: "g1", tasks: ["掃除"], emoji: "🧹" }];
 
@@ -75,7 +67,6 @@ describe("SettingsModal", () => {
   });
 
   it("4 つの項目をタブで並べ、閉じなくても移れる。移っても書きかけは残る", () => {
-    // このファイルは描画を後始末しないので、今回描いた分の中だけを探す
     const { container } = render(<SettingsModal {...createProps()} />);
     const { getByRole, getByLabelText } = within(container);
     const tabs = ["名前と仕事", "交代のしかた", "見た目", "くわしい設定"].map(
@@ -145,7 +136,7 @@ describe("SettingsModal", () => {
   describe("保存内容がサーバの検証を通ること", () => {
     const parseAsServer = async (payload: Record<string, unknown>) => {
       const { createScheduleSchema } =
-        await import("../../../server/schemas/schedule");
+        await import("../../../../server/schemas/schedule");
       return createScheduleSchema.safeParse({ ...payload, rotation: 0 });
     };
 

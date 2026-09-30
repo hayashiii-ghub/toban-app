@@ -212,6 +212,8 @@ export const en: Record<MessageKey, string> = {
   "settings.confirmClose": "Your changes haven't been saved. Close anyway?",
   "settings.errorNeedTask": "At least one task is required.",
   "settings.errorNeedMember": "At least one member is required.",
+  "settings.errorEmptyGroup": "Enter a duty in row {n}, or remove the row.",
+  "settings.errorEmptyOwner": "Enter a name in row {n}, or remove the row.",
   "settings.maxMembersReached": "Up to {n} members allowed.",
   "settings.maxGroupsReached": "Up to {n} groups allowed.",
   "settings.maxTasksReached": "Up to {n} tasks per group allowed.",
