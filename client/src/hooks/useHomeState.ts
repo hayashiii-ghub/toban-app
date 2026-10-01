@@ -11,6 +11,7 @@ import { useAutoSync } from "@/hooks/useAutoSync";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { useModalManager } from "@/hooks/useModalManager";
 import { useOnboarding } from "@/hooks/useOnboarding";
+import { useLocalToday } from "@/hooks/useLocalToday";
 import { usePrintMode } from "@/hooks/usePrintMode";
 import { useRotationAnimation } from "@/hooks/useRotationAnimation";
 import { useScheduleManager } from "@/hooks/useScheduleManager";
@@ -28,6 +29,7 @@ import {
 } from "@/rotation/guide-localization";
 
 export function useHomeState() {
+  const today = useLocalToday();
   const { locale } = useLocale();
   const t = useT();
   const toolEditingRef = useRef(false);
@@ -227,8 +229,8 @@ export function useHomeState() {
     [activeSchedule]
   );
   const effectiveRotation = useMemo(
-    () => (activeSchedule ? getEffectiveRotation(activeSchedule) : 0),
-    [activeSchedule]
+    () => (activeSchedule ? getEffectiveRotation(activeSchedule, today) : 0),
+    [activeSchedule, today]
   );
   const isDateMode = activeSchedule?.rotationConfig?.mode === "date";
   const assignments = useMemo(

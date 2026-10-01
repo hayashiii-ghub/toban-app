@@ -5,7 +5,7 @@ import { getSchedule, ApiError } from "@/lib/api";
 import type { ScheduleDTO } from "@/rotation/types";
 import {
   computeAssignments,
-  computeDateRotation,
+  computeDateRotationForDate,
   generateId,
 } from "@/rotation/utils";
 import { loadState, saveState } from "@/lib/appState";
@@ -19,6 +19,7 @@ import { PrintMenu } from "@/components/PrintMenu";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
 import { usePrintMode } from "@/hooks/usePrintMode";
 import { useTurnLabel } from "@/hooks/useTurnLabel";
+import { useLocalToday } from "@/hooks/useLocalToday";
 import { MyDuty, loadSharedMe, saveSharedMe } from "@/features/shared/MyDuty";
 import { useT, type MessageKey } from "@/i18n";
 import { getSavedFontId } from "@/fonts";
@@ -28,6 +29,7 @@ export default function SharedScheduleView() {
   const { slug } = useParams<{ slug: string }>();
   const [, navigate] = useLocation();
   const t = useT();
+  const today = useLocalToday();
   // 取得した slug ごと結果を持ち、表示中の slug と違えば読み込み中とみなす
   const [loaded, setLoaded] = useState<{
     slug: string;
@@ -93,10 +95,14 @@ export default function SharedScheduleView() {
     if (!schedule) return 0;
     if (schedule.rotationConfig?.mode === "date") {
       const activeMembers = schedule.members.filter(m => !m.skipped);
-      return computeDateRotation(schedule.rotationConfig, activeMembers.length);
+      return computeDateRotationForDate(
+        schedule.rotationConfig,
+        activeMembers.length,
+        today
+      );
     }
     return schedule.rotation;
-  }, [schedule]);
+  }, [schedule, today]);
   const turn = useTurnLabel(
     schedule?.rotationConfig,
     schedule?.members ?? [],
@@ -146,7 +152,10 @@ export default function SharedScheduleView() {
       schedules: [...state.schedules, newSchedule],
       activeScheduleId: newSchedule.id,
     };
-    saveState(newState);
+    if (!saveState(newState)) {
+      toast.error(t("summary.saveFailed"));
+      return;
+    }
     toast.success(t("shared.copied"));
     navigate("/");
   }, [schedule, navigate, t]);

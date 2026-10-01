@@ -9,6 +9,7 @@ import type {
 import { computeAssignments, listDateTurns } from "@/rotation/utils";
 import { formatTaskNames } from "@/rotation/taskFormatting";
 import { useDateLocale, useLocale, useT } from "@/i18n";
+import { useLocalToday } from "@/hooks/useLocalToday";
 
 interface RotationQuickTableProps {
   groups: TaskGroup[];
@@ -35,6 +36,7 @@ export function RotationQuickTable({
   const t = useT();
   const { locale } = useLocale();
   const dateLocale = useDateLocale();
+  const today = useLocalToday();
   const activeMembers = useMemo(
     () => members.filter(m => !m.skipped),
     [members]
@@ -49,9 +51,9 @@ export function RotationQuickTable({
   const dateTurns = useMemo(
     () =>
       rotationConfig?.mode === "date"
-        ? listDateTurns(rotationConfig, activeMembers.length, new Date())
+        ? listDateTurns(rotationConfig, activeMembers.length, today)
         : [],
-    [rotationConfig, activeMembers.length]
+    [rotationConfig, activeMembers.length, today]
   );
   const columns =
     dateTurns.length === activeMembers.length && dateTurns.length > 0

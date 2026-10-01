@@ -3,6 +3,7 @@ import type { Member, RotationConfig } from "@/rotation/types";
 import { listDateTurns } from "@/rotation/utils";
 import { formatIsoDateLocal, startOfLocalDay } from "@/rotation/dateUtils";
 import { useDateLocale, useT } from "@/i18n";
+import { useLocalToday } from "@/hooks/useLocalToday";
 
 export interface TurnLabel {
   /** 手動は「初期」「3回目」、日付モードは「9/29(火)〜10/5(月)の当番」 */
@@ -24,13 +25,14 @@ export function useTurnLabel(
 ): TurnLabel {
   const t = useT();
   const dateLocale = useDateLocale();
+  const today = useLocalToday();
   const activeCount = members.filter(m => !m.skipped).length;
   const turn = useMemo(
     () =>
       rotationConfig?.mode === "date"
-        ? listDateTurns(rotationConfig, activeCount, new Date(), 1)[0]
+        ? listDateTurns(rotationConfig, activeCount, today, 1)[0]
         : undefined,
-    [rotationConfig, activeCount]
+    [rotationConfig, activeCount, today]
   );
 
   if (rotationConfig?.mode !== "date") {
@@ -57,7 +59,7 @@ export function useTurnLabel(
       day: "numeric",
       weekday: "short",
     });
-  const beforeStart = turn.start > startOfLocalDay(new Date());
+  const beforeStart = turn.start > startOfLocalDay(today);
   const singleDay = turn.start.getTime() === turn.end.getTime();
   const label = beforeStart
     ? t("turn.startsOn", { date: format(turn.start) })
