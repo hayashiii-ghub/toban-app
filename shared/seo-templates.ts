@@ -452,7 +452,7 @@ export const COMMON_FAQ = [
   {
     question: "データはどこに保存されますか？",
     answer:
-      "当番表のデータはお使いのブラウザ内（localStorage）に保存されます。共有機能を使った場合のみ、クラウドサーバーにも保存されます。ブラウザのデータを削除すると当番表も消えるため、大切なデータは共有URLを発行して保管することをおすすめします。",
+      "当番表はブラウザ内（localStorage）に保存されます。編集した表はサーバーにも自動でバックアップされ、共有しない限り公開されません。共有した表は、リンクを知っている人が見られます。ブラウザのデータを削除すると、この端末の当番表や編集用の情報も消えます。",
   },
   {
     question: "お問い合わせはどこからできますか？",
@@ -688,7 +688,7 @@ export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
   {
     question: "Where is my data stored?",
     answer:
-      "Roster data is stored in your browser (localStorage). It's also saved to the cloud only when you use the share feature. Clearing your browser data deletes the roster, so for important data we recommend issuing a share URL to keep it.",
+      "Rosters are saved in your browser (localStorage). Edited rosters are also backed up automatically on the server and stay private until you share them. Anyone with a shared link can view a shared roster. Clearing your browser data also removes the rosters and the information needed to edit them from this device.",
   },
   {
     question: "Where can I contact you?",

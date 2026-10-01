@@ -38,6 +38,7 @@ describe("RotationCalendar", () => {
   });
 
   afterEach(() => {
+    cleanup();
     vi.useRealTimers();
   });
 

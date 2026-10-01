@@ -85,10 +85,15 @@ export default function Transfer() {
             )
           : [...state.schedules, nextSchedule];
 
-        saveState({
-          schedules,
-          activeScheduleId: nextSchedule.id,
-        });
+        if (
+          !saveState({
+            schedules,
+            activeScheduleId: nextSchedule.id,
+          })
+        ) {
+          setErrorKey("transfer.error.saveFailed");
+          return;
+        }
 
         toast.success(
           tStandalone(existing ? "transfer.updated" : "transfer.added", {

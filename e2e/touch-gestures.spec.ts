@@ -82,7 +82,9 @@ async function swipe(
 }
 
 const center = async (page: Page, selector: string) => {
-  const box = (await page.locator(selector).first().boundingBox())!;
+  const locator = page.locator(selector).first();
+  await locator.click({ trial: true });
+  const box = (await locator.boundingBox())!;
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 

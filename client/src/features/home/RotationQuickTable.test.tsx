@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, cleanup } from "@testing-library/react";
+import { act, render, cleanup } from "@testing-library/react";
 import { RotationQuickTable } from "./RotationQuickTable";
 import type { Member, RotationConfig, TaskGroup } from "@shared/types";
 
@@ -13,7 +13,12 @@ vi.stubGlobal(
   }
 );
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+});
 
 function makeMember(id: string, name: string): Member {
   return {
@@ -75,6 +80,31 @@ describe("RotationQuickTable", () => {
     )!;
     const bodyRows = table.querySelectorAll("tbody tr");
     expect(bodyRows.length).toBe(2);
+  });
+
+  it("同じ表を表示したまま画面に戻ると、早見表の日付を更新する", () => {
+    vi.stubEnv("TZ", "Asia/Tokyo");
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 9, 1, 23, 59));
+    const { container } = render(
+      <RotationQuickTable
+        groups={groups}
+        members={members}
+        rotation={0}
+        rotationConfig={{ mode: "date", startDate: "2026-10-01", cycleDays: 1 }}
+      />
+    );
+    const headings = () =>
+      [...container.querySelectorAll("thead th")]
+        .slice(1)
+        .map(th => th.textContent?.replace("◀", "").trim());
+    expect(headings()).toEqual(["10/1(木)", "10/2(金)", "10/3(土)"]);
+
+    act(() => {
+      vi.setSystemTime(new Date(2026, 9, 2, 0, 1));
+      window.dispatchEvent(new Event("focus"));
+    });
+    expect(headings()).toEqual(["10/2(金)", "10/3(土)", "10/4(日)"]);
   });
 
   it("renders one column per active member plus header column", () => {

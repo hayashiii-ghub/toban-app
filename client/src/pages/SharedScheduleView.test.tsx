@@ -1,16 +1,20 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   cleanup,
+  act,
   fireEvent,
   render,
   screen,
   within,
+  waitFor,
 } from "@testing-library/react";
 import { Route, Router } from "wouter";
 import { memoryLocation } from "wouter/memory-location";
 import { STORAGE_KEY } from "@/rotation/constants";
 import type { AppState } from "@/rotation/types";
 import SharedScheduleView from "./SharedScheduleView";
+import { loadState, saveState } from "@/lib/appState";
+import { toast } from "sonner";
 
 // 共有相手だけが見る画面なので、作者が壊れに気づけない。
 // API は fetch の手前だけ差し替え、api.ts の検証・割り当て計算・描画は本物を通す。
@@ -60,7 +64,10 @@ function renderAt(path: string) {
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
   localStorage.clear();
 });
 
@@ -191,5 +198,65 @@ describe("SharedScheduleView", () => {
     const sora = copy.members.find(m => m.name === "そら")!;
     expect(copy.groups[1].memberIds).toEqual([sora.id]);
     expect(location.history?.at(-1)).toBe("/");
+  });
+
+  it("コピーの端末保存に失敗したら、共有画面に留まり既存データを保つ", async () => {
+    const existing = loadState();
+    expect(saveState(existing)).toBe(true);
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const success = vi.spyOn(toast, "success");
+    const error = vi.spyOn(toast, "error");
+    const setItem = localStorage.setItem.bind(localStorage);
+    vi.spyOn(localStorage, "setItem").mockImplementation((key, value) => {
+      if (key === STORAGE_KEY)
+        throw new DOMException("Quota exceeded", "QuotaExceededError");
+      setItem(key, value);
+    });
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    stubFetch(async () => Response.json(shared));
+    const location = renderAt("/s/AbCdEfGhIj");
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /この当番表を自分用にコピー/ })
+    );
+
+    expect(error).toHaveBeenCalledWith(
+      "端末に保存できませんでした。内容を失わないよう、この画面を閉じずに保存先の空き容量・設定を確認してください。"
+    );
+    expect(success).not.toHaveBeenCalled();
+    expect(location.history?.at(-1)).toBe("/s/AbCdEfGhIj");
+    expect(localStorage.getItem(STORAGE_KEY)).toBe(saved);
+    expect(loadState()).toEqual(existing);
+  });
+
+  it("日付が変わって復帰すると担当・期間・自分の次の当番を更新する", async () => {
+    vi.stubEnv("TZ", "Asia/Tokyo");
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 9, 1, 23, 59));
+    const fetchMock = stubFetch(async () =>
+      Response.json({
+        ...shared,
+        groups: [shared.groups[0]],
+        rotationConfig: { mode: "date", startDate: "2026-10-01", cycleDays: 1 },
+      })
+    );
+    localStorage.setItem("toban-shared-me:AbCdEfGhIj", "m1");
+    renderAt("/s/AbCdEfGhIj");
+    expect(await screen.findByText("10/1(木)の当番")).toBeVisible();
+    const cards = () => screen.getByRole("list", { name: "当番割り当て一覧" });
+    expect(within(cards()).getByText("あおい")).toBeInTheDocument();
+    expect(screen.getByText("10/2(金)")).toBeInTheDocument();
+
+    act(() => {
+      vi.setSystemTime(new Date(2026, 9, 2, 0, 1));
+      window.dispatchEvent(new Event("focus"));
+    });
+    await waitFor(() =>
+      expect(screen.getByText("10/2(金)の当番")).toBeVisible()
+    );
+    expect(within(cards()).getByText("そら")).toBeInTheDocument();
+    expect(screen.queryByText("10/2(金)")).toBeNull();
+    expect(screen.getByText("10/5(月)")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledOnce();
   });
 });

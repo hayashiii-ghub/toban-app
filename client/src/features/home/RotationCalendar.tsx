@@ -15,6 +15,7 @@ import { useT, useDateLocale, useLocale } from "@/i18n";
 import { parseIsoDateLocal } from "@/rotation/dateUtils";
 import { formatTaskNames } from "@/rotation/taskFormatting";
 import { TaskLegend } from "@/features/home/TaskLegend";
+import { useLocalToday } from "@/hooks/useLocalToday";
 
 interface RotationCalendarProps {
   groups: TaskGroup[];
@@ -175,11 +176,7 @@ export function RotationCalendar({
     t("cal.wd5"),
     t("cal.wd6"),
   ];
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, []);
+  const today = useLocalToday();
 
   const [localViewDate, setLocalViewDate] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1)

@@ -9,6 +9,7 @@ import { computeAssignments, listDateTurns } from "@/rotation/utils";
 import { formatTaskNames } from "@/rotation/taskFormatting";
 import { safeGetItem, safeSetItem } from "@/lib/storage";
 import { useDateLocale, useLocale, useT } from "@/i18n";
+import { useLocalToday } from "@/hooks/useLocalToday";
 
 // 共有ページごとに、この端末で選んだ自分の名前を覚えておく（その当番表を開いた人だけのもの）
 const storageKey = (slug: string) => `toban-shared-me:${slug}`;
@@ -47,6 +48,7 @@ export function MyDuty({
   const t = useT();
   const { locale } = useLocale();
   const dateLocale = useDateLocale();
+  const today = useLocalToday();
   const id = useId();
   const activeMembers = members.filter(m => !m.skipped);
   const me = activeMembers.find(m => m.id === chosenId);
@@ -69,7 +71,7 @@ export function MyDuty({
       return listDateTurns(
         rotationConfig,
         activeMembers.length,
-        new Date(),
+        today,
         UPCOMING + 1
       )
         .slice(1)
@@ -95,6 +97,7 @@ export function MyDuty({
     members,
     assignmentMode,
     dateLocale,
+    today,
     t,
   ]);
 

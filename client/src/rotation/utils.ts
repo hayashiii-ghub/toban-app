@@ -413,10 +413,17 @@ export function removeMemberFromSchedule(
   return { ...schedule, members, groups };
 }
 
-export function getEffectiveRotation(schedule: Schedule): number {
+export function getEffectiveRotation(
+  schedule: Schedule,
+  today = new Date()
+): number {
   if (schedule.rotationConfig?.mode === "date") {
     const activeMembers = schedule.members.filter(m => !m.skipped);
-    return computeDateRotation(schedule.rotationConfig, activeMembers.length);
+    return computeDateRotationForDate(
+      schedule.rotationConfig,
+      activeMembers.length,
+      today
+    );
   }
   return schedule.rotation;
 }
