@@ -82,9 +82,10 @@ async function swipe(
 }
 
 const center = async (page: Page, selector: string) => {
-  const locator = page.locator(selector).first();
-  await locator.click({ trial: true });
-  const box = (await locator.boundingBox())!;
+  const target = page.locator(selector).first();
+  // 下から出てくる途中の座標では、指を離す位置が行間にずれる。安定してから読む。
+  await target.click({ trial: true });
+  const box = (await target.boundingBox())!;
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 

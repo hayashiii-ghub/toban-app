@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { LIMITS } from "@shared/limits";
 import type { AssignmentMode, Member, TaskGroup } from "@/rotation/types";
 import { TaskGroupEditor } from "./TaskGroupEditor";
@@ -32,12 +38,14 @@ function renderEditor(
   const latest = {
     groups: initial.groups ?? groups,
     members: initial.members ?? members,
+    replaceGroups: (_: TaskGroup[]) => {},
   };
   function Harness() {
     const [g, setG] = useState(latest.groups);
     const [m, setM] = useState(latest.members);
     latest.groups = g;
     latest.members = m;
+    latest.replaceGroups = setG;
     return (
       <TaskGroupEditor
         groups={g}
@@ -157,17 +165,21 @@ describe("TaskGroupEditor（タスクから見る）", () => {
 
 // 並べ替えは、つまむ印を pointer で動かす（usePointerDrag）。jsdom には elementFromPoint が無いので、
 // 指の下にあるものを to に差し替えてから、印を押して動かして離す
-function drag(from: Element, to: Element) {
+function drag(from: Element, to: Element, whileDragging?: () => void) {
   const grip = from
     .closest("[data-drag-item]")!
     .querySelector("[data-drag-grip]")!;
   const original = document.elementFromPoint;
   document.elementFromPoint = () => to;
   const at = (y: number) => ({ pointerId: 1, clientX: 10, clientY: y });
-  fireEvent.pointerDown(grip, { ...at(0), pointerType: "mouse", button: 0 });
-  fireEvent.pointerMove(grip, at(40));
-  fireEvent.pointerUp(grip, at(40));
-  document.elementFromPoint = original;
+  try {
+    fireEvent.pointerDown(grip, { ...at(0), pointerType: "mouse", button: 0 });
+    fireEvent.pointerMove(grip, at(40));
+    whileDragging?.();
+    fireEvent.pointerUp(grip, at(40));
+  } finally {
+    document.elementFromPoint = original;
+  }
 }
 
 describe("TaskGroupEditor のドラッグ", () => {
@@ -185,6 +197,90 @@ describe("TaskGroupEditor のドラッグ", () => {
     expect(state.groups.map(g => g.tasks)).toEqual([
       ["窓"],
       ["黒板", "床はき"],
+    ]);
+  });
+
+  it.each(["行", "余白"] as const)(
+    "上限に達したグループの%sには落とす印を出さず、仕事を移さない",
+    targetKind => {
+      const fullTasks = Array.from(
+        { length: LIMITS.tasksPerGroup },
+        (_, i) => `仕事${i + 1}`
+      );
+      const initialGroups = [
+        { id: "g1", tasks: ["黒板"], emoji: "🧽" },
+        { id: "g2", tasks: fullTasks, emoji: "🧹" },
+      ];
+      const state = renderEditor({ groups: initialGroups });
+      const row = screen
+        .getByRole("textbox", { name: "グループ2のタスク1" })
+        .closest("[data-drop-task]")!;
+      const target =
+        targetKind === "行" ? row : row.closest("[data-drop-zone]")!;
+
+      drag(
+        screen.getByRole("textbox", { name: "グループ1のタスク1" }),
+        target,
+        () => expect(target.querySelector(".absolute")).toBeNull()
+      );
+
+      // 移動元の最後の仕事も失わず、両方のグループをそのまま残す。
+      expect(state.groups).toEqual(initialGroups);
+    }
+  );
+
+  it("指を離す直前に移動先が上限になっても、移動元の仕事を抜かない", () => {
+    const destinationTasks = Array.from(
+      { length: LIMITS.tasksPerGroup - 1 },
+      (_, i) => `仕事${i + 1}`
+    );
+    const state = renderEditor({
+      groups: [
+        { id: "g1", tasks: ["黒板"], emoji: "🧽" },
+        { id: "g2", tasks: destinationTasks, emoji: "🧹" },
+      ],
+    });
+    const target = screen.getByRole("textbox", {
+      name: "グループ2のタスク1",
+    });
+    const fullGroups = [
+      state.groups[0],
+      { ...state.groups[1], tasks: [...destinationTasks, "追加した仕事"] },
+    ];
+
+    drag(
+      screen.getByRole("textbox", { name: "グループ1のタスク1" }),
+      target,
+      () => {
+        expect(
+          target.closest("[data-drop-task]")!.querySelector(".absolute")
+        ).not.toBeNull();
+        act(() => state.replaceGroups(fullGroups));
+      }
+    );
+
+    expect(state.groups).toEqual(fullGroups);
+  });
+
+  it("上限に達していても、同じグループ内の仕事は並べ替えられる", () => {
+    const fullTasks = Array.from(
+      { length: LIMITS.tasksPerGroup },
+      (_, i) => `仕事${i + 1}`
+    );
+    const state = renderEditor({
+      groups: [{ id: "g1", tasks: fullTasks, emoji: "🧽" }],
+    });
+
+    drag(
+      screen.getByRole("textbox", { name: "グループ1のタスク1" }),
+      screen.getByRole("textbox", {
+        name: `グループ1のタスク${LIMITS.tasksPerGroup}`,
+      })
+    );
+
+    expect(state.groups[0].tasks).toEqual([
+      ...fullTasks.slice(1),
+      fullTasks[0],
     ]);
   });
 
