@@ -214,6 +214,10 @@ export const ja = {
   "settings.confirmClose": "変更が保存されていません。閉じますか？",
   "settings.errorNeedTask": "タスクが1つ以上必要です。",
   "settings.errorNeedMember": "担当者が1人以上必要です。",
+  "settings.errorEmptyGroup":
+    "{n}行目の仕事を入力するか、行を削除してください。",
+  "settings.errorEmptyOwner":
+    "{n}行目の名前を入力するか、行を削除してください。",
   "settings.maxMembersReached": "メンバーは最大{n}人までです。",
   "settings.maxGroupsReached": "グループは最大{n}個までです。",
   "settings.maxTasksReached": "タスクは1グループ最大{n}個までです。",

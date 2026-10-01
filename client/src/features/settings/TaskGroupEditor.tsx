@@ -106,6 +106,10 @@ export function TaskGroupEditor({
     return { gIdx: a, idx: b };
   };
 
+  const canDropTaskInGroup = (from: number, to: number) =>
+    !!groups[to] &&
+    (from === to || groups[to].tasks.length < LIMITS.tasksPerGroup);
+
   const clearDropMarks = useCallback(() => {
     setDropGroupIdx(null);
     setDropTarget(null);
@@ -117,7 +121,16 @@ export function TaskGroupEditor({
       item.kind === "group"
         ? "[data-drop-group]"
         : item.kind === "task"
-          ? "[data-drop-task], [data-drop-zone]"
+          ? groups
+              .flatMap((_, gIdx) =>
+                canDropTaskInGroup(item.gIdx, gIdx)
+                  ? [
+                      `[data-drop-task^="${gIdx}:"]`,
+                      `[data-drop-zone="${gIdx}"]`,
+                    ]
+                  : []
+              )
+              .join(", ")
           : "[data-drop-member]",
     onOver: (item, el) => {
       const data = (el as HTMLElement | null)?.dataset;
@@ -150,6 +163,11 @@ export function TaskGroupEditor({
         const to = Number(data.dropGroup);
         if (to !== item.gIdx) moveGroupTo(item.gIdx, to);
       } else if (item.kind === "task") {
+        const to = data.dropTask
+          ? pair(data.dropTask).gIdx
+          : Number(data.dropZone);
+        // 動かしている間に仕事が増えた場合も、元の仕事を抜く前に確かめる。
+        if (!canDropTaskInGroup(item.gIdx, to)) return;
         const next = deepClone(groups);
         const [moved] = next[item.gIdx].tasks.splice(item.tIdx, 1);
         if (data.dropTask) {

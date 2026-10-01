@@ -7,23 +7,23 @@ import type {
   Member,
   RotationConfig,
 } from "@/rotation/types";
-import { deepClone, generateId } from "@/rotation/utils";
-import { MEMBER_PRESETS } from "@/rotation/constants";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useSheetSwipe } from "@/hooks/useSheetSwipe";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import type { ScheduleSettings } from "@/hooks/useScheduleManager";
 import { LIMITS } from "@shared/limits";
-import { TaskGroupEditor } from "./settings/TaskGroupEditor";
-import { DesignThemePicker } from "./settings/DesignThemePicker";
-import { FontPicker } from "./settings/FontPicker";
-import { RotationConfigEditor } from "./settings/RotationConfigEditor";
+import { TaskGroupEditor } from "./TaskGroupEditor";
+import { DesignThemePicker } from "./DesignThemePicker";
+import { FontPicker } from "./FontPicker";
+import { RotationConfigEditor } from "./RotationConfigEditor";
 import { getThemeById, getThemeLabel } from "@/rotation/designThemes";
-import { applyFont, getFontById, getSavedFontId } from "@/fonts";
+import { applyFont, getFontById } from "@/fonts";
 import type { FontId } from "@shared/appearance";
 import { applyThemeToRoot } from "@/contexts/DesignThemeContext";
-import { SheetHandle } from "./SheetHandle";
+import { SheetHandle } from "@/components/SheetHandle";
 import { useLocale, useT, type MessageKey } from "@/i18n";
+import { useSettingsDraft } from "@/features/settings/useSettingsDraft";
+import { prepareSettingsSave } from "@/features/settings/settingsDraft";
 
 interface Props {
   scheduleName: string;
@@ -51,16 +51,6 @@ const EDITOR_TABS: { id: EditorTab; label: MessageKey }[] = [
   { id: "advanced", label: "settings.sectionAdvanced" },
 ];
 
-type EditorPatch = {
-  name?: string;
-  groups?: TaskGroup[];
-  members?: Member[];
-  rotationConfig?: RotationConfig;
-  assignmentMode?: AssignmentMode;
-  designThemeId?: string | undefined;
-  fontId?: FontId;
-};
-
 export function SettingsModal({
   scheduleName,
   groups,
@@ -78,104 +68,34 @@ export function SettingsModal({
 }: Props) {
   const t = useT();
   const { locale } = useLocale();
-  const [editName, setEditName] = useState(scheduleName);
-  const [editGroups, setEditGroups] = useState<TaskGroup[]>(() =>
-    deepClone(groups)
-  );
-  const [editMembers, setEditMembers] = useState<Member[]>(() =>
-    deepClone(members)
-  );
-  const [editRotationConfig, setEditRotationConfig] = useState<RotationConfig>(
-    rotationConfig ?? { mode: "manual" }
-  );
-  const [editAssignmentMode, setEditAssignmentMode] = useState<AssignmentMode>(
-    assignmentMode ?? "member"
-  );
-  const [editDesignThemeId, setEditDesignThemeId] = useState<
-    string | undefined
-  >(designThemeId);
-  const [fontId, setFontId] = useState<FontId>(savedFontId ?? getSavedFontId());
+  const {
+    draft,
+    initial,
+    isDirty,
+    applyPatch: applyEditorPatch,
+    updateRotationConfig,
+    changeAssignmentMode,
+  } = useSettingsDraft({
+    name: scheduleName,
+    groups,
+    members,
+    rotationConfig,
+    pinned,
+    assignmentMode,
+    designThemeId,
+    fontId: savedFontId,
+  });
+  const {
+    name: editName,
+    groups: editGroups,
+    members: editMembers,
+    rotationConfig: editRotationConfig,
+    assignmentMode: editAssignmentMode,
+    designThemeId: editDesignThemeId,
+    fontId,
+  } = draft;
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [isDirty, setIsDirty] = useState(false);
-
-  // 初期値のJSON文字列を一度だけ計算してキャッシュ（isDirty比較用）
-  const initialGroupsJson = useRef(JSON.stringify(groups));
-  const initialMembersJson = useRef(JSON.stringify(members));
-  const initialRotationConfigJson = useRef(
-    JSON.stringify(rotationConfig ?? { mode: "manual" })
-  );
-
   const modalRef = useRef<HTMLDivElement>(null);
-
-  const computeDirty = useCallback(
-    (patch: EditorPatch = {}) => {
-      const nextName = "name" in patch ? (patch.name ?? "") : editName;
-      const nextGroups =
-        "groups" in patch ? (patch.groups ?? editGroups) : editGroups;
-      const nextMembers =
-        "members" in patch ? (patch.members ?? editMembers) : editMembers;
-      const nextRotationConfig =
-        "rotationConfig" in patch
-          ? (patch.rotationConfig ?? editRotationConfig)
-          : editRotationConfig;
-      const nextAssignmentMode =
-        "assignmentMode" in patch
-          ? (patch.assignmentMode ?? "member")
-          : editAssignmentMode;
-      const nextDesignThemeId =
-        "designThemeId" in patch ? patch.designThemeId : editDesignThemeId;
-      const nextFontId = "fontId" in patch ? (patch.fontId ?? fontId) : fontId;
-
-      if (nextName !== scheduleName) return true;
-      if (nextAssignmentMode !== (assignmentMode ?? "member")) return true;
-      if (nextDesignThemeId !== designThemeId) return true;
-      if (nextFontId !== (savedFontId ?? getSavedFontId())) return true;
-      if (JSON.stringify(nextGroups) !== initialGroupsJson.current) return true;
-      if (JSON.stringify(nextMembers) !== initialMembersJson.current)
-        return true;
-      if (
-        JSON.stringify(nextRotationConfig) !== initialRotationConfigJson.current
-      )
-        return true;
-      return false;
-    },
-    [
-      assignmentMode,
-      designThemeId,
-      editAssignmentMode,
-      editDesignThemeId,
-      editGroups,
-      fontId,
-      editMembers,
-      editName,
-      editRotationConfig,
-      scheduleName,
-      savedFontId,
-    ]
-  );
-
-  const applyEditorPatch = useCallback(
-    (patch: EditorPatch) => {
-      if ("name" in patch) setEditName(patch.name ?? "");
-      if ("groups" in patch) setEditGroups(patch.groups ?? []);
-      if ("members" in patch) setEditMembers(patch.members ?? []);
-      if ("rotationConfig" in patch && patch.rotationConfig)
-        setEditRotationConfig(patch.rotationConfig);
-      if ("assignmentMode" in patch && patch.assignmentMode)
-        setEditAssignmentMode(patch.assignmentMode);
-      if ("designThemeId" in patch) setEditDesignThemeId(patch.designThemeId);
-      if ("fontId" in patch && patch.fontId) setFontId(patch.fontId);
-      setIsDirty(computeDirty(patch));
-    },
-    [computeDirty]
-  );
-
-  const updateRotationConfig = useCallback(
-    (updater: (prev: RotationConfig) => RotationConfig) => {
-      applyEditorPatch({ rotationConfig: updater(editRotationConfig) });
-    },
-    [applyEditorPatch, editRotationConfig]
-  );
 
   const handleThemePreview = useCallback(
     (themeId: string) => {
@@ -193,56 +113,25 @@ export function SettingsModal({
     [applyEditorPatch]
   );
 
-  const handleAssignmentModeChange = useCallback(
-    (mode: AssignmentMode) => {
-      let nextGroups = editGroups;
-      let nextMembers = editMembers;
+  const handleAssignmentModeChange = (mode: AssignmentMode) => {
+    changeAssignmentMode(mode, t("settings.newTask"));
+  };
 
-      if (mode === "member") {
-        if (editGroups.length > editMembers.length) {
-          const missing = editGroups.length - editMembers.length;
-          nextMembers = [...editMembers];
-          for (let i = 0; i < missing; i++) {
-            const preset =
-              MEMBER_PRESETS[(editMembers.length + i) % MEMBER_PRESETS.length];
-            nextMembers.push({ id: generateId("m"), name: "", ...preset });
-          }
-        } else if (editMembers.length > editGroups.length) {
-          const extra = editMembers.length - editGroups.length;
-          nextGroups = [...editGroups];
-          for (let i = 0; i < extra; i++) {
-            nextGroups.push({
-              id: generateId("g"),
-              tasks: [t("settings.newTask")],
-              emoji: "✨",
-            });
-          }
-        }
-      }
-
-      applyEditorPatch({
-        assignmentMode: mode,
-        groups: nextGroups,
-        members: nextMembers,
-      });
+  // 保存しない終了は同じ経路を通す。取り消した場合は下書きとプレビューを残す。
+  const discardAndRun = useCallback(
+    (action: () => void) => {
+      if (isDirty && !window.confirm(t("settings.confirmClose"))) return false;
+      applyThemeToRoot(getThemeById(initial.designThemeId));
+      applyFont(getFontById(initial.fontId));
+      action();
+      return true;
     },
-    [applyEditorPatch, editGroups, editMembers, t]
+    [initial, isDirty, t]
   );
-
-  const revertThemePreview = useCallback(() => {
-    if (editDesignThemeId !== designThemeId) {
-      handleThemePreview(designThemeId ?? "whiteboard");
-    }
-    applyFont(getFontById(savedFontId ?? getSavedFontId()));
-  }, [editDesignThemeId, designThemeId, handleThemePreview, savedFontId]);
-
-  // 閉じたら true。保存していない変更があって確認で取り消したら false（下になでたシートを戻すのに使う）
-  const handleCloseWithCheck = useCallback(() => {
-    if (isDirty && !window.confirm(t("settings.confirmClose"))) return false;
-    revertThemePreview();
-    onClose();
-    return true;
-  }, [isDirty, onClose, revertThemePreview, t]);
+  const handleCloseWithCheck = useCallback(
+    () => discardAndRun(onClose),
+    [discardAndRun, onClose]
+  );
 
   useEscapeKey(
     useCallback(() => handleCloseWithCheck(), [handleCloseWithCheck])
@@ -257,62 +146,14 @@ export function SettingsModal({
   };
 
   const handleSave = () => {
+    const result = prepareSettingsSave(draft, initial.name);
+    if (!result.ok) {
+      setValidationError(t(result.key, result.params));
+      selectTab("content");
+      return;
+    }
     setValidationError(null);
-    const cleanedMembers = editMembers.filter(m => m.name.trim() !== "");
-    const activeMemberIds = cleanedMembers.flatMap(m =>
-      m.skipped ? [] : [m.id]
-    );
-    const cleanedGroups = editGroups
-      .map(g => {
-        // 絵文字は空欄にできるが、サーバは min(1) を要求する。空のまま送ると PUT が
-        // 400 になり、同期が黙って止まる（syncManager は 400 を破棄する）ため既定へ戻す。
-        const cleaned = {
-          ...g,
-          emoji: g.emoji.trim() || "✨",
-          tasks: g.tasks.filter(t => t.trim() !== ""),
-        };
-        if (cleaned.memberIds) {
-          const validIds = cleaned.memberIds.filter(id =>
-            activeMemberIds.includes(id)
-          );
-          if (validIds.length === 0) {
-            delete cleaned.memberIds;
-          } else if (validIds.length >= activeMemberIds.length) {
-            // 全員いるが、並び順がデフォルトと同じなら不要なので消す
-            const isSameOrder =
-              validIds.length === activeMemberIds.length &&
-              activeMemberIds.every((id, i) => validIds[i] === id);
-            if (isSameOrder) {
-              delete cleaned.memberIds;
-            } else {
-              cleaned.memberIds = validIds;
-            }
-          } else {
-            cleaned.memberIds = validIds;
-          }
-        }
-        return cleaned;
-      })
-      .filter(g => g.tasks.length > 0);
-
-    if (cleanedGroups.length === 0) {
-      setValidationError(t("settings.errorNeedTask"));
-      return;
-    }
-    if (cleanedMembers.length === 0) {
-      setValidationError(t("settings.errorNeedMember"));
-      return;
-    }
-    onSave({
-      name: editName.trim() || scheduleName,
-      groups: cleanedGroups,
-      members: cleanedMembers,
-      rotationConfig: editRotationConfig,
-      pinned,
-      assignmentMode: editAssignmentMode,
-      designThemeId: editDesignThemeId,
-      fontId,
-    });
+    onSave(result.settings);
   };
 
   const countLabel = (kind: "task" | "group" | "member", count: number) =>
@@ -635,7 +476,7 @@ export function SettingsModal({
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => onDuplicate()}
+                  onClick={() => discardAndRun(onDuplicate)}
                   className="theme-border inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-bold transition-all duration-150 theme-hover-lift"
                   style={{
                     color: "var(--dt-text)",
@@ -649,7 +490,7 @@ export function SettingsModal({
                 {canDelete && (
                   <button
                     type="button"
-                    onClick={() => onDelete()}
+                    onClick={() => discardAndRun(onDelete)}
                     className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-sm font-bold transition-colors hover:bg-red-50"
                     style={{ color: "#DC2626", borderRadius: "10px" }}
                   >
