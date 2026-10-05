@@ -131,6 +131,19 @@ describe("SettingsModal", () => {
     expect(queryByText("削除")).toBeNull();
   });
 
+  it("このアプリの案内は、書きかけを消さないよう新しいタブで開く", () => {
+    const { container } = render(<SettingsModal {...createProps()} />);
+    const links = within(
+      queryDialog(container).dialog as HTMLElement
+    ).getAllByRole("link", { hidden: true });
+    expect(links.map(link => link.getAttribute("href"))).toEqual([
+      "/about",
+      "/privacy",
+      "https://shigoto.dev/works/toban",
+    ]);
+    for (const link of links) expect(link).toHaveAttribute("target", "_blank");
+  });
+
   // 保存内容がサーバの検証を通らないと、PUT が 400 になって同期が黙って止まる
   // （syncManager が 400 を破棄するため、画面上は正常に見えたまま）。
   describe("保存内容がサーバの検証を通ること", () => {

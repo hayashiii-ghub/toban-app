@@ -39,7 +39,7 @@ export default function Home() {
     return (
       <DesignThemeProvider themeId={undefined}>
         <main
-          className="rotation-page min-h-screen"
+          className="rotation-page flex-1"
           style={{ backgroundColor: "var(--dt-page-bg)" }}
         >
           <div className="max-w-md mx-auto px-4 py-16 text-center space-y-4">
@@ -97,7 +97,7 @@ export default function Home() {
       fontId={s.activeSchedule.fontId}
     >
       <main
-        className="rotation-page min-h-screen"
+        className="rotation-page flex-1"
         style={{ backgroundColor: "var(--dt-page-bg)" }}
       >
         <ScheduleHeader
