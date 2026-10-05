@@ -86,14 +86,6 @@ export const en: Record<MessageKey, string> = {
 
   // Landing page
   "lp.docTitle": "toban — Free Duty Roster App & Maker | Create, Print & Share",
-  "lp.shareText":
-    "Easy duty rosters, ready in minutes. Create rotation schedules for cleaning, lunch, and daily duties for free.",
-  "lp.shareTitle": "toban | Easy Duty Rosters",
-  "lp.shareToban": "Share toban",
-  "lp.shareMenuClose": "Close share menu",
-  "lp.shareX": "Share on X",
-  "lp.urlCopied": "Link copied",
-  "lp.copyFailed": "Couldn't copy",
   "lp.createSchedule": "Create a schedule",
   "lp.heroTitleA": "Easy duty rosters,",
   "lp.heroTitleB": "ready in minutes.",
@@ -115,7 +107,6 @@ export const en: Record<MessageKey, string> = {
     "Pick from {count} templates and just add your members.",
   "lp.viewAllTemplates": "See all templates",
   "lp.faqHeading": "FAQ",
-  "lp.hero.badge": "No sign-up · Free",
   "lp.mock.title": "Cleaning duty",
   "lp.mock.week": "Week 2",
   "lp.mock.task1": "Floors",
@@ -129,8 +120,6 @@ export const en: Record<MessageKey, string> = {
   "lp.mock.askLabel": "Ask AI",
   "lp.mock.ask": '"Rotate cleaning among the 4 of us weekly"',
   "lp.ways.or": "or",
-  "lp.cta.heading": "Ready to make your roster?",
-  "lp.cta.sub": "No sign-up. Start right now.",
   "lp.faq.lead": "Can't find your question? Use the contact form below.",
   "lp.ways.heading": "Two ways to make one",
   "lp.ways.template.label": "From a template",

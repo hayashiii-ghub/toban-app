@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "wouter";
-import { ArrowRight } from "lucide-react";
 import { MEMBER_PRESETS } from "@shared/appearance";
-import { useT } from "@/i18n";
 import { LP_COLORS as C } from "./theme";
 
 type Tone = (typeof MEMBER_PRESETS)[number];
@@ -15,33 +13,6 @@ export function ChalkEdge() {
       className="absolute inset-x-0 bottom-0 h-3"
       style={{ backgroundColor: C.border }}
     />
-  );
-}
-
-/** ページ末尾の「さっそく作ってみませんか」の黒板帯 */
-export function LpCtaBand() {
-  const t = useT();
-  return (
-    <section
-      className="relative px-4 py-16 sm:py-20 text-center"
-      style={{ backgroundColor: C.heroBg }}
-    >
-      <h2 className="text-2xl sm:text-3xl" style={{ color: C.heroText }}>
-        {t("lp.cta.heading")}
-      </h2>
-      <p className="mt-3 text-sm sm:text-base" style={{ color: C.heroSubtext }}>
-        {t("lp.cta.sub")}
-      </p>
-      <Link
-        href="/"
-        className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl px-8 py-3.5 text-base sm:text-lg shadow-lg transition-transform hover:-translate-y-0.5"
-        style={{ backgroundColor: C.heroText, color: C.primary }}
-      >
-        {t("lp.createSchedule")}
-        <ArrowRight className="size-5" />
-      </Link>
-      <ChalkEdge />
-    </section>
   );
 }
 
