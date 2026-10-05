@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import {
-  ArrowRight,
-  ChevronDown,
-  Send,
-  Loader2,
-  Share2,
-  Copy,
-  Check,
-} from "lucide-react";
-import { toast } from "sonner";
+import { ArrowRight, ChevronDown, Send, Loader2 } from "lucide-react";
 import {
   TEMPLATE_CATEGORIES,
   TEMPLATE_SEO_DATA,
@@ -22,15 +13,11 @@ import { LIMITS } from "@shared/limits";
 import { getTemplates } from "@shared/template-localization";
 import { LP_COLORS as C, alpha } from "@/features/landing/theme";
 import { HeroRosterMock } from "@/features/landing/HeroRosterMock";
-import { ChalkEdge, LpCtaBand, TemplateCard } from "@/features/landing/parts";
+import { ChalkEdge, TemplateCard } from "@/features/landing/parts";
+import { LpStickyCta } from "@/features/landing/LpStickyCta";
 import { MEMBER_PRESETS } from "@shared/appearance";
 import { useT, useLocale, type MessageKey } from "@/i18n";
 import "./landing.css";
-
-const SHARE_URL =
-  typeof window !== "undefined"
-    ? `${window.location.origin}/about`
-    : "https://toban.app/about";
 
 const CONTACT_CATEGORY_LABEL_KEYS: Record<
   (typeof CONTACT_CATEGORIES)[number],
@@ -41,79 +28,6 @@ const CONTACT_CATEGORY_LABEL_KEYS: Record<
   使い方の質問: "contact.category.howTo",
   その他: "contact.category.other",
 };
-
-function ShareDropdown({ onClose }: { onClose: () => void }) {
-  const t = useT();
-  const [copied, setCopied] = useState(false);
-  const shareText = t("lp.shareText");
-
-  const handleCopyUrl = async () => {
-    try {
-      await navigator.clipboard.writeText(SHARE_URL);
-      setCopied(true);
-      toast.success(t("lp.urlCopied"));
-      setTimeout(() => {
-        setCopied(false);
-        onClose();
-      }, 1000);
-    } catch {
-      toast.error(t("lp.copyFailed"));
-    }
-  };
-
-  const lineShareUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(SHARE_URL)}&text=${encodeURIComponent(shareText)}`;
-  const xShareUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(SHARE_URL)}&text=${encodeURIComponent(shareText)}`;
-
-  return (
-    <>
-      <button
-        type="button"
-        aria-label={t("lp.shareMenuClose")}
-        className="fixed inset-0 z-40 cursor-default"
-        tabIndex={-1}
-        onClick={onClose}
-      />
-      <div
-        className="absolute left-1/2 -translate-x-1/2 mt-2 z-50 w-56 rounded-xl shadow-lg border overflow-hidden"
-        style={{ backgroundColor: C.cardBg, borderColor: C.border }}
-      >
-        <a
-          href={lineShareUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 px-4 py-3 text-sm font-bold hover:bg-gray-50 transition-colors"
-          style={{ color: "#06C755" }}
-        >
-          <svg viewBox="0 0 24 24" className="size-5" fill="currentColor">
-            <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-          </svg>
-          {t("share.lineShare")}
-        </a>
-        <a
-          href={xShareUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 px-4 py-3 text-sm font-bold hover:bg-gray-50 transition-colors"
-          style={{ color: C.text }}
-        >
-          <svg viewBox="0 0 24 24" className="size-5" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-          </svg>
-          {t("lp.shareX")}
-        </a>
-        <button
-          type="button"
-          onClick={handleCopyUrl}
-          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold hover:bg-gray-50 transition-colors"
-          style={{ color: C.text }}
-        >
-          {copied ? <Check className="size-5" /> : <Copy className="size-5" />}
-          {t("share.copyUrl")}
-        </button>
-      </div>
-    </>
-  );
-}
 
 function ContactForm() {
   const t = useT();
@@ -392,39 +306,11 @@ export default function LandingPage() {
   const t = useT();
   const { locale } = useLocale();
   const faqs = locale === "en" ? COMMON_FAQ_EN : COMMON_FAQ;
-  const [showShareMenu, setShowShareMenu] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     document.title = t("lp.docTitle");
   }, [t]);
-
-  useEffect(() => {
-    if (!showShareMenu) return;
-    const close = () => setShowShareMenu(false);
-    window.addEventListener("scroll", close, { passive: true });
-    return () => window.removeEventListener("scroll", close);
-  }, [showShareMenu]);
-
-  const isMobile =
-    typeof navigator !== "undefined" &&
-    /iPhone|iPad|Android/i.test(navigator.userAgent);
-
-  const handleShare = async () => {
-    if (isMobile && navigator.share) {
-      try {
-        await navigator.share({
-          title: t("lp.shareTitle"),
-          text: t("lp.shareText"),
-          url: SHARE_URL,
-        });
-        return;
-      } catch (e) {
-        if ((e as DOMException).name === "AbortError") return;
-      }
-    }
-    setShowShareMenu(prev => !prev);
-  };
 
   return (
     <main
@@ -447,14 +333,8 @@ export default function LandingPage() {
         <ChalkEdge />
         <div className="relative max-w-5xl mx-auto grid md:grid-cols-[1.1fr_1fr] gap-12 md:gap-8 items-center">
           <div className="text-center md:text-left">
-            <span
-              className="inline-block text-xs px-3 py-1 rounded-full mb-5"
-              style={{ backgroundColor: C.highlight, color: C.primary }}
-            >
-              {t("lp.hero.badge")}
-            </span>
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl leading-tight lg:[&:lang(en)]:text-5xl"
+              className="text-[2.75rem] sm:text-5xl lg:text-6xl leading-tight max-sm:[&:lang(en)]:text-4xl lg:[&:lang(en)]:text-5xl"
               style={{ color: C.heroText }}
             >
               {t("lp.heroTitleA")}
@@ -485,33 +365,6 @@ export default function LandingPage() {
               <br />
               {t("lp.heroSubB")}
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-8 py-3.5 text-base sm:text-lg shadow-lg transition-transform hover:-translate-y-0.5"
-                style={{ backgroundColor: C.heroText, color: C.primary }}
-              >
-                {t("lp.createSchedule")}
-                <ArrowRight className="size-5" />
-              </Link>
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={handleShare}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-base border-2 transition-colors cursor-pointer"
-                  style={{
-                    borderColor: alpha(C.heroText, 50),
-                    color: C.heroText,
-                  }}
-                >
-                  <Share2 className="size-5" />
-                  {t("lp.shareToban")}
-                </button>
-                {showShareMenu && (
-                  <ShareDropdown onClose={() => setShowShareMenu(false)} />
-                )}
-              </div>
-            </div>
           </div>
           <HeroRosterMock />
         </div>
@@ -723,8 +576,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <LpCtaBand />
-
       {/* ── お問い合わせ ── */}
       <section id="contact" className="px-4 py-12 sm:py-16">
         <div className="max-w-xl mx-auto">
@@ -754,11 +605,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="pb-24 text-center text-sm">
+      <footer className="pb-8 sm:pb-24 text-center text-sm">
         <a href="/privacy" style={{ color: C.textMuted }}>
           {t("footer.privacy")}
         </a>
       </footer>
+
+      <LpStickyCta href="/">{t("lp.createSchedule")}</LpStickyCta>
 
       {/* JSON-LD: 構造化データ（serializeJsonLd が < をエスケープ）。
           WebApplication はここでは出さない。index.html が SPA シェルとして

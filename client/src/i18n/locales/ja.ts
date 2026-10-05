@@ -90,14 +90,6 @@ export const ja = {
 
   // ランディングページ
   "lp.docTitle": SITE_TITLE,
-  "lp.shareText":
-    "当番表、すぐに完成。名前を入れるだけでも、AIに頼むだけでも。無料の当番表アプリです。",
-  "lp.shareTitle": "toban｜当番表アプリ",
-  "lp.shareToban": "tobanを共有する",
-  "lp.shareMenuClose": "共有メニューを閉じる",
-  "lp.shareX": "Xで共有",
-  "lp.urlCopied": "URLをコピーしました",
-  "lp.copyFailed": "コピーに失敗しました",
   "lp.createSchedule": "当番表を作る",
   "lp.heroTitleA": "当番表、",
   "lp.heroTitleB": "すぐに完成。",
@@ -119,7 +111,6 @@ export const ja = {
     "{count}種類のテンプレートから選んで、メンバーを入れるだけ。",
   "lp.viewAllTemplates": "テンプレート一覧を見る",
   "lp.faqHeading": "よくある質問",
-  "lp.hero.badge": "登録不要・完全無料",
   "lp.mock.title": "掃除当番",
   "lp.mock.week": "第2週",
   "lp.mock.task1": "床そうじ",
@@ -133,8 +124,6 @@ export const ja = {
   "lp.mock.askLabel": "AIに頼むと",
   "lp.mock.ask": "「掃除当番を4人で毎週回して」",
   "lp.ways.or": "または",
-  "lp.cta.heading": "さっそく、当番表を作ってみませんか",
-  "lp.cta.sub": "登録なしで、いますぐ始められます。",
   "lp.faq.lead": "ここにない質問は、ページ下のお問い合わせからどうぞ。",
   "lp.ways.heading": "作り方は、ふたつ",
   "lp.ways.template.label": "テンプレートから",

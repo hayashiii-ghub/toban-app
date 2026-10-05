@@ -7,8 +7,8 @@ import {
   type TemplateSEO,
 } from "@shared/seo-templates";
 import { getTemplates } from "@shared/template-localization";
-import { LpCtaLink } from "@/features/landing/LpCtaLink";
-import { ChalkEdge, LpCtaBand, TemplateCard } from "@/features/landing/parts";
+import { LpStickyCta } from "@/features/landing/LpStickyCta";
+import { ChalkEdge, TemplateCard } from "@/features/landing/parts";
 import { LP_COLORS as C, alpha } from "@/features/landing/theme";
 import { MEMBER_PRESETS } from "@shared/appearance";
 import {
@@ -126,7 +126,7 @@ export default function TemplatesPage() {
       </header>
 
       {/* ── カテゴリ別テンプレート ── */}
-      <div className="px-4 py-12 sm:py-16">
+      <div className="px-4 pt-12 pb-8 sm:pt-16 sm:pb-28">
         <div className="max-w-4xl mx-auto flex flex-col gap-14">
           {categories.map(({ cat, label, description, templates }, ci) => {
             const tone = MEMBER_PRESETS[ci % MEMBER_PRESETS.length];
@@ -182,8 +182,6 @@ export default function TemplatesPage() {
         </div>
       </div>
 
-      <LpCtaBand />
-
       {/* JSON-LD: BreadcrumbList + ItemList（serializeJsonLd が < をエスケープ） */}
       <script
         type="application/ld+json"
@@ -206,10 +204,7 @@ export default function TemplatesPage() {
         }}
       />
 
-      {/* 固定CTAボタン */}
-      <LpCtaLink href="/" variant="fixed">
-        {t("lp.createSchedule")}
-      </LpCtaLink>
+      <LpStickyCta href="/">{t("lp.createSchedule")}</LpStickyCta>
     </main>
   );
 }
