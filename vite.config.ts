@@ -18,7 +18,8 @@ export default defineConfig(({ command }) => ({
     ...VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "toban — 当番表アプリ",
+        // アプリのウィンドウでは、Chrome がこの名前をページの題名の前に付ける。題名とかぶらないよう名前だけにする
+        name: "toban",
         short_name: "toban",
         description: "学校・介護施設・自治会・家庭の当番表を作成・印刷・共有",
         theme_color: "#2D4A3E",
