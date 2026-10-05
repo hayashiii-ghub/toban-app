@@ -2,20 +2,7 @@ import { useState } from "react";
 import { CalendarDays, CalendarPlus } from "lucide-react";
 import type { Member } from "@/rotation/types";
 import { useLocale, useT } from "@/i18n";
-
-/** カレンダーが読みに来る URL（server/routes/schedules.ts の calendar.ics） */
-export function calendarFeedUrl(
-  origin: string,
-  slug: string,
-  memberId: string | null,
-  locale: string
-): string {
-  const params = new URLSearchParams();
-  if (memberId) params.set("member", memberId);
-  if (locale === "en") params.set("lang", "en");
-  const query = params.toString();
-  return `${origin}/api/schedules/${slug}/calendar.ics${query ? `?${query}` : ""}`;
-}
+import { calendarFeedUrl, calendarLinks } from "@/lib/calendarLinks";
 
 /**
  * Google と Apple のカレンダーに購読してもらうボタン。見た目は共有の画面の「URLをコピー」に揃える。
@@ -34,14 +21,9 @@ export function CalendarButtons({
 }) {
   const t = useT();
   const { locale } = useLocale();
-  const feedUrl = calendarFeedUrl(
-    window.location.origin,
-    slug,
-    memberId ?? null,
-    locale
+  const links = calendarLinks(
+    calendarFeedUrl(window.location.origin, slug, memberId ?? null, locale)
   );
-  const webcalUrl = feedUrl.replace(/^https?:/, "webcal:");
-  const googleUrl = `https://calendar.google.com/calendar/render?cid=${encodeURIComponent(webcalUrl)}`;
 
   const buttonClass =
     "theme-border theme-shadow-sm w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-bold transition-all duration-150 theme-hover-lift";
@@ -54,7 +36,7 @@ export function CalendarButtons({
   return (
     <div className={className}>
       <a
-        href={googleUrl}
+        href={links.google}
         target="_blank"
         rel="noopener noreferrer"
         className={buttonClass}
@@ -63,7 +45,7 @@ export function CalendarButtons({
         <CalendarPlus className="size-4" aria-hidden="true" />
         {t("calendar.google")}
       </a>
-      <a href={webcalUrl} className={buttonClass} style={buttonStyle}>
+      <a href={links.apple} className={buttonClass} style={buttonStyle}>
         <CalendarPlus className="size-4" aria-hidden="true" />
         {t("calendar.apple")}
       </a>

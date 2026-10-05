@@ -41,6 +41,7 @@ import {
 } from "@/rotation/scheduleEdits";
 import { VIEW_VALUES } from "@/features/home/viewTabsConfig";
 import { ApiError, getSchedule, toScheduleData } from "@/lib/api";
+import { calendarFeedUrl, calendarLinks } from "@/lib/calendarLinks";
 import { hasPendingSync, scheduleSyncDebounced } from "@/lib/syncManager";
 import {
   formatIsoDateLocal,
@@ -383,6 +384,40 @@ export function buildTobanTools(
         { group_id: emptied.id }
       );
   }
+  /** 公開されていることを公開の GET で確かめる。バックアップの slug は公開の証拠にならない */
+  async function verifyPublic(s: Schedule): Promise<string> {
+    if (!s.slug)
+      throw new ToolError(
+        "NOT_PUBLISHED",
+        say(
+          "未公開です。公開する場合は画面の共有ボタンを使ってください。",
+          "Not published. Use the Share button if you intend to publish."
+        )
+      );
+    try {
+      await getSchedule(encodeURIComponent(s.slug));
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) {
+        publication.set(s.id, { slug: s.slug, status: "not_published" });
+        throw new ToolError(
+          "NOT_PUBLISHED",
+          say(
+            "公開リンクはありません。バックアップは非公開です。",
+            "No public link is available. Backups are private."
+          )
+        );
+      }
+      throw new ToolError(
+        "PUBLICATION_UNKNOWN",
+        say(
+          "通信に失敗したため公開状態を確認できません。",
+          "Could not verify publication because the request failed."
+        )
+      );
+    }
+    publication.set(s.id, { slug: s.slug, status: "public" });
+    return s.slug;
+  }
   function tool<T>(
     toolName: string,
     description: string,
@@ -655,43 +690,66 @@ export function buildTobanTools(
       true,
       async input => {
         const s = selected(input);
-        if (!s.slug)
-          throw new ToolError(
-            "NOT_PUBLISHED",
-            say(
-              "未公開です。公開する場合は画面の共有ボタンを使ってください。",
-              "Not published. Use the Share button if you intend to publish."
-            )
-          );
-        try {
-          await getSchedule(encodeURIComponent(s.slug));
-        } catch (error) {
-          if (error instanceof ApiError && error.status === 404) {
-            publication.set(s.id, { slug: s.slug, status: "not_published" });
-            throw new ToolError(
-              "NOT_PUBLISHED",
-              say(
-                "公開リンクはありません。バックアップは非公開です。",
-                "No public link is available. Backups are private."
-              )
-            );
-          }
-          throw new ToolError(
-            "PUBLICATION_UNKNOWN",
-            say(
-              "通信に失敗したため公開状態を確認できません。",
-              "Could not verify publication because the request failed."
-            )
-          );
-        }
-        publication.set(s.id, { slug: s.slug, status: "public" });
+        const slug = await verifyPublic(s);
         return {
           ok: true,
           code: "OK",
           applied: false,
           schedule_id: s.id,
           publication: "public",
-          url: `${window.location.origin}/s/${encodeURIComponent(s.slug)}`,
+          url: `${window.location.origin}/s/${encodeURIComponent(slug)}`,
+        };
+      }
+    ),
+    tool(
+      "get_calendar_links",
+      "Get links that subscribe Google Calendar or Apple Calendar (or any app that accepts an iCalendar URL) to a published date-mode roster. member_id limits it to that member's duties; omit it for everyone. Calendars refresh on their own schedule (hours to a day) and reminders come from the calendar app's notification settings, not from toban. This tool never publishes; if the roster is not public, use prepare_share.",
+      z.strictObject({ ...targetShape, member_id: id.optional() }),
+      true,
+      async input => {
+        const s = selected(input);
+        if (s.rotationConfig?.mode !== "date")
+          throw new ToolError(
+            "NOT_DATE_MODE",
+            say(
+              "日付で交代する当番表だけカレンダーに追加できます。手で交代する表は、いつ誰の番かが決まりません。",
+              "Only date-mode rosters can be added to a calendar. Manual rotation has no dates."
+            )
+          );
+        const member = input.member_id
+          ? s.members.find(m => m.id === input.member_id)
+          : undefined;
+        if (input.member_id && !member)
+          throw new ToolError(
+            "NOT_FOUND",
+            say(
+              "その担当者はこの当番表にいません。",
+              "That member is not in this roster."
+            ),
+            { member_id: input.member_id }
+          );
+        const slug = await verifyPublic(s);
+        const links = calendarLinks(
+          calendarFeedUrl(
+            window.location.origin,
+            slug,
+            member?.id ?? null,
+            english() ? "en" : "ja"
+          )
+        );
+        return {
+          ok: true,
+          code: "OK",
+          applied: false,
+          schedule_id: s.id,
+          member_id: member?.id ?? null,
+          google_calendar_url: links.google,
+          apple_calendar_url: links.apple,
+          ics_url: links.feed,
+          summary: say(
+            "リンクを開くと、そのカレンダーで購読の確認が出ます。当番表を直すと、カレンダーが読み直したときに反映されます。",
+            "Opening a link asks the calendar to subscribe. Roster edits appear when the calendar refreshes."
+          ),
         };
       }
     ),

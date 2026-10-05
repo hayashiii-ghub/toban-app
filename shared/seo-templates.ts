@@ -440,6 +440,11 @@ export const COMMON_FAQ = [
       "日付モードを設定すれば、開始日と周期に基づいて自動的にローテーションが切り替わります。土日や祝日をスキップする設定もあります。",
   },
   {
+    question: "Googleカレンダーやスマホのカレンダーに入れられますか？",
+    answer:
+      "日付で交代する当番表は、共有するとGoogleカレンダーやiPhoneのカレンダー（Appleカレンダー）に追加できます。共有画面の「カレンダー」タブで全員の当番を、共有リンクを開いて自分の名前を選べば自分の当番だけを入れられます。当番表を直すと、カレンダーにもあとから反映されます。当番の日のお知らせは、カレンダーの通知の設定で出せます。",
+  },
+  {
     question: "推奨ブラウザはありますか？",
     answer:
       "Google Chrome または Microsoft Edge の最新版を推奨しています。印刷レイアウトが最もきれいに出力されます。Safari や Firefox でも基本機能は動作しますが、印刷時のレイアウトが崩れる場合があります。",
@@ -674,6 +679,11 @@ export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
     question: "Does the rotation switch automatically?",
     answer:
       "If you set date mode, the rotation switches automatically based on a start date and cycle. There's also an option to skip weekends and holidays.",
+  },
+  {
+    question: "Can I add the roster to Google Calendar or my phone's calendar?",
+    answer:
+      "Yes, for rosters that rotate by date. Once shared, you can add them to Google Calendar or Apple Calendar: use the Calendar tab on the Share screen for everyone's duties, or open the shared link and choose your name for just your own. Later edits show up in the calendar automatically, and reminders come from your calendar's notification settings.",
   },
   {
     question: "Is there a recommended browser?",

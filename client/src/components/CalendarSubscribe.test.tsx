@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { LanguageProvider } from "@/i18n";
-import { CalendarSubscribe, calendarFeedUrl } from "./CalendarSubscribe";
+import { CalendarSubscribe } from "./CalendarSubscribe";
+import { calendarFeedUrl } from "@/lib/calendarLinks";
 
 const member = {
   id: "m1",
