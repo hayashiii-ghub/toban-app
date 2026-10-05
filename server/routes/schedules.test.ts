@@ -71,6 +71,7 @@ function fakeScheduleRow(overrides: Partial<Record<string, unknown>> = {}) {
     font_id: null,
     created_at: "2026-01-01T00:00:00.000Z",
     updated_at: "2026-01-01T00:00:00.000Z",
+    calendar_accessed_at: null as string | null,
     ...overrides,
   };
 }
@@ -377,6 +378,88 @@ describe("GET /api/schedules/:slug (Public read)", () => {
     expect(res.status).toBe(400);
     const json = await readJson(res);
     expect(json.error).toBe("Invalid slug");
+  });
+});
+
+describe("GET /api/schedules/:slug/calendar.ics (Calendar feed)", () => {
+  const dateRow = (overrides: Partial<Record<string, unknown>> = {}) =>
+    fakeScheduleRow({
+      is_public: 1,
+      rotation_config_json: JSON.stringify({
+        mode: "date",
+        startDate: "2026-01-05",
+        cycleDays: 7,
+      }),
+      ...overrides,
+    });
+
+  function dbWith(row: unknown) {
+    const writes: { sql: string; params: unknown[] }[] = [];
+    const mockDB = createMockD1((sql, params) => {
+      if (sql.startsWith("select")) return { results: row ? [row] : [] };
+      writes.push({ sql, params });
+      return { results: [] };
+    });
+    return { mockDB, writes };
+  }
+
+  it("共有している、日付で交代する表を iCalendar で返し、読まれた日を残す", async () => {
+    const { mockDB, writes } = dbWith(dateRow());
+    const app = await createTestApp(mockDB);
+
+    const res = await app.request(
+      "/api/schedules/abcdefghij/calendar.ics?member=m1"
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toBe(
+      "text/calendar; charset=utf-8"
+    );
+    const body = await res.text();
+    expect(body).toContain("BEGIN:VCALENDAR");
+    expect(body).toContain("X-WR-CALNAME:テスト当番表（田中）");
+    expect(body).toContain("SUMMARY:テスト当番表：掃除");
+    expect(writes).toHaveLength(1);
+    expect(writes[0].sql).toMatch(
+      /update "schedules" set "calendar_accessed_at"/
+    );
+    // 編集の新しさ（updated_at）は変えない
+    expect(writes[0].sql).not.toContain("updated_at");
+  });
+
+  it("1 日以内に読まれていれば、書き込まない", async () => {
+    const { mockDB, writes } = dbWith(
+      dateRow({ calendar_accessed_at: new Date().toISOString() })
+    );
+    const app = await createTestApp(mockDB);
+
+    const res = await app.request("/api/schedules/abcdefghij/calendar.ics");
+
+    expect(res.status).toBe(200);
+    expect(writes).toHaveLength(0);
+  });
+
+  it("共有していない表は 404", async () => {
+    const { mockDB } = dbWith(dateRow({ is_public: 0 }));
+    const app = await createTestApp(mockDB);
+    const res = await app.request("/api/schedules/abcdefghij/calendar.ics");
+    expect(res.status).toBe(404);
+  });
+
+  it("手で交代する表は 404", async () => {
+    const { mockDB } = dbWith(dateRow({ rotation_config_json: null }));
+    const app = await createTestApp(mockDB);
+    const res = await app.request("/api/schedules/abcdefghij/calendar.ics");
+    expect(res.status).toBe(404);
+  });
+
+  it("当番表にいない人は 404", async () => {
+    const { mockDB } = dbWith(dateRow());
+    const app = await createTestApp(mockDB);
+    const res = await app.request(
+      "/api/schedules/abcdefghij/calendar.ics?member=nobody"
+    );
+    expect(res.status).toBe(404);
   });
 });
 

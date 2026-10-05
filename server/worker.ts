@@ -1,6 +1,6 @@
 import app from "./api";
 import { drizzle } from "drizzle-orm/d1";
-import { lt } from "drizzle-orm";
+import { and, isNull, lt, or } from "drizzle-orm";
 import { schedules } from "./db/schema";
 import {
   isBot,
@@ -19,7 +19,7 @@ interface Env {
   SLACK_WEBHOOK_URL: string;
 }
 
-// クラウド保存の保持期間。この日数だけ更新がない行は scheduled で削除する。
+// クラウド保存の保持期間。この日数だけ更新がなく、カレンダーからも読まれていない行は scheduled で削除する。
 // 変更したら利用者への告知（i18n の share.retention / shared.error.notFoundHint / client/public/privacy.html）も合わせること。
 const CLEANUP_RETENTION_DAYS = 365;
 
@@ -134,7 +134,15 @@ export default {
       const db = drizzle(env.DB);
       const result = await db
         .delete(schedules)
-        .where(lt(schedules.updatedAt, cutoff));
+        .where(
+          and(
+            lt(schedules.updatedAt, cutoff),
+            or(
+              isNull(schedules.calendarAccessedAt),
+              lt(schedules.calendarAccessedAt, cutoff)
+            )
+          )
+        );
       console.log(
         `Scheduled cleanup completed: cutoff=${cutoff}, deleted=${result.meta?.changes ?? "unknown"}`
       );

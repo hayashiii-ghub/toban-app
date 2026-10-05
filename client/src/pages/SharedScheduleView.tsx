@@ -296,6 +296,7 @@ export default function SharedScheduleView() {
         </header>
 
         <MyDuty
+          slug={schedule.slug}
           meId={meId}
           groups={schedule.groups}
           members={schedule.members}

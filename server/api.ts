@@ -50,7 +50,11 @@ const MAX_RATE_LIMIT_ENTRIES = 10_000;
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 let rateLimitRequestCount = 0;
 
-function getMaxRequests(method: string): number {
+// カレンダーの購読は Google などのサーバーが、多くの人の分を同じ IP から読みに来るので別枠にする
+const CALENDAR_PATH = /\/calendar\.ics$/;
+
+function getMaxRequests(method: string, path: string): number {
+  if (CALENDAR_PATH.test(path)) return 600;
   if (method === "POST") return 10;
   if (method === "PUT" || method === "DELETE") return 20;
   return 60; // GET
@@ -71,7 +75,8 @@ app.use("/api/*", async (c, next) => {
     c.req.header("x-forwarded-for") ??
     "unknown";
   const method = c.req.method;
-  const key = `${ip}:${method}`;
+  const path = c.req.path;
+  const key = CALENDAR_PATH.test(path) ? `${ip}:calendar` : `${ip}:${method}`;
   const now = Date.now();
 
   // 100リクエストごと、またはエントリ数上限超過時に掃除
@@ -90,7 +95,7 @@ app.use("/api/*", async (c, next) => {
 
   entry.count++;
 
-  if (entry.count > getMaxRequests(method)) {
+  if (entry.count > getMaxRequests(method, path)) {
     const retryAfter = Math.ceil((entry.resetAt - now) / 1000);
     c.header("Retry-After", String(retryAfter > 0 ? retryAfter : 1));
     return c.json({ error: "Too many requests" }, 429);

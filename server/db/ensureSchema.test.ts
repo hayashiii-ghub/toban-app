@@ -59,9 +59,10 @@ describe("ensureSchedulesSchema", () => {
         "design_theme_id",
         "font_id",
         "is_public",
+        "calendar_accessed_at",
       ],
     });
-    expect(runCalls).toHaveLength(6);
+    expect(runCalls).toHaveLength(7);
   });
 
   it("成功後は PRAGMA も ALTER も再実行しない", async () => {
@@ -73,6 +74,7 @@ describe("ensureSchedulesSchema", () => {
       "design_theme_id",
       "font_id",
       "is_public",
+      "calendar_accessed_at",
     ]);
 
     await ensureSchedulesSchema(db);

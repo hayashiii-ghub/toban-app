@@ -9,6 +9,7 @@ const REQUIRED_COLUMNS = [
   "design_theme_id",
   "font_id",
   "is_public",
+  "calendar_accessed_at",
 ];
 
 /** PRAGMA table_info(schedules) だけに答える D1 の偽物 */
