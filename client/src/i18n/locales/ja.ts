@@ -36,7 +36,7 @@ export const ja = {
     "このブラウザでは印刷できません。SafariまたはChromeで開いてください",
   "shared.error.notFound": "当番表が見つかりませんでした",
   "shared.error.notFoundHint":
-    "共有が止められたか、1年間更新がなく消えた可能性があります。送ってくれた人に確かめてください。",
+    "共有が止められたか、1年間使われずに消えた可能性があります。送ってくれた人に確かめてください。",
   "shared.error.retryHint":
     "通信の状態を確かめて、もう一度読み込んでください。",
   "shared.error.server":
@@ -53,6 +53,14 @@ export const ja = {
   "shared.me.rest": "今回はお休みです",
   "shared.me.off": "お休み",
   "shared.me.next": "次の順番",
+  "calendar.add": "カレンダーに追加",
+  "calendar.who": "入れる当番",
+  "calendar.mine": "{name}の当番",
+  "calendar.everyone": "全員の当番",
+  "calendar.google": "Google カレンダー",
+  "calendar.apple": "Apple カレンダー",
+  "calendar.note":
+    "当番表を直すと、カレンダーにもあとから反映されます（数時間〜1日）。当番の日に知らせてほしいときは、カレンダーの通知の設定を使ってください。",
   "shared.printHeader": "順番: {label} ／ 印刷日: {date}",
 
   // 共有モーダル
@@ -69,6 +77,9 @@ export const ja = {
   "share.title": "共有",
   "share.tabView": "👀 見るだけ",
   "share.tabEdit": "✏️ 編集もできる",
+  "share.tabCalendar": "📅 カレンダー",
+  "share.descCalendar":
+    "「{name}」の全員の当番を、あなたのカレンダーに入れます。",
   "share.descView":
     "リンクを知っている人は、だれでも「{name}」を見られます。検索結果には出ません。",
   "share.descEdit":
@@ -85,7 +96,7 @@ export const ja = {
     "このURLを知っている人は当番表を編集できます。信頼できる相手にのみ共有してください。",
   // 日数は server/worker.ts の CLEANUP_RETENTION_DAYS と揃える
   "share.retention":
-    "共有した当番表は、1年間まったく編集がないと自動で削除されます。",
+    "共有した当番表は、1年間まったく編集がなく、カレンダーからも読まれていないと自動で削除されます。",
 
   // ランディングページ
   "lp.docTitle": SITE_TITLE,

@@ -167,7 +167,7 @@ describe("SharedScheduleView", () => {
     );
     if (status === 404)
       expect(
-        screen.getByText(/1年間更新がなく消えた可能性があります/)
+        screen.getByText(/1年間使われずに消えた可能性があります/)
       ).toBeVisible();
   });
 

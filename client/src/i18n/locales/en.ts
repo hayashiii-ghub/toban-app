@@ -36,7 +36,7 @@ export const en: Record<MessageKey, string> = {
     "This browser can't print. Please open the page in Safari or Chrome.",
   "shared.error.notFound": "Schedule not found",
   "shared.error.notFoundHint":
-    "Sharing may have been turned off, or the roster was removed after a year without updates. Please check with the person who sent it.",
+    "Sharing may have been turned off, or the roster was removed after a year without use. Please check with the person who sent it.",
   "shared.error.retryHint": "Check your connection and try loading it again.",
   "shared.error.server":
     "A server error occurred. Please try again in a moment.",
@@ -52,6 +52,14 @@ export const en: Record<MessageKey, string> = {
   "shared.me.rest": "You're off this turn",
   "shared.me.off": "Off",
   "shared.me.next": "Next turn",
+  "calendar.add": "Add to calendar",
+  "calendar.who": "Duties to add",
+  "calendar.mine": "{name}'s duties",
+  "calendar.everyone": "Everyone's duties",
+  "calendar.google": "Google Calendar",
+  "calendar.apple": "Apple Calendar",
+  "calendar.note":
+    "Changes to the roster show up in your calendar later (a few hours to a day). For reminders, turn on notifications in your calendar app.",
   "shared.printHeader": "{label} · Printed: {date}",
 
   // Share modal
@@ -68,6 +76,8 @@ export const en: Record<MessageKey, string> = {
   "share.title": "Share schedule",
   "share.tabView": "👀 View only",
   "share.tabEdit": "✏️ Can edit",
+  "share.tabCalendar": "📅 Calendar",
+  "share.descCalendar": 'Add everyone\'s duties in "{name}" to your calendar.',
   "share.descView":
     'Anyone with this link can view "{name}". It won\'t show up in search results.',
   "share.descEdit": 'Anyone with this link can edit "{name}".',
@@ -82,7 +92,7 @@ export const en: Record<MessageKey, string> = {
   "share.editWarning": "Share this link only with people you trust.",
   // Keep in sync with CLEANUP_RETENTION_DAYS in server/worker.ts
   "share.retention":
-    "Shared schedules are deleted automatically after one year with no edits.",
+    "Shared schedules are deleted automatically after one year with no edits and no calendar reading them.",
 
   // Landing page
   "lp.docTitle": "toban — Free Duty Roster App & Maker | Create, Print & Share",

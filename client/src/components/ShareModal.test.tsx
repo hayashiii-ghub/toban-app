@@ -60,11 +60,36 @@ describe("ShareModal", () => {
     ).toBeTruthy();
   });
 
+  it("日付で交代する表だけ「カレンダー」のタブがあり、下のボタンが Google と Apple に替わる", () => {
+    const { unmount } = render(<ShareModal {...defaultProps} />);
+    expect(screen.queryByRole("button", { name: /カレンダー/ })).toBeNull();
+    unmount();
+
+    render(<ShareModal {...defaultProps} canAddToCalendar />);
+    fireEvent.click(screen.getByRole("button", { name: "📅 カレンダー" }));
+    expect(screen.queryByText("URLをコピー")).toBeNull();
+    expect(
+      screen.getByRole("link", { name: "Google カレンダー" })
+    ).toHaveAttribute(
+      "href",
+      expect.stringContaining(
+        encodeURIComponent("/api/schedules/test-slug/calendar.ics")
+      )
+    );
+    expect(
+      screen
+        .getByRole("link", { name: "Apple カレンダー" })
+        .getAttribute("href")
+    ).toMatch(/^webcal:\/\/.+\/api\/schedules\/test-slug\/calendar\.ics$/);
+  });
+
   // 共有した当番表は放置すると自動削除される。共有する画面で必ず伝える。
   it("保存期間が表示される", () => {
     render(<ShareModal {...defaultProps} />);
     expect(
-      screen.getByText(/1年間まったく編集がないと自動で削除/)
+      screen.getByText(
+        /1年間まったく編集がなく、カレンダーからも読まれていないと自動で削除/
+      )
     ).toBeTruthy();
   });
 });

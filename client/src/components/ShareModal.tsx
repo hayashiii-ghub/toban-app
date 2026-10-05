@@ -15,20 +15,29 @@ import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useSheetSwipe } from "@/hooks/useSheetSwipe";
 import { SheetHandle } from "./SheetHandle";
+import { CalendarButtons } from "./CalendarSubscribe";
 import { encodeShareTransferData } from "@/lib/shareTransfer";
 import { useLocale, useT } from "@/i18n";
 import { toast } from "sonner";
 
-type ShareTab = "view" | "edit";
+type ShareTab = "view" | "edit" | "calendar";
 
 interface Props {
   slug: string;
   editToken: string;
   scheduleName: string;
+  /** 日付で交代する表なら、「カレンダー」のタブを出す（全員の当番を自分のカレンダーに入れる） */
+  canAddToCalendar?: boolean;
   onClose: () => void;
 }
 
-export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
+export function ShareModal({
+  slug,
+  editToken,
+  scheduleName,
+  canAddToCalendar,
+  onClose,
+}: Props) {
   const t = useT();
   const { locale } = useLocale();
   const [activeTab, setActiveTab] = useState<ShareTab>("view");
@@ -99,6 +108,9 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
   const tabs: { value: ShareTab; label: string }[] = [
     { value: "view", label: t("share.tabView") },
     { value: "edit", label: t("share.tabEdit") },
+    ...(canAddToCalendar
+      ? [{ value: "calendar" as const, label: t("share.tabCalendar") }]
+      : []),
   ];
 
   const copyAction = (
@@ -189,14 +201,17 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
         </div>
 
         {/* タブ切り替え。見た目は ViewTabs と揃える */}
-        <div className="shrink-0 grid grid-cols-2 gap-2 px-4 sm:px-5 pt-3">
+        <div
+          className={`shrink-0 grid ${tabs.length === 3 ? "grid-cols-3" : "grid-cols-2"} gap-2 px-4 sm:px-5 pt-3`}
+        >
           {tabs.map(({ value, label }) => (
             <button
               key={value}
               type="button"
-              className={`theme-border py-2 text-sm font-bold transition-all duration-150 ${
-                activeTab === value ? "theme-shadow-sm" : "theme-hover-lift"
-              }`}
+              // 3 つ並ぶと、幅の狭いスマホで「編集もできる」が折れるので字を一段小さくする
+              className={`theme-border py-2 font-bold whitespace-nowrap transition-all duration-150 ${
+                tabs.length === 3 ? "text-xs min-[400px]:text-sm" : "text-sm"
+              } ${activeTab === value ? "theme-shadow-sm" : "theme-hover-lift"}`}
               style={{
                 backgroundColor:
                   activeTab === value
@@ -220,81 +235,104 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
           ))}
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-5 py-4 flex flex-col gap-3">
-          <p className="text-sm" style={{ color: "var(--dt-text-secondary)" }}>
-            {activeTab === "view"
-              ? t("share.descView", { name: scheduleName })
-              : t("share.descEdit", { name: scheduleName })}
-          </p>
-
-          {/* 渡す前に読ませたいので、コピー操作より上に置く */}
-          {activeTab === "edit" && (
-            <div
-              className="flex items-start gap-2 px-3 py-2 rounded-lg"
-              style={{ backgroundColor: "#FEF3C7" }}
-            >
-              <AlertTriangle
-                className="size-4 shrink-0 mt-0.5"
-                style={{ color: "#D97706" }}
-                aria-hidden="true"
-              />
-              <p className="text-xs" style={{ color: "#92400E" }}>
-                {t("share.editWarning")}
+        {/* 中身が増えても子を縮めない（縮むと、はみ出しを隠している URL の欄がつぶれる）。あふれた分はスクロール */}
+        <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-5 py-4 flex flex-col gap-3 [&>*]:shrink-0">
+          {activeTab === "calendar" ? (
+            <>
+              <p
+                className="text-sm"
+                style={{ color: "var(--dt-text-secondary)" }}
+              >
+                {t("share.descCalendar", { name: scheduleName })}
               </p>
-            </div>
-          )}
+              <p
+                className="text-xs leading-relaxed"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("calendar.note")}
+              </p>
+            </>
+          ) : (
+            <>
+              <p
+                className="text-sm"
+                style={{ color: "var(--dt-text-secondary)" }}
+              >
+                {activeTab === "view"
+                  ? t("share.descView", { name: scheduleName })
+                  : t("share.descEdit", { name: scheduleName })}
+              </p>
 
-          {/* 編集URLは data= に長いエンコード文字列が付く。折り返すと画面が
-              埋まるうえ読んでも意味がないので、1行に省略して見せる */}
-          <div
-            className="theme-border px-3 py-2.5 text-xs font-mono truncate"
-            style={{
-              borderRadius: "var(--dt-border-radius-sm)",
-              backgroundColor: "var(--dt-page-bg)",
-              color: "var(--dt-text-secondary)",
-            }}
-            title={currentUrl}
-          >
-            {currentUrl}
-          </div>
-
-          <div>
-            <button
-              type="button"
-              onClick={() => setShowQr(v => !v)}
-              className="flex items-center gap-1.5 text-sm font-bold transition-colors"
-              style={{ color: "var(--dt-text-secondary)" }}
-              aria-expanded={showQr}
-            >
-              <QrCode className="size-4" aria-hidden="true" />
-              {showQr ? t("share.hideQr") : t("share.showQr")}
-              <ChevronDown
-                className={`size-4 transition-transform ${showQr ? "rotate-180" : ""}`}
-                aria-hidden="true"
-              />
-            </button>
-
-            {showQr && (
-              <div ref={qrRef} className="flex justify-center pt-3">
-                {/* 余白は白のままにする。テーマ色にするとクワイエット
-                    ゾーンが崩れて読み取れなくなる */}
+              {/* 渡す前に読ませたいので、コピー操作より上に置く */}
+              {activeTab === "edit" && (
                 <div
-                  className="theme-border p-3"
-                  style={{
-                    borderRadius: "var(--dt-border-radius)",
-                    backgroundColor: "#ffffff",
-                  }}
+                  className="flex items-start gap-2 px-3 py-2 rounded-lg"
+                  style={{ backgroundColor: "#FEF3C7" }}
                 >
-                  <QRCode
-                    value={currentUrl}
-                    size={140}
-                    level="M"
-                    className="w-[140px] h-[140px]"
+                  <AlertTriangle
+                    className="size-4 shrink-0 mt-0.5"
+                    style={{ color: "#D97706" }}
+                    aria-hidden="true"
                   />
+                  <p className="text-xs" style={{ color: "#92400E" }}>
+                    {t("share.editWarning")}
+                  </p>
                 </div>
+              )}
+
+              {/* 編集URLは data= に長いエンコード文字列が付く。折り返すと画面が
+              埋まるうえ読んでも意味がないので、1行に省略して見せる */}
+              <div
+                className="theme-border px-3 py-2.5 text-xs font-mono truncate"
+                style={{
+                  borderRadius: "var(--dt-border-radius-sm)",
+                  backgroundColor: "var(--dt-page-bg)",
+                  color: "var(--dt-text-secondary)",
+                }}
+                title={currentUrl}
+              >
+                {currentUrl}
               </div>
-            )}
-          </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowQr(v => !v)}
+                  className="flex items-center gap-1.5 text-sm font-bold transition-colors"
+                  style={{ color: "var(--dt-text-secondary)" }}
+                  aria-expanded={showQr}
+                >
+                  <QrCode className="size-4" aria-hidden="true" />
+                  {showQr ? t("share.hideQr") : t("share.showQr")}
+                  <ChevronDown
+                    className={`size-4 transition-transform ${showQr ? "rotate-180" : ""}`}
+                    aria-hidden="true"
+                  />
+                </button>
+
+                {showQr && (
+                  <div ref={qrRef} className="flex justify-center pt-3">
+                    {/* 余白は白のままにする。テーマ色にするとクワイエット
+                    ゾーンが崩れて読み取れなくなる */}
+                    <div
+                      className="theme-border p-3"
+                      style={{
+                        borderRadius: "var(--dt-border-radius)",
+                        backgroundColor: "#ffffff",
+                      }}
+                    >
+                      <QRCode
+                        value={currentUrl}
+                        size={140}
+                        level="M"
+                        className="w-[140px] h-[140px]"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         <div
@@ -303,7 +341,9 @@ export function ShareModal({ slug, editToken, scheduleName, onClose }: Props) {
             borderTop: "var(--dt-border-width) solid var(--dt-border-color)",
           }}
         >
-          {locale === "en" ? (
+          {activeTab === "calendar" ? (
+            <CalendarButtons slug={slug} className="flex flex-col gap-2" />
+          ) : locale === "en" ? (
             <>
               {copyAction}
               {lineAction}

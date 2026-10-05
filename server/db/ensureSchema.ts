@@ -34,6 +34,10 @@ const REQUIRED_SCHEDULE_COLUMNS: RequiredColumn[] = [
     name: "is_public",
     sql: "ALTER TABLE schedules ADD COLUMN is_public integer DEFAULT 0 NOT NULL",
   },
+  {
+    name: "calendar_accessed_at",
+    sql: "ALTER TABLE schedules ADD COLUMN calendar_accessed_at text",
+  },
 ];
 
 let schemaReady = false;
