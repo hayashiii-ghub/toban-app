@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useId } from "react";
 import { m } from "framer-motion";
-import { X, Save, Copy, Trash2 } from "lucide-react";
+import { X, Save, Copy, Trash2, ArrowUpRight } from "lucide-react";
 import type {
   AssignmentMode,
   TaskGroup,
@@ -10,6 +10,7 @@ import type {
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { useSheetSwipe } from "@/hooks/useSheetSwipe";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { SITE_LINKS } from "@/components/siteLinks";
 import type { ScheduleSettings } from "@/hooks/useScheduleManager";
 import { LIMITS } from "@shared/limits";
 import { TaskGroupEditor } from "./TaskGroupEditor";
@@ -271,8 +272,8 @@ export function SettingsModal({
           role="tablist"
           aria-label={t("settings.title")}
           onKeyDown={handleTabKeyDown}
-          // スマホは 4 つを等分して全部見せる。PC は左から詰めて並べる
-          className="shrink-0 grid grid-cols-4 sm:flex sm:gap-1 px-2 sm:px-3"
+          // 4 つを等分して、幅いっぱいに並べる
+          className="shrink-0 grid grid-cols-4 px-2 sm:px-3"
           style={{
             borderBottom: "var(--dt-border-width) solid var(--dt-border-color)",
           }}
@@ -499,6 +500,36 @@ export function SettingsModal({
                   </button>
                 )}
               </div>
+            </section>
+
+            <section>
+              <h3
+                className="text-xs font-bold mb-1"
+                style={{ color: "var(--dt-text-muted)" }}
+              >
+                {t("settings.thisApp")}
+              </h3>
+              {/* 書きかけを消さないよう、どれも新しいタブで開く */}
+              <ul className="-mx-2">
+                {SITE_LINKS.map(link => (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 h-11 px-2 rounded-lg text-sm font-bold transition-colors hover:bg-black/5"
+                      style={{ color: "var(--dt-text)" }}
+                    >
+                      {link.icon}
+                      <span className="flex-1">{t(link.labelKey)}</span>
+                      <ArrowUpRight
+                        className="size-4 opacity-50"
+                        aria-hidden="true"
+                      />
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </section>
           </div>
         </div>

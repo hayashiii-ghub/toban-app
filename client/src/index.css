@@ -128,6 +128,13 @@
     font-family: var(--dt-font-family, "Kiwi Maru", serif);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+  /* ページの下に案内（App.tsx の AppFooter）を置くページは、本体を flex-1 にして
+     中身が短いときも案内を画面の下端に収める（min-h-screen だと案内が画面の外に押し出される） */
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),

@@ -10,7 +10,6 @@ export const ja = {
 
   "footer.about": "toban について",
   "footer.privacy": "プライバシー",
-  "more.aria": "その他のメニュー",
   "footer.maker": "はやしごと",
 
   // 共通
@@ -238,6 +237,7 @@ export const ja = {
   "settings.summarySeparator": "・",
   "settings.sectionAdvanced": "くわしい設定",
   "settings.thisRoster": "この当番表",
+  "settings.thisApp": "このアプリ",
   "settings.sectionAppearance": "見た目",
   "settings.sectionRotation": "交代のしかた",
 
@@ -341,8 +341,6 @@ export const ja = {
 
   // 当番表タブ
   "tabs.navAria": "当番表の切り替え",
-  "tabs.scrollLeft": "左にスクロール",
-  "tabs.scrollRight": "右にスクロール",
   "tabs.tablistAria":
     "当番表タブ一覧（Alt+矢印キーで並び替え、Shift+F10でメニュー）",
   "tabs.tabAria": "{name}タブ",

@@ -36,7 +36,6 @@ function Router() {
   );
 }
 
-// スマホの「⋯」メニュー（MoreMenu）と同じアイコンと言葉で並べる
 const FOOTER_ITEM_CLASS =
   "flex items-center gap-1.5 px-2 h-8 rounded-full text-sm whitespace-nowrap text-muted-foreground/60 hover:text-muted-foreground/80 hover:bg-muted/40 transition-colors";
 
@@ -49,7 +48,7 @@ function AppFooter() {
 
   return (
     <footer
-      // ホームのスマホ表示では、同じ案内をタイトル右上の「⋯」（MoreMenu）に出す
+      // ホームのスマホ表示では出さない（言語はタイトルの右上、ほかは編集画面の「くわしい設定」にある）
       className={`px-3 pt-6 pb-[calc(1rem+var(--home-toolbar-space,0px))] print:hidden ${location === "/" ? "max-sm:hidden" : ""}`}
       style={{
         backgroundColor: "var(--dt-page-bg)",

@@ -64,7 +64,7 @@ export function RotationControls({
     <div className="rotation-no-print sm:px-4 sm:pb-3">
       <div className="sm:max-w-4xl sm:mx-auto">
         <m.div
-          className="theme-border theme-shadow max-sm:border-x-0 max-sm:border-b-0 sm:rounded-[var(--dt-border-radius)] px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] sm:p-2.5 flex flex-wrap lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between gap-x-2 gap-y-1.5 sm:gap-y-2.5"
+          className="theme-border theme-shadow max-sm:shadow-none max-sm:border-x-0 max-sm:border-b-0 sm:rounded-[var(--dt-border-radius)] px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] sm:p-2.5 flex flex-wrap lg:grid lg:grid-cols-[1fr_auto_1fr] items-center justify-between gap-x-2 gap-y-1.5 sm:gap-y-2.5"
           style={{
             backgroundColor: "var(--dt-control-bar-bg)",
             color: "var(--dt-control-bar-text)",

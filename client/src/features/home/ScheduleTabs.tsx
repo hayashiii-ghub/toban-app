@@ -1,10 +1,4 @@
-import {
-  GripVertical,
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-  Pin,
-} from "lucide-react";
+import { GripVertical, Plus, Pin } from "lucide-react";
 import { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import type { Schedule } from "@/rotation/types";
 import { useT } from "@/i18n";
@@ -167,12 +161,6 @@ export function ScheduleTabs({
     };
   }, [schedules.length]);
 
-  const scroll = (dir: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir === "left" ? -120 : 120, behavior: "smooth" });
-  };
-
   const handleTabKeyDown = (
     e: React.KeyboardEvent<HTMLButtonElement>,
     scheduleId: string,
@@ -238,29 +226,15 @@ export function ScheduleTabs({
       <div className="max-w-4xl mx-auto">
         <nav aria-label={t("tabs.navAria")}>
           <div className="relative flex items-center">
-            {canScrollLeft && (
-              <button
-                type="button"
-                onClick={() => scroll("left")}
-                className="absolute left-0 z-10 size-7 flex items-center justify-center rounded-full sm:hidden"
-                style={{
-                  backgroundColor:
-                    "color-mix(in srgb, var(--dt-page-bg) 90%, transparent)",
-                  boxShadow: "2px 0 8px rgba(0,0,0,0.1)",
-                }}
-                aria-label={t("tabs.scrollLeft")}
-              >
-                <ChevronLeft
-                  className="size-4"
-                  style={{ color: "var(--dt-text-secondary)" }}
-                />
-              </button>
-            )}
             <div
               ref={scrollRef}
               role="tablist"
               aria-label={t("tabs.tablistAria")}
               className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide"
+              // 続きがある側の端を薄くして、タブが途中で切れて見えないようにする
+              style={{
+                maskImage: `linear-gradient(to right, ${canScrollLeft ? "transparent" : "#000"}, #000 1.5rem, #000 calc(100% - 1.5rem), ${canScrollRight ? "transparent" : "#000"})`,
+              }}
             >
               {sortedSchedules.map((schedule, index) => (
                 <button
@@ -353,24 +327,6 @@ export function ScheduleTabs({
                 </span>
               </button>
             </div>
-            {canScrollRight && (
-              <button
-                type="button"
-                onClick={() => scroll("right")}
-                className="absolute right-0 z-10 size-7 flex items-center justify-center rounded-full sm:hidden"
-                style={{
-                  backgroundColor:
-                    "color-mix(in srgb, var(--dt-page-bg) 90%, transparent)",
-                  boxShadow: "-2px 0 8px rgba(0,0,0,0.1)",
-                }}
-                aria-label={t("tabs.scrollRight")}
-              >
-                <ChevronRight
-                  className="size-4"
-                  style={{ color: "var(--dt-text-secondary)" }}
-                />
-              </button>
-            )}
           </div>
         </nav>
       </div>

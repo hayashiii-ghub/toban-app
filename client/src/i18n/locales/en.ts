@@ -10,7 +10,6 @@ export const en: Record<MessageKey, string> = {
 
   "footer.about": "About toban",
   "footer.privacy": "Privacy",
-  "more.aria": "More",
   "footer.maker": "shigoto.dev",
 
   // Common
@@ -235,6 +234,7 @@ export const en: Record<MessageKey, string> = {
   "settings.summarySeparator": " · ",
   "settings.sectionAdvanced": "Advanced",
   "settings.thisRoster": "This roster",
+  "settings.thisApp": "This app",
   "settings.sectionAppearance": "Appearance",
   "settings.sectionRotation": "How turns change",
 
@@ -339,8 +339,6 @@ export const en: Record<MessageKey, string> = {
 
   // Schedule tabs
   "tabs.navAria": "Switch schedules",
-  "tabs.scrollLeft": "Scroll left",
-  "tabs.scrollRight": "Scroll right",
   "tabs.tablistAria":
     "Schedule tabs (Alt+Arrow keys to reorder, Shift+F10 for the menu)",
   "tabs.tabAria": "{name} tab",
