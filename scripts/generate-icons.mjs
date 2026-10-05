@@ -4,10 +4,12 @@ import { fileURLToPath } from "node:url";
 import { Resvg } from "@resvg/resvg-js";
 
 // アイコンの SVG ソース（client/public/favicon.svg・pwa-icon.svg）は
-// Kiwi Maru のグリフをパス化済み＝フォント非依存。ここでは各サイズの PNG を
+// Kiwi Maru Medium の「当」をパス化済み＝フォント非依存。ここでは各サイズの PNG を
 // resvg でラスタライズするだけ。
-//   favicon.svg  = 「t」モノグラム・角丸（ブラウザタブ）
-//   pwa-icon.svg = 「toban」ワードマーク・正方形（アプリ／PWA）
+//   字は地の 63% の大きさで、描かれた部分の外接矩形の中心を地の中心に合わせている。
+//   地の色は manifest の theme_color（#2D4A3E）、字は LP の黒板の字（--lp-hero-text）
+//   favicon.svg  = 角丸（ブラウザタブ）
+//   pwa-icon.svg = 正方形（アプリ／PWA。角は OS が切り抜く）
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pub = path.resolve(__dirname, "..", "client/public");
 
