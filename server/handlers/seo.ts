@@ -231,7 +231,7 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 <ul>
 <li>登録不要・エクセル不要 — アカウントもExcelテンプレートも要らず、ブラウザだけで完結</li>
 <li>印刷がきれい — カード・一覧表・カレンダー・円盤の4形式</li>
-<li>URLで共有 — LINEやメールで送れる</li>
+<li>URLで共有 — LINEで送れる。カレンダーにも追加できる</li>
 <li>完全無料 — すべての機能を無料で利用可能</li>
 </ul>
 <h2>作り方は、ふたつ</h2>

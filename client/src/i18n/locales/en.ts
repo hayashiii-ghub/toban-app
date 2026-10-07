@@ -110,7 +110,8 @@ export const en: Record<MessageKey, string> = {
   "lp.feat.print.desc":
     "Print in four formats: cards, table, calendar, or wheel.",
   "lp.feat.share.label": "Share with a link",
-  "lp.feat.share.desc": "Copy a link and send it to your group.",
+  "lp.feat.share.desc":
+    "Copy a link and send it to your group, or add the roster to a calendar.",
   "lp.feat.free.label": "Completely free",
   "lp.feat.free.desc": "All features are free to use.",
   "lp.templatesHeading": "Ready-to-use templates",

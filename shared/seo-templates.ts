@@ -430,9 +430,9 @@ export const COMMON_FAQ = [
       "はい、ブラウザの印刷機能を使って、きれいなレイアウトで印刷や画像保存ができます。印刷ダイアログからPDF保存も可能です。カード表示・一覧表・カレンダー・円盤の4つの形式から選べます。",
   },
   {
-    question: "当番表をLINEなどで共有するにはどうすればいいですか？",
+    question: "当番表をLINEで共有するにはどうすればいいですか？",
     answer:
-      "共有ボタンからURLを発行できます。発行したURLはLINEやメールでそのまま送れます。閲覧用URLを送れば誰でも当番表を確認でき、編集用URLを渡せば共同で編集することもできます。QRコードでの共有にも対応しています。",
+      "共有ボタンからURLを発行できます。発行したURLはLINEでそのまま送れます。カレンダーへの追加もできます。閲覧用URLを送れば誰でも当番表を確認でき、編集用URLを渡せば共同で編集することもできます。QRコードでの共有にも対応しています。",
   },
   {
     question: "ローテーションは自動で切り替わりますか？",
@@ -673,7 +673,7 @@ export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
   {
     question: "How do I share a roster with others?",
     answer:
-      "Issue a URL from the Share button. Send a view-only URL so anyone can see the roster, or share an edit URL to collaborate. QR-code sharing is also supported.",
+      "Issue a URL from the Share button and send it to your group. You can also add the roster to a calendar. Send a view-only URL so anyone can see the roster, or share an edit URL to collaborate. QR-code sharing is also supported.",
   },
   {
     question: "Does the rotation switch automatically?",
