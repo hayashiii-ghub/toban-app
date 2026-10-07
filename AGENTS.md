@@ -24,7 +24,7 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 
 ## データ
 
-- 正本は localStorage。編集した当番表は、共有していなくても D1 に非公開で自動バックアップする（`useAutoSync`）。共有すると公開になる。1 年間更新の無い行は cron で消す（`CLEANUP_RETENTION_DAYS`。i18n の `share.retention`・`shared.error.notFoundHint` と `client/public/privacy.html` の記述と揃える）
+- 正本は localStorage。編集した当番表は、共有していなくても D1 に非公開で自動バックアップする（`useAutoSync`）。共有すると公開になる。1 年間更新が無く、カレンダーの購読（`/api/schedules/:slug/calendar.ics`）からも読まれていない行は cron で消す（`CLEANUP_RETENTION_DAYS`・`calendar_accessed_at`。i18n の `share.retention`・`shared.error.notFoundHint` と `client/public/privacy.html` の記述と揃える）
 - 同期まわり（`hooks/useAutoSync.ts` / `lib/syncManager.ts` / `lib/api.ts`）の変更はデータ消失につながる。`*.recovery.test.*` を含む既存テストを必ず通す
 - migration は `server/db/migrations/` に連番の SQL を手で書く（drizzle-kit は使わない。wrangler は `.sql` だけを読む）。既存のファイルは変えない。列を足したら `server/db/schema.ts` と `server/db/ensureSchema.ts` の `REQUIRED_SCHEDULE_COLUMNS` も揃える
 - 外部に送る情報を増やす（解析ツール、新しい外部サービスなど）ときは `client/public/privacy.html` も直す
@@ -40,11 +40,11 @@ toban を実装するときに守ること。コードを読めば分かるこ�
 ## 置き場所
 
 - 画面の機能コンポーネントは `client/src/features/<機能名>/`。`components/` は横断的に使うものだけ
-- ホームの操作の帯（表示の切り替えを含む）と当番表のタブは、スマホでは画面の下にまとめて固定し（`Home.tsx` の `.home-bottom-panel`）、PC ではタイトルの下に置く。画面の下に何かを固定するときは `--home-toolbar-space`（`client/src/pages/home.css`）の分だけ持ち上げる（通知・アプリ追加の案内はそうしてある）。スマホのホームでは、ページの一番下の案内の代わりにタイトル右上の「⋯」（`MoreMenu`）を出す。案内の項目は `components/siteLinks.tsx` の 1 か所で持つ
+- ホームの操作の帯（表示の切り替えを含む）と当番表のタブは、スマホでは画面の下にまとめて固定し（`Home.tsx` の `.home-bottom-panel`）、PC ではタイトルの下に置く。画面の下に何かを固定するときは `--home-toolbar-space`（`client/src/pages/home.css`）の分だけ持ち上げる（通知・アプリ追加の案内はそうしてある）。スマホのホームでは、ページの一番下の案内を出さず、言語の切り替えをタイトルの右上に、ほかの案内を編集画面の「くわしい設定」に置く。案内の項目は `components/siteLinks.tsx` の 1 か所で持つ
 - テーマの字の色は、どの背景との組み合わせもコントラスト比 4.5（WCAG AA）以上にする（`designThemes.test.ts` が見張る）。読みにくい字を白い面や半透明でごまかさない。帯はどの色も深くして白い字にそろえ、帯の上の字は面を敷かずに直接置いている
 - 並べ替えは HTML の drag and drop を使わない（スマホの指では動かない）。`hooks/usePointerDrag.ts` で、つまむ印（`touch-action: none`）から動かし、落とせる所に `data-drop-*` を付ける。指で動かす確認は `e2e/touch-gestures.spec.ts`（CDP で指の動きを送る）
 - スマホで下から出る画面は、見出しを下になでて閉じられる（`hooks/useSheetSwipe.ts` と `SheetHandle`）。新しく作るシートにも付ける
-- `client/src/rotation/` は React / DOM に依存させない（iOS 版で流用する予定）。型の import は可
+- `client/src/rotation/` は React / DOM に依存させない（iOS 版で流用する予定）。型の import は可。`turns.ts`（誰がいつ何の当番か）はサーバーのカレンダー配信（`server/calendar.ts`）も読むので、`@/` の import やブラウザの API を入れない
 
 ## テストの書き方
 

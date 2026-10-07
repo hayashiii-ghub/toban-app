@@ -1,7 +1,7 @@
 import { m } from "framer-motion";
 import { usePrintDateString } from "@/hooks/usePrintDateString";
 import { useT } from "@/i18n";
-import { MoreMenu } from "./MoreMenu";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface ScheduleHeaderProps {
   scheduleName: string;
@@ -22,9 +22,13 @@ export function ScheduleHeader({
   return (
     <header className="rotation-print-header pt-6 sm:pt-8 pb-3 sm:pb-6 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto text-center relative">
-        {/* スマホはページの一番下の案内（言語・プライバシーなど）が下の帯に隠れるので、ここにまとめる */}
+        {/* スマホはページの一番下の案内が下の帯に隠れるので、言語の切り替えだけをここに出す
+            （ほかの案内は編集画面の「くわしい設定」にある） */}
         <div className="absolute -right-1 -top-0.5 sm:hidden rotation-no-print">
-          <MoreMenu />
+          <LanguageSwitcher
+            iconOnly
+            className="size-9 flex items-center justify-center rounded-full transition-colors hover:bg-black/5 text-[var(--dt-text-secondary)]"
+          />
         </div>
         <m.div
           initial={{ y: -20, opacity: 0 }}

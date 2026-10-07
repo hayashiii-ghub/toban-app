@@ -16,7 +16,7 @@ import {
   serializeJsonLd,
 } from "@shared/jsonLd";
 import { getTemplates } from "@shared/template-localization";
-import { LpCtaLink } from "@/features/landing/LpCtaLink";
+import { LpStickyCta } from "@/features/landing/LpStickyCta";
 import type { ScheduleTemplate } from "@/rotation/types";
 import { useT, useLocale } from "@/i18n";
 import { usePageMeta } from "@/hooks/usePageMeta";
@@ -235,7 +235,7 @@ function TemplateDetailContent({
       </div>
 
       {/* 他のテンプレートへのリンク（内部リンク強化） */}
-      <section className="px-4 pb-24 max-w-3xl mx-auto">
+      <section className="px-4 pb-8 sm:pb-24 max-w-3xl mx-auto">
         <h2 className="text-base font-extrabold text-lp-text mb-3">
           {t("templatesDetail.related")}
         </h2>
@@ -265,10 +265,9 @@ function TemplateDetailContent({
         }}
       />
 
-      {/* 固定CTAボタン */}
-      <LpCtaLink href={`/?template=${seo.templateIndex}`} variant="fixed">
+      <LpStickyCta href={`/?template=${seo.templateIndex}`}>
         {t("templatesDetail.createFromThis")}
-      </LpCtaLink>
+      </LpStickyCta>
     </main>
   );
 }

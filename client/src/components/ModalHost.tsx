@@ -96,6 +96,7 @@ export function ModalHost({
               slug={activeSchedule.slug}
               editToken={activeSchedule.editToken}
               scheduleName={activeSchedule.name}
+              canAddToCalendar={activeSchedule.rotationConfig?.mode === "date"}
               onClose={onCloseShare}
             />
           )}

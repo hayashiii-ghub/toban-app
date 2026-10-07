@@ -152,3 +152,40 @@ describe("bot とそれ以外の振り分け", () => {
     expect(assets.fetch).toHaveBeenCalledOnce();
   });
 });
+
+describe("1 年使われていない当番表の削除（scheduled）", () => {
+  it("編集が 1 年なくても、カレンダーから読まれている表は消さない", async () => {
+    const statements: { sql: string; params: unknown[] }[] = [];
+    const DB = {
+      prepare(sql: string) {
+        const stmt = {
+          params: [] as unknown[],
+          bind(...params: unknown[]) {
+            stmt.params = params;
+            return stmt;
+          },
+          async run() {
+            statements.push({ sql, params: stmt.params });
+            return { results: [], success: true, meta: { changes: 0 } };
+          },
+        };
+        return stmt;
+      },
+    } as unknown as D1Database;
+
+    await worker.scheduled(
+      {} as ScheduledEvent,
+      { DB } as Parameters<typeof worker.scheduled>[1],
+      {} as ExecutionContext
+    );
+
+    expect(statements).toHaveLength(1);
+    const [{ sql, params }] = statements;
+    expect(sql).toMatch(/^delete from "schedules"/);
+    expect(sql).toContain('"updated_at" < ?');
+    expect(sql).toContain('"calendar_accessed_at" is null');
+    expect(sql).toContain('"calendar_accessed_at" < ?');
+    // どちらも同じ「1 年前」で比べる
+    expect(params[0]).toBe(params[1]);
+  });
+});

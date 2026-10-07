@@ -168,7 +168,7 @@ export default function SharedScheduleView() {
     return (
       <DesignThemeProvider themeId={DEFAULT_THEME_ID}>
         <div
-          className="rotation-page min-h-screen flex items-center justify-center p-4"
+          className="rotation-page flex-1 flex items-center justify-center p-4"
           style={{ backgroundColor: "var(--dt-page-bg)" }}
         >
           <div
@@ -246,7 +246,7 @@ export default function SharedScheduleView() {
       fontId={schedule?.fontId}
     >
       <main
-        className="rotation-page min-h-screen"
+        className="rotation-page flex-1"
         style={{ backgroundColor: "var(--dt-page-bg)" }}
       >
         <header className="rotation-print-header pt-6 sm:pt-8 pb-6 sm:pb-8 px-3 sm:px-4">
@@ -296,6 +296,7 @@ export default function SharedScheduleView() {
         </header>
 
         <MyDuty
+          slug={schedule.slug}
           meId={meId}
           groups={schedule.groups}
           members={schedule.members}

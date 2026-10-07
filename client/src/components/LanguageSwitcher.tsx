@@ -3,13 +3,18 @@ import { useLocale, useT } from "@/i18n";
 
 interface LanguageSwitcherProps {
   className?: string;
+  /** 字を出さず、印だけにする（狭い所に置くとき） */
+  iconOnly?: boolean;
 }
 
 const DEFAULT_CLASS =
   "flex items-center gap-1 px-2 h-8 rounded-full text-sm text-muted-foreground/60 hover:text-muted-foreground/80 hover:bg-muted/40 transition-colors";
 
 // JA ⇄ EN のトグル。2 言語なので dropdown ではなく「切り替え先を表示するボタン」。
-export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
+export default function LanguageSwitcher({
+  className,
+  iconOnly,
+}: LanguageSwitcherProps) {
   const { locale, setLocale } = useLocale();
   const t = useT();
 
@@ -24,8 +29,11 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
       title={t("lang.switchLabel")}
       className={className ?? DEFAULT_CLASS}
     >
-      <Languages className="size-4" aria-hidden="true" />
-      <span className="font-medium">{nextLabel}</span>
+      <Languages
+        className={iconOnly ? "size-5" : "size-4"}
+        aria-hidden="true"
+      />
+      {!iconOnly && <span className="font-medium">{nextLabel}</span>}
     </button>
   );
 }

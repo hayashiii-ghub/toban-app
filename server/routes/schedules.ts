@@ -18,6 +18,7 @@ import {
   createScheduleSchema,
   updateScheduleSchema,
 } from "../schemas/schedule";
+import { buildCalendar } from "../calendar";
 
 type Env = { Bindings: { DB: D1Database } };
 
@@ -158,6 +159,65 @@ app.get("/:slug/edit", async c => {
     logDatabaseError("edit-read", error, { slug });
     return c.json({ error: "Corrupted schedule data" }, 500);
   }
+});
+
+// GET /api/schedules/:slug/calendar.ics - カレンダーの購読（共有している、日付で交代する表だけ）
+// ?member=<id> でその人の当番だけ、省けば全員。?lang=en で英語の区切り
+app.get("/:slug/calendar.ics", async c => {
+  const slug = c.req.param("slug");
+  if (!SLUG_PATTERN.test(slug)) return c.text("Invalid slug", 400);
+  const memberId = c.req.query("member") || undefined;
+  const lang = c.req.query("lang") === "en" ? "en" : "ja";
+
+  const db = drizzle(c.env.DB);
+  let row: typeof schedules.$inferSelect | undefined;
+  let schedule: ReturnType<typeof serializeSchedule>;
+  try {
+    [row] = await db
+      .select()
+      .from(schedules)
+      .where(eq(schedules.slug, slug))
+      .limit(1);
+    if (!row || !row.isPublic) return c.text("Not found", 404);
+    schedule = serializeSchedule(row);
+  } catch (error) {
+    logDatabaseError("calendar", error, { slug });
+    return c.text("Corrupted schedule data", 500);
+  }
+  if (schedule.rotationConfig?.mode !== "date") {
+    return c.text("Not found", 404);
+  }
+  if (memberId && !schedule.members.some(m => m.id === memberId)) {
+    return c.text("Not found", 404);
+  }
+
+  // 読まれている表は 1 年の削除から外す（worker.ts の scheduled）。書くのは 1 日に 1 回まで。
+  // updated_at は変えない（編集の新しさを表す値なので）
+  const now = new Date();
+  const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  if (!row.calendarAccessedAt || row.calendarAccessedAt < dayAgo) {
+    try {
+      await db
+        .update(schedules)
+        .set({ calendarAccessedAt: now.toISOString() })
+        .where(eq(schedules.id, row.id));
+    } catch (error) {
+      // 記録に失敗しても、カレンダーは返す
+      logDatabaseError("calendar-access", error, { slug });
+    }
+  }
+
+  const body = buildCalendar(schedule, {
+    memberId,
+    lang,
+    origin: new URL(c.req.url).origin,
+    now,
+  });
+  return c.body(body, 200, {
+    "Content-Type": "text/calendar; charset=utf-8",
+    "Cache-Control": "max-age=3600",
+    "Content-Disposition": 'inline; filename="toban.ics"',
+  });
 });
 
 // GET /api/schedules/:slug - Read (public)

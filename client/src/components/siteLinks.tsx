@@ -10,8 +10,8 @@ export interface SiteLink {
 }
 
 /**
- * 画面の一番下の案内（App.tsx の AppFooter）と、スマホの「⋯」メニュー（MoreMenu）に並べるリンク。
- * 見た目と中身を揃えるため、どちらもここから作る（言語の切り替えは別に先頭へ置く）
+ * 画面の一番下の案内（App.tsx の AppFooter）と、編集画面の「くわしい設定」に並べるリンク。
+ * 中身を揃えるため、どちらもここから作る（言語の切り替えは別に置く）
  */
 export const SITE_LINKS: SiteLink[] = [
   {

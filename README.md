@@ -74,7 +74,7 @@ Cloudflare 側で設定する環境変数:
 
 ## WebMCP 対応
 
-AI エージェントが、利用者の開いている toban の画面をそのまま操作して、当番表の作成・修正・印刷ができる。[WebMCP](https://developer.chrome.com/docs/ai/webmcp) のツールを 18 個公開している（実装は `client/src/hooks/useTobanTools.ts`）。デモ動画（英語・2分）: https://youtu.be/4CSxh6WW51w
+AI エージェントが、利用者の開いている toban の画面をそのまま操作して、当番表の作成・修正・印刷ができる。[WebMCP](https://developer.chrome.com/docs/ai/webmcp) のツールを 19 個公開している（実装は `client/src/hooks/useTobanTools.ts`）。デモ動画（英語・2分）: https://youtu.be/4CSxh6WW51w
 
 使える環境:
 
@@ -85,7 +85,7 @@ AI エージェントが、利用者の開いている toban の画面をその�
 
 | 種類 | ツール                                                                                                                                                           |
 | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 読む | `list_schedules` `get_current_assignments` `get_schedule_details` `get_share_link`                                                                               |
+| 読む | `list_schedules` `get_current_assignments` `get_schedule_details` `get_share_link` `get_calendar_links`                                                          |
 | 作る | `create_schedule` `duplicate_schedule` `update_schedule` `add_member` `update_member` `remove_member` `set_rotation` `configure_rotation` `configure_appearance` |
 | 操作 | `switch_schedule` `advance_rotation` `change_view` `print_schedule` `prepare_share`                                                                              |
 

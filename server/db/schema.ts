@@ -21,4 +21,6 @@ export const schedules = sqliteTable("schedules", {
   fontId: text("font_id"),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
+  // カレンダーが購読 URL を最後に読みに来た日時。読まれている間は 1 年の削除の対象にしない
+  calendarAccessedAt: text("calendar_accessed_at"),
 });

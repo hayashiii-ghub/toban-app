@@ -10,7 +10,6 @@ export const en: Record<MessageKey, string> = {
 
   "footer.about": "About toban",
   "footer.privacy": "Privacy",
-  "more.aria": "More",
   "footer.maker": "shigoto.dev",
 
   // Common
@@ -37,7 +36,7 @@ export const en: Record<MessageKey, string> = {
     "This browser can't print. Please open the page in Safari or Chrome.",
   "shared.error.notFound": "Schedule not found",
   "shared.error.notFoundHint":
-    "Sharing may have been turned off, or the roster was removed after a year without updates. Please check with the person who sent it.",
+    "Sharing may have been turned off, or the roster was removed after a year without use. Please check with the person who sent it.",
   "shared.error.retryHint": "Check your connection and try loading it again.",
   "shared.error.server":
     "A server error occurred. Please try again in a moment.",
@@ -53,6 +52,14 @@ export const en: Record<MessageKey, string> = {
   "shared.me.rest": "You're off this turn",
   "shared.me.off": "Off",
   "shared.me.next": "Next turn",
+  "calendar.add": "Add to calendar",
+  "calendar.who": "Duties to add",
+  "calendar.mine": "{name}'s duties",
+  "calendar.everyone": "Everyone's duties",
+  "calendar.google": "Google Calendar",
+  "calendar.apple": "Apple Calendar",
+  "calendar.note":
+    "Changes to the roster show up in your calendar later (a few hours to a day). For reminders, turn on notifications in your calendar app.",
   "shared.printHeader": "{label} · Printed: {date}",
 
   // Share modal
@@ -69,6 +76,8 @@ export const en: Record<MessageKey, string> = {
   "share.title": "Share schedule",
   "share.tabView": "👀 View only",
   "share.tabEdit": "✏️ Can edit",
+  "share.tabCalendar": "📅 Calendar",
+  "share.descCalendar": 'Add everyone\'s duties in "{name}" to your calendar.',
   "share.descView":
     'Anyone with this link can view "{name}". It won\'t show up in search results.',
   "share.descEdit": 'Anyone with this link can edit "{name}".',
@@ -83,23 +92,16 @@ export const en: Record<MessageKey, string> = {
   "share.editWarning": "Share this link only with people you trust.",
   // Keep in sync with CLEANUP_RETENTION_DAYS in server/worker.ts
   "share.retention":
-    "Shared schedules are deleted automatically after one year with no edits.",
+    "Shared schedules are deleted automatically after one year with no edits and no calendar reading them.",
 
   // Landing page
   "lp.docTitle": "toban — Free Duty Roster App & Maker | Create, Print & Share",
-  "lp.shareText":
-    "Easy duty rosters, ready in minutes. Create rotation schedules for cleaning, lunch, and daily duties for free.",
-  "lp.shareTitle": "toban | Easy Duty Rosters",
-  "lp.shareToban": "Share toban",
-  "lp.shareMenuClose": "Close share menu",
-  "lp.shareX": "Share on X",
-  "lp.urlCopied": "Link copied",
-  "lp.copyFailed": "Couldn't copy",
   "lp.createSchedule": "Create a schedule",
-  "lp.heroTitleA": "Easy duty rosters,",
-  "lp.heroTitleB": "ready in minutes.",
-  "lp.heroSubA": "Just type the names, or just ask AI.",
-  "lp.heroSubB": "Make a duty roster for free, then print it or share it.",
+  "lp.heroTitleA": "Everyone's roster,",
+  "lp.heroTitleB": "ready now.",
+  "lp.heroSubA": "No account needed. Make it right in your browser.",
+  "lp.heroSubB":
+    "Print it, save a PDF, share the link, or add it to a calendar.",
   "lp.featuresHeading": "Why toban",
   "lp.feat.noSignup.label": "No sign-up",
   "lp.feat.noSignup.desc":
@@ -108,15 +110,15 @@ export const en: Record<MessageKey, string> = {
   "lp.feat.print.desc":
     "Print in four formats: cards, table, calendar, or wheel.",
   "lp.feat.share.label": "Share with a link",
-  "lp.feat.share.desc": "Copy a link and send it to your group.",
+  "lp.feat.share.desc":
+    "Copy a link and send it to your group, or add the roster to a calendar.",
   "lp.feat.free.label": "Completely free",
   "lp.feat.free.desc": "All features are free to use.",
   "lp.templatesHeading": "Ready-to-use templates",
   "lp.templatesSubtitle":
-    "Pick from {count} templates and just add your members.",
+    "Pick from {count} templates and edit the members and assignments.",
   "lp.viewAllTemplates": "See all templates",
   "lp.faqHeading": "FAQ",
-  "lp.hero.badge": "No sign-up · Free",
   "lp.mock.title": "Cleaning duty",
   "lp.mock.week": "Week 2",
   "lp.mock.task1": "Floors",
@@ -130,13 +132,11 @@ export const en: Record<MessageKey, string> = {
   "lp.mock.askLabel": "Ask AI",
   "lp.mock.ask": '"Rotate cleaning among the 4 of us weekly"',
   "lp.ways.or": "or",
-  "lp.cta.heading": "Ready to make your roster?",
-  "lp.cta.sub": "No sign-up. Start right now.",
   "lp.faq.lead": "Can't find your question? Use the contact form below.",
   "lp.ways.heading": "Two ways to make one",
   "lp.ways.template.label": "From a template",
   "lp.ways.template.desc":
-    "Pick one that fits, then type in your members' names.",
+    "Pick one that fits, then enter the members and assignments.",
   "lp.ways.template.link": "Choose a template",
   "lp.ways.ai.label": "Ask AI",
   "lp.ways.ai.desc": `Open toban.app in ${AI_AGENTS.en} and describe the roster you want.`,
@@ -235,6 +235,7 @@ export const en: Record<MessageKey, string> = {
   "settings.summarySeparator": " · ",
   "settings.sectionAdvanced": "Advanced",
   "settings.thisRoster": "This roster",
+  "settings.thisApp": "This app",
   "settings.sectionAppearance": "Appearance",
   "settings.sectionRotation": "How turns change",
 
@@ -339,8 +340,6 @@ export const en: Record<MessageKey, string> = {
 
   // Schedule tabs
   "tabs.navAria": "Switch schedules",
-  "tabs.scrollLeft": "Scroll left",
-  "tabs.scrollRight": "Scroll right",
   "tabs.tablistAria":
     "Schedule tabs (Alt+Arrow keys to reorder, Shift+F10 for the menu)",
   "tabs.tabAria": "{name} tab",

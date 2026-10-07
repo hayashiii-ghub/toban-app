@@ -10,6 +10,7 @@ import { formatTaskNames } from "@/rotation/taskFormatting";
 import { safeGetItem, safeSetItem } from "@/lib/storage";
 import { useDateLocale, useLocale, useT } from "@/i18n";
 import { useLocalToday } from "@/hooks/useLocalToday";
+import { CalendarSubscribe } from "@/components/CalendarSubscribe";
 
 // 共有ページごとに、この端末で選んだ自分の名前を覚えておく（その当番表を開いた人だけのもの）
 const storageKey = (slug: string) => `toban-shared-me:${slug}`;
@@ -25,6 +26,8 @@ export function saveSharedMe(slug: string, memberId: string | null) {
 const UPCOMING = 3;
 
 interface MyDutyProps {
+  /** 共有の slug（カレンダーの購読 URL に使う） */
+  slug: string;
   /** 選んだ人。当番表にいない人なら選んでいない扱い */
   meId: string | null;
   groups: TaskGroup[];
@@ -37,6 +40,7 @@ interface MyDutyProps {
 
 /** 共有ページで、受け取った人が自分の名前を選ぶと、今と次の当番が分かる */
 export function MyDuty({
+  slug,
   meId: chosenId,
   groups,
   members,
@@ -173,6 +177,18 @@ export function MyDuty({
                 ))}
               </dl>
             )}
+          </div>
+        )}
+
+        {rotationConfig?.mode === "date" && (
+          <div
+            className="mt-3 pt-3"
+            style={{
+              borderTop:
+                "1px solid color-mix(in srgb, var(--dt-text) 12%, transparent)",
+            }}
+          >
+            <CalendarSubscribe slug={slug} member={me} />
           </div>
         )}
       </div>

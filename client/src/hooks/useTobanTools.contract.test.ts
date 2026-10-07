@@ -226,6 +226,7 @@ describe("registered tool contracts", () => {
       "configure_rotation",
       "create_schedule",
       "duplicate_schedule",
+      "get_calendar_links",
       "get_current_assignments",
       "get_schedule_details",
       "get_share_link",
@@ -247,6 +248,7 @@ describe("registered tool contracts", () => {
         .map(tool => tool.name)
         .sort()
     ).toEqual([
+      "get_calendar_links",
       "get_current_assignments",
       "get_schedule_details",
       "get_share_link",
@@ -1141,6 +1143,50 @@ describe("view, print and publication", () => {
     expect(backup.home.commitToolState).not.toHaveBeenCalled();
   });
 
+  it("returns calendar links only for a published date-mode roster", async () => {
+    const dateMode = {
+      rotationConfig: {
+        mode: "date" as const,
+        startDate: "2026-10-05",
+        cycleDays: 7,
+      },
+    };
+    const manual = harness([sched({ slug: "pubslug0001" })]);
+    expect(await manual.run("get_calendar_links")).toMatchObject({
+      code: "NOT_DATE_MODE",
+      applied: false,
+    });
+
+    const unpublished = harness([sched(dateMode)]);
+    expect(await unpublished.run("get_calendar_links")).toMatchObject({
+      code: "NOT_PUBLISHED",
+    });
+
+    const h = harness([sched({ ...dateMode, slug: "pubslug0001" })]);
+    expect(
+      await h.run("get_calendar_links", { member_id: "nobody" })
+    ).toMatchObject({ code: "NOT_FOUND", member_id: "nobody" });
+
+    vi.mocked(getSchedule).mockResolvedValue({
+      ...sched(),
+      slug: "pubslug0001",
+      createdAt: "2026-09-01",
+      updatedAt: "2026-09-01",
+    });
+    const feed = `${window.location.origin}/api/schedules/pubslug0001/calendar.ics?member=m2`;
+    const webcal = feed.replace(/^https?:/, "webcal:");
+    expect(
+      await h.run("get_calendar_links", { member_id: "m2" })
+    ).toMatchObject({
+      ok: true,
+      member_id: "m2",
+      ics_url: feed,
+      apple_calendar_url: webcal,
+      google_calendar_url: `https://calendar.google.com/calendar/render?cid=${encodeURIComponent(webcal)}`,
+    });
+    expect(h.home.commitToolState).not.toHaveBeenCalled();
+  });
+
   it("distinguishes network failure from nonpublication, then verifies an escaped public URL", async () => {
     const h = harness([
       sched({ slug: "public/slug", editToken: "SECRET_EDIT_TOKEN" }),
@@ -1572,7 +1618,7 @@ describe("useTobanTools registration", () => {
         ({ home }) => useTobanTools(home),
         { initialProps: { home: first.get() } }
       );
-      expect(documentRegister).toHaveBeenCalledTimes(18);
+      expect(documentRegister).toHaveBeenCalledTimes(19);
       expect(registerTool).not.toHaveBeenCalled();
       const registered = documentRegister.mock.calls.map(
         ([tool]) => tool as WebMCPTool
@@ -1582,7 +1628,7 @@ describe("useTobanTools registration", () => {
       );
       expect(signals.every(signal => !signal.aborted)).toBe(true);
       rerender({ home: second.get() });
-      expect(documentRegister).toHaveBeenCalledTimes(18);
+      expect(documentRegister).toHaveBeenCalledTimes(19);
       const read = registered.find(
         tool => tool.name === "get_schedule_details"
       )!;
@@ -1607,7 +1653,7 @@ describe("useTobanTools registration", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     try {
       const { unmount } = renderHook(() => useTobanTools(harness().get()));
-      expect(registerTool).toHaveBeenCalledTimes(18);
+      expect(registerTool).toHaveBeenCalledTimes(19);
       expect(warn).toHaveBeenCalledOnce();
       unmount();
       expect(

@@ -10,7 +10,6 @@ export const ja = {
 
   "footer.about": "toban について",
   "footer.privacy": "プライバシー",
-  "more.aria": "その他のメニュー",
   "footer.maker": "はやしごと",
 
   // 共通
@@ -37,7 +36,7 @@ export const ja = {
     "このブラウザでは印刷できません。SafariまたはChromeで開いてください",
   "shared.error.notFound": "当番表が見つかりませんでした",
   "shared.error.notFoundHint":
-    "共有が止められたか、1年間更新がなく消えた可能性があります。送ってくれた人に確かめてください。",
+    "共有が止められたか、1年間使われずに消えた可能性があります。送ってくれた人に確かめてください。",
   "shared.error.retryHint":
     "通信の状態を確かめて、もう一度読み込んでください。",
   "shared.error.server":
@@ -54,6 +53,14 @@ export const ja = {
   "shared.me.rest": "今回はお休みです",
   "shared.me.off": "お休み",
   "shared.me.next": "次の順番",
+  "calendar.add": "カレンダーに追加",
+  "calendar.who": "入れる当番",
+  "calendar.mine": "{name}の当番",
+  "calendar.everyone": "全員の当番",
+  "calendar.google": "Google カレンダー",
+  "calendar.apple": "Apple カレンダー",
+  "calendar.note":
+    "当番表を直すと、カレンダーにもあとから反映されます（数時間〜1日）。当番の日に知らせてほしいときは、カレンダーの通知の設定を使ってください。",
   "shared.printHeader": "順番: {label} ／ 印刷日: {date}",
 
   // 共有モーダル
@@ -70,6 +77,9 @@ export const ja = {
   "share.title": "共有",
   "share.tabView": "👀 見るだけ",
   "share.tabEdit": "✏️ 編集もできる",
+  "share.tabCalendar": "📅 カレンダー",
+  "share.descCalendar":
+    "「{name}」の全員の当番を、あなたのカレンダーに入れます。",
   "share.descView":
     "リンクを知っている人は、だれでも「{name}」を見られます。検索結果には出ません。",
   "share.descEdit":
@@ -86,23 +96,16 @@ export const ja = {
     "このURLを知っている人は当番表を編集できます。信頼できる相手にのみ共有してください。",
   // 日数は server/worker.ts の CLEANUP_RETENTION_DAYS と揃える
   "share.retention":
-    "共有した当番表は、1年間まったく編集がないと自動で削除されます。",
+    "共有した当番表は、1年間まったく編集がなく、カレンダーからも読まれていないと自動で削除されます。",
 
   // ランディングページ
   "lp.docTitle": SITE_TITLE,
-  "lp.shareText":
-    "当番表、すぐに完成。名前を入れるだけでも、AIに頼むだけでも。無料の当番表アプリです。",
-  "lp.shareTitle": "toban｜当番表アプリ",
-  "lp.shareToban": "tobanを共有する",
-  "lp.shareMenuClose": "共有メニューを閉じる",
-  "lp.shareX": "Xで共有",
-  "lp.urlCopied": "URLをコピーしました",
-  "lp.copyFailed": "コピーに失敗しました",
   "lp.createSchedule": "当番表を作る",
-  "lp.heroTitleA": "当番表、",
-  "lp.heroTitleB": "すぐに完成。",
-  "lp.heroSubA": "名前を入れるだけでも、AIに頼むだけでも。",
-  "lp.heroSubB": "無料で作って、印刷やLINEで共有できます。",
+  "lp.heroTitleA": "みんなの当番表、",
+  "lp.heroTitleB": "すぐ完成。",
+  "lp.heroSubA": "登録不要で、ブラウザからそのまま作れます。",
+  "lp.heroSubB":
+    "印刷やPDF保存、LINEでの共有、カレンダーへの追加に対応しています。",
   "lp.featuresHeading": "tobanの特徴",
   "lp.feat.noSignup.label": "登録不要",
   "lp.feat.noSignup.desc":
@@ -111,15 +114,15 @@ export const ja = {
   "lp.feat.print.desc":
     "カード・一覧表・カレンダー・円盤の4形式で印刷できます。",
   "lp.feat.share.label": "LINEで共有",
-  "lp.feat.share.desc": "共有URLを発行してLINEやメールで送れます。",
+  "lp.feat.share.desc":
+    "共有URLを発行してLINEで送れます。カレンダーにも追加できます。",
   "lp.feat.free.label": "完全無料",
   "lp.feat.free.desc": "すべての機能を無料でお使いいただけます。",
   "lp.templatesHeading": "すぐ使えるテンプレート",
   "lp.templatesSubtitle":
-    "{count}種類のテンプレートから選んで、メンバーを入れるだけ。",
+    "{count}種類のテンプレートから選んで、メンバーや担当を編集できます。",
   "lp.viewAllTemplates": "テンプレート一覧を見る",
   "lp.faqHeading": "よくある質問",
-  "lp.hero.badge": "登録不要・完全無料",
   "lp.mock.title": "掃除当番",
   "lp.mock.week": "第2週",
   "lp.mock.task1": "床そうじ",
@@ -133,16 +136,13 @@ export const ja = {
   "lp.mock.askLabel": "AIに頼むと",
   "lp.mock.ask": "「掃除当番を4人で毎週回して」",
   "lp.ways.or": "または",
-  "lp.cta.heading": "さっそく、当番表を作ってみませんか",
-  "lp.cta.sub": "登録なしで、いますぐ始められます。",
   "lp.faq.lead": "ここにない質問は、ページ下のお問い合わせからどうぞ。",
   "lp.ways.heading": "作り方は、ふたつ",
   "lp.ways.template.label": "テンプレートから",
-  "lp.ways.template.desc":
-    "場面に合った表を選んで、メンバーの名前を入れるだけ。",
+  "lp.ways.template.desc": "場面に合った表を選び、メンバーと担当を入力します。",
   "lp.ways.template.link": "テンプレートを選ぶ",
   "lp.ways.ai.label": "AIに頼んで",
-  "lp.ways.ai.desc": `${AI_AGENTS.ja}で toban.app を開いて、作りたい当番表を伝えるだけ。`,
+  "lp.ways.ai.desc": `${AI_AGENTS.ja}で toban.app を開き、作りたい当番表を伝えます。`,
   "lp.ways.ai.example":
     "「1班〜6班で給食当番表を作って。配膳・牛乳・片付けを毎週交代、土日はお休み」",
   "lp.ways.ai.note": "表の公開（共有）だけは、必ずご自身で確定します。",
@@ -238,6 +238,7 @@ export const ja = {
   "settings.summarySeparator": "・",
   "settings.sectionAdvanced": "くわしい設定",
   "settings.thisRoster": "この当番表",
+  "settings.thisApp": "このアプリ",
   "settings.sectionAppearance": "見た目",
   "settings.sectionRotation": "交代のしかた",
 
@@ -341,8 +342,6 @@ export const ja = {
 
   // 当番表タブ
   "tabs.navAria": "当番表の切り替え",
-  "tabs.scrollLeft": "左にスクロール",
-  "tabs.scrollRight": "右にスクロール",
   "tabs.tablistAria":
     "当番表タブ一覧（Alt+矢印キーで並び替え、Shift+F10でメニュー）",
   "tabs.tabAria": "{name}タブ",
