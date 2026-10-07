@@ -1,69 +1,52 @@
 # AGENTS.md
 
-toban を実装するときに守ること。コードを読めば分かることは書かない。人向けの説明は README。
+toban の変更時に守る作業指示。使い方は README、実装の詳細と可変の値はコードを参照する。この文書はユーザーの依頼・既存の承認範囲を広げない。
 
-## 検査
+## 着手とブランチ管理
 
-- pnpm が PATH に無いときは `corepack pnpm <cmd>`（ツールは `node_modules/.bin/<tool>` でも可）
-- PR 前: `pnpm format:check && pnpm check && pnpm lint && pnpm test:coverage && pnpm build && pnpm test:e2e`
-  - `pnpm check` は `e2e/` と直下の `*.config.ts` も型検査する
-  - カバレッジの下限は `vite.config.ts`（行 70 / 分岐 60 / 関数 65 / 文 70）
-- `pnpm dev` と e2e は Cloudflare の Vite プラグインで Worker ごと動く（手元の D1 は直下の `.wrangler/state`。`pnpm db:migrate:local` と共有）。e2e は vite を 3000 番で自前起動する。3000 番が塞がっていても止めない（利用者の dev サーバーのことがある）。一時設定でポートを変えて回す
+- 作業前に `git status`、`git worktree list`、最新の main、既存の PR とローカル・リモートのブランチを確認する。未コミット変更を上書き・破棄・無断で stash しない。他作業と重なる場合は独立した worktree を使う。
+- 同じ目的の未完了 PR / ブランチがあれば、所有者と依頼範囲を確認して再利用する。継続中の依存更新は既存の Dependabot PR などを更新し、同じ依存・更新範囲の PR を重複作成しない。新規作成は既存作業で扱えない理由があるときだけ。
+- 新規作業は最新 main から、1つの目的につき1つの短命ブランチ・PRにする。別 PR の head を base にして積み重ねない。継続作業を理由に用途の違う変更を同じブランチへ追加しない。
+- ブランチ整理が承認範囲に含まれる場合、マージ後に対象 PR・取り込まれた head・残りの差分を確認し、その作業の不要な head ブランチを個別に整理する。GitHub 側の削除状態と `git worktree list` も確認する。
+- 未マージ、他作業の所有、未 push の変更があるブランチや、変更の残る worktree は勝手に削除しない。古い未マージブランチは所有者と残す必要性を確認する。リモート追跡先が `gone` というだけで一括削除しない。squash 後に `git branch -d` が拒否しても、機械的に `-D` へ切り替えない。
+- この手順を根拠に PR のマージ・クローズ、ブランチ削除、設定変更、デプロイを実行しない。個々の操作は依頼・承認の範囲に従う。
 
-## 配信とルーティング（壊れやすい所）
+## 検証
 
-- `client/index.html` は SPA シェルで全ルートに配られる。ここの meta / JSON-LD は全ページに載る
-- `/` はアプリ本体、LP は `/about`
-- ビルドは D1 の ID を差し込んだ `wrangler.deploy.jsonc` を Vite プラグインに読ませ（`build` が先に `prepare-wrangler-config.mjs` を実行）、デプロイは出力の `dist/toban/wrangler.json` を使う。Vite の root が `client/` なので、プラグインの状態の置き場所と設定のパスは `vite.config.ts` で直下に向けている。PWA プラグインは client 環境だけで動かす
-- ブラウザのページ遷移（`Sec-Fetch-Mode: navigate`）は、Cloudflare の `not_found_handling: single-page-application` により Worker を通らずに `index.html` が返る。Worker の分岐やヘッダーが効くのは bot と fetch だけ。転送は `client/public/_redirects`、ヘッダーは `client/public/_headers` に書く（Worker の `HTML_SECURITY_HEADERS` と揃える。`worker.test.ts` が見張る）（Service Worker が先に返さないよう `navigateFallbackDenylist` にも足す）
-- bot は UA 判定で `/about` `/templates` `/templates/:slug` のプリレンダリングを受け取る（`server/handlers/seo.ts`）。`/` は対象外
-- ルートを足したら `seo.ts` の `KNOWN_APP_ROUTES` にも足す。無いと bot に 404 を返す
-- 利用者向けの静的ページ（今は `client/public/privacy.html`）は拡張子なしの URL で配られる。足すときは `KNOWN_APP_ROUTES` と `vite.config.ts` の `navigateFallbackDenylist` にも足す（無いと Service Worker が index.html で返し、SPA の 404 になる）
-- `client/public/googlee79602eefe9a90c4.html` は Search Console の所有権確認。消さない・1 バイトも変えない
-- `/api/` を workbox の `runtimeCaching` に載せない。古い 200 を同期の引き直しが最新として取り込み、ローカルの編集が巻き戻る（`swCache.test.ts` が見張る）
+- Node / pnpm は `package.json` の `engines` と `packageManager` に合わせ、依存は `pnpm install --frozen-lockfile` で入れる。pnpm が PATH に無ければ `corepack pnpm` を使う。
+- コード・依存・設定を変更した PR の提出前は、`pnpm format:check && pnpm check && pnpm lint && pnpm test:coverage && pnpm build && pnpm test:e2e` を通す。型検査の対象は `tsconfig.json`、カバレッジ下限は `vite.config.ts` を正本とし、検査を通すために下げない。
+- Markdown だけの変更は整形、記載したコマンド・パスと実装の照合、`git diff --check` と差分レビューを行う。どの変更でも最終コミットの CI を確認し、失敗や未実施の検査を隠さない。CI の高速化は依頼がない限り提案しない。
+- `pnpm dev` / E2E は Vite と Worker を動かす。ローカル D1 は直下の `.wrangler/state` で、`pnpm db:migrate:local` と共有する。E2E はサーバーを自前起動するため、3000 番が使用中なら既存プロセスを止めず、一時設定で別ポートを使う。
+- 検証対象の中核（保存・読込、QRコード、framer-motion など）をモックしない。`client/src/test/setup.ts` の localStorage・アニメーション設定を使い、ネットワークは fetch の境界で差し替える。必須要素の有無で E2E の検査をスキップしない。
+- 日付だけを扱う処理は `rotation/dateUtils.ts` の `formatIsoDateLocal` を使う。`toISOString()` による UTC 変換で日付をずらさない。時差が関わるテストは `TZ` を指定する。
 
-## データ
+## Cloudflare / PWA の配信
 
-- 正本は localStorage。編集した当番表は、共有していなくても D1 に非公開で自動バックアップする（`useAutoSync`）。共有すると公開になる。1 年間更新が無く、カレンダーの購読（`/api/schedules/:slug/calendar.ics`）からも読まれていない行は cron で消す（`CLEANUP_RETENTION_DAYS`・`calendar_accessed_at`。i18n の `share.retention`・`shared.error.notFoundHint` と `client/public/privacy.html` の記述と揃える）
-- 同期まわり（`hooks/useAutoSync.ts` / `lib/syncManager.ts` / `lib/api.ts`）の変更はデータ消失につながる。`*.recovery.test.*` を含む既存テストを必ず通す
-- migration は `server/db/migrations/` に連番の SQL を手で書く（drizzle-kit は使わない。wrangler は `.sql` だけを読む）。既存のファイルは変えない。列を足したら `server/db/schema.ts` と `server/db/ensureSchema.ts` の `REQUIRED_SCHEDULE_COLUMNS` も揃える
-- 外部に送る情報を増やす（解析ツール、新しい外部サービスなど）ときは `client/public/privacy.html` も直す
+- `/` はアプリ、`/about` は LP。`client/index.html` は全 SPA ルートと PWA の共通シェルなので、特定ページだけの meta・JSON-LD・スクリプトを置かない。
+- 通常のブラウザ遷移は Cloudflare の SPA fallback により Worker を通らない場合がある。ブラウザ向けの転送は `client/public/_redirects`、ヘッダーは `client/public/_headers` に定義し、後者は Worker の `HTML_SECURITY_HEADERS` と揃える。Worker 側だけの修正で配信を直したと判断しない。
+- ルートの追加・変更は `client/src/App.tsx` と `server/handlers/seo.ts` の既知ルート判定を揃える。bot 向けの `/about`・テンプレートのプリレンダリングは利用者向け本文と揃え、クローラー専用の内容を作らない。
+- 静的ページ・転送ルートは `vite.config.ts` の `navigateFallbackDenylist` も確認する。拡張子なしで配る `privacy.html` などが PWA の `index.html` に置き換わらないようにする。配信・キャッシュ変更は直接アクセスと更新後の Service Worker 経由を検証する。
+- `/api/` を Workbox の `runtimeCaching` に載せない。古い成功応答を同期が最新と誤認し、ローカル編集を巻き戻すため。
+- `pnpm build` は D1 ID がある場合に `wrangler.deploy.jsonc` を生成してビルドする。`wrangler.jsonc` の ID プレースホルダーを実値で上書きしない。PWA は client 環境だけで生成し、承認されたデプロイでは出力の `dist/toban/wrangler.json` を使う。
+- `client/public/googlee79602eefe9a90c4.html` は所有権確認用。内容を変更・削除しない。
 
-## 同じ値を持つ場所（1 か所だけ直すと食い違う）
+## データと共有
 
-- 入力の上限: `shared/limits.ts`（server のスキーマ、UI の maxLength、WebMCP の検証が共有）
-- トップと LP の検索タイトル: `shared/site.ts` の `SITE_TITLE`。`client/index.html` の title / og:title / twitter:title は手書きで、`shared/seo-templates.test.ts` が一致を見張る
-- toban を操作できる AI の名前: `shared/site.ts` の `AI_AGENTS`（LP・FAQ・bot 向け LP に差し込む）。実際に使えるものだけを書き、予定は書かない。LP の AI の節は `seo.ts` にも手書きしてあり、`seo.test.ts` が一致を見張る
-- UI 文字列: `client/src/i18n/locales/ja.ts` がキーの正本（`MessageKey`）。`en.ts` と `t()` の引数は型でこれに縛られる。利用者が保存した名前・仕事は言語を切り替えても翻訳しない
-- テンプレートは 32 件、LP は 31 件で正常（「カスタム（空白）」は LP を持たない）
+- 当番表の正本は localStorage。D1 への自動バックアップは非公開で、共有操作により公開する。`useAutoSync` / `syncManager` / `api` の変更では `*.recovery.test.*` を含む保存・復旧の検証を通す。
+- migration は `server/db/migrations/` に連番の SQL を追加し、既存ファイルを書き換えない（drizzle-kit は使わない）。列追加は `schema.ts` と `ensureSchema.ts` の `REQUIRED_SCHEDULE_COLUMNS` も揃える。
+- 保存期限の変更は `CLEANUP_RETENTION_DAYS`・`calendar_accessed_at`、i18n の保持期限案内、`client/public/privacy.html` を揃える。外部送信する情報を増やす場合もプライバシー説明を更新する。
+- `hooks/useTobanTools.ts` は本番機能。実名入りの表を誤公開しないよう公開 tool を追加しない。出力は1,500字以内の有効な JSON に分割し、利用者入力には `untrustedContentHint`、読み取り専用には `readOnlyHint` を付ける（契約テストを参照）。
 
-## 置き場所
+## 実装の境界
 
-- 画面の機能コンポーネントは `client/src/features/<機能名>/`。`components/` は横断的に使うものだけ
-- ホームの操作の帯（表示の切り替えを含む）と当番表のタブは、スマホでは画面の下にまとめて固定し（`Home.tsx` の `.home-bottom-panel`）、PC ではタイトルの下に置く。画面の下に何かを固定するときは `--home-toolbar-space`（`client/src/pages/home.css`）の分だけ持ち上げる（通知・アプリ追加の案内はそうしてある）。スマホのホームでは、ページの一番下の案内を出さず、言語の切り替えをタイトルの右上に、ほかの案内を編集画面の「くわしい設定」に置く。案内の項目は `components/siteLinks.tsx` の 1 か所で持つ
-- テーマの字の色は、どの背景との組み合わせもコントラスト比 4.5（WCAG AA）以上にする（`designThemes.test.ts` が見張る）。読みにくい字を白い面や半透明でごまかさない。帯はどの色も深くして白い字にそろえ、帯の上の字は面を敷かずに直接置いている
-- 並べ替えは HTML の drag and drop を使わない（スマホの指では動かない）。`hooks/usePointerDrag.ts` で、つまむ印（`touch-action: none`）から動かし、落とせる所に `data-drop-*` を付ける。指で動かす確認は `e2e/touch-gestures.spec.ts`（CDP で指の動きを送る）
-- スマホで下から出る画面は、見出しを下になでて閉じられる（`hooks/useSheetSwipe.ts` と `SheetHandle`）。新しく作るシートにも付ける
-- `client/src/rotation/` は React / DOM に依存させない（iOS 版で流用する予定）。型の import は可。`turns.ts`（誰がいつ何の当番か）はサーバーのカレンダー配信（`server/calendar.ts`）も読むので、`@/` の import やブラウザの API を入れない
+- 画面固有の機能は `client/src/features/`、横断部品は `components/` に置く。`rotation/` は React / DOM に依存させない。サーバーからも読む `turns.ts` にブラウザ API や `@/` import を入れない。
+- 入力上限は `shared/limits.ts`、サイトの共通文言は `shared/site.ts`、テンプレートと記事は `shared/` を正本にする。手書きのシェル・bot HTMLとの一致は関連テストで確認する。「カスタム（空白）」は記事を持たないので、テンプレートと記事の件数は一致しない。
+- UI 文字列のキーは `i18n/locales/ja.ts` を正本にして `en.ts` も更新する。利用者が保存した名前・仕事は言語切替で翻訳しない。
+- スマホの下部固定 UI は `--home-toolbar-space` を考慮する。案内リンクは `components/siteLinks.tsx`、並べ替えは `usePointerDrag`、シートの下スワイプは `useSheetSwipe` / `SheetHandle` を再利用する。HTML drag and drop に置き換えず、タッチ操作を検証する。
+- テーマの文字と背景はコントラスト比4.5以上を保つ（`designThemes.test.ts`）。読みにくさを半透明や文字の背面への白い面追加でごまかさない。
 
-## テストの書き方
+## PR と完了報告
 
-- 対象の中核をモックしない。`react-qr-code` をモックしていて本番の共有モーダル障害を見逃し、`@/lib/storage` をモックして保存→読込の往復が一度も通っていなかった
-- localStorage は `client/src/test/setup.ts` に実物同等のものがある。ネットワークは fetch の手前で差し替える
-- framer-motion は本物を使う（setup でアニメーションを即時にし、`m` を `motion` に差し替えている）。フェードイン直後に `toBeVisible` を見るときは `waitFor`
-- 日付を `toISOString()` で作らない（UTC になり、日本時間の 0〜9 時は前日）。`rotation/dateUtils.ts` の `formatIsoDateLocal` を使う。時差が絡むテストは `vi.stubEnv("TZ", "Asia/Tokyo")`
-- e2e に `if (await x.isVisible())` のような分岐を書かない（要素が無いと黙って通る）
-
-## WebMCP
-
-- `client/src/hooks/useTobanTools.ts` は本番の機能。共有（公開）を実行する tool は持たない（誤発火で実名入りの表が公開されるのを防ぐ）
-- tool の出力は 1,500 字以内の有効な JSON に分割する。利用者の入力を返す tool には `untrustedContentHint`、状態を変えない tool には `readOnlyHint`（`useTobanTools.contract.test.ts` が見張る）
-
-## Git と PR
-
-- main から 1 PR = 1 ブランチで切る。PR を積み重ねない（base のブランチが消えると上の PR が自動で閉じる）
-- コミットと PR のタイトルは `feat:` / `fix:` / `refactor:` / `test:` / `chore:` / `docs:` などの接頭辞。PR の本文は `.github/pull_request_template.md` に沿って日本語で書く
-- マージは squash。GitHub 側の head ブランチは自動で消える。手元はマージ後に消す:
-  `git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs -n1 git branch -D`
-- main へのマージで Workers Builds が本番へデプロイする。完了はマージコミットの check-run（`Workers Builds: toban`）で判定し、本番は実際に開いて確かめる
-- CI の高速化は提案しない（定常で 2 分前後。軽量化は不要と判断済み）
+- コミット・PRタイトルは `fix:` / `docs:` などの接頭辞を付ける。本文は `.github/pull_request_template.md` に沿って日本語で、問題・変更後の動作・検証結果を書く。
+- main へのマージは squash を使い、本番の Workers Builds を起動する操作として扱う。マージ・本番反映まで依頼された場合は、マージコミットの `Workers Builds: toban` と本番の動作を確認してから完了とする。
+- 完了時は PR URL、コミット、変更の要点、実行した検査と CI の結果、残る制約を報告する。push・PR作成・マージ・デプロイのどこまで行ったか明記し、残したブランチ / worktree の場所と整理待ちの理由も伝える。
