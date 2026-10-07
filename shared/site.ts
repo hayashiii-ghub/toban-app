@@ -11,7 +11,7 @@ export const SITE_TITLE =
  * client/index.html は静的なので手で書いており、shared/seo-templates.test.ts で一致を見張っている。
  */
 export function siteDescription(templateCount: number): string {
-  return `ブラウザで使える無料の当番表作成アプリ。アカウント登録やエクセルは不要です。作成から印刷、LINEやメールでの共有までブラウザだけで完結します。学校・職場・家庭向けのテンプレートを${templateCount}種類用意しています。`;
+  return `ブラウザで使える無料の当番表作成アプリ。アカウント登録やエクセルは不要です。作成から印刷、LINEでの共有、カレンダーへの追加までブラウザだけで完結します。学校・職場・家庭向けのテンプレートを${templateCount}種類用意しています。`;
 }
 
 /**

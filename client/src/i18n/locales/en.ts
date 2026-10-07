@@ -100,7 +100,8 @@ export const en: Record<MessageKey, string> = {
   "lp.heroTitleA": "Everyone's roster,",
   "lp.heroTitleB": "ready now.",
   "lp.heroSubA": "No account needed. Make it right in your browser.",
-  "lp.heroSubB": "Print it, save a PDF, or share the link.",
+  "lp.heroSubB":
+    "Print it, save a PDF, share the link, or add it to a calendar.",
   "lp.featuresHeading": "Why toban",
   "lp.feat.noSignup.label": "No sign-up",
   "lp.feat.noSignup.desc":
@@ -114,7 +115,7 @@ export const en: Record<MessageKey, string> = {
   "lp.feat.free.desc": "All features are free to use.",
   "lp.templatesHeading": "Ready-to-use templates",
   "lp.templatesSubtitle":
-    "Pick from {count} templates and just add your members.",
+    "Pick from {count} templates and edit the members and assignments.",
   "lp.viewAllTemplates": "See all templates",
   "lp.faqHeading": "FAQ",
   "lp.mock.title": "Cleaning duty",
@@ -134,7 +135,7 @@ export const en: Record<MessageKey, string> = {
   "lp.ways.heading": "Two ways to make one",
   "lp.ways.template.label": "From a template",
   "lp.ways.template.desc":
-    "Pick one that fits, then type in your members' names.",
+    "Pick one that fits, then enter the members and assignments.",
   "lp.ways.template.link": "Choose a template",
   "lp.ways.ai.label": "Ask AI",
   "lp.ways.ai.desc": `Open toban.app in ${AI_AGENTS.en} and describe the roster you want.`,
