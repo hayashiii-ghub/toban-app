@@ -4,7 +4,7 @@
  * shared/seo-templates.test.ts で一致を見張っている。
  */
 export const SITE_TITLE =
-  "当番表アプリ toban｜無料で作成・印刷・LINE共有・カレンダー";
+  "当番表アプリ toban｜無料で簡単作成・印刷・LINEで共有";
 
 /**
  * トップ（/）の meta description。件数はテンプレートの実数を渡す。
