@@ -22,6 +22,7 @@ import { useT, useLocale } from "@/i18n";
 import { usePageMeta } from "@/hooks/usePageMeta";
 
 import NotFound from "./NotFound";
+import { loadArticleAds } from "@/lib/articleAds";
 
 export default function TemplateDetailPage() {
   const { locale } = useLocale();
@@ -60,8 +61,12 @@ function TemplateDetailContent({
 
   const heading = en?.heading ?? seo.heading;
   const intro = en?.intro ?? seo.intro;
-  // 本文・FAQ は日本語のみ用意しているため、英語表示では出さない
-  const content = locale === "ja" ? TEMPLATE_CONTENT[seo.slug] : undefined;
+  // 翻訳のない本文・FAQ も、利用者とクローラーに同じ内容を届ける。
+  const content = TEMPLATE_CONTENT[seo.slug];
+
+  useEffect(() => {
+    if (content?.body.length) loadArticleAds(`/templates/${slug}`);
+  }, [content, slug]);
   const catLabel = category
     ? locale === "en"
       ? (TEMPLATE_CATEGORIES_EN[category.id]?.label ?? category.label)
@@ -180,7 +185,12 @@ function TemplateDetailContent({
 
       {/* 本文（テンプレート固有の運用解説） */}
       {content && (
-        <section className="px-4 pb-10 max-w-3xl mx-auto">
+        <section lang="ja" className="px-4 pb-10 max-w-3xl mx-auto">
+          {locale === "en" && (
+            <p lang="en" className="text-sm text-lp-text-secondary mb-4">
+              {t("templatesDetail.japaneseContentNote")}
+            </p>
+          )}
           {content.body.map(section => (
             <div key={section.heading} className="mb-8 last:mb-0">
               <h2 className="text-lg font-extrabold text-lp-text mb-3">
@@ -201,9 +211,9 @@ function TemplateDetailContent({
 
       {/* よくある質問 */}
       {content && content.faq.length > 0 && (
-        <section className="px-4 pb-10 max-w-3xl mx-auto">
+        <section lang="ja" className="px-4 pb-10 max-w-3xl mx-auto">
           <h2 className="text-lg font-extrabold text-lp-text mb-4">
-            {heading}のよくある質問
+            {seo.heading}のよくある質問
           </h2>
           <dl>
             {content.faq.map(item => (

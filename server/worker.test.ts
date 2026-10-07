@@ -13,6 +13,9 @@ vi.mock("./handlers/seo", async importOriginal => {
   };
 });
 
+import { TEMPLATE_SEO_DATA } from "../shared/seo-templates";
+import { renderTemplateDetailHtml } from "./handlers/seo";
+
 import worker, { HTML_SECURITY_HEADERS } from "./worker";
 
 describe("撤去したページの転送（client/public/_redirects）", () => {
@@ -94,6 +97,31 @@ describe("bot とそれ以外の振り分け", () => {
       headers: { "User-Agent": userAgent },
     });
   }
+
+  it.each([
+    "Mediapartners-Google",
+    "Mozilla/5.0 (compatible; Google-Display-Ads-Bot/1.0; +http://www.google.com/bot.html)",
+  ])("AdSense crawler %s receives the existing article HTML", async ua => {
+    const { env, assets } = envWithAssets();
+    for (const seo of TEMPLATE_SEO_DATA) {
+      const response = await worker.fetch(
+        get(`/templates/${seo.slug}`, ua),
+        env,
+        {} as ExecutionContext
+      );
+      expect(response.status).toBe(200);
+      expect(await response.text()).toBe(
+        renderTemplateDetailHtml("https://toban.app", seo.slug)
+      );
+    }
+    expect(assets.fetch).not.toHaveBeenCalled();
+    const missing = await worker.fetch(
+      get("/templates/missing", ua),
+      env,
+      {} as ExecutionContext
+    );
+    expect(missing.status).toBe(404);
+  });
 
   it("bot には /about をプリレンダリングした HTML で返す", async () => {
     const { env, assets } = envWithAssets();

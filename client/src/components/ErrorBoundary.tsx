@@ -1,5 +1,6 @@
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
 import { Component, ReactNode } from "react";
+import { resetAdsAfterError } from "@/lib/articleAds";
 import { tStandalone } from "@/i18n";
 
 interface Props {
@@ -23,6 +24,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    resetAdsAfterError();
     console.error("[ErrorBoundary] キャッチされたエラー:", error);
     console.error(
       "[ErrorBoundary] コンポーネントスタック:",

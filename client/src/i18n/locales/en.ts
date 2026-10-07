@@ -515,6 +515,8 @@ export const en: Record<MessageKey, string> = {
   "templateSummary.member.other": "{count} people",
 
   // Template detail page
+  "templatesDetail.japaneseContentNote":
+    "This guide and its FAQ are currently available in Japanese.",
   "templatesDetail.contents": "Template contents",
   "templatesDetail.taskN": "Task {n}",
   "templatesDetail.groupN": "Group {n}",

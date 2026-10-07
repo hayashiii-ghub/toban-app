@@ -35,7 +35,7 @@ const AI_CRAWLER_UA =
   "GPTBot|OAI-SearchBot|ChatGPT-User|PerplexityBot|Perplexity-User|ClaudeBot|Claude-User|Claude-SearchBot|Amazonbot|meta-externalagent|CCBot|DuckAssistBot|YouBot|Bytespider";
 
 const BOT_UA_PATTERN = new RegExp(
-  `${SOCIAL_AND_SEARCH_BOT_UA}|${AI_CRAWLER_UA}`,
+  `${SOCIAL_AND_SEARCH_BOT_UA}|${AI_CRAWLER_UA}|Mediapartners-Google|Google-Display-Ads-Bot`,
   "i"
 );
 
