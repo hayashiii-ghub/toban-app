@@ -12,6 +12,7 @@ import {
 import { COMMON_FAQ, TEMPLATE_SEO_DATA } from "../../shared/seo-templates";
 import { TEMPLATE_CONTENT } from "../../shared/template-content";
 import { ja } from "../../client/src/i18n/locales/ja";
+import { siteDescription } from "../../shared/site";
 
 describe("isBot", () => {
   // 生成AI検索のクローラーは JS を実行しない。bot 判定を外すとプリレンダリングが返らず、
@@ -203,6 +204,7 @@ describe("render functions emit consistent OGP/Twitter tags", () => {
     // 順位は /templates で取りに行くので、ここは title ではなく description だけ。
     const html = renderLandingPageHtml(origin);
     const desc = html.match(/<meta name="description" content="([^"]*)">/)![1];
+    expect(desc).toBe(siteDescription(TEMPLATE_SEO_DATA.length));
     expect(desc).toContain("テンプレート");
     expect(html).not.toContain("<title>当番表テンプレート");
   });
