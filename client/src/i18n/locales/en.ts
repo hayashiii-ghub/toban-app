@@ -95,7 +95,8 @@ export const en: Record<MessageKey, string> = {
     "Shared schedules are deleted automatically after one year with no edits and no calendar reading them.",
 
   // Landing page
-  "lp.docTitle": "toban — Free Duty Roster App & Maker | Create, Print & Share",
+  "lp.docTitle":
+    "toban — Free Duty Roster App | Create, Print, Share & Calendar",
   "lp.createSchedule": "Create a schedule",
   "lp.heroTitleA": "Everyone's roster,",
   "lp.heroTitleB": "ready now.",
