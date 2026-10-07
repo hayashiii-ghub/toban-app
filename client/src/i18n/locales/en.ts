@@ -97,10 +97,10 @@ export const en: Record<MessageKey, string> = {
   // Landing page
   "lp.docTitle": "toban — Free Duty Roster App & Maker | Create, Print & Share",
   "lp.createSchedule": "Create a schedule",
-  "lp.heroTitleA": "Easy duty rosters,",
-  "lp.heroTitleB": "ready in minutes.",
-  "lp.heroSubA": "Just type the names, or just ask AI.",
-  "lp.heroSubB": "Make a duty roster for free, then print it or share it.",
+  "lp.heroTitleA": "Everyone's roster,",
+  "lp.heroTitleB": "ready now.",
+  "lp.heroSubA": "No account needed. Make it right in your browser.",
+  "lp.heroSubB": "Print it, save a PDF, or share the link.",
   "lp.featuresHeading": "Why toban",
   "lp.feat.noSignup.label": "No sign-up",
   "lp.feat.noSignup.desc":

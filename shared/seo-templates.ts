@@ -398,7 +398,7 @@ export const COMMON_FAQ = [
   {
     question: "当番表はどうやって作りますか？",
     answer:
-      "テンプレートを選んでメンバーの名前を入れるだけで完成します。担当の数や人数、並び順は後から自由に編集できます。アカウント登録もインストールも不要で、ブラウザだけで作れます。作った表はそのまま印刷やPDF保存ができます。",
+      "テンプレートを選ぶか、空白の表からメンバーや担当を入力して作成します。人数や担当数、並び順は後から自由に変更できます。アカウント登録やインストールは不要で、ブラウザ上で作成から印刷・PDF保存まで行えます。",
   },
   {
     question: "AI（ChatGPTなど）で当番表を作れますか？",
@@ -639,7 +639,7 @@ export const COMMON_FAQ_EN: { question: string; answer: string }[] = [
   {
     question: "How do I make a duty roster?",
     answer:
-      "Pick a template and type in your members' names—that's it. The number of assignments, the number of people, and the order are all editable afterwards. No account and no install required; it works in the browser alone. You can print the finished roster or save it as a PDF.",
+      "Pick a template, or start from a blank roster and enter the members and assignments. You can change the number of people, the number of assignments, and the order later. No account and no install; you can create the roster, print it, and save a PDF in the browser.",
   },
   {
     question: "Can I make a roster with AI, such as ChatGPT?",

@@ -15,7 +15,12 @@ import {
   serializeJsonLd,
 } from "../../shared/jsonLd";
 import { TEMPLATES } from "../../shared/templates";
-import { AI_AGENTS, OG_IMAGE_PATH, SITE_TITLE } from "../../shared/site";
+import {
+  AI_AGENTS,
+  OG_IMAGE_PATH,
+  SITE_TITLE,
+  siteDescription,
+} from "../../shared/site";
 import { TEMPLATE_CONTENT } from "../../shared/template-content";
 
 interface Env {
@@ -178,7 +183,7 @@ export async function handleScheduleOgp(
 
 export function renderLandingPageHtml(origin: string): string {
   const title = SITE_TITLE;
-  const desc = `名前を入れるだけで当番表がすぐ完成する、無料の当番表作成アプリ。アカウント登録・インストール不要、エクセルがなくてもスマホやパソコンのブラウザから作成・印刷し、LINEやメールで共有できます。職場・学校・家庭などで使える用途別のテンプレートを${TEMPLATE_SEO_DATA.length}種類用意。`;
+  const desc = siteDescription(TEMPLATE_SEO_DATA.length);
 
   const faqHtml = COMMON_FAQ.map(
     f => `<dt>${escapeHtml(f.question)}</dt><dd>${escapeHtml(f.answer)}</dd>`

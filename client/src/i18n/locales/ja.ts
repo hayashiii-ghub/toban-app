@@ -101,10 +101,10 @@ export const ja = {
   // ランディングページ
   "lp.docTitle": SITE_TITLE,
   "lp.createSchedule": "当番表を作る",
-  "lp.heroTitleA": "当番表、",
-  "lp.heroTitleB": "すぐに完成。",
-  "lp.heroSubA": "名前を入れるだけでも、AIに頼むだけでも。",
-  "lp.heroSubB": "無料で作って、印刷やLINEで共有できます。",
+  "lp.heroTitleA": "みんなの当番表、",
+  "lp.heroTitleB": "すぐ完成。",
+  "lp.heroSubA": "登録不要で、ブラウザからそのまま作れます。",
+  "lp.heroSubB": "印刷やPDF保存、LINEでの共有に対応しています。",
   "lp.featuresHeading": "tobanの特徴",
   "lp.feat.noSignup.label": "登録不要",
   "lp.feat.noSignup.desc":

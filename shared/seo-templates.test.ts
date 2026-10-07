@@ -8,7 +8,7 @@ import {
   COMMON_FAQ_EN,
 } from "./seo-templates";
 import { TEMPLATES } from "./templates";
-import { OG_IMAGE_PATH, SITE_TITLE } from "./site";
+import { OG_IMAGE_PATH, SITE_TITLE, siteDescription } from "./site";
 
 // 紹介ページを持たない唯一のテンプレート。空白から作り始めるためのもので、
 // 書く内容が無いため SEO ページを作らない（中身の無い LP を増やさない）。
@@ -123,6 +123,16 @@ describe("SITE_TITLE（トップと LP の検索タイトル）", () => {
     );
     expect(html).toContain(`<title>${SITE_TITLE}</title>`);
     expect(html.split(`content="${SITE_TITLE}"`).length - 1).toBe(2);
+  });
+
+  it("client/index.html の description が siteDescription と一致する", () => {
+    const html = readFileSync(
+      join(import.meta.dirname, "..", "client", "index.html"),
+      "utf8"
+    );
+    const desc = siteDescription(TEMPLATE_SEO_DATA.length);
+    // meta / og:description / twitter:description / JSON-LD / noscript
+    expect(html.split(desc).length - 1).toBe(5);
   });
 
   it("client/index.html の og:image / twitter:image が OG_IMAGE_PATH を指す", () => {
