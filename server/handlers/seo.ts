@@ -15,7 +15,12 @@ import {
   serializeJsonLd,
 } from "../../shared/jsonLd";
 import { TEMPLATES } from "../../shared/templates";
-import { AI_AGENTS, OG_IMAGE_PATH, SITE_TITLE } from "../../shared/site";
+import {
+  AI_AGENTS,
+  OG_IMAGE_PATH,
+  SITE_TITLE,
+  siteDescription,
+} from "../../shared/site";
 import { TEMPLATE_CONTENT } from "../../shared/template-content";
 
 interface Env {
@@ -178,7 +183,7 @@ export async function handleScheduleOgp(
 
 export function renderLandingPageHtml(origin: string): string {
   const title = SITE_TITLE;
-  const desc = `名前を入れるだけで当番表がすぐ完成する、無料の当番表作成アプリ。アカウント登録・インストール不要、エクセルがなくてもスマホやパソコンのブラウザから作成・印刷し、LINEやメールで共有できます。職場・学校・家庭などで使える用途別のテンプレートを${TEMPLATE_SEO_DATA.length}種類用意。`;
+  const desc = siteDescription(TEMPLATE_SEO_DATA.length);
 
   const faqHtml = COMMON_FAQ.map(
     f => `<dt>${escapeHtml(f.question)}</dt><dd>${escapeHtml(f.answer)}</dd>`
@@ -226,14 +231,14 @@ ${buildSocialMetaTags({ title, description: desc, url: `${origin}/`, origin, typ
 <ul>
 <li>登録不要・エクセル不要 — アカウントもExcelテンプレートも要らず、ブラウザだけで完結</li>
 <li>印刷がきれい — カード・一覧表・カレンダー・円盤の4形式</li>
-<li>URLで共有 — LINEやメールで送れる</li>
+<li>URLで共有 — LINEで送れる。カレンダーにも追加できる</li>
 <li>完全無料 — すべての機能を無料で利用可能</li>
 </ul>
 <h2>作り方は、ふたつ</h2>
 <h3>テンプレートから</h3>
-<p>場面に合った表を選んで、メンバーの名前を入れるだけ。</p>
+<p>場面に合った表を選び、メンバーと担当を入力します。</p>
 <h3>AIに頼んで</h3>
-<p>${AI_AGENTS.ja}で toban.app を開いて、作りたい当番表を伝えるだけ。</p>
+<p>${AI_AGENTS.ja}で toban.app を開き、作りたい当番表を伝えます。</p>
 <p>「1班〜6班で給食当番表を作って。配膳・牛乳・片付けを毎週交代、土日はお休み」</p>
 <p>表の公開（共有）だけは、必ずご自身で確定します。</p>
 <h2>すぐ使えるテンプレート</h2>

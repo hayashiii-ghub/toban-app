@@ -97,10 +97,11 @@ export const en: Record<MessageKey, string> = {
   // Landing page
   "lp.docTitle": "toban — Free Duty Roster App & Maker | Create, Print & Share",
   "lp.createSchedule": "Create a schedule",
-  "lp.heroTitleA": "Easy duty rosters,",
-  "lp.heroTitleB": "ready in minutes.",
-  "lp.heroSubA": "Just type the names, or just ask AI.",
-  "lp.heroSubB": "Make a duty roster for free, then print it or share it.",
+  "lp.heroTitleA": "Everyone's roster,",
+  "lp.heroTitleB": "ready now.",
+  "lp.heroSubA": "No account needed. Make it right in your browser.",
+  "lp.heroSubB":
+    "Print it, save a PDF, share the link, or add it to a calendar.",
   "lp.featuresHeading": "Why toban",
   "lp.feat.noSignup.label": "No sign-up",
   "lp.feat.noSignup.desc":
@@ -109,12 +110,13 @@ export const en: Record<MessageKey, string> = {
   "lp.feat.print.desc":
     "Print in four formats: cards, table, calendar, or wheel.",
   "lp.feat.share.label": "Share with a link",
-  "lp.feat.share.desc": "Copy a link and send it to your group.",
+  "lp.feat.share.desc":
+    "Copy a link and send it to your group, or add the roster to a calendar.",
   "lp.feat.free.label": "Completely free",
   "lp.feat.free.desc": "All features are free to use.",
   "lp.templatesHeading": "Ready-to-use templates",
   "lp.templatesSubtitle":
-    "Pick from {count} templates and just add your members.",
+    "Pick from {count} templates and edit the members and assignments.",
   "lp.viewAllTemplates": "See all templates",
   "lp.faqHeading": "FAQ",
   "lp.mock.title": "Cleaning duty",
@@ -134,7 +136,7 @@ export const en: Record<MessageKey, string> = {
   "lp.ways.heading": "Two ways to make one",
   "lp.ways.template.label": "From a template",
   "lp.ways.template.desc":
-    "Pick one that fits, then type in your members' names.",
+    "Pick one that fits, then enter the members and assignments.",
   "lp.ways.template.link": "Choose a template",
   "lp.ways.ai.label": "Ask AI",
   "lp.ways.ai.desc": `Open toban.app in ${AI_AGENTS.en} and describe the roster you want.`,
