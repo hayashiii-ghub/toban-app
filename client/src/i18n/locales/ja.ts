@@ -523,6 +523,8 @@ export const ja = {
   "templateSummary.member.one": "{count}人",
   "templateSummary.member.other": "{count}人",
 
+  "templatesDetail.japaneseContentNote":
+    "本文とFAQは現在、日本語でのみ提供しています。",
   "templatesDetail.contents": "テンプレートの内容",
   "templatesDetail.taskN": "タスク {n}",
   "templatesDetail.groupN": "グループ {n}",
